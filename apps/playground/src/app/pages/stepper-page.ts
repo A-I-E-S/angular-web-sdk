@@ -33,6 +33,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         title="Linear wizard"
         hint="Forward is blocked while the active step sets isValid to false."
         badge="linear"
+        [code]="linearCode"
       >
         <div class="mb-5 flex flex-wrap items-center gap-4">
           <label class="inline-flex items-center gap-2 text-body-sm text-ink dark:text-white">
@@ -110,6 +111,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         title="Non-linear"
         hint="Click any step header to jump — useful for review/edit flows."
         badge="free nav"
+        [code]="freeCode"
       >
         <aies-stepper
           [steps]="freeSteps"
@@ -150,6 +152,36 @@ export class StepperPage {
     { key: 'billing', label: 'Billing' },
     { key: 'confirm', label: 'Confirm' },
   ];
+
+  protected readonly linearCode = `import { StepperComponent, StepDefDirective, type StepDefinition } from '@aies/aies-ui';
+
+steps: StepDefinition[] = [
+  { key: 'route', label: 'Route', isValid: false },
+  { key: 'cargo', label: 'Cargo', isValid: true },
+  { key: 'review', label: 'Review' },
+];
+
+<aies-stepper
+  [steps]="steps"
+  [activeIndex]="index()"
+  [linear]="true"
+  (activeIndexChange)="index.set($event)"
+>
+  <ng-template aiesStepDef="route">…</ng-template>
+  <ng-template aiesStepDef="cargo">…</ng-template>
+  <ng-template aiesStepDef="review">…</ng-template>
+</aies-stepper>`;
+
+  protected readonly freeCode = `<aies-stepper
+  [steps]="freeSteps"
+  [activeIndex]="freeIndex()"
+  [linear]="false"
+  (activeIndexChange)="freeIndex.set($event)"
+>
+  <ng-template aiesStepDef="account">…</ng-template>
+  <ng-template aiesStepDef="billing">…</ng-template>
+  <ng-template aiesStepDef="confirm">…</ng-template>
+</aies-stepper>`;
 
   protected canGoNext(): boolean {
     const current = this.linearSteps()[this.linearIndex()];

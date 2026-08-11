@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 
 interface ModelEntry {
@@ -11,7 +12,7 @@ interface ModelEntry {
 @Component({
   selector: 'app-models-page',
   standalone: true,
-  imports: [PageHeaderComponent],
+  imports: [PageHeaderComponent, DemoSectionComponent],
   template: `
     <div class="pg-page-enter flex flex-col gap-8">
       <app-page-header
@@ -19,6 +20,17 @@ interface ModelEntry {
         title="Models"
         description="Key TypeScript exports from @aies/aies-models — shared shapes with no Angular runtime."
       />
+
+      <app-demo-section
+        title="Import"
+        hint="Types only — no Angular providers required."
+        [code]="importCode"
+      >
+        <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+          Use these shapes in feature state, API clients, and UI bindings (e.g.
+          AsyncQueryState for aies-async-state).
+        </p>
+      </app-demo-section>
 
       <div class="grid gap-3">
         @for (entry of models; track entry.name) {
@@ -43,6 +55,21 @@ interface ModelEntry {
   `,
 })
 export class ModelsPage {
+  protected readonly importCode = `import type {
+  ApiResponseModel,
+  AsyncQueryState,
+  PaginationMeta,
+  ShippingMode,
+} from '@aies/aies-models';
+
+const state: AsyncQueryState<Shipment[]> = {
+  data: undefined,
+  isLoading: true,
+  isFetching: true,
+  isError: false,
+  error: null,
+};`;
+
   protected readonly models: ModelEntry[] = [
     {
       name: 'ApiResponseModel<T>',

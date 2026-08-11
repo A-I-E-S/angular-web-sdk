@@ -23,7 +23,11 @@ interface TokenSwatch {
       />
 
       @for (group of groups; track group) {
-        <app-demo-section [title]="group" [badge]="countIn(group) + ' tokens'">
+        <app-demo-section
+          [title]="group"
+          [badge]="countIn(group) + ' tokens'"
+          [code]="group === 'Export (SFN)' ? tokenUsageCode : null"
+        >
           <div
             class="grid gap-3"
             style="grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));"
@@ -50,7 +54,11 @@ interface TokenSwatch {
         </app-demo-section>
       }
 
-      <app-demo-section title="Typography scale" hint="Provisional sizes — flagged for design confirmation.">
+      <app-demo-section
+        title="Typography scale"
+        hint="Provisional sizes — flagged for design confirmation."
+        [code]="typeCode"
+      >
         <ul class="m-0 flex list-none flex-col gap-5 p-0">
           <li>
             <p class="pg-kicker m-0 mb-1">heading-1 · 2.5rem / 700</p>
@@ -112,6 +120,21 @@ export class TokensPage {
     'Import (STN)',
     'Feedback',
   ];
+
+  protected readonly tokenUsageCode = `// tailwind.config.js — extend @aies/aies-theme preset
+module.exports = {
+  presets: [require('@aies/aies-theme/tailwind-preset')],
+  content: ['./src/**/*.{html,ts}', './node_modules/@aies/aies-ui/**/*.{js,mjs}'],
+};
+
+// In templates — mode accents via utilities
+<span class="bg-export text-white">SFN</span>
+<span class="bg-import text-white">STN</span>`;
+
+  protected readonly typeCode = `<h1 class="text-heading-1">Ship across continents</h1>
+<h2 class="text-heading-2">Shipment details</h2>
+<p class="text-body">Body copy uses the theme font stack.</p>
+<span class="text-caption">Meta / captions</span>`;
 
   protected readonly colors: TokenSwatch[] = [
     { name: 'black', bgClass: 'bg-black', hex: '#000000', group: 'Core' },

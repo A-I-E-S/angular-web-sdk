@@ -36,6 +36,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       <app-demo-section
         title="Breadcrumb"
         hint="Crumbs reflect the active child route (built from the Router URL)."
+        [code]="breadcrumbCode"
       >
         <aies-breadcrumb [items]="crumbs()" />
       </app-demo-section>
@@ -43,6 +44,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       <app-demo-section
         title="Tabs (routed)"
         hint="Child routes under /components/navigation/*. Active tab = Router.isActive (works on refresh)."
+        [code]="routedTabsCode"
       >
         <aies-tabs
           [items]="routeTabs"
@@ -57,6 +59,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       <app-demo-section
         title="Segment (routed via query)"
         hint="Same path, different ?density=… — selected pill matches the query on load."
+        [code]="segmentCode"
       >
         <aies-segment
           [items]="densitySegments"
@@ -74,6 +77,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       <app-demo-section
         title="Tabs (local)"
         hint="No routerLink — selection is only [(activeId)] + aiesTabDef panels."
+        [code]="localTabsCode"
       >
         <aies-tabs
           [items]="localTabs"
@@ -157,6 +161,36 @@ export class NavigationPage {
     { id: 'alpha', label: 'Alpha' },
     { id: 'beta', label: 'Beta' },
   ];
+
+  protected readonly breadcrumbCode = `import { BreadcrumbComponent, type AiesNavItem } from '@aies/aies-ui';
+
+items: AiesNavItem[] = [
+  { id: 'home', label: 'Home', routerLink: '/' },
+  { id: 'shipments', label: 'Shipments', routerLink: '/shipments' },
+  { id: 'current', label: 'SFN-1042' }, // last = current page
+];
+
+<aies-breadcrumb [items]="items" />`;
+
+  protected readonly routedTabsCode = `items = [
+  { id: 'overview', label: 'Overview', routerLink: '/shipments/1/overview' },
+  { id: 'docs', label: 'Documents', routerLink: '/shipments/1/docs' },
+];
+
+<aies-tabs [items]="items" [(activeId)]="activeId" ariaLabel="Shipment" />
+<router-outlet />`;
+
+  protected readonly segmentCode = `items = [
+  { id: 'list', label: 'List', routerLink: '/shipments', queryParams: { view: 'list' } },
+  { id: 'map', label: 'Map', routerLink: '/shipments', queryParams: { view: 'map' } },
+];
+
+<aies-segment [items]="items" [(activeId)]="viewId" ariaLabel="View" />`;
+
+  protected readonly localTabsCode = `<aies-tabs [items]="localTabs" [(activeId)]="localTabId">
+  <ng-template aiesTabDef="alpha">Panel Alpha</ng-template>
+  <ng-template aiesTabDef="beta">Panel Beta</ng-template>
+</aies-tabs>`;
 
   /** Breadcrumb trail derived from the current URL (consumer pattern). */
   protected readonly crumbs = computed((): AiesNavItem[] => {

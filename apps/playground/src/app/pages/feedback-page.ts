@@ -70,6 +70,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
       <app-demo-section
         title="LoadingState"
         hint="Block vs inline for full-page vs toolbar refresh."
+        [code]="loadingCode"
       >
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col gap-2">
@@ -98,6 +99,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
       <app-demo-section
         title="ErrorState"
         hint="Retry is always visible — omitting (retry) is a misuse, not a supported config."
+        [code]="errorCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
           <div
@@ -122,6 +124,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
       <app-demo-section
         title="EmptyState"
         hint="Same always-retry rule — empty can change after a filter reset."
+        [code]="emptyCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
           <aies-empty-state
@@ -139,6 +142,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
         title="AsyncState playground"
         hint="Flip scenarios to see blocking states vs non-blocking badges."
         badge="6 scenarios"
+        [code]="asyncCode"
       >
         <div
           class="mb-5 inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-background-welcome p-1 dark:bg-ink-950"
@@ -267,6 +271,33 @@ export class FeedbackPage {
     fetching: 'Updating…',
     stale: 'Stale error',
   };
+
+  protected readonly loadingCode = `import { LoadingStateComponent } from '@aies/aies-ui';
+
+<aies-loading-state message="Loading shipments…" />
+<aies-loading-state mode="inline" message="Refreshing rates…" />`;
+
+  protected readonly errorCode = `import { ErrorStateComponent } from '@aies/aies-ui';
+
+<aies-error-state
+  message="Failed to load shipments."
+  (retry)="refetch()"
+/>`;
+
+  protected readonly emptyCode = `import { EmptyStateComponent } from '@aies/aies-ui';
+
+<aies-empty-state
+  message="No shipments match your filters."
+  (retry)="resetFilters()"
+/>`;
+
+  protected readonly asyncCode = `import { AsyncStateComponent } from '@aies/aies-ui';
+import type { AsyncQueryState } from '@aies/aies-models';
+
+<aies-async-state [state]="state()" (retry)="refetch()">
+  <!-- content when data is ready -->
+  <aies-table [columns]="columns" [rows]="state().data!" />
+</aies-async-state>`;
 
   protected setDemo(kind: DemoKind): void {
     this.demo.set(kind);

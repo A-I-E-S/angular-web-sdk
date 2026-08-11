@@ -32,7 +32,9 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         title="Variants"
         hint="Primary uses the active mode accent. Flip SFN/STN in the sidebar to preview."
         badge="4"
-      >        <div class="flex flex-wrap items-end gap-6">
+        [code]="variantsCode"
+      >
+        <div class="flex flex-wrap items-end gap-6">
           @for (v of variants; track v) {
             <app-variant-label [label]="v">
               <button aies-button type="button" [variant]="v">{{ labels[v] }}</button>
@@ -41,7 +43,11 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Sizes" hint="sm for dense toolbars, lg for hero CTAs.">
+      <app-demo-section
+        title="Sizes"
+        hint="sm for dense toolbars, lg for hero CTAs."
+        [code]="sizesCode"
+      >
         <div class="flex flex-wrap items-end gap-6">
           @for (s of sizes; track s) {
             <app-variant-label [label]="'size=' + s">
@@ -51,7 +57,7 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Variant × size matrix" muted>
+      <app-demo-section title="Variant × size matrix" muted [code]="matrixCode">
         <div class="overflow-x-auto">
           <table class="w-full border-collapse text-left">
             <thead>
@@ -80,7 +86,11 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="With icons" hint="Project aies-icon inside the button host.">
+      <app-demo-section
+        title="With icons"
+        hint="Project aies-icon inside the button host."
+        [code]="iconsCode"
+      >
         <div class="flex flex-wrap gap-3">
           <button aies-button type="button" variant="primary">
             <aies-icon name="airplane" [size]="16" />
@@ -101,7 +111,11 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="As links" hint="Same aies-button attribute on anchors.">
+      <app-demo-section
+        title="As links"
+        hint="Same aies-button attribute on anchors."
+        [code]="linksCode"
+      >
         <div class="flex flex-wrap gap-3">
           <a aies-button href="#primary" variant="primary">Primary link</a>
           <a aies-button href="#secondary" variant="secondary" size="sm">Secondary link</a>
@@ -109,7 +123,11 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Disabled" hint="aria-disabled applied for anchors; native disabled for buttons.">
+      <app-demo-section
+        title="Disabled"
+        hint="aria-disabled applied for anchors; native disabled for buttons."
+        [code]="disabledCode"
+      >
         <div class="flex flex-wrap gap-3">
           <button aies-button type="button" variant="primary" disabled>Primary</button>
           <button aies-button type="button" variant="secondary" disabled>Secondary</button>
@@ -118,7 +136,11 @@ import { VariantLabelComponent } from '../shared/variant-label.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="In context" hint="Toolbar strip as it often appears in product UI.">
+      <app-demo-section
+        title="In context"
+        hint="Toolbar strip as it often appears in product UI."
+        [code]="contextCode"
+      >
         <div
           class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-background-welcome px-4 py-3 dark:border-white/10 dark:bg-ink-950"
         >
@@ -150,4 +172,36 @@ export class ButtonPage {
     ghost: 'Cancel',
     danger: 'Delete',
   };
+
+  protected readonly variantsCode = `import { ButtonComponent } from '@aies/aies-ui';
+
+<button aies-button type="button" variant="primary">Save shipment</button>
+<button aies-button type="button" variant="secondary">Save draft</button>
+<button aies-button type="button" variant="ghost">Cancel</button>
+<button aies-button type="button" variant="danger">Delete</button>`;
+
+  protected readonly sizesCode = `<button aies-button type="button" size="sm">Continue</button>
+<button aies-button type="button" size="md">Continue</button>
+<button aies-button type="button" size="lg">Continue</button>`;
+
+  protected readonly matrixCode = `<button aies-button type="button" [variant]="variant" [size]="size">
+  Action
+</button>`;
+
+  protected readonly iconsCode = `import { AiesIconComponent } from '@aies/aies-icons';
+
+<button aies-button type="button" variant="primary">
+  <aies-icon name="airplane" [size]="16" />
+  Create shipment
+</button>`;
+
+  protected readonly linksCode = `<a aies-button href="/shipments/new" variant="primary">Primary link</a>
+<a aies-button routerLink="/drafts" variant="secondary" size="sm">Secondary link</a>`;
+
+  protected readonly disabledCode = `<button aies-button type="button" variant="primary" disabled>Primary</button>
+<a aies-button href="/x" variant="ghost" [attr.aria-disabled]="true">Ghost link</a>`;
+
+  protected readonly contextCode = `<button aies-button type="button" variant="ghost" size="sm">Cancel</button>
+<button aies-button type="button" variant="secondary" size="sm">Save draft</button>
+<button aies-button type="button" variant="primary" size="sm">Submit</button>`;
 }

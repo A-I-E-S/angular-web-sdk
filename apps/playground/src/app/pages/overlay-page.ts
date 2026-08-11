@@ -33,6 +33,7 @@ import {
         title="Modal"
         hint="Default requires Cancel / Save. Opt in with dismissible: true."
         badge="ModalService"
+        [code]="modalCode"
       >
         <div class="flex flex-wrap items-center gap-3">
           <button aies-button type="button" variant="primary" (click)="openModal(false)">
@@ -54,6 +55,7 @@ import {
         title="Drawer"
         hint="Same dismissible contract as modals."
         badge="DrawerService"
+        [code]="drawerCode"
       >
         <div class="flex flex-wrap items-center gap-3">
           <button aies-button type="button" variant="secondary" (click)="openDrawer(false)">
@@ -75,6 +77,7 @@ import {
         title="Confirm"
         hint="Requires Confirm or Cancel unless dismissible is set."
         badge="ConfirmService"
+        [code]="confirmCode"
       >
         <div class="flex flex-wrap gap-3">
           <button aies-button type="button" (click)="openConfirm(false)">
@@ -110,6 +113,43 @@ export class OverlayPage {
   protected readonly modalResult = signal<string | null>(null);
   protected readonly drawerResult = signal<string | null>(null);
   protected readonly confirmResult = signal<string | null>(null);
+
+  protected readonly modalCode = `import { ModalService, provideAiesUiOverlays, OVERLAY_DATA, AiesOverlayRef } from '@aies/aies-ui';
+
+// app.config.ts
+providers: [provideAiesUiOverlays()]
+
+const modal = inject(ModalService);
+modal
+  .open(EditShipmentModal, {
+    data: { shipmentRef: 'SFN-1042' },
+    dismissible: false, // default
+  })
+  .afterClosed()
+  .subscribe((result) => { /* … */ });`;
+
+  protected readonly drawerCode = `import { DrawerService } from '@aies/aies-ui';
+
+inject(DrawerService)
+  .open(FiltersPanel, {
+    data: { facet: 'Status' },
+    dismissible: true,
+  })
+  .afterClosed()
+  .subscribe((result) => { /* … */ });`;
+
+  protected readonly confirmCode = `import { ConfirmService } from '@aies/aies-ui';
+
+inject(ConfirmService)
+  .confirm({
+    title: 'Delete shipment?',
+    message: 'This cannot be undone.',
+    confirmLabel: 'Delete',
+    danger: true,
+  })
+  .subscribe((ok) => {
+    if (ok) this.deleteShipment();
+  });`;
 
   protected openModal(dismissible: boolean): void {
     this.modal

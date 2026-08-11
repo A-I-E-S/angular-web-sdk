@@ -45,7 +45,11 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         description="Shared pattern: label, hint, field error, prefix/suffix slots, and ControlValueAccessor."
       />
 
-      <app-demo-section title="Text input" hint="Default, with affixes, error, and disabled.">
+      <app-demo-section
+        title="Text input"
+        hint="Default, with affixes, error, and disabled."
+        [code]="textCode"
+      >
         <div class="grid gap-5 md:grid-cols-2">
           <aies-text-input
             label="Tracking number"
@@ -65,7 +69,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Textarea">
+      <app-demo-section title="Textarea" [code]="textareaCode">
         <div class="grid gap-5 md:grid-cols-2">
           <aies-textarea
             label="Special instructions"
@@ -81,7 +85,11 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Number input" hint="Comma formatting is display-only — value stays a number.">
+      <app-demo-section
+        title="Number input"
+        hint="Comma formatting is display-only — value stays a number."
+        [code]="numberCode"
+      >
         <div class="grid gap-5 md:grid-cols-2">
           <aies-number-input label="Declared value (USD)" [(value)]="amount">
             <span prefix>$</span>
@@ -100,6 +108,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         title="Select"
         hint="Searchable, free-text, and multi-select modes."
         badge="3 modes"
+        [code]="selectCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
           <aies-select
@@ -136,7 +145,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Choice controls">
+      <app-demo-section title="Choice controls" [code]="choiceCode">
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col gap-4">
             <aies-checkbox label="Require signature on delivery" [(value)]="signature" />
@@ -161,7 +170,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Date & file">
+      <app-demo-section title="Date & file" [code]="dateFileCode">
         <div class="grid gap-5 md:grid-cols-2">
           <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
           <aies-date-picker
@@ -276,6 +285,72 @@ export class FormsPage {
   protected readonly readyDate = signal<string | null>('2026-08-15');
   protected readonly cutoffDate = signal<string | null>(null);
   protected readonly files = signal<FileUploadResult[]>([]);
+
+  protected readonly textCode = `import { TextInputComponent } from '@aies/aies-ui';
+
+<aies-text-input
+  label="Tracking number"
+  hint="As printed on the airway bill"
+  placeholder="e.g. AWB-12345"
+  [(value)]="tracking"
+/>
+
+<aies-text-input label="Reference" [(value)]="reference">
+  <aies-icon prefix name="anchor" [size]="16" />
+</aies-text-input>
+
+<aies-text-input label="Email" error="Enter a valid email" [(value)]="email" />`;
+
+  protected readonly textareaCode = `<aies-textarea
+  label="Special instructions"
+  hint="Visible to warehouse staff"
+  placeholder="Fragile — keep upright"
+  [(value)]="instructions"
+/>`;
+
+  protected readonly numberCode = `<aies-number-input label="Declared value (USD)" [(value)]="amount">
+  <span prefix>$</span>
+</aies-number-input>
+
+<aies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
+  <span suffix>kg</span>
+</aies-number-input>`;
+
+  protected readonly selectCode = `<aies-select
+  label="Warehouse"
+  [options]="warehouses()"
+  [searchable]="true"
+  [(selected)]="selectedWarehouse"
+>
+  <aies-icon prefix name="warehouse" [size]="16" />
+</aies-select>
+
+<aies-select
+  label="Tags"
+  [searchable]="true"
+  [allowFreeText]="true"
+  [multiple]="true"
+  [(options)]="tags"
+  [(selected)]="selectedTags"
+/>`;
+
+  protected readonly choiceCode = `<aies-checkbox label="Require signature on delivery" [(value)]="signature" />
+<aies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
+<aies-radio
+  label="Service level"
+  [options]="serviceLevels"
+  [(value)]="serviceLevel"
+/>`;
+
+  protected readonly dateFileCode = `<aies-date-picker label="Ready date" [(value)]="readyDate" />
+
+<aies-file-upload
+  label="Identity document"
+  accept="image/*,.pdf"
+  [allowCamera]="true"
+  [multiple]="true"
+  (filesSelected)="onFiles($event)"
+/>`;
 
   protected onFiles(next: FileUploadResult[]): void {
     this.files.set(next);

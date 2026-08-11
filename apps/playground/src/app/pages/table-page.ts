@@ -55,6 +55,7 @@ const PAGE_SIZE = 6;
         title="Shipments list"
         hint="Sort emits upward; paging uses PaginationMeta from the API envelope."
         badge="template cells"
+        [code]="tableCode"
       >
         <div class="mb-4 flex flex-wrap gap-2">
           @for (kind of listKinds; track kind) {
@@ -128,7 +129,7 @@ const PAGE_SIZE = 6;
         </aies-async-state>
       </app-demo-section>
 
-      <app-demo-section title="Compact / text-only columns" muted>
+      <app-demo-section title="Compact / text-only columns" muted [code]="compactCode">
         <aies-table [columns]="compactColumns" [rows]="pageRows().slice(0, 3)" />
       </app-demo-section>
     </div>
@@ -155,6 +156,29 @@ export class TablePage {
     { key: 'destination', header: 'Destination' },
     { key: 'status', header: 'Status' },
   ];
+
+  protected readonly tableCode = `import {
+  AsyncStateComponent,
+  TableComponent,
+  CellDefDirective,
+  PaginationComponent,
+} from '@aies/aies-ui';
+
+<aies-async-state [state]="listState()" (retry)="refetch()">
+  <aies-table
+    [columns]="columns"
+    [rows]="pageRows()"
+    [sort]="sort()"
+    (sortChange)="onSort($event)"
+  >
+    <ng-template aiesCellDef="status" let-row>
+      {{ row.status }}
+    </ng-template>
+  </aies-table>
+  <aies-pagination [meta]="meta()" (pageChange)="onPageChange($event)" />
+</aies-async-state>`;
+
+  protected readonly compactCode = `<aies-table [columns]="columns" [rows]="rows" />`;
 
   protected readonly sortedRows = computed(() => {
     const current = this.sort();

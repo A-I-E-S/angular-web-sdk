@@ -1,12 +1,13 @@
 import { Component, computed, signal } from '@angular/core';
 import { AiesIconComponent, ICON_NAMES, type IconName } from '@aies/aies-icons';
 
+import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 
 @Component({
   selector: 'app-icons-page',
   standalone: true,
-  imports: [AiesIconComponent, PageHeaderComponent],
+  imports: [AiesIconComponent, PageHeaderComponent, DemoSectionComponent],
   template: `
     <div class="pg-page-enter flex flex-col gap-8">
       <app-page-header
@@ -20,6 +21,21 @@ import { PageHeaderComponent } from '../shared/page-header.component';
           </p>
         </div>
       </app-page-header>
+
+      <app-demo-section
+        title="Usage"
+        hint="Import the sprite once in the app; then use aies-icon anywhere."
+        [code]="usageCode"
+      >
+        <div class="flex flex-wrap items-center gap-4 text-ink dark:text-white">
+          <aies-icon name="airplane" [size]="24" />
+          <aies-icon name="warehouse" [size]="24" />
+          <aies-icon name="warning" [size]="24" />
+          <span class="text-body-sm text-neutral-600 dark:text-neutral-400">
+            Prefer typed IconName — never free-string icon ids.
+          </span>
+        </div>
+      </app-demo-section>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <input
@@ -69,6 +85,12 @@ export class IconsPage {
   protected readonly ICON_NAMES = ICON_NAMES;
   protected readonly query = signal('');
   protected readonly copied = signal<string | null>(null);
+
+  protected readonly usageCode = `import { AiesIconComponent, type IconName } from '@aies/aies-icons';
+
+// Provide the sprite in app bootstrap / index (see package README), then:
+<aies-icon name="airplane" [size]="20" />
+<aies-icon [name]="icon" [size]="16" />`;
 
   protected readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();
