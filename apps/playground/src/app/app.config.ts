@@ -16,11 +16,14 @@ import { ThemeService } from '@aies/aies-theme';
 
 import { appRoutes } from './app.routes';
 
+/** Test export API — mode config loads from GET /public/mode/config on startup. */
+const PLAYGROUND_API_BASE = 'https://test-api-export.africaniestest.com/api';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),
-    provideAiesSdk({ baseUrl: 'https://example.invalid' }),
+    provideAiesSdk({ baseUrl: PLAYGROUND_API_BASE }),
     provideHttpClient(
       withInterceptors([shipmentModeInterceptor, authInterceptor]),
     ),

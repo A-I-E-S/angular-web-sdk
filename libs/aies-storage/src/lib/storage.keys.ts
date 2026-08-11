@@ -10,3 +10,6 @@ export const AIES_THEME_KEY = 'aies.theme';
 
 /** Persisted shipping mode (`'stn' | 'sfn'`). */
 export const AIES_SHIPPING_MODE_KEY = 'aies.shippingMode';
+
+/** Cached public mode-config payload (mapped {@link ModeConfigData}). */
+export const AIES_MODE_CONFIG_KEY = 'aies.modeConfig';

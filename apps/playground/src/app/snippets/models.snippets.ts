@@ -269,49 +269,44 @@ export class ModeSwitcherComponent {
 
 export const MODELS_MODE_CONFIG = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
-// Intent:       Resolve region units and currency from the public mode-config payload.
-// Prerequisites: @aies/aies-models ModeConfigData, ModeRegionConfig, ShippingMode.
-// Do:            Pick sfn vs stn branch first, then country key with default fallback.
-//                Treat SFN (ng) and STN (us/cn/gb) key sets as intentionally different.
-// Don't:        Assume every mode exposes the same country keys.
-//                Parse snake_case in feature code — normalize once at the API boundary.
+// Intent:       ModeConfigService is the source of truth for region currency
+//               and measurement units — fetch once, persist, resolve by country.
+// Prerequisites: provideAiesSdk({ baseUrl }) + provideHttpClient; mode config
+//                loads automatically (or call provideModeConfig() explicitly).
+// Do:            Use getRegionConfig(countryCode) with active ShippingModeService.
+//                Let the service save the server record — do not duplicate maps.
+// Don't:        Hard-code units/currency per country in feature components.
 // ───────────────────────────────────────────────────────────────────────
 
-import type {
-  ModeConfigData,
-  ModeRegionConfig,
-  ShippingMode,
-} from '@aies/aies-models';
+import { Component, inject } from '@angular/core';
+import { ModeConfigService, ShippingModeService } from '@aies/aies-core';
 
-export function resolveRegionConfig(
-  config: ModeConfigData,
-  mode: ShippingMode,
-  countryCode: string,
-): ModeRegionConfig {
-  const branch = mode === 'sfn' ? config.sfn : config.stn;
-  const key = countryCode.toLowerCase() as keyof typeof branch;
+@Component({
+  selector: 'app-shipment-summary',
+  standalone: true,
+  template: \`
+    @if (region(); as r) {
+      <p>Value: {{ r.currencySymbol }}{{ amount }}</p>
+      <p>Weight unit: {{ r.massUnit }}</p>
+    }
+  \`,
+})
+export class ShipmentSummaryComponent {
+  private readonly modeConfig = inject(ModeConfigService);
+  private readonly shipping = inject(ShippingModeService);
 
-  if (key in branch && key !== 'default') {
-    return branch[key as Exclude<keyof typeof branch, 'default'>];
+  readonly amount = 1250;
+  readonly originCountry = 'cn';
+
+  region() {
+    // Uses saved /public/mode/config record + active STN/SFN mode.
+    return this.modeConfig.getRegionConfig(this.originCountry);
   }
-
-  return branch.default;
 }
 
-// Example: format weight for the active region
-export function formatWeight(
-  config: ModeConfigData,
-  mode: ShippingMode,
-  country: string,
-  kg: number,
-): string {
-  const region = resolveRegionConfig(config, mode, country);
-  if (region.massUnit === 'LBS') {
-    const lbs = kg * 2.20462;
-    return \`\${lbs.toFixed(1)} \${region.massUnit}\`;
-  }
-  return \`\${kg.toFixed(1)} \${region.massUnit}\`;
-}
-
-// Wire payload from GET /public/mode/config → ApiResponseModel<ModeConfigData>
+// app.config.ts
+// provideAiesSdk({
+//   baseUrl: 'https://test-api-export.africaniestest.com/api',
+//   // loadModeConfig: true by default — GET /public/mode/config on startup
+// }),
 `;

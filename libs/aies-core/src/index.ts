@@ -25,6 +25,12 @@ export {
 
 // Mode config
 export { ModeConfigService } from './lib/mode/mode-config.service';
+export {
+  mapModeConfigData,
+  resolveModeRegionConfig,
+  MODE_CONFIG_PATH,
+} from './lib/mode/mode-config.mapper';
+export { provideModeConfig } from './lib/mode/provide-mode-config';
 
 // Route-driven overlays (openers provided by aies-ui)
 export type {

@@ -1,4 +1,4 @@
-export { AIES_SHIPPING_MODE_KEY, AIES_THEME_KEY } from './lib/storage.keys';
+export { AIES_MODE_CONFIG_KEY, AIES_SHIPPING_MODE_KEY, AIES_THEME_KEY } from './lib/storage.keys';
 export { StorageService } from './lib/storage.service';
 export { STORAGE_TOKEN } from './lib/storage.token';
 export { LocalStorageService } from './lib/local-storage.service';

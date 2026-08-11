@@ -51,6 +51,12 @@ export interface AiesSdkConfig {
    * Request-specific headers override these on key collision.
    */
   defaultHeaders?: Record<string, string>;
+
+  /**
+   * When true (default), fetch `/public/mode/config` on startup via
+   * {@link provideModeConfig}. Set `false` for tests or offline-only shells.
+   */
+  loadModeConfig?: boolean;
 }
 
 /**

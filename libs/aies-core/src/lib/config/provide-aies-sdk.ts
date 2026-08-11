@@ -5,14 +5,14 @@ import {
 import { provideLocalStorage } from '@aies/aies-storage';
 
 import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
+import { provideModeConfig } from '../mode/provide-mode-config';
 
 /**
  * Registers SDK configuration and ensures browser storage is available.
  *
- * Also calls {@link provideLocalStorage} so theme / shipping-mode persistence
- * works out of the box. Apps that prefer session-scoped storage should call
- * {@link provideSessionStorage} **after** this provider so it overrides the
- * default localStorage binding.
+ * Also calls {@link provideLocalStorage} so theme / shipping-mode / mode-config
+ * persistence works out of the box. When {@link AiesSdkConfig.loadModeConfig}
+ * is not `false`, {@link provideModeConfig} runs on startup.
  *
  * @param config - API origin and optional timeout / default headers.
  * @returns Environment providers for `app.config.ts`.
@@ -47,7 +47,7 @@ import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
 export function provideAiesSdk(config: AiesSdkConfig): EnvironmentProviders {
   return makeEnvironmentProviders([
     { provide: AIES_SDK_CONFIG, useValue: config },
-    // Storage defaults to localStorage; apps may override with provideSessionStorage().
     provideLocalStorage(),
+    ...(config.loadModeConfig !== false ? [provideModeConfig()] : []),
   ]);
 }

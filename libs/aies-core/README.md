@@ -49,7 +49,7 @@ export const appConfig: ApplicationConfig = {
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
 | HTTP | `ApiClient`, `normalize`, `authInterceptor`, `AUTH_TOKEN_PROVIDER` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
-| Mode | `ModeConfigService` |
+| Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 
 `MODAL_SERVICE` / `DRAWER_SERVICE` are tokens only — implementations ship in

@@ -158,7 +158,7 @@ export class ModelsPage {
     {
       id: 'mode-config',
       title: 'Mode config',
-      hint: 'Public /mode/config payload — region units and currency per mode.',
+      hint: 'ModeConfigService fetches /public/mode/config, persists the record, resolves by country + STN/SFN.',
       code: MODELS_MODE_CONFIG,
       models: [
         {

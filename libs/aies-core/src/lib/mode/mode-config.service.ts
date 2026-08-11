@@ -4,87 +4,91 @@ import type {
   ModeAppType,
   ModeConfigData,
   ModeRegionConfig,
-  ModeSfnConfig,
-  ModeStnConfig,
 } from '@aies/aies-models';
-import { Observable, tap } from 'rxjs';
+import { AIES_MODE_CONFIG_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
+import { finalize, Observable, tap } from 'rxjs';
 
 import { ApiClient } from '../http/api-client';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
+import {
+  isModeConfigData,
+  mapModeConfigData,
+  MODE_CONFIG_PATH,
+  resolveModeRegionConfig,
+} from './mode-config.mapper';
 
 /**
- * Loads and exposes public mode/region metadata (units, currency).
+ * Source of truth for region currency and measurement units (STN / SFN).
  *
- * Fetches `/public/mode/config` in wrapped mode — that endpoint typically
- * sends `success` / `data` / `status_code` without `errors` or `pagination`,
- * which exercises {@link normalize}'s null-coalescing.
- *
- * Errors are **not** swallowed: callers (or TanStack Query) decide how to
- * surface failures. Wire format may be snake_case; this service maps region
- * fields to the camelCase {@link ModeConfigData} model at the boundary.
+ * On startup (via {@link provideModeConfig}), loads
+ * `GET /public/mode/config`, normalizes snake_case wire fields once, and
+ * persists the mapped record to storage. {@link getRegionConfig} reads that
+ * saved record and resolves by country code + active shipping mode.
  *
  * @example
  * ```ts
- * // app startup
- * const modes = inject(ModeConfigService);
- * modes.loadConfig().subscribe();
+ * // app.config.ts
+ * providers: [
+ *   provideAiesSdk({ baseUrl: 'https://test-api-export.africaniestest.com/api' }),
+ *   provideHttpClient(withInterceptors([shipmentModeInterceptor])),
+ *   provideModeConfig(),
+ * ];
  *
- * // later — format money for a shipment origin
- * const region = modes.getRegionConfig(shipment.originCountry);
+ * // feature — format for shipment origin country
+ * const modeConfig = inject(ModeConfigService);
+ * const region = modeConfig.getRegionConfig('us');
  * if (region) {
- *   formatAmount(amount, region.currency, region.currencySymbol);
+ *   console.log(region.currencySymbol, region.massUnit);
  * }
  * ```
  */
 @Injectable({ providedIn: 'root' })
 export class ModeConfigService {
   private readonly api = inject(ApiClient);
+  private readonly storage = inject(STORAGE_TOKEN);
   private readonly shippingMode = inject(ShippingModeService);
 
   private readonly _config = signal<ModeConfigData | null>(null);
   private readonly _loading = signal(false);
 
-  /** Latest successfully loaded config, or `null` before the first success. */
+  /** Latest mode-config record (storage hydrate or last successful fetch). */
   readonly config: Signal<ModeConfigData | null> = this._config.asReadonly();
 
-  /** `true` while a {@link loadConfig} request is in flight. */
+  /** `true` while {@link loadConfig} is in flight. */
   readonly loading: Signal<boolean> = this._loading.asReadonly();
 
+  constructor() {
+    this.hydrateFromStorage();
+  }
+
   /**
-   * Fetches mode config and updates {@link config}.
-   * Safe to call multiple times — each call refreshes the signal on success.
+   * Fetches mode config from the server, updates {@link config}, and persists.
    *
-   * @returns Observable of the normalized envelope; errors propagate to subscribers.
+   * @returns Normalized API envelope; errors propagate to subscribers.
    */
   loadConfig(): Observable<ApiResponseModel<ModeConfigData>> {
     this._loading.set(true);
-    return this.api.get<ModeConfigData>('/public/mode/config').pipe(
-      tap({
-        next: (res) => {
-          if (res.data !== null) {
-            this._config.set(mapModeConfigData(res.data));
-          }
-          this._loading.set(false);
-        },
-        error: () => {
-          this._loading.set(false);
-        },
+    return this.api.get<ModeConfigData>(MODE_CONFIG_PATH).pipe(
+      tap((res) => {
+        if (res.success && res.data !== null) {
+          this.saveRecord(mapModeConfigData(res.data));
+        }
+      }),
+      finalize(() => {
+        this._loading.set(false);
       }),
     );
   }
 
   /**
-   * Resolves region display units/currency for a country within an app type.
+   * Region units and currency for a country code under the active (or given) mode.
    *
-   * @param countryCode - ISO-ish country key (`'ng'`, `'us'`, …) or `null`
-   *   to force the mode's `default` region.
-   * @param appType - Defaults to {@link ShippingModeService.mode} so callers
-   *   rarely need to pass the active STN/SFN surface explicitly.
-   * @returns Matching {@link ModeRegionConfig}, the mode `default`, or `null`
-   *   when config has not been loaded yet.
+   * @param countryCode - e.g. `'ng'`, `'us'`, `'cn'` — unknown keys use `default`.
+   * @param appType - Defaults to {@link ShippingModeService.mode}.
+   * @returns Resolved region, or `null` before the first load/hydrate.
    */
   getRegionConfig(
-    countryCode: string | null,
+    countryCode: string | null | undefined,
     appType?: ModeAppType,
   ): ModeRegionConfig | null {
     const config = this._config();
@@ -92,62 +96,21 @@ export class ModeConfigService {
       return null;
     }
 
-    const type: ModeAppType = appType ?? this.shippingMode.mode();
-    const regions: ModeSfnConfig | ModeStnConfig =
-      type === 'sfn' ? config.sfn : config.stn;
+    const mode = appType ?? this.shippingMode.mode();
+    return resolveModeRegionConfig(config, mode, countryCode);
+  }
 
-    if (countryCode !== null && countryCode !== '') {
-      const key = countryCode.toLowerCase();
-      const keyed = regions as unknown as Record<string, ModeRegionConfig>;
-      if (Object.prototype.hasOwnProperty.call(keyed, key)) {
-        return keyed[key] ?? null;
-      }
+  /** Replace the in-memory record and persist — used after {@link loadConfig}. */
+  private saveRecord(config: ModeConfigData): void {
+    this._config.set(config);
+    this.storage.set(AIES_MODE_CONFIG_KEY, config);
+  }
+
+  /** Restore the last saved server record so region lookups work offline. */
+  private hydrateFromStorage(): void {
+    const stored = this.storage.get<ModeConfigData>(AIES_MODE_CONFIG_KEY);
+    if (isModeConfigData(stored)) {
+      this._config.set(stored);
     }
-
-    return regions.default;
   }
-}
-
-/**
- * Map a possibly snake_case region object into {@link ModeRegionConfig}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- */
-function mapRegionConfig(raw: unknown): ModeRegionConfig {
-  const record = (raw ?? {}) as Record<string, unknown>;
-  return {
-    dimensionUnit: (record['dimensionUnit'] ??
-      record['dimension_unit']) as ModeRegionConfig['dimensionUnit'],
-    massUnit: (record['massUnit'] ??
-      record['mass_unit']) as ModeRegionConfig['massUnit'],
-    currency: (record['currency'] ?? 'NGN') as ModeRegionConfig['currency'],
-    currencySymbol: String(
-      record['currencySymbol'] ?? record['currency_symbol'] ?? '',
-    ),
-  };
-}
-
-/**
- * Map every region entry under a mode (`default`, `ng`, `us`, …).
- */
-function mapModeRegions(modeRaw: unknown): Record<string, ModeRegionConfig> {
-  const mode = (modeRaw ?? {}) as Record<string, unknown>;
-  const out: Record<string, ModeRegionConfig> = {};
-  for (const [key, value] of Object.entries(mode)) {
-    out[key] = mapRegionConfig(value);
-  }
-  return out;
-}
-
-/**
- * Deep-map mode config so SDK consumers never see wire snake_case.
- */
-function mapModeConfigData(
-  raw: ModeConfigData | Record<string, unknown>,
-): ModeConfigData {
-  const record = raw as Record<string, unknown>;
-  return {
-    // Cast via unknown: wire payloads are loosely typed until mapped.
-    sfn: mapModeRegions(record['sfn']) as unknown as ModeSfnConfig,
-    stn: mapModeRegions(record['stn']) as unknown as ModeStnConfig,
-  };
 }
