@@ -52,9 +52,10 @@ let nextToggleId = 0;
     <div class="flex flex-col gap-1.5">
       <label
         [attr.for]="controlId"
-        class="inline-flex items-center gap-3 text-body text-ink dark:text-white cursor-pointer"
+        class="inline-flex items-center gap-3 text-body text-ink dark:text-white"
         [class.opacity-50]="disabled()"
-        [class.pointer-events-none]="disabled()"
+        [class.cursor-pointer]="!disabled()"
+        [class.cursor-not-allowed]="disabled()"
       >
         <button
           [id]="controlId"

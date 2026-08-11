@@ -28,6 +28,9 @@ export {
   type LoadingStateMode,
 } from './lib/feedback';
 
+// Alert (inline banners — distinct from ErrorState)
+export { AlertComponent, type AlertVariant } from './lib/alert';
+
 /**
  * Re-export for consumers wiring `<aies-async-state>` without a separate
  * `@aies/aies-models` import for this one type.

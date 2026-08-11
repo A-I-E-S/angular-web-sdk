@@ -16,6 +16,7 @@ import {
 import {
   FORM_AFFIX_CLASS,
   FORM_CONTROL_INNER_CLASS,
+  FORM_DISABLED_CLASS,
   FORM_ERROR_CLASS,
   FORM_FIELD_CLASS,
   FORM_FIELD_ERROR_CLASS,
@@ -141,8 +142,14 @@ export class TextInputComponent implements ControlValueAccessor {
   );
 
   protected readonly shellClass = computed(() => {
-    const base = FORM_FIELD_CLASS;
-    return this.error() ? `${base} ${FORM_FIELD_ERROR_CLASS}` : base;
+    let classes = FORM_FIELD_CLASS;
+    if (this.error()) {
+      classes += ` ${FORM_FIELD_ERROR_CLASS}`;
+    }
+    if (this.disabled()) {
+      classes += ` ${FORM_DISABLED_CLASS}`;
+    }
+    return classes;
   });
 
   protected readonly describedBy = computed(() => {

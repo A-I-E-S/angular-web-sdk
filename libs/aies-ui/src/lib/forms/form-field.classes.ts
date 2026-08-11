@@ -13,8 +13,7 @@ export const FORM_LABEL_CLASS =
 /** Default control shell (bordered wrapper or native input). */
 export const FORM_FIELD_CLASS =
   'flex items-stretch w-full min-h-10 rounded-md border border-border bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/15 ' +
-  'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink ' +
-  'disabled:opacity-50 disabled:pointer-events-none';
+  'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
 
 /**
  * Error border — `!` so it wins over shell `border-border` /
@@ -51,5 +50,5 @@ export const FORM_HINT_CLASS =
 /** Field-level validation message (not ErrorStateComponent). */
 export const FORM_ERROR_CLASS = 'mt-1.5 text-caption text-danger m-0';
 
-/** Disabled opacity applied on host wrappers that are not native disabled. */
-export const FORM_DISABLED_CLASS = 'opacity-50 pointer-events-none';
+/** Disabled shell — dimmed with not-allowed cursor over the full field chrome. */
+export const FORM_DISABLED_CLASS = 'opacity-50 cursor-not-allowed';

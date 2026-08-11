@@ -57,15 +57,18 @@ let nextCheckboxId = 0;
     <div class="flex flex-col gap-1.5">
       <label
         [attr.for]="controlId"
-        class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white cursor-pointer"
+        class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white"
         [class.opacity-50]="disabled()"
-        [class.pointer-events-none]="disabled()"
+        [class.cursor-pointer]="!disabled()"
+        [class.cursor-not-allowed]="disabled()"
       >
         <span class="relative inline-flex size-4 shrink-0">
           <input
             [id]="controlId"
             type="checkbox"
-            class="peer absolute inset-0 z-10 m-0 size-full cursor-pointer opacity-0"
+            class="peer absolute inset-0 z-10 m-0 size-full opacity-0"
+            [class.cursor-pointer]="!disabled()"
+            [class.cursor-not-allowed]="disabled()"
             [checked]="value()"
             [disabled]="disabled()"
             [attr.aria-invalid]="error() ? true : null"

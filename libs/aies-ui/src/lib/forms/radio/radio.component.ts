@@ -78,14 +78,17 @@ let nextRadioId = 0;
       <div class="flex flex-col gap-2" role="radiogroup">
         @for (opt of options(); track trackOption(opt)) {
           <label
-            class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white cursor-pointer"
+            class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white"
             [class.opacity-50]="disabled() || opt.disabled"
-            [class.pointer-events-none]="disabled() || opt.disabled"
+            [class.cursor-pointer]="!(disabled() || opt.disabled)"
+            [class.cursor-not-allowed]="disabled() || opt.disabled"
           >
             <span class="relative inline-flex size-4 shrink-0">
               <input
                 type="radio"
-                class="peer absolute inset-0 z-10 m-0 size-full cursor-pointer opacity-0"
+                class="peer absolute inset-0 z-10 m-0 size-full opacity-0"
+                [class.cursor-pointer]="!(disabled() || opt.disabled)"
+                [class.cursor-not-allowed]="disabled() || opt.disabled"
                 [name]="groupName"
                 [checked]="isSelected(opt)"
                 [disabled]="disabled() || !!opt.disabled"

@@ -55,6 +55,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     '[attr.aria-disabled]': 'disabled() ? true : null',
     '[attr.disabled]': 'disabled() ? true : null',
     '[attr.tabindex]': 'disabled() ? -1 : null',
+    '(click)': 'blockWhenDisabled($event)',
   },
 })
 export class ButtonComponent {
@@ -85,7 +86,7 @@ export class ButtonComponent {
     const base =
       'inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
-      'disabled:opacity-50 disabled:pointer-events-none aria-disabled:opacity-50 aria-disabled:pointer-events-none';
+      'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 
     const sizes: Record<ButtonSize, string> = {
       sm: 'text-body-sm px-2.5 py-1.5 min-h-8',
@@ -110,4 +111,12 @@ export class ButtonComponent {
 
     return `${base} ${sizes[this.size()]} ${variantClass}`;
   });
+
+  /** Anchors lack native `disabled` — block activation while keeping the cursor. */
+  protected blockWhenDisabled(event: Event): void {
+    if (this.disabled()) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
 }

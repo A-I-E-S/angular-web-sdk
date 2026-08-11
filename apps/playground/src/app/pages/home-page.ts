@@ -10,6 +10,7 @@ interface CatalogCard {
   blurb: string;
   icon:
     | 'adjust'
+    | 'info-circle'
     | 'ellipsis-v'
     | 'warning'
     | 'modal'
@@ -121,6 +122,13 @@ export class HomePage {
       title: 'Button',
       blurb: 'Primary, secondary, ghost, danger — sizes and disabled.',
       icon: 'adjust',
+      group: 'Components',
+    },
+    {
+      path: '/components/alert',
+      title: 'Alert',
+      blurb: 'Dismissible info / success / warning / danger banners.',
+      icon: 'info-circle',
       group: 'Components',
     },
     {

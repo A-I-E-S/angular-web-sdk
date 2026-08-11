@@ -80,7 +80,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
                 ' ' +
                 (isItemActive(item) ? activeTabClass() : inactiveTabClass())
               "
-              [class.pointer-events-none]="item.disabled"
+              [class.cursor-not-allowed]="item.disabled"
               [class.opacity-50]="item.disabled"
               [routerLink]="item.disabled ? null : item.routerLink"
               [queryParams]="item.queryParams"

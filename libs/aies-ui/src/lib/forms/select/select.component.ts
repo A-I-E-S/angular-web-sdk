@@ -30,6 +30,7 @@ import {
   FORM_ERROR_CLASS,
   FORM_FIELD_CLASS,
   FORM_FIELD_ERROR_CLASS,
+  FORM_DISABLED_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
@@ -430,8 +431,14 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   );
 
   protected readonly shellClass = computed(() => {
-    const base = FORM_FIELD_CLASS;
-    return this.error() ? `${base} ${FORM_FIELD_ERROR_CLASS}` : base;
+    let classes = FORM_FIELD_CLASS;
+    if (this.error()) {
+      classes += ` ${FORM_FIELD_ERROR_CLASS}`;
+    }
+    if (this.disabled()) {
+      classes += ` ${FORM_DISABLED_CLASS}`;
+    }
+    return classes;
   });
 
   protected readonly describedBy = computed(() => {
@@ -539,7 +546,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     const active = this.activeIndex() === this.optionIndex(filteredIndex);
     const colors = this.modeColor.classes();
     const base =
-      'flex w-full items-center gap-2 px-3 py-2 text-left text-body text-ink dark:text-white disabled:opacity-50 disabled:pointer-events-none';
+      'flex w-full items-center gap-2 px-3 py-2 text-left text-body text-ink dark:text-white disabled:opacity-50 disabled:cursor-not-allowed';
     return active
       ? `${base} ${colors.soft}`
       : `${base} ${colors.softHover}`;

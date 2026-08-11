@@ -95,7 +95,7 @@ let nextFileUploadId = 0;
         [class.!border-danger]="!!error()"
         [class.dark:!border-danger]="!!error()"
         [class.opacity-50]="disabled()"
-        [class.pointer-events-none]="disabled()"
+        [class.cursor-not-allowed]="disabled()"
         [attr.aria-invalid]="error() ? true : null"
         [attr.aria-describedby]="describedBy()"
       >
@@ -106,6 +106,7 @@ let nextFileUploadId = 0;
               type="button"
               variant="secondary"
               size="sm"
+              [disabled]="disabled()"
               (click)="openFilePicker()"
             >
               <aies-icon name="upload" [size]="16" />
@@ -118,6 +119,7 @@ let nextFileUploadId = 0;
               type="button"
               variant="secondary"
               size="sm"
+              [disabled]="disabled()"
               (click)="openCamera()"
             >
               <aies-icon name="camera" [size]="16" />
@@ -288,10 +290,16 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
   }
 
   protected openFilePicker(): void {
+    if (this.disabled()) {
+      return;
+    }
     this.fileInput()?.nativeElement.click();
   }
 
   protected openCamera(): void {
+    if (this.disabled()) {
+      return;
+    }
     this.cameraInput()?.nativeElement.click();
   }
 

@@ -5,6 +5,7 @@
 
 export * from './button.snippets';
 export * from './feedback.snippets';
+export * from './alert.snippets';
 export * from './overlay.snippets';
 export * from './forms.snippets';
 export * from './navigation.snippets';
