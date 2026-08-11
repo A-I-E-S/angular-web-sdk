@@ -130,6 +130,7 @@ import type {
               <aies-date-picker
                 label="From"
                 [value]="draft().from ?? null"
+                [max]="draft().to || undefined"
                 (valueChange)="patchFrom($event)"
               />
               <aies-date-picker
@@ -402,14 +403,19 @@ export class FilterDrawerPanel {
   protected patchFrom(value: string | null): void {
     this.draft.update((s) => {
       const from = value ?? undefined;
-      const to =
-        from && s.to && s.to < from ? undefined : s.to;
+      // Keep range valid: To cannot precede From.
+      const to = from && s.to && s.to < from ? undefined : s.to;
       return { ...s, from, to };
     });
   }
 
   protected patchTo(value: string | null): void {
-    this.draft.update((s) => ({ ...s, to: value ?? undefined }));
+    this.draft.update((s) => {
+      const to = value ?? undefined;
+      // Keep range valid: From cannot follow To.
+      const from = to && s.from && s.from > to ? undefined : s.from;
+      return { ...s, from, to };
+    });
   }
 
   /** Clears date field + range without touching other filters. */
