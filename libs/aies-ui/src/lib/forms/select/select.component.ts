@@ -152,7 +152,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         @if (multiple() && selectedList().length) {
           @for (chip of selectedList(); track trackOption(chip)) {
             <span
-              class="inline-flex items-center gap-1 rounded-md bg-background-welcome dark:bg-ink text-body-sm text-ink dark:text-white px-2 py-0.5"
+              class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-background-welcome dark:border-white/20 dark:bg-ink text-body-sm text-ink dark:text-white px-2 py-0.5"
             >
               @if (chip.prefix; as prefixIcon) {
                 <aies-icon [name]="prefixIcon" [size]="14" class="shrink-0" />
@@ -592,7 +592,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     const base =
       'inline-flex size-4 items-center justify-center rounded border shrink-0 text-white dark:border-white/20';
     if (!this.isSelected(opt)) {
-      return `${base} border-border`;
+      return `${base} border-neutral-400`;
     }
     const c = this.modeColor.classes();
     return `${base} ${c.bg} ${c.border}`;

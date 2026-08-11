@@ -137,7 +137,7 @@ export class CheckboxComponent implements ControlValueAccessor {
       const c = this.modeColor.classes();
       return `${base} ${c.bg} ${c.border}${err}`;
     }
-    return `${base} border-border bg-white dark:border-white/40 dark:bg-ink-950${err}`;
+    return `${base} border-neutral-400 bg-white dark:border-white/40 dark:bg-ink-950${err}`;
   });
 
   protected readonly describedBy = computed(() => {

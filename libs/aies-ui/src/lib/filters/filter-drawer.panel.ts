@@ -179,8 +179,16 @@ import type {
                       <button
                         type="button"
                         class="rounded-md border px-2.5 py-1.5 text-body-sm transition-colors"
-                        [style.color]="opt.color ?? null"
-                        [style.border-color]="opt.color ?? null"
+                        [style.color]="
+                          draft().values[field.key] === opt.value
+                            ? opt.color ?? null
+                            : null
+                        "
+                        [style.border-color]="
+                          draft().values[field.key] === opt.value
+                            ? opt.color ?? null
+                            : null
+                        "
                         [style.background-color]="
                           draft().values[field.key] === opt.value && opt.color
                             ? opt.color + '1A'
@@ -189,9 +197,7 @@ import type {
                         [class]="
                           draft().values[field.key] === opt.value
                             ? 'font-medium'
-                            : opt.color
-                              ? 'opacity-80 hover:opacity-100'
-                              : 'border-border text-neutral-600 hover:border-neutral-400 dark:border-white/15 dark:text-neutral-300'
+                            : 'border-neutral-300 text-neutral-600 hover:border-neutral-400 dark:border-white/15 dark:text-neutral-300'
                         "
                         (click)="setFieldValue(field.key, opt.value)"
                       >
