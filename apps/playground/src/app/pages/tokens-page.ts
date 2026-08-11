@@ -26,7 +26,7 @@ interface TokenSwatch {
         <app-demo-section
           [title]="group"
           [badge]="countIn(group) + ' tokens'"
-          [code]="group === 'Export (SFN)' ? tokenUsageCode : null"
+          [code]="codeForGroup(group)"
         >
           <div
             class="grid gap-3"
@@ -95,7 +95,11 @@ interface TokenSwatch {
         </ul>
       </app-demo-section>
 
-      <app-demo-section title="Mode accents in situ" muted>
+      <app-demo-section
+        title="Mode accents in situ"
+        muted
+        [code]="modeAccentsCode"
+      >
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="rounded-xl bg-export-subtle p-5">
             <p class="m-0 text-caption font-medium uppercase tracking-wide text-export">SFN / export</p>
@@ -135,6 +139,43 @@ module.exports = {
 <h2 class="text-heading-2">Shipment details</h2>
 <p class="text-body">Body copy uses the theme font stack.</p>
 <span class="text-caption">Meta / captions</span>`;
+
+  protected readonly modeAccentsCode = `<div class="rounded-xl bg-export-subtle p-5">
+  <p class="text-caption font-medium uppercase tracking-wide text-export">SFN / export</p>
+  <p class="text-heading-3">Lagos outbound</p>
+</div>
+
+<div class="rounded-xl bg-import-subtle p-5">
+  <p class="text-caption font-medium uppercase tracking-wide text-import">STN / import</p>
+  <p class="text-heading-3">US inbound</p>
+</div>`;
+
+  protected readonly groupCode: Record<string, string> = {
+    Core: `<!-- Core ink / surface -->
+<div class="bg-ink text-white">Ink surface</div>
+<div class="bg-ink-brand text-white">Brand ink</div>
+<div class="bg-ink-950 text-white">Near-black panel</div>`,
+    Neutral: `<!-- Borders & page chrome -->
+<div class="rounded-lg border border-border bg-background-welcome p-4">
+  <p class="text-neutral-600">Muted supporting copy</p>
+  <p class="text-ink">Primary body on welcome bg</p>
+</div>`,
+    'Export (SFN)': `<!-- SFN / export green -->
+<span class="rounded-md bg-export px-2 py-1 text-white">Primary</span>
+<span class="rounded-md bg-export-subtle px-2 py-1 text-export">Subtle</span>
+<span class="text-export-light">Light accent</span>`,
+    'Import (STN)': `<!-- STN / import orange -->
+<span class="rounded-md bg-import px-2 py-1 text-white">Primary</span>
+<span class="rounded-md bg-import-subtle px-2 py-1 text-import">Subtle</span>
+<span class="text-import-light">Light accent</span>`,
+    Feedback: `<!-- Status colors -->
+<span class="rounded-md bg-danger-subtle px-2 py-1 text-danger">Danger</span>
+<span class="rounded-md bg-warning-subtle px-2 py-1 text-warning-dark">Warning</span>`,
+  };
+
+  protected codeForGroup(group: string): string {
+    return this.groupCode[group] ?? this.tokenUsageCode;
+  }
 
   protected readonly colors: TokenSwatch[] = [
     { name: 'black', bgClass: 'bg-black', hex: '#000000', group: 'Core' },

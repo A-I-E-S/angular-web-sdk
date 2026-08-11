@@ -189,7 +189,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Live values" muted>
+      <app-demo-section title="Live values" muted [code]="liveValuesCode">
         <dl class="m-0 grid gap-2 text-body-sm sm:grid-cols-2">
           <div>
             <dt class="text-neutral-600">Tracking</dt>
@@ -351,6 +351,15 @@ export class FormsPage {
   [multiple]="true"
   (filesSelected)="onFiles($event)"
 />`;
+
+  protected readonly liveValuesCode = `// Two-way binds update signals — read them anywhere in the template
+tracking = signal('');
+amount = signal<number | null>(12500);
+selectedWarehouse = signal<SelectOption<string> | null>(null);
+
+{{ tracking() || '—' }}
+{{ amount() == null ? '—' : amount() }}
+{{ selectedWarehouse()?.label ?? '—' }}`;
 
   protected onFiles(next: FileUploadResult[]): void {
     this.files.set(next);

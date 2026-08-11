@@ -43,7 +43,8 @@ let nextRadioId = 0;
  * **Prefix/suffix slots are omitted** — radios are mutually exclusive options
  * with labels; affix projection does not apply.
  *
- * Selected fill follows {@link ModeColorService} (SFN green / STN orange).
+ * Selected ring and center disc follow {@link ModeColorService}
+ * (SFN green / STN orange).
  *
  * @typeParam T - Option value type.
  *
@@ -93,7 +94,7 @@ let nextRadioId = 0;
               />
               <span [class]="markClass(opt)" aria-hidden="true">
                 @if (isSelected(opt)) {
-                  <span class="block size-1.5 rounded-full bg-white"></span>
+                  <span [class]="dotClass()"></span>
                 }
               </span>
             </span>
@@ -173,11 +174,17 @@ export class RadioComponent<T = string> implements ControlValueAccessor {
       'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink';
     const err = this.error() ? ' !border-danger dark:!border-danger' : '';
     if (this.isSelected(opt)) {
-      const c = this.modeColor.classes();
-      return `${base} ${c.bg} ${c.border}${err}`;
+      // Ring uses mode accent; fill stays transparent so the center dot reads clearly.
+      return `${base} ${this.modeColor.classes().border}${err}`;
     }
     return `${base} border-neutral-400 dark:border-white${err}`;
   }
+
+  /** Selected inner disc — SFN green / STN orange. */
+  protected readonly dotClass = computed(
+    () =>
+      `block size-1.5 rounded-full ${this.modeColor.classes().bg}`,
+  );
 
   /** @param value - Selected option value or `null`. */
   writeValue(value: T | null): void {
