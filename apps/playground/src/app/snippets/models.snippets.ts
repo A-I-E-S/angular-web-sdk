@@ -6,7 +6,7 @@ export /**
  *
  */
 const MODELS_IMPORT = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       Share API and UI state shapes across features without Angular runtime.
 // Prerequisites: @aies/aies-models package; type-only imports (no providers).
 // Do:            Use AsyncQueryState with aies-async-state; PaginationMeta with
@@ -32,7 +32,7 @@ export /**
  *
  */
 const MODELS_API_RESPONSE = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       Handle the canonical API envelope from ApiClient (wrapped mode).
 // Prerequisites: @aies/aies-models (ApiResponseModel, ApiErrorDetail);
 //                @aies/aies-core ApiClient.
@@ -83,7 +83,7 @@ export /**
  *
  */
 const MODELS_PAGINATION = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       List fetches with ResourceId + PaginationQueryParams → PaginationMeta.
 // Prerequisites: @aies/aies-models; @aies/aies-core ApiClient.getResource;
 //                aies-pagination for UI.
@@ -160,7 +160,7 @@ export /**
  *
  */
 const MODELS_ASYNC_STATE = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       Map fetch signals into AsyncQueryState for aies-async-state.
 // Prerequisites: @aies/aies-models AsyncQueryState; @aies/aies-ui AsyncStateComponent.
 // Do:            Distinguish isLoading (first paint) from isFetching (background refresh).
@@ -247,7 +247,7 @@ export /**
  *
  */
 const MODELS_SHIPPING_MODE = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       Type-safe STN / SFN mode literals across theme and HTTP layers.
 // Prerequisites: @aies/aies-models ShippingMode; @aies/aies-core ShippingModeService.
 // Do:            Read active mode from ShippingModeService in UI; persist user choice
@@ -286,7 +286,7 @@ export /**
  *
  */
 const MODELS_MODE_CONFIG = `
-// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
+// ── GUIDE ─────────────────────────────────────────────────────
 // Intent:       ModeConfigService is the source of truth for region currency
 //               and measurement units — fetch once, persist, resolve by country.
 // Prerequisites: provideAiesSdk({ baseUrl }) + provideHttpClient; mode config

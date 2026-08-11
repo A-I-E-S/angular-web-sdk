@@ -7,7 +7,7 @@ export /**
  */
 const FILTERS_OVERVIEW = `
 // =============================================================================
-// ARCHITECT GUIDE — List filters
+// GUIDE — List filters
 //
 // INTENT
 //   Uniform filter protocol across modules: ModuleFilterConfig drives a shared
@@ -92,7 +92,7 @@ export /**
  */
 const FILTERS_LEGACY = `
 // =============================================================================
-// ARCHITECT GUIDE — legacy-parallel transport
+// GUIDE — legacy-parallel transport
 //
 // INTENT
 //   Match existing Laravel list endpoints: filterColumn + filterValue CSVs
@@ -138,7 +138,7 @@ export /**
  */
 const FILTERS_NAMED = `
 // =============================================================================
-// ARCHITECT GUIDE — named transport
+// GUIDE — named transport
 //
 // INTENT
 //   Newer endpoints expose each filter as its own query key (claim_status, …)
@@ -166,7 +166,7 @@ export /**
  */
 const FILTERS_ASYNC_OPTIONS = `
 // =============================================================================
-// ARCHITECT GUIDE — async option catalogs
+// GUIDE — async option catalogs
 //
 // INTENT
 //   Select fields declare optionsSource ('warehouses', 'shipmentMethods', …).
