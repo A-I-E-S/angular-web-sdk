@@ -5,7 +5,7 @@ import { Directive } from '@angular/core';
  *
  * @example
  * ```html
- * <aies-action-menu [items]="items" (actionSelect)="onAction($event)">
+ * <aies-action-menu [items]="items">
  *   <button type="button" aies-button aiesActionMenuTrigger variant="secondary" size="sm">
  *     More
  *   </button>

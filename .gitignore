@@ -45,3 +45,9 @@ Thumbs.db
 .claude/settings.local.json
 
 .angular
+
+# Documentation — markdown and docs directories (local reference, not versioned)
+**/*.md
+!README.md
+!**/README.md
+**/docs/**

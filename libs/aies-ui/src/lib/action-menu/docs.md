@@ -13,14 +13,13 @@ overlay (same pattern as select) so the panel is not clipped by table
 | `items` | `AiesMenuItem[]` | yes | Menu options |
 | `ariaLabel` | `string` | no | Trigger / menu name (default `"Actions"`) |
 | `disabled` | `boolean` | no | Disables the default trigger |
-| `actionSelect` | `output<string>` | — | Emits the selected item `id`, then closes |
 
 ### `AiesMenuItem`
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `id` | `string` | Emitted on `actionSelect` |
 | `label` | `string` | Visible label |
+| `onClick` | `() => void` | Called when the row is activated (menu closes after) |
 | `icon` | `IconName?` | Optional leading icon |
 | `disabled` | `boolean?` | Non-interactive row |
 | `danger` | `boolean?` | Destructive styling |
@@ -41,32 +40,27 @@ import {
   type AiesMenuItem,
 } from '@aies/aies-ui';
 
-rowActions: AiesMenuItem[] = [
-  { id: 'open', label: 'Open', icon: 'eye' },
-  { id: 'edit', label: 'Edit', icon: 'edit' },
-  {
-    id: 'delete',
-    label: 'Delete',
-    icon: 'trash',
-    danger: true,
-    dividerBefore: true,
-  },
-];
-
-onRowAction(id: string, row: Shipment): void {
-  // branch on id
+rowActions(row: Shipment): AiesMenuItem[] {
+  return [
+    { label: 'Open', icon: 'eye', onClick: () => this.open(row) },
+    { label: 'Edit', icon: 'edit', onClick: () => this.edit(row) },
+    {
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => this.delete(row),
+    },
+  ];
 }
 ```
 
 ```html
 <!-- Default ellipsis trigger -->
-<aies-action-menu
-  [items]="rowActions"
-  (actionSelect)="onRowAction($event, row)"
-/>
+<aies-action-menu [items]="rowActions(row)" />
 
 <!-- Custom trigger -->
-<aies-action-menu [items]="toolbarActions" (actionSelect)="onAction($event)">
+<aies-action-menu [items]="toolbarActions">
   <button
     type="button"
     aies-button
@@ -81,15 +75,13 @@ onRowAction(id: string, row: Shipment): void {
 
 ## With table
 
-Keep `TableComponent` presentational — place the menu inside an actions cell:
+Keep `TableComponent` presentational — build row-scoped items in the actions
+cell:
 
 ```html
 <aies-table [columns]="columns" [rows]="rows">
   <ng-template aiesCellDef="actions" let-row>
-    <aies-action-menu
-      [items]="rowActions"
-      (actionSelect)="onRowAction($event, row)"
-    />
+    <aies-action-menu [items]="rowActions(row)" />
   </ng-template>
 </aies-table>
 ```

@@ -13,13 +13,13 @@ export const ACTION_MENU_DEFAULT = `
 //   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
 //
 // DO
-//   - Define items with stable string ids — actionSelect emits the chosen id.
+//   - Put side effects on each item's onClick — the menu closes after it runs.
 //   - Set ariaLabel when context is not obvious (row menus: include row name).
-//   - Branch in the handler on id (open, edit, delete, …).
+//   - For table rows, build items in a factory so onClick closes over row.
 //
 // DON'T
-//   - Put navigation side effects inside the menu — handle in actionSelect.
-//   - Rely on array index — ids are the contract.
+//   - Use a single host (actionSelect) handler with string ids — prefer onClick.
+//   - Share one static items array across rows when actions need row context.
 //
 // CDK OVERLAY
 //   The menu panel renders in a CDK overlay attached to the document body, so
@@ -35,11 +35,7 @@ import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
   imports: [ActionMenuComponent],
   template: \`
     <div class="flex flex-wrap items-center gap-4">
-      <aies-action-menu
-        [items]="items"
-        ariaLabel="Shipment actions"
-        (actionSelect)="onAction($event)"
-      />
+      <aies-action-menu [items]="items" ariaLabel="Shipment actions" />
 
       <p class="m-0 text-body-sm">
         Last action:
@@ -52,22 +48,29 @@ export class ShipmentRowActionsDemoComponent {
   protected readonly lastAction = signal<string | null>(null);
 
   protected readonly items: AiesMenuItem[] = [
-    { id: 'open', label: 'Open', icon: 'eye' },
-    { id: 'edit', label: 'Edit', icon: 'edit' },
-    { id: 'copy', label: 'Copy reference', icon: 'copy' },
     {
-      id: 'delete',
+      label: 'Open',
+      icon: 'eye',
+      onClick: () => this.lastAction.set('Open'),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      onClick: () => this.lastAction.set('Edit'),
+    },
+    {
+      label: 'Copy reference',
+      icon: 'copy',
+      onClick: () => this.lastAction.set('Copy reference'),
+    },
+    {
       label: 'Delete',
       icon: 'trash',
       danger: true,
       dividerBefore: true,
+      onClick: () => this.lastAction.set('Delete'),
     },
   ];
-
-  protected onAction(id: string): void {
-    this.lastAction.set(id);
-    // switch (id) { case 'open': … case 'delete': … }
-  }
 }
 `;
 
@@ -83,7 +86,6 @@ export const ACTION_MENU_CUSTOM = `
 // DO
 //   - Wrap the trigger button inside <aies-action-menu> content projection.
 //   - Add aiesActionMenuTrigger on the clickable element.
-//   - Keep (actionSelect) on the host menu component.
 //
 // DON'T
 //   - Nest a second button without the directive — it will not toggle the menu.
@@ -103,11 +105,7 @@ import {
   standalone: true,
   imports: [ActionMenuComponent, ActionMenuTriggerDirective, ButtonComponent],
   template: \`
-    <aies-action-menu
-      [items]="items"
-      ariaLabel="Shipment actions"
-      (actionSelect)="onAction($event)"
-    >
+    <aies-action-menu [items]="items" ariaLabel="Shipment actions">
       <button
         type="button"
         aies-button
@@ -122,13 +120,35 @@ import {
 })
 export class ShipmentToolbarActionsComponent {
   protected readonly items: AiesMenuItem[] = [
-    { id: 'open', label: 'Open', icon: 'eye' },
-    { id: 'edit', label: 'Edit', icon: 'edit' },
-    { id: 'delete', label: 'Delete', icon: 'trash', danger: true, dividerBefore: true },
+    {
+      label: 'Open',
+      icon: 'eye',
+      onClick: () => this.open(),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      onClick: () => this.edit(),
+    },
+    {
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => this.delete(),
+    },
   ];
 
-  protected onAction(id: string): void {
-    // handle id
+  private open(): void {
+    /* navigate or open drawer */
+  }
+
+  private edit(): void {
+    /* … */
+  }
+
+  private delete(): void {
+    /* … */
   }
 }
 `;
@@ -160,24 +180,36 @@ import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
   standalone: true,
   imports: [ActionMenuComponent],
   template: \`
-    <aies-action-menu [items]="items" (actionSelect)="onAction($event)" />
+    <aies-action-menu [items]="items" />
   \`,
 })
 export class ShipmentActionVariantsComponent {
   protected readonly items: AiesMenuItem[] = [
-    { id: 'download', label: 'Download PDF', icon: 'download' },
-    { id: 'archive', label: 'Archive', disabled: true },
     {
-      id: 'void',
+      label: 'Download PDF',
+      icon: 'download',
+      onClick: () => this.download(),
+    },
+    {
+      label: 'Archive',
+      disabled: true,
+      onClick: () => undefined,
+    },
+    {
       label: 'Void shipment',
       icon: 'trash',
       danger: true,
       dividerBefore: true,
+      onClick: () => this.voidShipment(),
     },
   ];
 
-  protected onAction(id: string): void {
-    // disabled items never emit — only reachable ids fire here
+  private download(): void {
+    /* … */
+  }
+
+  private voidShipment(): void {
+    /* … */
   }
 }
 `;
@@ -207,11 +239,7 @@ import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
   standalone: true,
   imports: [ActionMenuComponent],
   template: \`
-    <aies-action-menu
-      [items]="items"
-      [disabled]="menuDisabled()"
-      (actionSelect)="onAction($event)"
-    />
+    <aies-action-menu [items]="items" [disabled]="menuDisabled()" />
   \`,
 })
 export class ShipmentActionMenuDisabledComponent {
@@ -219,13 +247,35 @@ export class ShipmentActionMenuDisabledComponent {
   readonly menuDisabled = input(false);
 
   protected readonly items: AiesMenuItem[] = [
-    { id: 'open', label: 'Open', icon: 'eye' },
-    { id: 'edit', label: 'Edit', icon: 'edit' },
-    { id: 'delete', label: 'Delete', icon: 'trash', danger: true, dividerBefore: true },
+    {
+      label: 'Open',
+      icon: 'eye',
+      onClick: () => this.open(),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      onClick: () => this.edit(),
+    },
+    {
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => this.delete(),
+    },
   ];
 
-  protected onAction(id: string): void {
-    // not reachable while [disabled]="true"
+  private open(): void {
+    /* not reachable while [disabled]="true" */
+  }
+
+  private edit(): void {
+    /* … */
+  }
+
+  private delete(): void {
+    /* … */
   }
 }
 `;

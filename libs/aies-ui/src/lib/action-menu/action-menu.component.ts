@@ -12,7 +12,6 @@ import {
   contentChild,
   ElementRef,
   input,
-  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -56,24 +55,29 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
  * @example
  * ```html
  * <!-- Default icon trigger (table row) -->
- * <aies-action-menu
- *   [items]="rowActions"
- *   (actionSelect)="onRowAction($event, row)"
- * />
+ * <aies-action-menu [items]="rowActions(row)" />
  *
  * <!-- Custom trigger -->
- * <aies-action-menu [items]="toolbarActions" (actionSelect)="onAction($event)">
+ * <aies-action-menu [items]="toolbarActions">
  *   <button type="button" aies-button aiesActionMenuTrigger variant="secondary" size="sm">
  *     Actions
  *   </button>
  * </aies-action-menu>
  * ```
  * ```ts
- * rowActions: AiesMenuItem[] = [
- *   { id: 'open', label: 'Open', icon: 'eye' },
- *   { id: 'edit', label: 'Edit', icon: 'edit' },
- *   { id: 'delete', label: 'Delete', icon: 'trash', danger: true, dividerBefore: true },
- * ];
+ * rowActions(row: Shipment): AiesMenuItem[] {
+ *   return [
+ *     { label: 'Open', icon: 'eye', onClick: () => this.open(row) },
+ *     { label: 'Edit', icon: 'edit', onClick: () => this.edit(row) },
+ *     {
+ *       label: 'Delete',
+ *       icon: 'trash',
+ *       danger: true,
+ *       dividerBefore: true,
+ *       onClick: () => this.delete(row),
+ *     },
+ *   ];
+ * }
  * ```
  */
 @Component({
@@ -140,7 +144,7 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
         [attr.aria-label]="ariaLabel()"
         (keydown)="onPanelKeydown($event)"
       >
-        @for (item of items(); track item.id; let i = $index) {
+        @for (item of items(); track $index; let i = $index) {
           @if (item.dividerBefore) {
             <div
               class="my-1 border-t border-border dark:border-white/10"
@@ -150,7 +154,7 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
           <button
             type="button"
             role="menuitem"
-            [id]="itemDomId(item.id)"
+            [id]="itemDomId(i)"
             [class]="itemClass(item, i)"
             [disabled]="!!item.disabled"
             (click)="selectItem(item)"
@@ -181,9 +185,6 @@ export class ActionMenuComponent {
   /** When true, the default trigger cannot open the menu. */
   readonly disabled = input(false, { transform: booleanAttribute });
 
-  /** Emits the selected item id, then closes. */
-  readonly actionSelect = output<string>();
-
   protected readonly open = signal(false);
   protected readonly activeIndex = signal(0);
 
@@ -193,8 +194,8 @@ export class ActionMenuComponent {
     () => this.projectedTrigger() != null,
   );
 
-  protected itemDomId(id: string): string {
-    return `${this.menuId}-${id}`;
+  protected itemDomId(index: number): string {
+    return `${this.menuId}-item-${index}`;
   }
 
   protected itemClass(item: AiesMenuItem, index: number): string {
@@ -294,7 +295,7 @@ export class ActionMenuComponent {
     if (item.disabled) {
       return;
     }
-    this.actionSelect.emit(item.id);
+    item.onClick();
     this.close();
   }
 

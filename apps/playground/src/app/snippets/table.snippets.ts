@@ -20,7 +20,7 @@ export const TABLE_LIST = `
 //   - Treat getResource() response.data as [rows] and response.pagination as [meta].
 //   - Refetch on sortChange and pageChange — do not client-slice as primary paging.
 //   - Use aiesCellDef templates for non-text cells (badges, actions, currency).
-//   - Handle row actions via aies-action-menu (actionSelect emits item id).
+//   - Handle row actions via aies-action-menu — each item carries onClick.
 //
 // DON'T
 //   - Put loading / error branches inside aies-table — use aies-async-state.
@@ -87,9 +87,8 @@ const PAGE_SIZE = 20;
 
         <ng-template aiesCellDef="actions" let-row>
           <aies-action-menu
-            [items]="rowActions"
+            [items]="rowActions(row)"
             [ariaLabel]="'Actions for ' + row.reference"
-            (actionSelect)="onRowAction($event, row)"
           />
         </ng-template>
       </aies-table>
@@ -125,18 +124,32 @@ export class ShipmentListPageComponent {
     { key: 'actions', header: '', width: '3.5rem' },
   ];
 
-  protected readonly rowActions: AiesMenuItem[] = [
-    { id: 'open', label: 'Open', icon: 'eye' },
-    { id: 'edit', label: 'Edit', icon: 'edit' },
-    { id: 'copy', label: 'Copy reference', icon: 'copy' },
-    {
-      id: 'delete',
-      label: 'Delete',
-      icon: 'trash',
-      danger: true,
-      dividerBefore: true,
-    },
-  ];
+  protected rowActions(row: Shipment): AiesMenuItem[] {
+    return [
+      {
+        label: 'Open',
+        icon: 'eye',
+        onClick: () => this.open(row),
+      },
+      {
+        label: 'Edit',
+        icon: 'edit',
+        onClick: () => this.edit(row),
+      },
+      {
+        label: 'Copy reference',
+        icon: 'copy',
+        onClick: () => this.copyReference(row),
+      },
+      {
+        label: 'Delete',
+        icon: 'trash',
+        danger: true,
+        dividerBefore: true,
+        onClick: () => this.delete(row),
+      },
+    ];
+  }
 
   protected readonly listState = computed((): AsyncQueryState<Shipment[]> => ({
     data: this.isLoading() ? undefined : this.rows(),
@@ -184,8 +197,20 @@ export class ShipmentListPageComponent {
     this.refetch();
   }
 
-  protected onRowAction(id: string, row: Shipment): void {
-    // Branch on id: open / edit / copy / delete
+  private open(row: Shipment): void {
+    /* navigate to detail */
+  }
+
+  private edit(row: Shipment): void {
+    /* open edit flow */
+  }
+
+  private copyReference(row: Shipment): void {
+    /* clipboard.writeText(row.reference) */
+  }
+
+  private delete(row: Shipment): void {
+    /* confirm + API delete */
   }
 
   protected formatUsd(value: number): string {

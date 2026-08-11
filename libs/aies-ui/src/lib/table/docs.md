@@ -95,9 +95,8 @@ onSort(change: TableSortChange): void {
 
     <ng-template aiesCellDef="actions" let-row>
       <aies-action-menu
-        [items]="rowActions"
+        [items]="rowActions(row)"
         [ariaLabel]="'Actions for ' + row.reference"
-        (actionSelect)="onRowAction($event, row)"
       />
     </ng-template>
   </aies-table>

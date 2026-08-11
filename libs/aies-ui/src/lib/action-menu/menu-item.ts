@@ -4,10 +4,10 @@ import type { IconName } from '@aies/aies-icons';
  * Option row for {@link ActionMenuComponent}.
  */
 export interface AiesMenuItem {
-  /** Stable id emitted on {@link ActionMenuComponent.actionSelect}. */
-  id: string;
   /** Visible label. */
   label: string;
+  /** Invoked when the user activates this row (then the menu closes). */
+  onClick: () => void;
   /** Optional leading icon from `@aies/aies-icons`. */
   icon?: IconName;
   /** When true, the item cannot be activated. */

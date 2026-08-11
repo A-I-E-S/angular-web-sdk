@@ -113,9 +113,8 @@ const PAGE_SIZE = 6;
             </ng-template>
             <ng-template aiesCellDef="actions" let-row>
               <aies-action-menu
-                [items]="rowActions"
+                [items]="rowActions(row)"
                 [ariaLabel]="'Actions for ' + row.reference"
-                (actionSelect)="onRowAction($event, row)"
               />
             </ng-template>
           </aies-table>
@@ -149,16 +148,28 @@ export class TablePage {
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
 
-  protected readonly rowActions: AiesMenuItem[] = [
-    { id: 'open', label: 'Open', icon: 'eye' },
-    { id: 'edit', label: 'Edit', icon: 'edit' },
-    { id: 'copy', label: 'Copy reference', icon: 'copy' },
+  protected readonly rowActions = (row: DemoShipment): AiesMenuItem[] => [
     {
-      id: 'delete',
+      label: 'Open',
+      icon: 'eye',
+      onClick: () => this.lastRowAction.set(`Open · ${row.reference}`),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      onClick: () => this.lastRowAction.set(`Edit · ${row.reference}`),
+    },
+    {
+      label: 'Copy reference',
+      icon: 'copy',
+      onClick: () => this.lastRowAction.set(`Copy · ${row.reference}`),
+    },
+    {
       label: 'Delete',
       icon: 'trash',
       danger: true,
       dividerBefore: true,
+      onClick: () => this.lastRowAction.set(`Delete · ${row.reference}`),
     },
   ];
 
@@ -265,10 +276,6 @@ export class TablePage {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
-  }
-
-  protected onRowAction(id: string, row: DemoShipment): void {
-    this.lastRowAction.set(`${id} · ${row.reference}`);
   }
 
   protected formatUsd(value: number): string {
