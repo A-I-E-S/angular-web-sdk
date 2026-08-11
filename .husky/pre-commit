@@ -1,0 +1,2 @@
+npx nx run-many -t lint --parallel=3 --exclude=playground || true
+npm run docs:coverage || true

@@ -1,0 +1,27 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": false,
+    "paths": {
+      "@aies/aies-models": ["./libs/aies-models/src/index.ts"],
+      "@aies/aies-storage": ["./libs/aies-storage/src/index.ts"],
+      "@aies/aies-core": ["./libs/aies-core/src/index.ts"],
+      "@aies/aies-theme": ["./libs/aies-theme/src/index.ts"],
+      "@aies/aies-icons": ["./libs/aies-icons/src/index.ts"],
+      "@aies/aies-ui": ["./libs/aies-ui/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

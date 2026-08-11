@@ -1,0 +1,5 @@
+# Copy these lines into the consuming app's .npmrc (or project-level .npmrc).
+# Authenticate with a GitHub PAT that has `read:packages` (and SSO authorized if required).
+
+@aies:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}

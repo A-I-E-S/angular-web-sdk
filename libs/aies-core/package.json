@@ -1,0 +1,17 @@
+{
+  "name": "@aies/aies-core",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "rxjs": "^7.8.0",
+    "@aies/aies-models": "^0.0.1",
+    "@aies/aies-storage": "^0.0.1"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}

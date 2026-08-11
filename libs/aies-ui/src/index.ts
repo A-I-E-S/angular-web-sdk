@@ -1,0 +1,84 @@
+/**
+ * Public API for `@aies/aies-ui`.
+ *
+ * Overlay openers, async feedback states, form controls, table/pagination,
+ * stepper, and the button primitive.
+ */
+
+// Button
+export {
+  ButtonComponent,
+  type ButtonSize,
+  type ButtonVariant,
+} from './lib/button';
+
+// Feedback
+export {
+  AsyncStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  LoadingStateComponent,
+  type LoadingStateMode,
+} from './lib/feedback';
+
+/**
+ * Re-export for consumers wiring `<aies-async-state>` without a separate
+ * `@aies/aies-models` import for this one type.
+ */
+export type { AsyncQueryState } from '@aies/aies-models';
+
+// Overlay
+export {
+  AiesOverlayRef,
+  ConfirmDialogComponent,
+  ConfirmService,
+  DrawerService,
+  ModalService,
+  OVERLAY_DATA,
+  provideAiesUiOverlays,
+  type ConfirmOptions,
+  type OverlayOpenConfig,
+} from './lib/overlay';
+
+// Form controls (see libs/aies-ui/docs/form-controls.md)
+export {
+  CheckboxComponent,
+  DatePickerComponent,
+  FileUploadComponent,
+  NumberInputComponent,
+  RadioComponent,
+  SelectComponent,
+  TextareaComponent,
+  TextInputComponent,
+  ToggleComponent,
+  type FileUploadResult,
+  type RadioOption,
+  type SelectCreateConfig,
+  type SelectOption,
+} from './lib/forms';
+
+// Table
+export {
+  CellDefDirective,
+  TableComponent,
+  type CellDefContext,
+  type TableColumn,
+  type TableSortChange,
+} from './lib/table';
+
+// Pagination
+export { PaginationComponent } from './lib/pagination';
+
+/**
+ * Re-export so pagination consumers can type `meta` without a separate
+ * `@aies/aies-models` import for this one type.
+ */
+export type { PaginationMeta } from '@aies/aies-models';
+
+// Stepper
+export {
+  StepDefDirective,
+  StepperComponent,
+  type StepDefContext,
+  type StepDefinition,
+} from './lib/stepper';

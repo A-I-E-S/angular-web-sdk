@@ -1,0 +1,16 @@
+/* Shell-specific motion; layout chrome uses Tailwind utilities. */
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+aside nav a {
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+aside nav a:hover {
+  transform: translateX(2px);
+}
