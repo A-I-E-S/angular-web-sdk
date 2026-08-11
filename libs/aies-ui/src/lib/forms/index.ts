@@ -7,10 +7,15 @@
 export { CheckboxComponent } from './checkbox';
 export { DatePickerComponent } from './date-picker';
 export {
+  acceptLabels,
+  fileExtensionLabel,
+  fileMatchesAccept,
   FileUploadComponent,
   type FileUploadResult,
+  type FileUploadVariant,
 } from './file-upload';
 export { NumberInputComponent } from './number-input';
+export { OtpInputComponent } from './otp-input';
 export { RadioComponent, type RadioOption } from './radio';
 export {
   SelectComponent,

@@ -80,17 +80,6 @@ npx nx serve playground
 npx nx build playground
 ```
 
-### Deploy to Vercel
-
-Root [`vercel.json`](./vercel.json) builds `playground` and serves
-`dist/apps/playground/browser` (SPA rewrites included).
-
-1. Import the GitHub repo in [Vercel](https://vercel.com/new).
-2. Framework preset: **Other** (config is already in `vercel.json`).
-3. Root directory: repo root (default).
-4. Deploy — production URL is the playground; packages still publish via
-   GitHub Packages (`nx release`), not Vercel.
-
 ## Docs
 
 - [Development prompt playbook](./docs/prompt-playbook.md)

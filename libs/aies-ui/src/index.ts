@@ -93,11 +93,16 @@ export {
 
 // Form controls (see libs/aies-ui/docs/form-controls.md)
 export {
+  acceptLabels,
   CheckboxComponent,
   DatePickerComponent,
+  fileExtensionLabel,
+  fileMatchesAccept,
   FileUploadComponent,
   type FileUploadResult,
+  type FileUploadVariant,
   NumberInputComponent,
+  OtpInputComponent,
   RadioComponent,
   type RadioOption,
   SelectComponent,

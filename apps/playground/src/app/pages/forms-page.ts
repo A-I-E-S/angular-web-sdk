@@ -8,6 +8,7 @@ import {
   FileUploadComponent,
   type FileUploadResult,
   NumberInputComponent,
+  OtpInputComponent,
   RadioComponent,
   type RadioOption,
   SelectComponent,
@@ -22,8 +23,10 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 import {
   FORMS_CHOICE,
   FORMS_DATE_FILE,
+  FORMS_FILE_UPLOAD,
   FORMS_LIVE_VALUES,
   FORMS_NUMBER,
+  FORMS_OTP,
   FORMS_SELECT,
   FORMS_TEXT,
   FORMS_TEXTAREA,
@@ -41,6 +44,7 @@ import {
     TextareaComponent,
     SelectComponent,
     NumberInputComponent,
+    OtpInputComponent,
     FileUploadComponent,
     CheckboxComponent,
     RadioComponent,
@@ -183,7 +187,48 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Date & file" [code]="dateFileCode">
+      <app-demo-section
+        title="OTP input"
+        hint="Digit cells for SMS/email verification codes. Paste fills multiple cells; completed fires when all digits are entered."
+        subtext="value is a single string. Digits only. Resend row starts a cooldown (default 60s); listen to (resend) to call your API. Set showResend=false to hide it."
+        [code]="otpCode"
+      >
+        <div class="flex flex-col gap-6">
+          <aies-otp-input
+            label="Verification code"
+            hint="Enter the 6-digit code we sent"
+            [resendCooldown]="10"
+            [(value)]="otpCodeValue"
+            (completed)="onOtpCompleted($event)"
+            (resend)="onOtpResend()"
+          />
+          <aies-otp-input
+            label="4-digit PIN"
+            [length]="4"
+            [showResend]="false"
+            [(value)]="otpPin"
+          />
+          <aies-otp-input
+            label="Code with error"
+            error="Invalid or expired code"
+            [resendCooldown]="0"
+            [(value)]="otpError"
+            (resend)="onOtpResend()"
+          />
+          <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+            Last completed:
+            <span class="font-mono text-ink dark:text-white">{{
+              lastOtpCompleted() || '—'
+            }}</span>
+            · Resend clicks:
+            <span class="font-mono text-ink dark:text-white">{{
+              otpResendCount()
+            }}</span>
+          </p>
+        </div>
+      </app-demo-section>
+
+      <app-demo-section title="Date" [code]="dateFileCode">
         <div class="grid gap-5 md:grid-cols-2">
           <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
           <aies-date-picker
@@ -191,14 +236,42 @@ import {
             error="Cutoff must be after ready date"
             [(value)]="cutoffDate"
           />
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="File upload"
+        [code]="fileUploadCode"
+        subtext="Variants: dropzone (default), button, compact. Drag & drop on all. accept drives chips + client filter (invalid files skipped with a message). Images show thumbnails; other types get an icon + extension badge."
+      >
+        <div class="flex flex-col gap-8">
           <aies-file-upload
-            class="md:col-span-2"
-            label="Identity document"
+            label="Dropzone · multi · images & PDF"
+            hint="Default variant — drag files onto the zone or use Camera"
             accept="image/*,.pdf"
+            variant="dropzone"
             [allowCamera]="true"
             [multiple]="true"
             (filesSelected)="onFiles($event)"
           />
+          <div class="grid gap-6 md:grid-cols-2">
+            <aies-file-upload
+              label="Button · single image"
+              accept="image/*"
+              variant="button"
+              [allowCamera]="true"
+              [multiple]="false"
+              (filesSelected)="onButtonFiles($event)"
+            />
+            <aies-file-upload
+              label="Compact · docs"
+              accept=".pdf,.doc,.docx,.xlsx"
+              variant="compact"
+              [allowCamera]="false"
+              [multiple]="true"
+              (filesSelected)="onCompactFiles($event)"
+            />
+          </div>
         </div>
       </app-demo-section>
 
@@ -302,17 +375,42 @@ export class FormsPage {
   protected readonly readyDate = signal<string | null>('2026-08-15');
   protected readonly cutoffDate = signal<string | null>(null);
   protected readonly files = signal<FileUploadResult[]>([]);
+  protected readonly buttonFiles = signal<FileUploadResult[]>([]);
+  protected readonly compactFiles = signal<FileUploadResult[]>([]);
+  protected readonly otpCodeValue = signal('');
+  protected readonly otpPin = signal('');
+  protected readonly otpError = signal('0000');
+  protected readonly lastOtpCompleted = signal('');
+  protected readonly otpResendCount = signal(0);
 
   protected readonly textCode = FORMS_TEXT;
   protected readonly textareaCode = FORMS_TEXTAREA;
   protected readonly numberCode = FORMS_NUMBER;
   protected readonly selectCode = FORMS_SELECT;
   protected readonly choiceCode = FORMS_CHOICE;
+  protected readonly otpCode = FORMS_OTP;
   protected readonly dateFileCode = FORMS_DATE_FILE;
+  protected readonly fileUploadCode = FORMS_FILE_UPLOAD;
   protected readonly liveValuesCode = FORMS_LIVE_VALUES;
 
   protected onFiles(next: FileUploadResult[]): void {
     this.files.set(next);
+  }
+
+  protected onButtonFiles(next: FileUploadResult[]): void {
+    this.buttonFiles.set(next);
+  }
+
+  protected onCompactFiles(next: FileUploadResult[]): void {
+    this.compactFiles.set(next);
+  }
+
+  protected onOtpCompleted(code: string): void {
+    this.lastOtpCompleted.set(code);
+  }
+
+  protected onOtpResend(): void {
+    this.otpResendCount.update((n) => n + 1);
   }
 
   protected tagSummary(): string {

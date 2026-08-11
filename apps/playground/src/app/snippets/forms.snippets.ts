@@ -393,50 +393,32 @@ export /**
 const FORMS_DATE_FILE = `
 // =============================================================================
 // INTENT
-//   Date selection (ISO string | null) and file upload with typed results.
-//   File upload emits FileUploadResult[] via (filesSelected) — not two-way bind.
+//   Date selection (ISO string | null) via native input[type=date].
 //
 // PREREQUISITES
-//   @aies/aies-ui (DatePickerComponent, FileUploadComponent, type FileUploadResult).
+//   DatePickerComponent from @aies/aies-ui.
 //
 // DO
-//   - Bind date-picker with [(value)] as string | null (YYYY-MM-DD).
-//   - Set accept, [allowCamera], and [multiple] on file-upload for your use case.
-//   - Store uploaded files in a signal updated from (filesSelected).
+//   - Bind with [(value)] as string | null (YYYY-MM-DD).
 //
 // DON'T
-//   - Assume file-upload maintains form state — you own the FileUploadResult[] list.
-//   - Upload inside the component — handle files in the parent / service layer.
+//   - Parse locale display strings — keep the ISO date the control emits.
 // =============================================================================
 
 import { Component, signal } from '@angular/core';
-import {
-  DatePickerComponent,
-  FileUploadComponent,
-  type FileUploadResult,
-} from '@aies/aies-ui';
+import { DatePickerComponent } from '@aies/aies-ui';
 
 @Component({
   selector: 'app-shipment-schedule-form',
   standalone: true,
-  imports: [DatePickerComponent, FileUploadComponent],
+  imports: [DatePickerComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
       <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
-
       <aies-date-picker
         label="Cutoff"
         error="Cutoff must be after ready date"
         [(value)]="cutoffDate"
-      />
-
-      <aies-file-upload
-        class="md:col-span-2"
-        label="Identity document"
-        accept="image/*,.pdf"
-        [allowCamera]="true"
-        [multiple]="true"
-        (filesSelected)="onFiles($event)"
       />
     </div>
   \`,
@@ -444,11 +426,123 @@ import {
 export class ShipmentScheduleFormComponent {
   protected readonly readyDate = signal<string | null>('2026-08-15');
   protected readonly cutoffDate = signal<string | null>(null);
+}
+`;
+
+export /**
+ * File upload — variants, drag-drop, accept filtering.
+ */
+const FORMS_FILE_UPLOAD = `
+// =============================================================================
+// GUIDE — File upload
+//
+// INTENT
+//   Pick files via browse, drag-and-drop, or camera. Three layouts:
+//   dropzone (default), button, compact. Emits FileUploadResult[] via
+//   (filesSelected). Images get object-URL thumbnails; other types get an
+//   icon + extension badge. Invalid files (vs accept) are skipped with a message.
+//
+// PREREQUISITES
+//   FileUploadComponent from @aies/aies-ui.
+//   provideAiesUiOverlays() for the live camera path.
+//
+// DO
+//   - Set accept (e.g. image/*,.pdf) — drives chips + client-side filter.
+//   - Use [multiple] for multi-file; omit / false for single replace.
+//   - Pick variant for density: dropzone | button | compact.
+//   - Store results in a signal; revoke is handled inside the control for
+//     URLs it created while mounted.
+//
+// DON'T
+//   - Upload inside the control — host owns the API call.
+//   - Assume every dropped file is kept — mismatches vs accept are skipped.
+// =============================================================================
+
+import { Component, signal } from '@angular/core';
+import {
+  FileUploadComponent,
+  type FileUploadResult,
+} from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-kyc-upload-form',
+  standalone: true,
+  imports: [FileUploadComponent],
+  template: \`
+    <aies-file-upload
+      variant="dropzone"
+      label="Identity document"
+      accept="image/*,.pdf"
+      [allowCamera]="true"
+      [multiple]="true"
+      (filesSelected)="onFiles($event)"
+    />
+  \`,
+})
+export class KycUploadFormComponent {
   protected readonly files = signal<FileUploadResult[]>([]);
 
   protected onFiles(next: FileUploadResult[]): void {
-    // FileUploadResult wraps the native File plus any preview metadata from the control.
     this.files.set(next);
+  }
+}
+`;
+
+export /**
+ * OTP / verification code input.
+ */
+const FORMS_OTP = `
+// =============================================================================
+// GUIDE — OTP input
+//
+// INTENT
+//   Discrete digit cells for SMS/email one-time codes. Single string model
+//   (not string[]). Digits only; paste fills multiple cells. Built-in resend
+//   row with cooldown — UI only; host calls the API on (resend).
+//
+// PREREQUISITES
+//   OtpInputComponent from @aies/aies-ui.
+//
+// DO
+//   - Bind [(value)] to a signal<string>.
+//   - Listen to (completed) when the code reaches [length] to verify/submit.
+//   - Listen to (resend) to request a new code; cooldown restarts automatically.
+//   - Set length for 4-digit PINs vs 6-digit SMS codes (default 6).
+//
+// DON'T
+//   - Put verify/API logic inside the control — host owns that on completed/resend.
+//   - Expect alphanumeric codes — non-digits are stripped.
+// =============================================================================
+
+import { Component, signal } from '@angular/core';
+import { OtpInputComponent } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-verify-otp-form',
+  standalone: true,
+  imports: [OtpInputComponent],
+  template: \`
+    <aies-otp-input
+      label="Verification code"
+      hint="Enter the 6-digit code we sent"
+      [resendCooldown]="60"
+      [(value)]="code"
+      (completed)="verify($event)"
+      (resend)="sendAgain()"
+    />
+  \`,
+})
+export class VerifyOtpFormComponent {
+  protected readonly code = signal('');
+
+  protected verify(code: string): void {
+    // POST /auth/verify { code }
+    console.log('OTP complete', code);
+  }
+
+  protected sendAgain(): void {
+    // POST /auth/resend-otp
+    console.log('Resend OTP');
   }
 }
 `;
