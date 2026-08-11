@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Fails if a public export in libs/*/src is missing a leading TSDoc block.
+ * Fails if a public export under libs is missing a leading TSDoc block.
  * Heuristic only — catches obvious misses before review, not a full TSDoc parser.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
