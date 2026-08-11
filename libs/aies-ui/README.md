@@ -1,8 +1,9 @@
 # @aies/aies-ui
 
 Standalone Angular UI primitives for AIES apps: button, feedback states,
-overlays (modal / drawer / confirm), form controls, table, pagination, and
-stepper. Styles use Tailwind utilities from `@aies/aies-theme`.
+overlays (modal / drawer / confirm), form controls, navigation chrome
+(breadcrumb / tabs / segment), table, pagination, and stepper. Styles use
+Tailwind utilities from `@aies/aies-theme`.
 
 ## Install
 
@@ -46,6 +47,7 @@ export const appConfig: ApplicationConfig = {
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState` |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date |
+| Navigation | `Breadcrumb`, `Tabs` (+ `aiesTabDef`), `Segment` — optional `routerLink` per item |
 | Data | `TableComponent`, `PaginationComponent`, `StepperComponent` |
 
 Form control conventions: [docs/form-controls.md](./docs/form-controls.md).

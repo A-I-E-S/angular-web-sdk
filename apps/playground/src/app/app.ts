@@ -49,6 +49,7 @@ export class App {
     { path: '/components/forms', label: 'Forms', group: 'Components' },
     { path: '/components/table', label: 'Table', group: 'Components' },
     { path: '/components/stepper', label: 'Stepper', group: 'Components' },
+    { path: '/components/navigation/overview', label: 'Navigation', group: 'Components' },
     { path: '/icons', label: 'Icons', group: 'Foundation' },
     { path: '/tokens', label: 'Tokens', group: 'Foundation' },
     { path: '/models', label: 'Models', group: 'Foundation' },

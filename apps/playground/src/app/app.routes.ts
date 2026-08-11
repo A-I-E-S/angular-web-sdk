@@ -32,6 +32,29 @@ export const appRoutes: Route[] = [
       import('./pages/stepper-page').then((m) => m.StepperPage),
   },
   {
+    path: 'components/navigation',
+    loadComponent: () =>
+      import('./pages/navigation-page').then((m) => m.NavigationPage),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'overview' },
+      {
+        path: 'overview',
+        loadComponent: () =>
+          import('./pages/nav-route-panels').then((m) => m.NavOverviewPanel),
+      },
+      {
+        path: 'documents',
+        loadComponent: () =>
+          import('./pages/nav-route-panels').then((m) => m.NavDocumentsPanel),
+      },
+      {
+        path: 'events',
+        loadComponent: () =>
+          import('./pages/nav-route-panels').then((m) => m.NavEventsPanel),
+      },
+    ],
+  },
+  {
     path: 'icons',
     loadComponent: () =>
       import('./pages/icons-page').then((m) => m.IconsPage),

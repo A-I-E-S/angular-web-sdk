@@ -1,8 +1,8 @@
 /**
  * Public API for `@aies/aies-ui`.
  *
- * Overlay openers, async feedback states, form controls, table/pagination,
- * stepper, and the button primitive.
+ * Overlay openers, async feedback states, form controls, navigation chrome,
+ * table/pagination, stepper, and the button primitive.
  */
 
 // Button
@@ -56,6 +56,18 @@ export {
   type SelectCreateConfig,
   type SelectOption,
 } from './lib/forms';
+
+// Navigation (breadcrumb, tabs, segment — optional RouterLink on items)
+export {
+  BreadcrumbComponent,
+  SegmentComponent,
+  TabDefDirective,
+  TabsComponent,
+  isNavItemActive,
+  navItemUrlTree,
+  type AiesNavItem,
+  type TabDefContext,
+} from './lib/navigation';
 
 // Table
 export {
