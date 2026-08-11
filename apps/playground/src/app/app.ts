@@ -55,6 +55,7 @@ export class App {
     { path: '/components/feedback', label: 'Feedback', group: 'Components' },
     { path: '/components/overlays', label: 'Overlays', group: 'Components' },
     { path: '/components/forms', label: 'Forms', group: 'Components' },
+    { path: '/components/filters', label: 'Filters', group: 'Components' },
     { path: '/components/navigation/overview', label: 'Navigation', group: 'Components' },
     { path: '/components/table', label: 'Table', group: 'Components' },
     { path: '/components/stepper', label: 'Stepper', group: 'Components' },

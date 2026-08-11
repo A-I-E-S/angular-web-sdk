@@ -20,7 +20,8 @@ interface CatalogCard {
     | 'panel'
     | 'abacus'
     | 'palette'
-    | 'code';
+    | 'code'
+    | 'filter';
   group: string;
 }
 
@@ -152,6 +153,13 @@ export class HomePage {
       title: 'Form controls',
       blurb: 'Text, select, number, upload, and more with errors.',
       icon: 'accordion-menu',
+      group: 'Components',
+    },
+    {
+      path: '/components/filters',
+      title: 'Filters',
+      blurb: 'Schema-driven list filter drawer + legacy/named serialize.',
+      icon: 'filter',
       group: 'Components',
     },
     {

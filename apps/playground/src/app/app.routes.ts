@@ -37,6 +37,11 @@ export const appRoutes: Route[] = [
       import('./pages/forms-page').then((m) => m.FormsPage),
   },
   {
+    path: 'components/filters',
+    loadComponent: () =>
+      import('./pages/filters-page').then((m) => m.FiltersPage),
+  },
+  {
     path: 'components/table',
     loadComponent: () =>
       import('./pages/table-page').then((m) => m.TablePage),

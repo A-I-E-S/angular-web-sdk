@@ -7,6 +7,7 @@ non-Angular TypeScript tooling alike.
 ## Domains
 
 - **api** — `ApiResponseModel`, pagination, resource id conventions
+- **filters** — `ModuleFilterConfig`, `FilterState`, `toFilterParams` / `fromFilterParams`
 - **mode** — region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
 - **async** — `AsyncQueryState` for UI async wrappers

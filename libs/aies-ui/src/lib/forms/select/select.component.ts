@@ -188,9 +188,9 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         >
           <span
             class="min-w-0 truncate"
-            [class.text-neutral-400]="!displayLabel()"
+            [class.text-neutral-400]="!displayLabel() && !hasMultiSelection()"
           >
-            {{ displayLabel() || placeholder() || 'Select…' }}
+            {{ displayLabel() || triggerText() }}
           </span>
           <aies-icon
             name="angle-down"
@@ -219,7 +219,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       [cdkConnectedOverlayOpen]="open()"
       [cdkConnectedOverlayPositions]="panelPositions"
       [cdkConnectedOverlayWidth]="panelWidth()"
-      [cdkConnectedOverlayMinWidth]="minPanelWidth"
+      [cdkConnectedOverlayMinWidth]="panelWidth()"
       [cdkConnectedOverlayPush]="true"
       [cdkConnectedOverlayHasBackdrop]="true"
       cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
@@ -228,7 +228,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       (detach)="onOverlayDetach()"
     >
       <div
-        class="min-w-56 rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto"
+        class="w-full rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto"
         role="listbox"
         [attr.aria-multiselectable]="multiple() || null"
         (keydown)="onPanelKeydown($event)"
@@ -337,7 +337,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected readonly errorClass = FORM_ERROR_CLASS;
   protected readonly panelPositions = SELECT_PANEL_POSITIONS;
 
-  /** Floor width for the overlay panel (14rem) so short triggers still read well. */
+  /** Floor width for the overlay panel when the trigger width is unknown. */
   protected readonly minPanelWidth = 224;
 
   private readonly searchInput =
@@ -508,6 +508,21 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     return sel && !Array.isArray(sel) ? sel.label : '';
   });
 
+  /** True when multiple mode has at least one chip selected. */
+  protected readonly hasMultiSelection = computed(
+    () => this.multiple() && this.selectedList().length > 0,
+  );
+
+  /**
+   * Placeholder for the trigger — hidden in multiple mode once chips exist.
+   */
+  protected readonly triggerText = computed(() => {
+    if (this.hasMultiSelection()) {
+      return '';
+    }
+    return this.placeholder() || 'Select…';
+  });
+
   /**
    * Single-select current option (for shell prefix/suffix icons).
    * `null` in multiple mode or when nothing is selected.
@@ -649,13 +664,15 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     this.openPanel();
   }
 
-  /** Sync panel width to the trigger shell (never below {@link minPanelWidth}). */
+  /** Sync panel width to the trigger shell (exact match when measurable). */
   protected openPanel(): void {
     const origin = this.triggerOrigin()?.elementRef.nativeElement as
       | HTMLElement
       | undefined;
     const triggerWidth = origin?.getBoundingClientRect().width ?? 0;
-    this.panelWidth.set(Math.max(triggerWidth, this.minPanelWidth));
+    this.panelWidth.set(
+      triggerWidth > 0 ? triggerWidth : this.minPanelWidth,
+    );
     this.open.set(true);
     this.activeIndex.set(0);
     queueMicrotask(() => this.searchInput()?.nativeElement.focus());

@@ -14,3 +14,4 @@ export * from './action-menu.snippets';
 export * from './stepper.snippets';
 export * from './foundation.snippets';
 export * from './models.snippets';
+export * from './filters.snippets';

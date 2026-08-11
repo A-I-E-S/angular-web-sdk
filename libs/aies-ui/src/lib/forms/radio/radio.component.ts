@@ -61,6 +61,9 @@ let nextRadioId = 0;
   selector: 'aies-radio',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'inline-flex max-w-full',
+  },
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -75,7 +78,7 @@ let nextRadioId = 0;
       [attr.aria-describedby]="describedBy()"
     >
       <legend [class]="labelClass">{{ label() }}</legend>
-      <div class="flex flex-col gap-2" role="radiogroup">
+      <div class="flex flex-row flex-wrap gap-x-4 gap-y-2" role="radiogroup">
         @for (opt of options(); track trackOption(opt)) {
           <label
             class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white"

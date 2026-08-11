@@ -46,6 +46,7 @@ export const appConfig: ApplicationConfig = {
 | Button | `button[aies-button]` / `a[aies-button]` |
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert` |
+| Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date |
 | Navigation | `Breadcrumb`, `Tabs` (+ `aiesTabDef`), `Segment` — optional `routerLink` per item |

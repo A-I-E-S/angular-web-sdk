@@ -45,6 +45,9 @@ let nextCheckboxId = 0;
   selector: 'aies-checkbox',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    class: 'inline-flex max-w-full',
+  },
   imports: [AiesIconComponent],
   providers: [
     {
@@ -54,7 +57,7 @@ let nextCheckboxId = 0;
     },
   ],
   template: `
-    <div class="flex flex-col gap-1.5">
+    <div class="inline-flex max-w-full flex-col gap-1.5">
       <label
         [attr.for]="controlId"
         class="inline-flex items-center gap-2.5 text-body text-ink dark:text-white"

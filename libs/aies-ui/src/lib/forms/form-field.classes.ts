@@ -6,9 +6,9 @@
  * when consumers scan the published UI bundle.
  */
 
-/** Label above the control. */
+/** Label above the control. Hidden when empty so callers can omit a label. */
 export const FORM_LABEL_CLASS =
-  'block text-body-sm font-medium text-ink dark:text-white mb-1.5';
+  'block text-body-sm font-medium text-ink dark:text-white mb-1.5 empty:hidden';
 
 /** Default control shell (bordered wrapper or native input). */
 export const FORM_FIELD_CLASS =
