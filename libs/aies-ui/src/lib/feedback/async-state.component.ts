@@ -1,5 +1,3 @@
-import type { AsyncQueryState } from '@aies/aies-models';
-import { ModeColorService } from '@aies/aies-theme';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,6 +6,9 @@ import {
   input,
   output,
 } from '@angular/core';
+
+import type { AsyncQueryState } from '@aies/aies-models';
+import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from './empty-state.component';
@@ -195,6 +196,8 @@ export class AsyncStateComponent<T = unknown> {
  * WHY include `null`: some APIs use null as "no entity"; arrays are the
  * common list empty sentinel. Non-array objects are considered present even
  * when empty `{}` so detail views are not forced into EmptyState.
+ * @param data - Payload under consideration.
+ * @returns True when the UI should show the empty state.
  */
 function isEmptyData(data: unknown): boolean {
   if (data === undefined || data === null) {

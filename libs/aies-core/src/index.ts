@@ -3,33 +3,33 @@ export { AIES_SDK_CONFIG, type AiesSdkConfig } from './lib/config/aies-sdk.confi
 export { provideAiesSdk } from './lib/config/provide-aies-sdk';
 
 // Shipping mode
-export { ShippingModeService } from './lib/shipping/shipping-mode.service';
 export { shipmentModeInterceptor } from './lib/shipping/shipment-mode.interceptor';
+export { ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';
-export { normalize } from './lib/http/normalize';
-export { HttpResponseCache } from './lib/http/http-cache';
 export {
   AUTH_TOKEN_PROVIDER,
   authInterceptor,
   type AuthTokenProvider,
 } from './lib/http/auth.interceptor';
+export { HttpResponseCache } from './lib/http/http-cache';
+export { normalize } from './lib/http/normalize';
 
 // Query defaults (plain object — no @tanstack dependency)
 export {
+  type AiesQueryClientDefaults,
   createAiesQueryClientDefaults,
   provideAiesQueryDefaults,
-  type AiesQueryClientDefaults,
 } from './lib/query/provide-aies-query-defaults';
 
 // Mode config
-export { ModeConfigService } from './lib/mode/mode-config.service';
 export {
   mapModeConfigData,
-  resolveModeRegionConfig,
   MODE_CONFIG_PATH,
+  resolveModeRegionConfig,
 } from './lib/mode/mode-config.mapper';
+export { ModeConfigService } from './lib/mode/mode-config.service';
 export { provideModeConfig } from './lib/mode/provide-mode-config';
 
 // Route-driven overlays (openers provided by aies-ui)

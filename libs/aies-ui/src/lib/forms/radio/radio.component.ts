@@ -1,4 +1,3 @@
-import { ModeColorService } from '@aies/aies-theme';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -14,6 +13,8 @@ import {
   type ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+
+import { ModeColorService } from '@aies/aies-theme';
 
 import {
   FORM_ERROR_CLASS,

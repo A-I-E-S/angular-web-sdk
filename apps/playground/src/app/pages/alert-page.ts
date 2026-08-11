@@ -1,14 +1,18 @@
 import { Component, signal } from '@angular/core';
+
 import {
   AlertComponent,
-  ButtonComponent,
   type AlertVariant,
+  ButtonComponent,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-alert-page',
   standalone: true,

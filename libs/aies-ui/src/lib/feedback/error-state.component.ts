@@ -1,10 +1,11 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import {
   ChangeDetectionStrategy,
   Component,
   input,
   output,
 } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 

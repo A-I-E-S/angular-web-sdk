@@ -25,6 +25,9 @@ export class NavRoutePanelComponent {
   readonly body = input.required<string>();
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-nav-overview-panel',
   standalone: true,
@@ -38,6 +41,9 @@ export class NavRoutePanelComponent {
 })
 export class NavOverviewPanel {}
 
+/**
+ *
+ */
 @Component({
   selector: 'app-nav-documents-panel',
   standalone: true,
@@ -51,6 +57,9 @@ export class NavOverviewPanel {}
 })
 export class NavDocumentsPanel {}
 
+/**
+ *
+ */
 @Component({
   selector: 'app-nav-events-panel',
   standalone: true,

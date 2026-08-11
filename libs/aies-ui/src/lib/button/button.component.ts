@@ -1,4 +1,3 @@
-import { ModeColorService } from '@aies/aies-theme';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -7,6 +6,8 @@ import {
   inject,
   input,
 } from '@angular/core';
+
+import { ModeColorService } from '@aies/aies-theme';
 
 /**
  * Visual emphasis for {@link ButtonComponent}.
@@ -112,7 +113,10 @@ export class ButtonComponent {
     return `${base} ${sizes[this.size()]} ${variantClass}`;
   });
 
-  /** Anchors lack native `disabled` — block activation while keeping the cursor. */
+  /**
+   * Anchors lack native `disabled` — block activation while keeping the cursor.
+   * @param event
+   */
   protected blockWhenDisabled(event: Event): void {
     if (this.disabled()) {
       event.preventDefault();

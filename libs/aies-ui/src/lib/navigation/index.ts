@@ -5,15 +5,12 @@
  * consumer’s Angular Router; otherwise selection is local via `activeId`.
  */
 
+export { BreadcrumbComponent } from './breadcrumb';
 export type { AiesNavItem } from './nav-item';
 export { isNavItemActive, navItemUrlTree } from './nav-router.util';
-
-export { BreadcrumbComponent } from './breadcrumb';
-
+export { SegmentComponent } from './segment';
 export {
+  type TabDefContext,
   TabDefDirective,
   TabsComponent,
-  type TabDefContext,
 } from './tabs';
-
-export { SegmentComponent } from './segment';

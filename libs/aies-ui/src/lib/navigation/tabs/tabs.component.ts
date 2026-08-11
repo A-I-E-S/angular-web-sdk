@@ -1,5 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -20,7 +18,11 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
+
 import { filter, map, startWith } from 'rxjs';
+
+import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
 import { isNavItemActive } from '../nav-router.util';
@@ -67,11 +69,12 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
       <div
         class="flex flex-wrap gap-1 border-b border-border dark:border-white/10"
         role="tablist"
+        tabindex="-1"
         [attr.aria-label]="ariaLabel()"
         (keydown)="onTablistKeydown($event)"
       >
         @for (item of items(); track item.id) {
-          @if (item.routerLink != null) {
+          @if (item.routerLink !== null && item.routerLink !== undefined) {
             <a
               #tabEl
               role="tab"
@@ -246,6 +249,7 @@ export class TabsComponent {
   /**
    * Arrow-key navigation for the tablist. Local buttons also change selection
    * (ARIA tabs); routed links only move focus.
+   * @param event
    */
   protected onTablistKeydown(event: KeyboardEvent): void {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
@@ -269,7 +273,10 @@ export class TabsComponent {
     event.preventDefault();
     const delta = event.key === 'ArrowRight' ? 1 : -1;
     const next = (idx + delta + els.length) % els.length;
-    const nextEl = els[next]!;
+    const nextEl = els[next];
+    if (!nextEl) {
+      return;
+    }
     nextEl.focus();
 
     if (nextEl.tagName === 'BUTTON') {

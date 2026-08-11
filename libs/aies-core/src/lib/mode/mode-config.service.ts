@@ -1,4 +1,7 @@
 import { inject, Injectable, type Signal, signal } from '@angular/core';
+
+import { finalize, Observable, tap } from 'rxjs';
+
 import type {
   ApiResponseModel,
   ModeAppType,
@@ -6,7 +9,6 @@ import type {
   ModeRegionConfig,
 } from '@aies/aies-models';
 import { AIES_MODE_CONFIG_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
-import { finalize, Observable, tap } from 'rxjs';
 
 import { ApiClient } from '../http/api-client';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
@@ -100,7 +102,10 @@ export class ModeConfigService {
     return resolveModeRegionConfig(config, mode, countryCode);
   }
 
-  /** Replace the in-memory record and persist — used after {@link loadConfig}. */
+  /**
+   * Replace the in-memory record and persist — used after {@link loadConfig}.
+   * @param config
+   */
   private saveRecord(config: ModeConfigData): void {
     this._config.set(config);
     this.storage.set(AIES_MODE_CONFIG_KEY, config);

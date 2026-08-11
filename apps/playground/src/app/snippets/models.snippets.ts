@@ -2,7 +2,10 @@
  * Playground code snippets — Models (@aies/aies-models).
  */
 
-export const MODELS_IMPORT = `
+export /**
+ *
+ */
+const MODELS_IMPORT = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Share API and UI state shapes across features without Angular runtime.
 // Prerequisites: @aies/aies-models package; type-only imports (no providers).
@@ -25,7 +28,10 @@ import type {
 // No NgModule / provider setup required for this package.
 `;
 
-export const MODELS_API_RESPONSE = `
+export /**
+ *
+ */
+const MODELS_API_RESPONSE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Handle the canonical API envelope from ApiClient (wrapped mode).
 // Prerequisites: @aies/aies-models (ApiResponseModel, ApiErrorDetail);
@@ -73,7 +79,10 @@ export class ShipmentApi {
 }
 `;
 
-export const MODELS_PAGINATION = `
+export /**
+ *
+ */
+const MODELS_PAGINATION = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       List fetches with ResourceId + PaginationQueryParams → PaginationMeta.
 // Prerequisites: @aies/aies-models; @aies/aies-core ApiClient.getResource;
@@ -147,7 +156,10 @@ export class ShipmentListComponent {
 }
 `;
 
-export const MODELS_ASYNC_STATE = `
+export /**
+ *
+ */
+const MODELS_ASYNC_STATE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Map fetch signals into AsyncQueryState for aies-async-state.
 // Prerequisites: @aies/aies-models AsyncQueryState; @aies/aies-ui AsyncStateComponent.
@@ -231,7 +243,10 @@ export class ShipmentAsyncListComponent {
 }
 `;
 
-export const MODELS_SHIPPING_MODE = `
+export /**
+ *
+ */
+const MODELS_SHIPPING_MODE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Type-safe STN / SFN mode literals across theme and HTTP layers.
 // Prerequisites: @aies/aies-models ShippingMode; @aies/aies-core ShippingModeService.
@@ -267,7 +282,10 @@ export class ModeSwitcherComponent {
 }
 `;
 
-export const MODELS_MODE_CONFIG = `
+export /**
+ *
+ */
+const MODELS_MODE_CONFIG = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       ModeConfigService is the source of truth for region currency
 //               and measurement units — fetch once, persist, resolve by country.

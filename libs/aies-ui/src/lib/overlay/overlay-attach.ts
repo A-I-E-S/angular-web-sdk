@@ -1,4 +1,3 @@
-import type { OverlayHandle } from '@aies/aies-core';
 import {
   Overlay,
   type OverlayConfig,
@@ -6,6 +5,8 @@ import {
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Injector, type StaticProvider, type Type } from '@angular/core';
+
+import type { OverlayHandle } from '@aies/aies-core';
 
 import { AiesOverlayRef } from './aies-overlay-ref';
 import { OVERLAY_DATA } from './overlay-data.token';
@@ -38,8 +39,15 @@ export interface OverlayOpenConfig<TData = unknown> {
  * panel classes; close semantics, data injection, and handle lifecycle stay
  * identical so route overlays behave the same on both surfaces.
  *
+ * @param overlay
+ * @param parentInjector
+ * @param component
+ * @param overlayConfig
+ * @param surface
+ * @param config
  * @typeParam TData - {@link OVERLAY_DATA} shape.
  * @typeParam TResult - `close(result)` / `afterClosed` payload.
+ * @returns Handle used to close the overlay and observe the result.
  */
 export function attachOverlayContent<TData = unknown, TResult = unknown>(
   overlay: Overlay,

@@ -1,6 +1,9 @@
 // Playground snippet modules — copy-paste implementation guides for overlay services.
 
-export const OVERLAY_MODAL = `// Intent
+export /**
+ *
+ */
+const OVERLAY_MODAL = `// Intent
 // Open a centered modal via ModalService — inject OVERLAY_DATA in the panel,
 // close with AiesOverlayRef.close(result), observe via afterClosed().
 //
@@ -138,7 +141,10 @@ export class OpenModalDemoComponent {
   }
 }`;
 
-export const OVERLAY_DRAWER = `// Intent
+export /**
+ *
+ */
+const OVERLAY_DRAWER = `// Intent
 // Open a right-edge drawer via DrawerService — same OVERLAY_DATA / AiesOverlayRef
 // contract as modals; ideal for filters, detail chrome, and secondary workflows.
 //
@@ -246,7 +252,10 @@ export class OpenDrawerDemoComponent {
   }
 }`;
 
-export const OVERLAY_CONFIRM = `// Intent
+export /**
+ *
+ */
+const OVERLAY_CONFIRM = `// Intent
 // One-line destructive / neutral confirmation via ConfirmService.confirm().
 // Built on ModalService — returns Observable<boolean> (true = confirmed).
 //

@@ -3,7 +3,10 @@
  * Each export is a copy-ready implementation guide for demo panels.
  */
 
-export const TOKENS_SETUP = `
+export /**
+ *
+ */
+const TOKENS_SETUP = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Wire Tailwind to @aies/aies-theme so design tokens compile.
 // Prerequisites: tailwindcss + postcss in the app; aies-theme package linked.
@@ -29,7 +32,10 @@ module.exports = {
 };
 `;
 
-export const TOKENS_CORE = `
+export /**
+ *
+ */
+const TOKENS_CORE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Apply core ink / surface tokens for primary chrome and panels.
 // Prerequisites: TOKENS_SETUP applied; dark mode via ThemeService if needed.
@@ -45,7 +51,10 @@ export const TOKENS_CORE = `
 <div class="bg-white text-ink">White surface</div>
 `;
 
-export const TOKENS_NEUTRAL = `
+export /**
+ *
+ */
+const TOKENS_NEUTRAL = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Neutral palette for borders, muted copy, and page backgrounds.
 // Prerequisites: TOKENS_SETUP applied.
@@ -64,7 +73,10 @@ export const TOKENS_NEUTRAL = `
 <span class="text-neutral-300">Light divider accent</span>
 `;
 
-export const TOKENS_EXPORT = `
+export /**
+ *
+ */
+const TOKENS_EXPORT = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       SFN / export green accents — static marketing or mode-fixed UI.
 // Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
@@ -80,7 +92,10 @@ export const TOKENS_EXPORT = `
 <div class="rounded-xl bg-export-tint p-5">Tinted panel</div>
 `;
 
-export const TOKENS_IMPORT = `
+export /**
+ *
+ */
+const TOKENS_IMPORT = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       STN / import orange accents — static marketing or mode-fixed UI.
 // Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
@@ -96,7 +111,10 @@ export const TOKENS_IMPORT = `
 <div class="rounded-xl bg-import-tint p-5">Tinted panel</div>
 `;
 
-export const TOKENS_FEEDBACK = `
+export /**
+ *
+ */
+const TOKENS_FEEDBACK = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Semantic status colors — independent of SFN/STN shipping mode.
 // Prerequisites: TOKENS_SETUP applied.
@@ -112,7 +130,10 @@ export const TOKENS_FEEDBACK = `
 <span class="text-danger-dark">Inline error copy</span>
 `;
 
-export const TOKENS_TYPE = `
+export /**
+ *
+ */
+const TOKENS_TYPE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Typography scale from the theme preset — headings through captions.
 // Prerequisites: TOKENS_SETUP applied; font stack inherited from preset.
@@ -133,7 +154,10 @@ export const TOKENS_TYPE = `
 <span class="text-caption text-neutral-600">Hints, timestamps, and chip labels.</span>
 `;
 
-export const TOKENS_MODE_ACCENTS = `
+export /**
+ *
+ */
+const TOKENS_MODE_ACCENTS = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Dynamic primary chrome that follows the active shipping mode.
 // Prerequisites: ShippingModeService (via provideAiesSdk); ModeColorService from
@@ -180,7 +204,10 @@ export class ModeAccentDemoComponent {
 }
 `;
 
-export const ICONS_USAGE = `
+export /**
+ *
+ */
+const ICONS_USAGE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Render icons from the shared SVG sprite with type-safe names.
 // Prerequisites: @aies/aies-icons package; sprite registered once at bootstrap

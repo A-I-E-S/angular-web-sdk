@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, signal } from '@angular/core';
+
 import { AIES_THEME_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
 
 import type { Theme } from './theme.types';

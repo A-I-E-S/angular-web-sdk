@@ -1,13 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+
 import { Subscription } from 'rxjs';
 
 import type { OverlayRouteConfig } from './overlay-route.types';
 import {
   DRAWER_SERVICE,
-  type OverlayHandle,
   MODAL_SERVICE,
   OVERLAY_ROUTE_CONFIGS,
+  type OverlayHandle,
 } from './overlay-tokens';
 
 interface OpenOverlayState {

@@ -319,7 +319,8 @@ function caretFromDigitCount(
   if (!afterDecimal || dot === -1) {
     let seen = 0;
     for (let i = 0; i < display.length; i++) {
-      if (/\d/.test(display[i]!)) {
+      const ch = display[i];
+      if (ch !== undefined && /\d/.test(ch)) {
         seen++;
         if (seen >= intDigitsWanted) {
           return i + 1;
@@ -331,7 +332,8 @@ function caretFromDigitCount(
 
   let seen = 0;
   for (let i = dot + 1; i < display.length; i++) {
-    if (/\d/.test(display[i]!)) {
+    const ch = display[i];
+    if (ch !== undefined && /\d/.test(ch)) {
       seen++;
       if (seen >= fracDigitsWanted) {
         return i + 1;

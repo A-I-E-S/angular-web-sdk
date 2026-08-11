@@ -3,7 +3,10 @@
  * Each export is a copy-paste-ready guide for consumer apps.
  */
 
-export const NAV_BREADCRUMB = `
+export /**
+ *
+ */
+const NAV_BREADCRUMB = `
 // =============================================================================
 // INTENT
 //   Hierarchical trail for wayfinding. The consumer builds and owns the items
@@ -71,7 +74,10 @@ export class ShipmentDetailChromeComponent {
 }
 `;
 
-export const NAV_ROUTED_TABS = `
+export /**
+ *
+ */
+const NAV_ROUTED_TABS = `
 // =============================================================================
 // INTENT
 //   URL-driven section tabs paired with child routes and router-outlet.
@@ -152,7 +158,10 @@ export class ShipmentDetailTabsComponent {
 // }
 `;
 
-export const NAV_SEGMENT = `
+export /**
+ *
+ */
+const NAV_SEGMENT = `
 // =============================================================================
 // INTENT
 //   Compact pill switcher on a fixed path using queryParams for view state.
@@ -229,7 +238,10 @@ export class ShipmentListDensityComponent {
 }
 `;
 
-export const NAV_LOCAL_TABS = `
+export /**
+ *
+ */
+const NAV_LOCAL_TABS = `
 // =============================================================================
 // INTENT
 //   In-page tabs with no router involvement — selection is [(activeId)] only.

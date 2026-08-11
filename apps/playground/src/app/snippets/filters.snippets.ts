@@ -2,7 +2,10 @@
  * Playground implementation snippets — schema-driven filters.
  */
 
-export const FILTERS_OVERVIEW = `
+export /**
+ *
+ */
+const FILTERS_OVERVIEW = `
 // =============================================================================
 // ARCHITECT GUIDE — List filters
 //
@@ -84,7 +87,10 @@ export class ShipmentListFiltersComponent {
 }
 `;
 
-export const FILTERS_LEGACY = `
+export /**
+ *
+ */
+const FILTERS_LEGACY = `
 // =============================================================================
 // ARCHITECT GUIDE — legacy-parallel transport
 //
@@ -127,7 +133,10 @@ toFilterParams(state, config);
 // }
 `;
 
-export const FILTERS_NAMED = `
+export /**
+ *
+ */
+const FILTERS_NAMED = `
 // =============================================================================
 // ARCHITECT GUIDE — named transport
 //
@@ -152,7 +161,10 @@ toFilterParams(state, shipmentTrackingItemFilterConfig);
 // (no filterColumn / filterValue)
 `;
 
-export const FILTERS_ASYNC_OPTIONS = `
+export /**
+ *
+ */
+const FILTERS_ASYNC_OPTIONS = `
 // =============================================================================
 // ARCHITECT GUIDE — async option catalogs
 //

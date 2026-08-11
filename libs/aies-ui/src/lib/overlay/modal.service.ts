@@ -1,10 +1,11 @@
-import type { OverlayHandle, OverlayOpener } from '@aies/aies-core';
 import { Overlay } from '@angular/cdk/overlay';
-import { Injectable, Injector, type Type, inject } from '@angular/core';
+import { inject,Injectable, Injector, type Type } from '@angular/core';
+
+import type { OverlayHandle, OverlayOpener } from '@aies/aies-core';
 
 import {
-  type OverlayOpenConfig,
   attachOverlayContent,
+  type OverlayOpenConfig,
 } from './overlay-attach';
 
 /**

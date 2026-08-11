@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
+
 import {
   ActionMenuComponent,
   ActionMenuTriggerDirective,
-  ButtonComponent,
   type AiesMenuItem,
+  ButtonComponent,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
@@ -15,6 +16,9 @@ import {
   ACTION_MENU_VARIANTS,
 } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-action-menu-page',
   standalone: true,

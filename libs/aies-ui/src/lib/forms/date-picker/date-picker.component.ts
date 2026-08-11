@@ -1,4 +1,3 @@
-import { ThemeService } from '@aies/aies-theme';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -16,6 +15,8 @@ import {
   type ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+
+import { ThemeService } from '@aies/aies-theme';
 
 import {
   FORM_AFFIX_CLASS,
@@ -69,7 +70,6 @@ let nextDatePickerId = 0;
     <div
       [class]="shellClass()"
       [class.cursor-pointer]="!disabled()"
-      (click)="openPicker()"
     >
       <span [class]="affixClass" data-slot="prefix">
         <ng-content select="[prefix]" />
@@ -196,11 +196,10 @@ export class DatePickerComponent implements ControlValueAccessor {
   }
 
   /**
-   * Opens the native calendar for any click on the shell / input.
+   * Opens the native calendar on input click.
    * Uses `showPicker()` when available (Chromium, Safari 16+, Firefox 101+).
    *
-   * @param event - Optional click from the input; stopped so the shell handler
-   *   does not double-fire `showPicker`.
+   * @param event - Click from the input.
    */
   protected openPicker(event?: Event): void {
     if (this.disabled()) {

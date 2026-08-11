@@ -1,4 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import {
   CdkConnectedOverlay,
   CdkOverlayOrigin,
@@ -15,6 +14,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 import { ActionMenuTriggerDirective } from './action-menu-trigger.directive';
@@ -96,7 +97,11 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
       cdkOverlayOrigin
       #triggerOrigin="cdkOverlayOrigin"
     >
-      <!-- Always project so Angular registers the trigger directive. -->
+      <!--
+        Always project so Angular registers the trigger directive.
+        Key/click bubble from the projected control — that child owns focus.
+      -->
+      <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
       <span
         class="inline-flex"
         [class.hidden]="!hasCustomTrigger()"
@@ -257,14 +262,22 @@ export class ActionMenuComponent {
         event.preventDefault();
         this.moveActive(-1, enabled);
         break;
-      case 'Home':
+      case 'Home': {
         event.preventDefault();
-        this.activeIndex.set(enabled[0]!);
+        const first = enabled[0];
+        if (first !== undefined) {
+          this.activeIndex.set(first);
+        }
         break;
-      case 'End':
+      }
+      case 'End': {
         event.preventDefault();
-        this.activeIndex.set(enabled[enabled.length - 1]!);
+        const last = enabled[enabled.length - 1];
+        if (last !== undefined) {
+          this.activeIndex.set(last);
+        }
         break;
+      }
       case 'Enter':
       case ' ': {
         event.preventDefault();
@@ -325,10 +338,15 @@ export class ActionMenuComponent {
   }
 
   private moveActive(delta: number, enabled: number[]): void {
+    if (enabled.length === 0) {
+      return;
+    }
     const currentPos = enabled.indexOf(this.activeIndex());
     const start = currentPos < 0 ? 0 : currentPos;
-    const next = enabled[(start + delta + enabled.length) % enabled.length]!;
-    this.activeIndex.set(next);
+    const next = enabled[(start + delta + enabled.length) % enabled.length];
+    if (next !== undefined) {
+      this.activeIndex.set(next);
+    }
   }
 }
 

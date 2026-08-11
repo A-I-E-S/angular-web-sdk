@@ -1,10 +1,11 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   inject,
 } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 import { AiesOverlayRef } from './aies-overlay-ref';
@@ -94,7 +95,11 @@ export class ConfirmDialogComponent {
   }
 }
 
-/** Tiny unique suffix without pulling in a uuid dependency. */
+/**
+ * Tiny unique suffix without pulling in a uuid dependency.
+ *
+ * @returns Short alphanumeric id fragment.
+ */
 function cryptoRandom(): string {
   return Math.random().toString(36).slice(2, 10);
 }

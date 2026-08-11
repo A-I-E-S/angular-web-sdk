@@ -4,14 +4,10 @@ import {
   HttpParams,
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import type {
-  ApiResponseModel,
-  PaginationQueryParams,
-  ResourceId,
-} from '@aies/aies-models';
+
 import {
-  Observable,
   map,
+  Observable,
   of,
   retry,
   tap,
@@ -19,6 +15,12 @@ import {
   timeout,
   timer,
 } from 'rxjs';
+
+import type {
+  ApiResponseModel,
+  PaginationQueryParams,
+  ResourceId,
+} from '@aies/aies-models';
 
 import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
 import { ShippingModeService } from '../shipping/shipping-mode.service';

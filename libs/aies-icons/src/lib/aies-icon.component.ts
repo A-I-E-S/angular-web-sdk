@@ -85,12 +85,20 @@ export class AiesIconComponent {
     });
   }
 
-  /** Fragment href into the inlined sprite (`#truck`). */
+  /**
+   * Fragment href into the inlined sprite (`#truck`).
+   *
+   * @returns Hash fragment pointing at the named symbol.
+   */
   protected href(): string {
     return `#${this.name()}`;
   }
 
-  /** Normalized size attribute value. */
+  /**
+   * Normalized size attribute value.
+   *
+   * @returns Size as a string suitable for the SVG `width`/`height` attrs.
+   */
   protected resolvedSize(): string {
     const value = this.size();
     return typeof value === 'number' ? String(value) : value;

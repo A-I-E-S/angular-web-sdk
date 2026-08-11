@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { inject,Injectable } from '@angular/core';
 
-import type { ConfirmOptions } from './confirm-options';
+import { map,Observable } from 'rxjs';
+
 import { ConfirmDialogComponent } from './confirm-dialog.component';
+import type { ConfirmOptions } from './confirm-options';
 import { ModalService } from './modal.service';
 
 /**

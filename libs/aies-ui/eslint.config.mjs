@@ -33,16 +33,18 @@ export default [
       '@angular-eslint/component-selector': [
         'error',
         {
-          type: 'element',
+          // Element hosts (`aies-select`) and attribute hosts (`button[aies-button]`).
+          type: ['element', 'attribute'],
           prefix: 'aies',
           style: 'kebab-case',
         },
       ],
+      // CVA controls expose `disabled` via `disabledInput` + alias — intentional.
+      '@angular-eslint/no-input-rename': 'off',
     },
   },
   {
     files: ['**/*.html'],
-    // Override or add rules here
     rules: {},
   },
 ];

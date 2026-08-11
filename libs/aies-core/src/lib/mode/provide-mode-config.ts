@@ -4,6 +4,7 @@ import {
   makeEnvironmentProviders,
   provideAppInitializer,
 } from '@angular/core';
+
 import { catchError, firstValueFrom, of } from 'rxjs';
 
 import { ModeConfigService } from './mode-config.service';
@@ -13,6 +14,8 @@ import { ModeConfigService } from './mode-config.service';
  *
  * Failures do not block bootstrap — cached storage (if any) remains usable.
  * Pair with {@link provideAiesSdk} and a real {@link AiesSdkConfig.baseUrl}.
+ *
+ * @returns Environment providers that run the mode-config initializer.
  */
 export function provideModeConfig(): EnvironmentProviders {
   return makeEnvironmentProviders([

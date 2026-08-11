@@ -1,19 +1,20 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
+
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
   CheckboxComponent,
   DatePickerComponent,
   FileUploadComponent,
+  type FileUploadResult,
   NumberInputComponent,
   RadioComponent,
+  type RadioOption,
   SelectComponent,
+  type SelectOption,
   TextareaComponent,
   TextInputComponent,
   ToggleComponent,
-  type FileUploadResult,
-  type RadioOption,
-  type SelectOption,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
@@ -28,6 +29,9 @@ import {
   FORMS_TEXTAREA,
 } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-forms-page',
   standalone: true,
@@ -207,7 +211,11 @@ import {
           <div>
             <dt class="text-neutral-600">Amount</dt>
             <dd class="m-0 font-medium text-ink dark:text-white">
-              {{ amount() == null ? '—' : (amount()! | number: '1.0-6') }}
+              {{
+                amount() === null || amount() === undefined
+                  ? '—'
+                  : (amount() | number: '1.0-6')
+              }}
             </dd>
           </div>
           <div>

@@ -1,4 +1,5 @@
 import { InjectionToken, type Type } from '@angular/core';
+
 import type { Observable } from 'rxjs';
 
 import type { OverlayRouteConfig } from './overlay-route.types';

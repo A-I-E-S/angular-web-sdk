@@ -1,5 +1,6 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import { Component, inject } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 import {
   AiesOverlayRef,
   ButtonComponent,

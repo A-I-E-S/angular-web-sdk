@@ -1,10 +1,14 @@
 import { Component, computed, signal } from '@angular/core';
+
 import { AiesIconComponent, ICON_NAMES, type IconName } from '@aies/aies-icons';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { ICONS_USAGE } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-icons-page',
   standalone: true,

@@ -1,4 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -16,6 +15,8 @@ import {
   type ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../../button/button.component';
 import {

@@ -1,6 +1,8 @@
-import type { OverlayHandle } from '@aies/aies-core';
 import type { OverlayRef } from '@angular/cdk/overlay';
+
 import { Observable, Subject } from 'rxjs';
+
+import type { OverlayHandle } from '@aies/aies-core';
 
 /**
  * Concrete {@link OverlayHandle} bound to a CDK {@link OverlayRef}.
@@ -57,6 +59,8 @@ export class AiesOverlayRef<TResult = unknown>
 
   /**
    * Emits once when the overlay finishes closing, then completes.
+   *
+   * @returns Observable of the close result (or `undefined` if dismissed).
    */
   afterClosed(): Observable<TResult | undefined> {
     return this.closed$.asObservable();

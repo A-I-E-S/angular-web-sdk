@@ -1,5 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,7 +14,11 @@ import {
   Router,
   RouterLink,
 } from '@angular/router';
+
 import { filter, map, startWith } from 'rxjs';
+
+import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
 import { isNavItemActive } from '../nav-router.util';
@@ -61,7 +63,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
       [attr.aria-label]="ariaLabel()"
     >
       @for (item of items(); track item.id) {
-        @if (item.routerLink != null) {
+        @if (item.routerLink !== null && item.routerLink !== undefined) {
           <a
             [class]="
               segmentChrome() +

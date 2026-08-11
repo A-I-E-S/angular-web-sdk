@@ -1,13 +1,14 @@
-import { DRAWER_SERVICE, MODAL_SERVICE } from '@aies/aies-core';
 import {
   type EnvironmentProviders,
   makeEnvironmentProviders,
 } from '@angular/core';
 
+import { DRAWER_SERVICE, MODAL_SERVICE } from '@aies/aies-core';
+
+import { FilterDrawerService } from '../filters/filter-drawer.service';
 import { ConfirmService } from './confirm.service';
 import { DrawerService } from './drawer.service';
 import { ModalService } from './modal.service';
-import { FilterDrawerService } from '../filters/filter-drawer.service';
 
 /**
  * Registers programmatic overlay openers and binds core DI tokens.

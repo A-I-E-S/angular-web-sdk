@@ -1,4 +1,3 @@
-import { ModeColorService } from '@aies/aies-theme';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   booleanAttribute,
@@ -11,6 +10,8 @@ import {
   output,
   TemplateRef,
 } from '@angular/core';
+
+import { ModeColorService } from '@aies/aies-theme';
 
 import { StepDefDirective } from './step-def.directive';
 import { StepDefinition } from './step-definition';
@@ -167,7 +168,11 @@ export class StepperComponent {
     return { $implicit: step?.key ?? '' };
   });
 
-  /** Badge chrome for step `index` (completed / active vs upcoming). */
+  /**
+   * Badge chrome for step `index` (completed / active vs upcoming).
+   * @param index - Step index in {@link steps}.
+   * @returns Tailwind class string for the step badge.
+   */
   protected stepBadgeClass(index: number): string {
     const base =
       'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-body-sm font-medium';
@@ -182,6 +187,7 @@ export class StepperComponent {
    * Whether the given index may become active under the current `linear` mode.
    *
    * @param index - Candidate step index.
+   * @returns True when navigation to `index` is allowed.
    */
   protected canActivate(index: number): boolean {
     if (index === this.activeIndex()) {
@@ -217,6 +223,7 @@ export class StepperComponent {
    * True when every step in `[activeIndex, targetIndex)` has `isValid !== false`.
    *
    * @param targetIndex - Destination index (exclusive end of the validity scan).
+   * @returns False if any step on the path is explicitly invalid.
    */
   private forwardPathValid(targetIndex: number): boolean {
     const steps = this.steps();

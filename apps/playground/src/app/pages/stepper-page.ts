@@ -1,16 +1,20 @@
 import { Component, computed, signal } from '@angular/core';
+
 import {
   ButtonComponent,
   StepDefDirective,
+  type StepDefinition,
   StepperComponent,
   TextInputComponent,
-  type StepDefinition,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-stepper-page',
   standalone: true,

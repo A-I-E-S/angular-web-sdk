@@ -1,14 +1,15 @@
 import { Component, computed, signal } from '@angular/core';
+
 import type { AsyncQueryState, PaginationMeta } from '@aies/aies-models';
 import {
   ActionMenuComponent,
+  type AiesMenuItem,
   AsyncStateComponent,
   ButtonComponent,
   CellDefDirective,
   PaginationComponent,
-  TableComponent,
-  type AiesMenuItem,
   type TableColumn,
+  TableComponent,
   type TableSortChange,
 } from '@aies/aies-ui';
 
@@ -24,16 +25,34 @@ interface DemoShipment {
   valueUsd: number;
 }
 
+const STATUSES = [
+  'In transit',
+  'Delivered',
+  'Pending',
+  'Exception',
+] as const satisfies readonly DemoShipment['status'][];
+
+const DESTINATIONS = [
+  'Lagos',
+  'Accra',
+  'Nairobi',
+  'Cairo',
+  'London',
+] as const;
+
 const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => ({
   reference: `${i % 2 === 0 ? 'SFN' : 'STN'}-${1000 + i}`,
-  status: (['In transit', 'Delivered', 'Pending', 'Exception'] as const)[i % 4]!,
+  status: STATUSES[i % STATUSES.length] ?? 'Pending',
   mode: i % 2 === 0 ? 'sfn' : 'stn',
-  destination: ['Lagos', 'Accra', 'Nairobi', 'Cairo', 'London'][i % 5]!,
+  destination: DESTINATIONS[i % DESTINATIONS.length] ?? 'Lagos',
   valueUsd: 400 + i * 175,
 }));
 
 const PAGE_SIZE = 6;
 
+/**
+ *
+ */
 @Component({
   selector: 'app-table-page',
   standalone: true,

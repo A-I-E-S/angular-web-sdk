@@ -1,6 +1,9 @@
 // Playground snippet modules — copy-paste implementation guides for aies-button.
 
-export const BUTTON_VARIANTS = `// Intent
+export /**
+ *
+ */
+const BUTTON_VARIANTS = `// Intent
 // Show the four visual variants of aies-button and how primary follows shipping mode
 // (SFN export green / STN import orange via ModeColorService inside ButtonComponent).
 //
@@ -60,7 +63,10 @@ export class ShipmentActionsComponent {
   };
 }`;
 
-export const BUTTON_SIZES = `// Intent
+export /**
+ *
+ */
+const BUTTON_SIZES = `// Intent
 // Demonstrate sm | md | lg sizing for dense toolbars vs hero CTAs.
 //
 // Prerequisites
@@ -102,7 +108,10 @@ export class ButtonSizesComponent {
   protected readonly sizes: ButtonSize[] = ['sm', 'md', 'lg'];
 }`;
 
-export const BUTTON_MATRIX = `// Intent
+export /**
+ *
+ */
+const BUTTON_MATRIX = `// Intent
 // Render the full variant × size matrix for QA / design review surfaces.
 //
 // Prerequisites
@@ -163,7 +172,10 @@ export class ButtonMatrixComponent {
   protected readonly sizes: ButtonSize[] = ['sm', 'md', 'lg'];
 }`;
 
-export const BUTTON_ICONS = `// Intent
+export /**
+ *
+ */
+const BUTTON_ICONS = `// Intent
 // Project aies-icon inside the button host — icon + label share one focus ring.
 //
 // Prerequisites
@@ -213,7 +225,10 @@ import { ButtonComponent } from '@aies/aies-ui';
 })
 export class ButtonIconsComponent {}`;
 
-export const BUTTON_LINKS = `// Intent
+export /**
+ *
+ */
+const BUTTON_LINKS = `// Intent
 // Apply aies-button on anchors for navigation-shaped CTAs (same styling as buttons).
 //
 // Prerequisites
@@ -255,7 +270,10 @@ import { ButtonComponent } from '@aies/aies-ui';
 })
 export class ButtonLinksComponent {}`;
 
-export const BUTTON_DISABLED = `// Intent
+export /**
+ *
+ */
+const BUTTON_DISABLED = `// Intent
 // Disable activation on buttons and links — native disabled vs aria-disabled.
 //
 // Prerequisites
@@ -306,7 +324,10 @@ export class ButtonDisabledComponent {
   protected readonly saving = signal(false);
 }`;
 
-export const BUTTON_CONTEXT = `// Intent
+export /**
+ *
+ */
+const BUTTON_CONTEXT = `// Intent
 // Typical dialog / detail toolbar: ghost cancel, secondary draft, primary submit.
 // Primary accent follows active shipping mode (SFN green / STN orange).
 //

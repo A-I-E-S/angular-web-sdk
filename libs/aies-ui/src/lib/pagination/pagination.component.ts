@@ -1,10 +1,11 @@
-import type { PaginationMeta } from '@aies/aies-models';
 import {
   ChangeDetectionStrategy,
   Component,
   input,
   output,
 } from '@angular/core';
+
+import type { PaginationMeta } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
 

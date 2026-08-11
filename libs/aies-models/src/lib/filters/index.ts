@@ -1,3 +1,11 @@
+export {
+  FILTER_CONFIGS,
+  type FilterConfigId,
+  shipmentTrackingItemFilterConfig,
+  trackShipmentsFilterConfig,
+  updateShipmentsFilterConfig,
+  usersFilterConfig,
+} from './configs/seed-configs';
 export type {
   FilterField,
   FilterFieldType,
@@ -15,11 +23,3 @@ export {
   resetFilterState,
   toFilterParams,
 } from './filter-serialize';
-export {
-  FILTER_CONFIGS,
-  shipmentTrackingItemFilterConfig,
-  trackShipmentsFilterConfig,
-  updateShipmentsFilterConfig,
-  usersFilterConfig,
-  type FilterConfigId,
-} from './configs/seed-configs';

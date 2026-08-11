@@ -31,6 +31,7 @@ export function navItemUrlTree(
  * @param router - Consumer app router.
  * @param item - Nav item with a `routerLink`.
  * @param options - Same shape as `RouterLinkActive` options.
+ * @returns True when the current URL matches the item.
  */
 export function isNavItemActive(
   router: Router,

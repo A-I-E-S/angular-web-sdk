@@ -3,7 +3,10 @@
  * Each export is a copy-ready implementation guide for demo panels.
  */
 
-export const STEPPER_LINEAR = `
+export /**
+ *
+ */
+const STEPPER_LINEAR = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Multi-step wizard with forward-blocking linear navigation.
 // Prerequisites: @aies/aies-ui StepperComponent + StepDefDirective; reactive
@@ -119,7 +122,10 @@ export class ShipmentWizardComponent {
 }
 `;
 
-export const STEPPER_FREE = `
+export /**
+ *
+ */
+const STEPPER_FREE = `
 // ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Non-linear stepper — users jump to any step via header clicks.
 // Prerequisites: @aies/aies-ui StepperComponent + StepDefDirective; static or

@@ -41,6 +41,9 @@ export const AUTH_TOKEN_PROVIDER = new InjectionToken<AuthTokenProvider>(
  *
  * Compose with {@link shipmentModeInterceptor} in `provideHttpClient`.
  *
+ * @param req - Outgoing request.
+ * @param next - Next handler in the interceptor chain.
+ * @returns The downstream observable for the (possibly cloned) request.
  * @example
  * ```ts
  * provideHttpClient(

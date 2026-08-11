@@ -17,6 +17,8 @@ function prefersReducedMotion(): boolean {
  *
  * Uses the Web Animations API so consumers get motion without shipping a
  * separate CSS bundle. Skipped when the user prefers reduced motion.
+ * @param overlayRef
+ * @param surface
  */
 export function playOverlayEnter(
   overlayRef: OverlayRef,
@@ -56,6 +58,9 @@ export function playOverlayEnter(
 /**
  * Reverse of {@link playOverlayEnter}. Resolves when leave animations finish
  * (or immediately when reduced-motion is on) so dispose can wait.
+ * @param overlayRef - Live CDK overlay whose panel/backdrop animate out.
+ * @param surface - Modal vs drawer leave keyframes.
+ * @returns Promise that resolves when leave animations complete.
  */
 export function playOverlayLeave(
   overlayRef: OverlayRef,

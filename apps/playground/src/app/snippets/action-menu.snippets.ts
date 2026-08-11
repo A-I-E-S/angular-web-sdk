@@ -3,7 +3,10 @@
  * Each export is a copy-paste-ready guide for consumer apps.
  */
 
-export const ACTION_MENU_DEFAULT = `
+export /**
+ *
+ */
+const ACTION_MENU_DEFAULT = `
 // =============================================================================
 // INTENT
 //   Overflow menu with the built-in ghost ellipsis trigger — typical for table
@@ -74,7 +77,10 @@ export class ShipmentRowActionsDemoComponent {
 }
 `;
 
-export const ACTION_MENU_CUSTOM = `
+export /**
+ *
+ */
+const ACTION_MENU_CUSTOM = `
 // =============================================================================
 // INTENT
 //   Replace the default ellipsis with any projected control via aiesActionMenuTrigger.
@@ -153,7 +159,10 @@ export class ShipmentToolbarActionsComponent {
 }
 `;
 
-export const ACTION_MENU_VARIANTS = `
+export /**
+ *
+ */
+const ACTION_MENU_VARIANTS = `
 // =============================================================================
 // INTENT
 //   Item-level styling and interaction: danger destructive actions, disabled
@@ -214,7 +223,10 @@ export class ShipmentActionVariantsComponent {
 }
 `;
 
-export const ACTION_MENU_DISABLED = `
+export /**
+ *
+ */
+const ACTION_MENU_DISABLED = `
 // =============================================================================
 // INTENT
 //   Disable the entire menu — blocks opening the default trigger (or custom

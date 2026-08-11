@@ -2,10 +2,11 @@ import {
   type EnvironmentProviders,
   makeEnvironmentProviders,
 } from '@angular/core';
+
 import { provideLocalStorage } from '@aies/aies-storage';
 
-import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
 import { provideModeConfig } from '../mode/provide-mode-config';
+import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
 
 /**
  * Registers SDK configuration and ensures browser storage is available.

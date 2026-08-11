@@ -1,25 +1,29 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
+
 import {
   authInterceptor,
   provideAiesSdk,
   shipmentModeInterceptor,
 } from '@aies/aies-core';
-import { provideAiesUiOverlays } from '@aies/aies-ui';
 import { ThemeService } from '@aies/aies-theme';
+import { provideAiesUiOverlays } from '@aies/aies-ui';
 
 import { appRoutes } from './app.routes';
 
 /** Test export API — mode config loads from GET /public/mode/config on startup. */
 const PLAYGROUND_API_BASE = 'https://test-api-export.africaniestest.com/api';
 
-export const appConfig: ApplicationConfig = {
+export /**
+ *
+ */
+const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),

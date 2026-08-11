@@ -179,6 +179,7 @@ export class TableComponent<T = unknown> {
    * Builds the `let-row` context for a projected cell template.
    *
    * @param row - Current row record.
+   * @returns NgTemplateOutlet context with `$implicit` set to `row`.
    */
   protected cellContext(row: T): { $implicit: T } {
     return { $implicit: row };
@@ -193,6 +194,7 @@ export class TableComponent<T = unknown> {
    *
    * @param row - Current row.
    * @param key - Column key into the row.
+   * @returns Display string for the cell.
    */
   protected defaultCellText(row: T, key: string): string {
     const value = (row as Record<string, unknown>)[key];
@@ -206,6 +208,7 @@ export class TableComponent<T = unknown> {
    * Glyph for the active sort column; empty for inactive sortable headers.
    *
    * @param key - Column key under the header button.
+   * @returns Sort direction glyph (`↑` / `↓` / `↕`).
    */
   protected sortIndicator(key: string): string {
     const current = this.sort();

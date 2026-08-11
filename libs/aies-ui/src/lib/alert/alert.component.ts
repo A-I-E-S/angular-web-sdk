@@ -1,5 +1,3 @@
-import type { IconName } from '@aies/aies-icons';
-import { AiesIconComponent } from '@aies/aies-icons';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -8,6 +6,9 @@ import {
   input,
   output,
 } from '@angular/core';
+
+import type { IconName } from '@aies/aies-icons';
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 

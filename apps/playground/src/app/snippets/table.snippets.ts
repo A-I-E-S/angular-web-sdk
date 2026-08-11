@@ -3,7 +3,10 @@
  * Each export is a copy-paste-ready guide for consumer apps.
  */
 
-export const TABLE_LIST = `
+export /**
+ *
+ */
+const TABLE_LIST = `
 // =============================================================================
 // INTENT
 //   Production list screen: server-driven rows, sort, pagination, row actions.
@@ -234,7 +237,10 @@ export class ShipmentListPageComponent {
 // meta = computed((): PaginationMeta => ({ /* derived from ALL_ROWS.length */ }));
 `;
 
-export const TABLE_COMPACT = `
+export /**
+ *
+ */
+const TABLE_COMPACT = `
 // =============================================================================
 // INTENT
 //   Minimal read-only table — text columns only, no custom cell templates.

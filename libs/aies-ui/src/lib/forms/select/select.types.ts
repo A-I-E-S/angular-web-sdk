@@ -1,5 +1,6 @@
-import type { IconName } from '@aies/aies-icons';
 import type { Type } from '@angular/core';
+
+import type { IconName } from '@aies/aies-icons';
 
 /**
  * Selectable row for {@link SelectComponent}.

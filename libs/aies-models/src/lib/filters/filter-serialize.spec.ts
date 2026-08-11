@@ -1,14 +1,5 @@
-import type {
-  FilterParams,
-  FilterState,
-  ModuleFilterConfig,
-} from '@aies/aies-models';
-import {
-  cloneFilterState,
-  emptyFilterState,
-  fromFilterParams,
-  toFilterParams,
-} from '@aies/aies-models';
+import { FilterParams, FilterState, ModuleFilterConfig } from './filter-config.model';
+import { cloneFilterState, emptyFilterState, fromFilterParams, toFilterParams } from './filter-serialize';
 
 describe('filter-serialize', () => {
   const config: ModuleFilterConfig = {

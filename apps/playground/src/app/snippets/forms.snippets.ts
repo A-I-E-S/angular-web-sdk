@@ -3,7 +3,10 @@
  * Each export is a copy-paste-ready guide for consumer apps.
  */
 
-export const FORMS_TEXT = `
+export /**
+ *
+ */
+const FORMS_TEXT = `
 // =============================================================================
 // INTENT
 //   Single-line text fields with the shared label / hint / error pattern.
@@ -64,7 +67,10 @@ export class ShipmentReferenceFormComponent {
 }
 `;
 
-export const FORMS_TEXTAREA = `
+export /**
+ *
+ */
+const FORMS_TEXTAREA = `
 // =============================================================================
 // INTENT
 //   Multi-line text with the same label / hint / error contract as text inputs.
@@ -110,7 +116,10 @@ export class ShipmentInstructionsFormComponent {
 }
 `;
 
-export const FORMS_NUMBER = `
+export /**
+ *
+ */
+const FORMS_NUMBER = `
 // =============================================================================
 // INTENT
 //   Numeric entry with optional prefix/suffix slots and display comma formatting.
@@ -160,7 +169,10 @@ export class ShipmentValueFormComponent {
 }
 `;
 
-export const FORMS_SELECT = `
+export /**
+ *
+ */
+const FORMS_SELECT = `
 // =============================================================================
 // INTENT
 //   Searchable single/multi select with optional free-text and entity creation.
@@ -296,7 +308,10 @@ export class WarehouseCreateModalComponent {}
 // };
 `;
 
-export const FORMS_CHOICE = `
+export /**
+ *
+ */
+const FORMS_CHOICE = `
 // =============================================================================
 // INTENT
 //   Boolean and single-choice inputs: checkbox, toggle, radio group.
@@ -372,7 +387,10 @@ export class ShipmentOptionsFormComponent {
 }
 `;
 
-export const FORMS_DATE_FILE = `
+export /**
+ *
+ */
+const FORMS_DATE_FILE = `
 // =============================================================================
 // INTENT
 //   Date selection (ISO string | null) and file upload with typed results.
@@ -435,7 +453,10 @@ export class ShipmentScheduleFormComponent {
 }
 `;
 
-export const FORMS_LIVE_VALUES = `
+export /**
+ *
+ */
+const FORMS_LIVE_VALUES = `
 // =============================================================================
 // INTENT
 //   Read bound form signals anywhere in the template — summary panels, debug

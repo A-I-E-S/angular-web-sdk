@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { readJson, writeJson } from './storage-json';
 import { StorageService } from './storage.service';
+import { readJson, writeJson } from './storage-json';
 
 /**
  * `sessionStorage`-backed {@link StorageService}.

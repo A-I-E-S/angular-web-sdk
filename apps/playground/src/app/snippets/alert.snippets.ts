@@ -2,7 +2,10 @@
  * Playground implementation snippets — Alert (@aies/aies-ui).
  */
 
-export const ALERT_VARIANTS = `
+export /**
+ *
+ */
+const ALERT_VARIANTS = `
 // =============================================================================
 // INTENT
 //   Inline page/section banners for info, success, warning, and danger.
@@ -58,7 +61,10 @@ export class AlertDemo {
 }
 `;
 
-export const ALERT_DISMISSIBLE = `
+export /**
+ *
+ */
+const ALERT_DISMISSIBLE = `
 // =============================================================================
 // INTENT
 //   Dismissible banners — default dismissible=true. Parent removes the node

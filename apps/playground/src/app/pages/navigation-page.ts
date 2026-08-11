@@ -1,14 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+
+import { filter, map, startWith } from 'rxjs';
+
 import {
+  type AiesNavItem,
   BreadcrumbComponent,
   SegmentComponent,
   TabDefDirective,
   TabsComponent,
-  type AiesNavItem,
 } from '@aies/aies-ui';
-import { filter, map, startWith } from 'rxjs';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -19,6 +21,9 @@ import {
   NAV_SEGMENT,
 } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-navigation-page',
   standalone: true,

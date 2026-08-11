@@ -1,5 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+
 import type {
   FilterParams,
   FilterState,
@@ -198,7 +199,9 @@ export class FiltersPage {
     },
   ];
 
-  protected readonly activeId = signal(this.modules[0]!.id);
+  protected readonly activeId = signal(
+    this.modules[0]?.id ?? 'track-shipments',
+  );
   protected readonly state = signal<FilterState>(emptyFilterState());
   protected readonly lastParams = signal<FilterParams>(
     toFilterParams(emptyFilterState(), trackShipmentsFilterConfig),
@@ -219,7 +222,10 @@ export class FiltersPage {
 
   protected openFilters(): void {
     const mod =
-      this.modules.find((m) => m.id === this.activeId()) ?? this.modules[0]!;
+      this.modules.find((m) => m.id === this.activeId()) ?? this.modules[0];
+    if (!mod) {
+      return;
+    }
     this.filterDrawer
       .open({
         config: mod.config,

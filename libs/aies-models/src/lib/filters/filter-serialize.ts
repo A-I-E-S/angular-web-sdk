@@ -6,6 +6,8 @@ import type {
 
 /**
  * Empty filter state — safe default before hydrate / after reset.
+ *
+ * @returns A state with an empty `values` map.
  */
 export function emptyFilterState(): FilterState {
   return { values: {} };
@@ -15,6 +17,7 @@ export function emptyFilterState(): FilterState {
  * Clone state so drawer edits do not mutate the host until Apply.
  *
  * @param state - Current filter state (or undefined).
+ * @returns A shallow copy safe to mutate in the drawer.
  */
 export function cloneFilterState(state?: FilterState | null): FilterState {
   if (state == null) {
@@ -42,6 +45,7 @@ export function cloneFilterState(state?: FilterState | null): FilterState {
  *
  * @param state - Current filter map state.
  * @param config - Module schema (controls transport + shared params).
+ * @returns Flat query / API bag ready for HttpParams or the router.
  */
 export function toFilterParams(
   state: FilterState,
@@ -109,6 +113,7 @@ export function toFilterParams(
  *
  * @param params - Router query params or API query object (stringish values).
  * @param config - Module schema.
+ * @returns Hydrated {@link FilterState}.
  */
 export function fromFilterParams(
   params: Record<string, string | number | null | undefined | readonly string[]>,
@@ -182,6 +187,7 @@ export function fromFilterParams(
  *
  * @param state - Mutable or immutable state to copy.
  * @param key - {@link FilterField.key} to clear.
+ * @returns Cloned state without that field value.
  */
 export function clearFilterField(
   state: FilterState,
@@ -197,6 +203,7 @@ export function clearFilterField(
  *
  * @param keepPagination - When true, preserve `page` / `size`.
  * @param state - Optional prior state for pagination retention.
+ * @returns Empty filter state, optionally retaining pagination.
  */
 export function resetFilterState(
   keepPagination = false,

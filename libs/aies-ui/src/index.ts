@@ -33,10 +33,10 @@ export { AlertComponent, type AlertVariant } from './lib/alert';
 
 // Filters (schema-driven list filter drawer)
 export {
-  FilterDrawerPanel,
-  FilterDrawerService,
   type FilterDrawerData,
+  FilterDrawerPanel,
   type FilterDrawerResult,
+  FilterDrawerService,
 } from './lib/filters';
 
 /**
@@ -50,17 +50,10 @@ export type { AsyncQueryState } from '@aies/aies-models';
  * drawers without a separate models import for the common path.
  */
 export {
-  FILTER_CONFIGS,
   clearFilterField,
   cloneFilterState,
   emptyFilterState,
-  fromFilterParams,
-  resetFilterState,
-  shipmentTrackingItemFilterConfig,
-  toFilterParams,
-  trackShipmentsFilterConfig,
-  updateShipmentsFilterConfig,
-  usersFilterConfig,
+  FILTER_CONFIGS,
   type FilterConfigId,
   type FilterField,
   type FilterFieldType,
@@ -68,20 +61,27 @@ export {
   type FilterOptionsSource,
   type FilterParams,
   type FilterState,
+  fromFilterParams,
   type ModuleFilterConfig,
+  resetFilterState,
+  shipmentTrackingItemFilterConfig,
+  toFilterParams,
+  trackShipmentsFilterConfig,
+  updateShipmentsFilterConfig,
+  usersFilterConfig,
 } from '@aies/aies-models';
 
 // Overlay
 export {
   AiesOverlayRef,
   ConfirmDialogComponent,
+  type ConfirmOptions,
   ConfirmService,
   DrawerService,
   ModalService,
   OVERLAY_DATA,
-  provideAiesUiOverlays,
-  type ConfirmOptions,
   type OverlayOpenConfig,
+  provideAiesUiOverlays,
 } from './lib/overlay';
 
 // Form controls (see libs/aies-ui/docs/form-controls.md)
@@ -89,36 +89,36 @@ export {
   CheckboxComponent,
   DatePickerComponent,
   FileUploadComponent,
+  type FileUploadResult,
   NumberInputComponent,
   RadioComponent,
+  type RadioOption,
   SelectComponent,
+  type SelectCreateConfig,
+  type SelectOption,
   TextareaComponent,
   TextInputComponent,
   ToggleComponent,
-  type FileUploadResult,
-  type RadioOption,
-  type SelectCreateConfig,
-  type SelectOption,
 } from './lib/forms';
 
 // Navigation (breadcrumb, tabs, segment — optional RouterLink on items)
 export {
+  type AiesNavItem,
   BreadcrumbComponent,
-  SegmentComponent,
-  TabDefDirective,
-  TabsComponent,
   isNavItemActive,
   navItemUrlTree,
-  type AiesNavItem,
+  SegmentComponent,
   type TabDefContext,
+  TabDefDirective,
+  TabsComponent,
 } from './lib/navigation';
 
 // Table
 export {
-  CellDefDirective,
-  TableComponent,
   type CellDefContext,
+  CellDefDirective,
   type TableColumn,
+  TableComponent,
   type TableSortChange,
 } from './lib/table';
 
@@ -133,8 +133,8 @@ export type { PaginationMeta } from '@aies/aies-models';
 
 // Stepper
 export {
-  StepDefDirective,
-  StepperComponent,
   type StepDefContext,
+  StepDefDirective,
   type StepDefinition,
+  StepperComponent,
 } from './lib/stepper';

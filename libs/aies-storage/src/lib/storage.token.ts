@@ -1,4 +1,4 @@
-import { InjectionToken, inject } from '@angular/core';
+import { inject,InjectionToken } from '@angular/core';
 
 import { LocalStorageService } from './local-storage.service';
 import { StorageService } from './storage.service';

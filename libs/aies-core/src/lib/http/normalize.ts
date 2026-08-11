@@ -8,6 +8,8 @@ import type {
  * Narrow unknown JSON into a record for defensive key reads.
  * Primitives and arrays are treated as non-objects so callers fall through
  * to the "unwrapped payload" path.
+ * @param value - Candidate JSON value.
+ * @returns A record when `value` is a plain object; otherwise `null`.
  */
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
@@ -20,6 +22,8 @@ function asRecord(value: unknown): Record<string, unknown> | null {
  * Whether the payload looks like an AIES API envelope.
  * Requires both `success` and `data` so accidental objects with only one
  * of those keys are not mis-classified as envelopes.
+ * @param value - Candidate JSON value.
+ * @returns True when both `success` and `data` keys are present.
  */
 function isWrappedEnvelope(value: unknown): boolean {
   const record = asRecord(value);
@@ -29,6 +33,8 @@ function isWrappedEnvelope(value: unknown): boolean {
 /**
  * Coalesce a single error entry so missing field/code become `null`.
  * `message` falls back to empty string because {@link ApiErrorDetail} requires it.
+ * @param value - Raw error entry from the wire.
+ * @returns A null-safe {@link ApiErrorDetail}.
  */
 function normalizeErrorDetail(value: unknown): ApiErrorDetail {
   const record = asRecord(value) ?? {};
@@ -42,6 +48,8 @@ function normalizeErrorDetail(value: unknown): ApiErrorDetail {
 /**
  * Map pagination from camelCase or snake_case wire forms.
  * Backends are inconsistent; reading both keeps consumers on one SDK shape.
+ * @param value - Raw pagination object (camelCase or snake_case).
+ * @returns Normalized meta, or `null` when `value` is not an object.
  */
 function normalizePagination(value: unknown): PaginationMeta | null {
   const record = asRecord(value);
@@ -86,24 +94,26 @@ function normalizePagination(value: unknown): PaginationMeta | null {
  */
 export function normalize<T>(raw: unknown): ApiResponseModel<T> {
   if (isWrappedEnvelope(raw)) {
-    const record = asRecord(raw)!;
-    const success = record['success'];
-    const statusCode =
-      record['statusCode'] ?? record['status_code'] ?? null;
+    const record = asRecord(raw);
+    if (record !== null) {
+      const success = record['success'];
+      const statusCode =
+        record['statusCode'] ?? record['status_code'] ?? null;
 
-    return {
-      success: typeof success === 'boolean' ? success : Boolean(success),
-      message: (record['message'] as string | null | undefined) ?? null,
-      data: (record['data'] as T | null | undefined) ?? null,
-      errors: Array.isArray(record['errors'])
-        ? record['errors'].map(normalizeErrorDetail)
-        : null,
-      pagination: normalizePagination(record['pagination']),
-      statusCode:
-        statusCode === null || statusCode === undefined
-          ? null
-          : Number(statusCode),
-    };
+      return {
+        success: typeof success === 'boolean' ? success : Boolean(success),
+        message: (record['message'] as string | null | undefined) ?? null,
+        data: (record['data'] as T | null | undefined) ?? null,
+        errors: Array.isArray(record['errors'])
+          ? record['errors'].map(normalizeErrorDetail)
+          : null,
+        pagination: normalizePagination(record['pagination']),
+        statusCode:
+          statusCode === null || statusCode === undefined
+            ? null
+            : Number(statusCode),
+      };
+    }
   }
 
   return {

@@ -1,5 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -8,6 +6,9 @@ import {
   input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
 
@@ -59,7 +60,7 @@ import type { AiesNavItem } from '../nav-item';
                 }
                 {{ item.label }}
               </span>
-            } @else if (item.routerLink != null && !item.disabled) {
+            } @else if (item.routerLink !== null && item.routerLink !== undefined && !item.disabled) {
               <a
                 class="inline-flex items-center gap-1 truncate transition-colors hover:underline"
                 [ngClass]="modeColor.classes().text"

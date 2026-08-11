@@ -1,11 +1,12 @@
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
 } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
 
 /**
  * Layout density for {@link LoadingStateComponent}.

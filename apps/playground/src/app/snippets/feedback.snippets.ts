@@ -1,6 +1,9 @@
 // Playground snippet modules — copy-paste implementation guides for feedback states.
 
-export const FEEDBACK_LOADING = `// Intent
+export /**
+ *
+ */
+const FEEDBACK_LOADING = `// Intent
 // Show blocking (block) vs compact (inline) loading indicators for async surfaces.
 // Spinner accent follows ModeColorService (SFN green / STN orange).
 //
@@ -48,7 +51,10 @@ import { LoadingStateComponent } from '@aies/aies-ui';
 })
 export class LoadingDemoComponent {}`;
 
-export const FEEDBACK_ERROR = `// Intent
+export /**
+ *
+ */
+const FEEDBACK_ERROR = `// Intent
 // Blocking error state for failed fetches — always includes a Retry control.
 //
 // Prerequisites
@@ -94,7 +100,10 @@ export class ErrorDemoComponent {
   }
 }`;
 
-export const FEEDBACK_EMPTY = `// Intent
+export /**
+ *
+ */
+const FEEDBACK_EMPTY = `// Intent
 // Blocking empty state when fetch succeeded but produced no rows / value.
 // Retry is always visible — often wired to resetFilters() or refetch().
 //
@@ -133,7 +142,10 @@ export class EmptyDemoComponent {
   }
 }`;
 
-export const FEEDBACK_ASYNC = `// Intent
+export /**
+ *
+ */
+const FEEDBACK_ASYNC = `// Intent
 // Wrap list/detail content in AsyncState — maps AsyncQueryState<T> to loading / error /
 // empty / success with non-blocking badges for background refetch and stale errors.
 //

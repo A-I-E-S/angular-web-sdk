@@ -1,5 +1,6 @@
-import type { OverlayHandle } from '@aies/aies-core';
 import { inject, Injectable } from '@angular/core';
+
+import type { OverlayHandle } from '@aies/aies-core';
 
 import { DrawerService } from '../overlay/drawer.service';
 import { FilterDrawerPanel } from './filter-drawer.panel';

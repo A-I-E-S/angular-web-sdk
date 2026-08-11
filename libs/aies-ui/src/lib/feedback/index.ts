@@ -7,5 +7,5 @@
 export { AsyncStateComponent } from './async-state.component';
 export { EmptyStateComponent } from './empty-state.component';
 export { ErrorStateComponent } from './error-state.component';
-export { LoadingStateComponent } from './loading-state.component';
 export type { LoadingStateMode } from './loading-state.component';
+export { LoadingStateComponent } from './loading-state.component';

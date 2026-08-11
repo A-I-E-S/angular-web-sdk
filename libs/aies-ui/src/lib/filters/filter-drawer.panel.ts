@@ -1,3 +1,11 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+
 import { AiesIconComponent } from '@aies/aies-icons';
 import type {
   FilterField,
@@ -9,13 +17,6 @@ import {
   resetFilterState,
   toFilterParams,
 } from '@aies/aies-models';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
 
 import { ButtonComponent } from '../button/button.component';
 import { DatePickerComponent } from '../forms/date-picker/date-picker.component';

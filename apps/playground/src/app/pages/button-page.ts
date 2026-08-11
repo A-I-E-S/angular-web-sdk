@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
   ButtonComponent,
@@ -19,6 +20,9 @@ import {
   BUTTON_VARIANTS,
 } from '../snippets';
 
+/**
+ *
+ */
 @Component({
   selector: 'app-button-page',
   standalone: true,

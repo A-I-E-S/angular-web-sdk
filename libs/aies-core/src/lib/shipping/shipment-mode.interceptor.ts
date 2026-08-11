@@ -13,6 +13,9 @@ import { ShippingModeService } from './shipping-mode.service';
  * Register alongside {@link authInterceptor} via `provideHttpClient`.
  * {@link ShippingModeService} is `providedIn: 'root'` and needs no extra provider.
  *
+ * @param req - Outgoing request.
+ * @param next - Next handler in the interceptor chain.
+ * @returns The downstream observable for the cloned request.
  * @example
  * ```ts
  * import { provideHttpClient, withInterceptors } from '@angular/common/http';

@@ -1,5 +1,3 @@
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
 import {
   CdkConnectedOverlay,
   CdkOverlayOrigin,
@@ -24,13 +22,16 @@ import {
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
 
+import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
+
 import { ModalService } from '../../overlay/modal.service';
 import {
   FORM_AFFIX_CLASS,
+  FORM_DISABLED_CLASS,
   FORM_ERROR_CLASS,
   FORM_FIELD_CLASS,
   FORM_FIELD_ERROR_CLASS,
-  FORM_DISABLED_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
@@ -230,6 +231,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       <div
         class="w-full rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto"
         role="listbox"
+        tabindex="-1"
         [attr.aria-multiselectable]="multiple() || null"
         (keydown)="onPanelKeydown($event)"
       >
@@ -254,6 +256,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             type="button"
             [class]="freeTextClass()"
             role="option"
+            [attr.aria-selected]="false"
             (click)="commitFreeText()"
             (mouseenter)="activeIndex.set(freeTextIndex())"
           >
@@ -294,7 +297,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           </button>
         }
 
-        @if (multiple() && maxSelected() != null) {
+        @if (multiple() && maxSelected() !== null && maxSelected() !== undefined) {
           <div
             class="px-3 py-1.5 text-caption text-neutral-600 dark:text-neutral-400 border-t border-border dark:border-white/10"
           >
@@ -587,7 +590,11 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
       : `${base} ${colors.softHover}`;
   }
 
-  /** Multi-select checkbox chrome for a list option. */
+  /**
+   * Multi-select checkbox chrome for a list option.
+   * @param opt - Option whose selection state drives the mark.
+   * @returns Tailwind class string for the checkbox glyph.
+   */
   protected multiCheckClass(opt: SelectOption<T>): string {
     const base =
       'inline-flex size-4 items-center justify-center rounded border shrink-0 text-white dark:border-white/20';
@@ -694,6 +701,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
    * Dismiss when the user clicks outside the panel.
    * Clicks on the trigger are ignored so {@link toggleOpen} owns that path
    * (avoids close-then-reopen when the transparent backdrop is not covering).
+   * @param event
    */
   protected onOutsideClick(event: MouseEvent): void {
     const origin = this.triggerOrigin()?.elementRef.nativeElement as

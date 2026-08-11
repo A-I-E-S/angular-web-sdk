@@ -25,6 +25,9 @@ interface ModelGroup {
   models: ModelEntry[];
 }
 
+/**
+ *
+ */
 @Component({
   selector: 'app-models-page',
   standalone: true,

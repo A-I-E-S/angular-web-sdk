@@ -1,5 +1,6 @@
-import { AiesIconComponent } from '@aies/aies-icons';
 import { Component, computed, signal } from '@angular/core';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 import type { AsyncQueryState } from '@aies/aies-models';
 import {
   AsyncStateComponent,
@@ -53,6 +54,9 @@ const SUCCESS_ROWS: DemoShipment[] = [
   },
 ];
 
+/**
+ *
+ */
 @Component({
   selector: 'app-feedback-page',
   standalone: true,

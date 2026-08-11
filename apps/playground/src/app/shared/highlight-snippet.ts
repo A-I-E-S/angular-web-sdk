@@ -1,9 +1,9 @@
 import hljs from 'highlight.js/lib/core';
+import bash from 'highlight.js/lib/languages/bash';
+import css from 'highlight.js/lib/languages/css';
+import json from 'highlight.js/lib/languages/json';
 import typescript from 'highlight.js/lib/languages/typescript';
 import xml from 'highlight.js/lib/languages/xml';
-import css from 'highlight.js/lib/languages/css';
-import bash from 'highlight.js/lib/languages/bash';
-import json from 'highlight.js/lib/languages/json';
 
 hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('ts', typescript);
@@ -19,10 +19,13 @@ hljs.registerLanguage('json', json);
 /**
  * Highlight a playground implementation snippet for IDE-like display.
  * Defaults to TypeScript (snippets are mostly TS + template literals).
+ * @param code - Raw source to highlight.
+ * @param language - highlight.js language id (default `typescript`).
+ * @returns HTML string with highlight.js span markup.
  */
 export function highlightSnippet(
   code: string,
-  language: string = 'typescript',
+  language = 'typescript',
 ): string {
   try {
     return hljs.highlight(code, {
