@@ -38,8 +38,9 @@ export class ConfirmService {
    * Opens {@link ConfirmDialogComponent} and resolves to whether the user
    * confirmed.
    *
-   * Backdrop / Escape dismissal maps to `false` (same as Cancel) so callers
-   * only branch on an affirmative click.
+   * Not dismissible by default. When `options.dismissible` is true, backdrop /
+   * Escape map to `false` (same as Cancel) so callers only branch on an
+   * affirmative click.
    *
    * @param options - Title, message, and button labels for the dialog.
    * @returns Observable that emits once with `true` / `false`, then completes.
@@ -48,8 +49,7 @@ export class ConfirmService {
     return this.modal
       .open<ConfirmOptions, boolean>(ConfirmDialogComponent, {
         data: options,
-        // Confirm should require an explicit choice when destructive.
-        disableClose: options.danger === true,
+        dismissible: options.dismissible === true,
       })
       .afterClosed()
       .pipe(map((result) => result === true));

@@ -8,7 +8,17 @@ interface CatalogCard {
   path: string;
   title: string;
   blurb: string;
-  icon: 'adjust' | 'warning' | 'accordion-menu' | 'warehouse' | 'align-justify' | 'abacus';
+  icon:
+    | 'adjust'
+    | 'warning'
+    | 'modal'
+    | 'accordion-menu'
+    | 'align-justify'
+    | 'warehouse'
+    | 'panel'
+    | 'abacus'
+    | 'palette'
+    | 'code';
   group: string;
 }
 
@@ -120,10 +130,24 @@ export class HomePage {
       group: 'Components',
     },
     {
+      path: '/components/overlays',
+      title: 'Overlays',
+      blurb: 'Modal, drawer, and confirm via service APIs.',
+      icon: 'modal',
+      group: 'Components',
+    },
+    {
       path: '/components/forms',
       title: 'Form controls',
       blurb: 'Text, select, number, upload, and more with errors.',
       icon: 'accordion-menu',
+      group: 'Components',
+    },
+    {
+      path: '/components/navigation/overview',
+      title: 'Navigation',
+      blurb: 'Breadcrumb, tabs, and segment — router or local.',
+      icon: 'panel',
       group: 'Components',
     },
     {
@@ -145,6 +169,20 @@ export class HomePage {
       title: 'Icon gallery',
       blurb: 'Browse and copy every IconName from the sprite.',
       icon: 'abacus',
+      group: 'Foundation',
+    },
+    {
+      path: '/tokens',
+      title: 'Design tokens',
+      blurb: 'Colors, type, and mode accents from the theme.',
+      icon: 'palette',
+      group: 'Foundation',
+    },
+    {
+      path: '/models',
+      title: 'Shared models',
+      blurb: 'Domain types shared across AIES packages.',
+      icon: 'code',
       group: 'Foundation',
     },
   ];

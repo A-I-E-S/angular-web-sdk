@@ -17,6 +17,11 @@ export const appRoutes: Route[] = [
       import('./pages/feedback-page').then((m) => m.FeedbackPage),
   },
   {
+    path: 'components/overlays',
+    loadComponent: () =>
+      import('./pages/overlay-page').then((m) => m.OverlayPage),
+  },
+  {
     path: 'components/forms',
     loadComponent: () =>
       import('./pages/forms-page').then((m) => m.FormsPage),

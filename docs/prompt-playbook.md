@@ -560,7 +560,7 @@ method that dynamically attaches the given component via ComponentPortal,
 injects `config.data` into it through an OVERLAY_DATA injection token, and
 returns an OverlayHandle with `close(result?)` and `afterClosed():
 Observable<TResult | undefined>`. Wire backdrop click and ESC to close()
-unless `disableClose` is set. Document the full open/close/result flow
+unless `dismissible: true` is set (default is locked). Document the full open/close/result flow
 with a worked TSDoc @example on ModalService.open(), including how the
 opened component reads OVERLAY_DATA and calls close() with a result. Note
 that SelectComponent's create-via-modal feature (6.5.4) depends on

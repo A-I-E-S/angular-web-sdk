@@ -9,6 +9,11 @@ import { Injector, type StaticProvider, type Type } from '@angular/core';
 
 import { AiesOverlayRef } from './aies-overlay-ref';
 import { OVERLAY_DATA } from './overlay-data.token';
+import {
+  type OverlaySurface,
+  playOverlayEnter,
+  playOverlayLeave,
+} from './overlay-motion';
 
 /**
  * Shared open options for modal and drawer surfaces.
@@ -18,8 +23,11 @@ import { OVERLAY_DATA } from './overlay-data.token';
 export interface OverlayOpenConfig<TData = unknown> {
   /** Arbitrary payload for the hosted component (query-param siblings, form seed, …). */
   data?: TData;
-  /** When true, backdrop click and Escape do not dismiss the overlay. */
-  disableClose?: boolean;
+  /**
+   * When true, backdrop click and Escape dismiss the overlay.
+   * Defaults to `false` — dialogs require an explicit close action.
+   */
+  dismissible?: boolean;
 }
 
 /**
@@ -38,10 +46,13 @@ export function attachOverlayContent<TData = unknown, TResult = unknown>(
   parentInjector: Injector,
   component: Type<unknown>,
   overlayConfig: OverlayConfig,
+  surface: OverlaySurface,
   config?: OverlayOpenConfig<TData>,
 ): OverlayHandle<TResult> {
   const overlayRef: OverlayRef = overlay.create(overlayConfig);
-  const handle = new AiesOverlayRef<TResult>(overlayRef);
+  const handle = new AiesOverlayRef<TResult>(overlayRef, () =>
+    playOverlayLeave(overlayRef, surface),
+  );
 
   const providers: StaticProvider[] = [
     { provide: AiesOverlayRef, useValue: handle },
@@ -55,8 +66,9 @@ export function attachOverlayContent<TData = unknown, TResult = unknown>(
 
   const portal = new ComponentPortal(component, null, injector);
   overlayRef.attach(portal);
+  playOverlayEnter(overlayRef, surface);
 
-  if (!config?.disableClose) {
+  if (config?.dismissible === true) {
     overlayRef.backdropClick().subscribe(() => handle.close());
     overlayRef.keydownEvents().subscribe((event: KeyboardEvent) => {
       if (event.key === 'Escape') {

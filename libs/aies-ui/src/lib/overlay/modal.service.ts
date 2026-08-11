@@ -40,8 +40,10 @@ import {
  * const modal = inject(ModalService);
  * const handle = modal.open< { id: string }, Shipment >(EditShipmentModal, {
  *   data: { id: shipmentId },
- *   disableClose: false,
  * });
+ *
+ * // Opt into backdrop / Escape dismiss:
+ * modal.open(QuickLookModal, { dismissible: true });
  *
  * handle.afterClosed().subscribe((result) => {
  *   if (result) {
@@ -58,8 +60,8 @@ export class ModalService implements OverlayOpener {
   /**
    * Opens `component` in a centered modal with a dimmed backdrop.
    *
-   * Backdrop click and Escape call {@link OverlayHandle.close} unless
-   * `config.disableClose` is set. `config.data` is available inside the
+   * Not dismissible by default — backdrop click and Escape do nothing unless
+   * `config.dismissible` is `true`. `config.data` is available inside the
    * hosted component via {@link OVERLAY_DATA}; call
    * `inject(AiesOverlayRef).close(result)` to dismiss with a value.
    *
@@ -90,7 +92,7 @@ export class ModalService implements OverlayOpener {
    *   { data: { id: 'SHP-1' } },
    * );
    * handle.afterClosed().subscribe((result) => {
-   *   console.log(result?.saved); // true when Save was clicked; undefined on backdrop/ESC
+   *   console.log(result?.saved); // true when Save was clicked; undefined on Cancel
    * });
    * ```
    */
@@ -106,7 +108,12 @@ export class ModalService implements OverlayOpener {
         hasBackdrop: true,
         // Token-named utilities: consumers' Tailwind scan picks these up from
         // the published UI bundle content path (see aies-theme THEME.md).
-        backdropClass: 'bg-ink/40',
+        backdropClass: [
+          'aies-overlay-backdrop',
+          'bg-ink/45',
+          'backdrop-blur-sm',
+          'dark:bg-ink/60',
+        ],
         panelClass: [
           'aies-modal-panel',
           'bg-white',
@@ -114,7 +121,7 @@ export class ModalService implements OverlayOpener {
           'text-ink',
           'dark:text-white',
           'rounded-lg',
-          'shadow-lg',
+          'shadow-xl',
           'border',
           'border-border',
           'dark:border-white/15',
@@ -123,6 +130,7 @@ export class ModalService implements OverlayOpener {
           'w-[min(100vw-2rem,32rem)]',
           'max-h-[min(100vh-2rem,90vh)]',
           'overflow-auto',
+          'will-change-transform',
         ],
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy: this.overlay
@@ -131,6 +139,7 @@ export class ModalService implements OverlayOpener {
           .centerHorizontally()
           .centerVertically(),
       },
+      'modal',
       config,
     );
   }

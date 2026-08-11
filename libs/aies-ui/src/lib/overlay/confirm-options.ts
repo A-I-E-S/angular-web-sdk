@@ -17,4 +17,9 @@ export interface ConfirmOptions {
    * actions read as high-risk before the click.
    */
   danger?: boolean;
+  /**
+   * When true, backdrop click and Escape dismiss as Cancel (`false`).
+   * Defaults to `false` — confirms require Confirm or Cancel.
+   */
+  dismissible?: boolean;
 }

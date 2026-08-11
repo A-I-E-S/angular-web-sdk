@@ -38,7 +38,7 @@ export interface OverlayOpener {
    */
   open<TData = unknown, TResult = unknown>(
     component: Type<unknown>,
-    config?: { data?: TData; disableClose?: boolean },
+    config?: { data?: TData; dismissible?: boolean },
   ): OverlayHandle<TResult>;
 }
 

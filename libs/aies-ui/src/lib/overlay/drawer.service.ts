@@ -27,9 +27,9 @@ export class DrawerService implements OverlayOpener {
   /**
    * Opens `component` in a right-side drawer panel with a dimmed backdrop.
    *
-   * Backdrop click and Escape dismiss unless `disableClose` is set. Inject
-   * {@link OVERLAY_DATA} and {@link AiesOverlayRef} inside the hosted
-   * component the same way as modals.
+   * Not dismissible by default — set `dismissible: true` for backdrop / Escape
+   * close. Inject {@link OVERLAY_DATA} and {@link AiesOverlayRef} inside the
+   * hosted component the same way as modals.
    *
    * @typeParam TData - Shape injected as {@link OVERLAY_DATA}.
    * @typeParam TResult - Value emitted by `afterClosed` when closed with a result.
@@ -47,14 +47,19 @@ export class DrawerService implements OverlayOpener {
       component,
       {
         hasBackdrop: true,
-        backdropClass: 'bg-ink/40',
+        backdropClass: [
+          'aies-overlay-backdrop',
+          'bg-ink/45',
+          'backdrop-blur-sm',
+          'dark:bg-ink/60',
+        ],
         panelClass: [
           'aies-drawer-panel',
           'bg-white',
           'dark:bg-ink-950',
           'text-ink',
           'dark:text-white',
-          'shadow-lg',
+          'shadow-xl',
           'border-l',
           'border-border',
           'dark:border-white/15',
@@ -62,6 +67,7 @@ export class DrawerService implements OverlayOpener {
           'w-[min(100vw,24rem)]',
           'overflow-auto',
           'p-6',
+          'will-change-transform',
         ],
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy: this.overlay
@@ -71,6 +77,7 @@ export class DrawerService implements OverlayOpener {
           .top('0')
           .bottom('0'),
       },
+      'drawer',
       config,
     );
   }

@@ -19,14 +19,19 @@ export class AiesOverlayRef<TResult = unknown>
 
   /**
    * @param overlayRef - CDK overlay hosting the content portal.
+   * @param playLeave - Optional leave animation that must finish before dispose.
    */
-  constructor(private readonly overlayRef: OverlayRef) {}
+  constructor(
+    private readonly overlayRef: OverlayRef,
+    private readonly playLeave?: () => Promise<void>,
+  ) {}
 
   /**
    * Disposes the overlay and emits `result` on {@link afterClosed}.
    *
    * Idempotent: later calls are ignored so backdrop + ESC + explicit close
-   * cannot emit twice.
+   * cannot emit twice. When a leave animation is configured, dispose waits
+   * until it finishes so the panel can blur/slide out.
    *
    * @param result - Optional value for callers awaiting the dialog outcome.
    */
@@ -35,9 +40,19 @@ export class AiesOverlayRef<TResult = unknown>
       return;
     }
     this.settled = true;
-    this.closed$.next(result);
-    this.closed$.complete();
-    this.overlayRef.dispose();
+
+    const finish = (): void => {
+      this.closed$.next(result);
+      this.closed$.complete();
+      this.overlayRef.dispose();
+    };
+
+    if (!this.playLeave) {
+      finish();
+      return;
+    }
+
+    void this.playLeave().then(finish, finish);
   }
 
   /**
