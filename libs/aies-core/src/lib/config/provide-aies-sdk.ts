@@ -22,11 +22,9 @@ import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
  * ```ts
  * // app.config.ts
  * import { ApplicationConfig } from '@angular/core';
- * import { provideHttpClient, withInterceptors } from '@angular/common/http';
  * import {
  *   provideAiesSdk,
- *   shipmentModeInterceptor,
- *   authInterceptor,
+ *   provideAiesHttpClient,
  * } from '@aies/aies-core';
  * import { provideSessionStorage } from '@aies/aies-storage';
  *
@@ -38,9 +36,9 @@ import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
  *     }),
  *     // Optional: override the localStorage default registered above
  *     // provideSessionStorage(),
- *     provideHttpClient(
- *       withInterceptors([shipmentModeInterceptor, authInterceptor]),
- *     ),
+ *     provideAiesHttpClient(),
+ *     // Or with app interceptors:
+ *     // provideAiesHttpClient({ interceptors: [loggingInterceptor] }),
  *   ],
  * };
  * ```

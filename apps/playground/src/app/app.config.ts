@@ -1,4 +1,3 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   ApplicationConfig,
   inject,
@@ -7,11 +6,7 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
-import {
-  authInterceptor,
-  provideAiesSdk,
-  shipmentModeInterceptor,
-} from '@aies/aies-core';
+import { provideAiesHttpClient, provideAiesSdk } from '@aies/aies-core';
 import { ThemeService } from '@aies/aies-theme';
 import { provideAiesUiOverlays } from '@aies/aies-ui';
 
@@ -28,9 +23,7 @@ const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),
     provideAiesSdk({ baseUrl: PLAYGROUND_API_BASE }),
-    provideHttpClient(
-      withInterceptors([shipmentModeInterceptor, authInterceptor]),
-    ),
+    provideAiesHttpClient(),
     provideAiesUiOverlays(),
     provideAppInitializer(() => {
       // Apply stored / system theme before first paint of themed chrome.

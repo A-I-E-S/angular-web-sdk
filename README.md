@@ -36,11 +36,9 @@ npm install @aies/aies-core @aies/aies-models @aies/aies-storage \
 ```ts
 // app.config.ts
 import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   provideAiesSdk,
-  shipmentModeInterceptor,
-  authInterceptor,
+  provideAiesHttpClient,
 } from '@aies/aies-core';
 import { provideAiesUiOverlays } from '@aies/aies-ui';
 import { ThemeService } from '@aies/aies-theme';
@@ -48,9 +46,9 @@ import { ThemeService } from '@aies/aies-theme';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAiesSdk({ baseUrl: 'https://api.example.com' }),
-    provideHttpClient(
-      withInterceptors([shipmentModeInterceptor, authInterceptor]),
-    ),
+    // Ships shipment-mode + auth interceptors; pass extras if needed:
+    // provideAiesHttpClient({ interceptors: [myInterceptor] })
+    provideAiesHttpClient(),
     provideAiesUiOverlays(),
     provideAppInitializer(() => {
       inject(ThemeService); // applies light/dark class early

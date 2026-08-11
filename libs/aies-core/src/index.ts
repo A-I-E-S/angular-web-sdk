@@ -15,6 +15,10 @@ export {
 } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
 export { normalize } from './lib/http/normalize';
+export {
+  type AiesHttpClientOptions,
+  provideAiesHttpClient,
+} from './lib/http/provide-aies-http-client';
 
 // Query defaults (plain object — no @tanstack dependency)
 export {

@@ -10,12 +10,7 @@ import { InjectionToken } from '@angular/core';
  * ```ts
  * // app.config.ts
  * import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
- * import { provideHttpClient, withInterceptors } from '@angular/common/http';
- * import {
- *   provideAiesSdk,
- *   shipmentModeInterceptor,
- *   authInterceptor,
- * } from '@aies/aies-core';
+ * import { provideAiesSdk, provideAiesHttpClient } from '@aies/aies-core';
  *
  * export const appConfig: ApplicationConfig = {
  *   providers: [
@@ -25,9 +20,7 @@ import { InjectionToken } from '@angular/core';
  *       timeout: 30_000,
  *       defaultHeaders: { 'X-App': 'stn-web' },
  *     }),
- *     provideHttpClient(
- *       withInterceptors([shipmentModeInterceptor, authInterceptor]),
- *     ),
+ *     provideAiesHttpClient(),
  *   ],
  * };
  * ```

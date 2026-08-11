@@ -18,11 +18,9 @@ Peer dependencies: `@angular/common`, `@angular/core`, `@angular/router`,
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
   provideAiesSdk,
-  shipmentModeInterceptor,
-  authInterceptor,
+  provideAiesHttpClient,
   provideOverlayRoutes,
   createAiesQueryClientDefaults,
 } from '@aies/aies-core';
@@ -30,9 +28,9 @@ import {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAiesSdk({ baseUrl: 'https://api.example.com', timeout: 30_000 }),
-    provideHttpClient(
-      withInterceptors([shipmentModeInterceptor, authInterceptor]),
-    ),
+    provideAiesHttpClient(),
+    // optional extras:
+    // provideAiesHttpClient({ interceptors: [correlationInterceptor] }),
     // optional: provideOverlayRoutes([{ paramKey: 'modal', routes: { ... } }]),
   ],
 };
@@ -47,7 +45,7 @@ export const appConfig: ApplicationConfig = {
 |------|---------|
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG` |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
-| HTTP | `ApiClient`, `normalize`, `authInterceptor`, `AUTH_TOKEN_PROVIDER` |
+| HTTP | `provideAiesHttpClient`, `ApiClient`, `normalize`, `authInterceptor`, `AUTH_TOKEN_PROVIDER` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |

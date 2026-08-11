@@ -39,16 +39,17 @@ export const AUTH_TOKEN_PROVIDER = new InjectionToken<AuthTokenProvider>(
  * Functional interceptor that sets `Authorization: Bearer <token>` when
  * {@link AUTH_TOKEN_PROVIDER} returns a non-null token.
  *
- * Compose with {@link shipmentModeInterceptor} in `provideHttpClient`.
+ * Compose via {@link provideAiesHttpClient} (preferred) or pass explicitly to
+ * `provideHttpClient(withInterceptors([...]))`.
  *
  * @param req - Outgoing request.
  * @param next - Next handler in the interceptor chain.
  * @returns The downstream observable for the (possibly cloned) request.
  * @example
  * ```ts
- * provideHttpClient(
- *   withInterceptors([shipmentModeInterceptor, authInterceptor]),
- * );
+ * provideAiesHttpClient(),
+ * // or with extras:
+ * provideAiesHttpClient({ interceptors: [myInterceptor] }),
  * ```
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

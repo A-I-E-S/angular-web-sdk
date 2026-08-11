@@ -10,29 +10,17 @@ import { ShippingModeService } from './shipping-mode.service';
  * this interceptor covers the header half so domain calls stay consistent
  * without each service remembering the header name.
  *
- * Register alongside {@link authInterceptor} via `provideHttpClient`.
- * {@link ShippingModeService} is `providedIn: 'root'` and needs no extra provider.
+ * Prefer {@link provideAiesHttpClient}, which registers this interceptor by
+ * default. {@link ShippingModeService} is `providedIn: 'root'` and needs no
+ * extra provider.
  *
  * @param req - Outgoing request.
  * @param next - Next handler in the interceptor chain.
  * @returns The downstream observable for the cloned request.
  * @example
  * ```ts
- * import { provideHttpClient, withInterceptors } from '@angular/common/http';
- * import {
- *   provideAiesSdk,
- *   shipmentModeInterceptor,
- *   authInterceptor,
- * } from '@aies/aies-core';
- *
- * export const appConfig = {
- *   providers: [
- *     provideAiesSdk({ baseUrl: 'https://api.example.com' }),
- *     provideHttpClient(
- *       withInterceptors([shipmentModeInterceptor, authInterceptor]),
- *     ),
- *   ],
- * };
+ * provideAiesSdk({ baseUrl: 'https://api.example.com' }),
+ * provideAiesHttpClient(),
  * ```
  */
 export const shipmentModeInterceptor: HttpInterceptorFn = (req, next) => {

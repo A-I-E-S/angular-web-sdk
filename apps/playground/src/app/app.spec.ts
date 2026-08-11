@@ -1,12 +1,7 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import {
-  authInterceptor,
-  provideAiesSdk,
-  shipmentModeInterceptor,
-} from '@aies/aies-core';
+import { provideAiesHttpClient, provideAiesSdk } from '@aies/aies-core';
 import { provideAiesUiOverlays } from '@aies/aies-ui';
 
 import { App } from './app';
@@ -19,9 +14,7 @@ describe('App', () => {
       providers: [
         provideRouter(appRoutes),
         provideAiesSdk({ baseUrl: 'https://example.invalid' }),
-        provideHttpClient(
-          withInterceptors([shipmentModeInterceptor, authInterceptor]),
-        ),
+        provideAiesHttpClient(),
         provideAiesUiOverlays(),
       ],
     }).compileComponents();
