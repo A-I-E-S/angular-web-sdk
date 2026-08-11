@@ -45,6 +45,11 @@ const appRoutes: Route[] = [
       import('./pages/filters-page').then((m) => m.FiltersPage),
   },
   {
+    path: 'components/tooltip',
+    loadComponent: () =>
+      import('./pages/tooltip-page').then((m) => m.TooltipPage),
+  },
+  {
     path: 'components/table',
     loadComponent: () =>
       import('./pages/table-page').then((m) => m.TablePage),

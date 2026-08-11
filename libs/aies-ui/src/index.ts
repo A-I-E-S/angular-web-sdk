@@ -31,6 +31,13 @@ export {
 // Alert (inline banners — distinct from ErrorState)
 export { AlertComponent, type AlertVariant } from './lib/alert';
 
+// Tooltip (contextual help — default icon or custom trigger)
+export {
+  TooltipComponent,
+  type TooltipPlacement,
+  TooltipTriggerDirective,
+} from './lib/tooltip';
+
 // Filters (schema-driven list filter drawer)
 export {
   type FilterDrawerData,

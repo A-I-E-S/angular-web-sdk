@@ -63,6 +63,12 @@ import { highlightSnippet } from './highlight-snippet';
         <ng-content />
       </div>
 
+      @if (subtext()) {
+        <p class="m-0 text-caption text-neutral-500 dark:text-neutral-400">
+          {{ subtext() }}
+        </p>
+      }
+
       @if (hasCode() && codeOpen()) {
         <div
           class="overflow-hidden rounded-xl border border-border bg-[#1e1e1e] text-white dark:border-white/10"
@@ -99,8 +105,13 @@ export class DemoSectionComponent {
 
   /** Section heading. */
   readonly title = input.required<string>();
-  /** Optional supporting sentence. */
+  /** Optional supporting sentence under the title. */
   readonly hint = input<string | null>(null);
+  /**
+   * Optional gotcha / clarification under the live demo
+   * (e.g. “`color` never appears in serialized params”).
+   */
+  readonly subtext = input<string | null>(null);
   /** Optional meta chip (e.g. "4 variants"). */
   readonly badge = input<string | null>(null);
   /** Use dashed muted canvas instead of solid white. */

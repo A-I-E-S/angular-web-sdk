@@ -164,6 +164,13 @@ export class HomePage {
       group: 'Components',
     },
     {
+      path: '/components/tooltip',
+      title: 'Tooltip',
+      blurb: 'Help tip with default icon or custom trigger target.',
+      icon: 'info-circle',
+      group: 'Components',
+    },
+    {
       path: '/components/navigation/overview',
       title: 'Navigation',
       blurb: 'Breadcrumb, tabs, and segment — router or local.',

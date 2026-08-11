@@ -18,11 +18,16 @@ import type {
  * ```ts
  * const filters = inject(FilterDrawerService);
  * filters
- *   .open({ config: trackShipmentsFilterConfig, state: current })
+ *   .open({
+ *     config: trackShipmentsFilterConfig,
+ *     state: current,
+ *     // Drawer stays open until the list request succeeds.
+ *     onApply: ({ params }) => this.shipments.load(params),
+ *   })
  *   .afterClosed()
  *   .subscribe((result) => {
  *     if (result?.applied) {
- *       applyQuery(result.params);
+ *       this.state.set(result.state);
  *     }
  *   });
  * ```
@@ -33,6 +38,9 @@ export class FilterDrawerService {
 
   /**
    * Opens the filter drawer (dismissible by default — backdrop / Escape cancel).
+   *
+   * Pass {@link FilterDrawerData.onApply} to keep the drawer open until your
+   * API call succeeds; omit it to close immediately on Apply.
    *
    * @param data - Module config, optional prior state, and host option lists.
    * @returns Overlay handle; `afterClosed` emits {@link FilterDrawerResult} on Apply.

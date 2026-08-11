@@ -2,9 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { isObservable, type Observable,take } from 'rxjs';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import type {
@@ -39,7 +43,9 @@ import type {
  *
  * Opened via {@link FilterDrawerService} (or {@link DrawerService} with this
  * component). Edits a cloned {@link FilterState}; Apply serializes with
- * {@link toFilterParams} and closes with {@link FilterDrawerResult}.
+ * {@link toFilterParams}. When {@link FilterDrawerData.onApply} is set, the
+ * drawer stays open until that call succeeds, then closes with
+ * {@link FilterDrawerResult}.
  */
 @Component({
   selector: 'aies-filter-drawer',
@@ -240,26 +246,33 @@ import type {
       </div>
 
       <div
-        class="flex shrink-0 gap-2 border-t border-border bg-white px-6 pt-3 pb-2 dark:border-white/10 dark:bg-ink-950"
+        class="flex shrink-0 flex-col gap-2 border-t border-border bg-white px-6 pt-3 pb-2 dark:border-white/10 dark:bg-ink-950"
       >
-        <button
-          aies-button
-          type="button"
-          variant="ghost"
-          class="flex-1"
-          (click)="onReset()"
-        >
-          Reset
-        </button>
-        <button
-          aies-button
-          type="button"
-          variant="primary"
-          class="flex-1"
-          (click)="onApply()"
-        >
-          Apply
-        </button>
+        @if (applyError(); as err) {
+          <p class="m-0 text-caption text-danger" role="alert">{{ err }}</p>
+        }
+        <div class="flex gap-2">
+          <button
+            aies-button
+            type="button"
+            variant="ghost"
+            class="flex-1"
+            [disabled]="applying()"
+            (click)="onReset()"
+          >
+            Reset
+          </button>
+          <button
+            aies-button
+            type="button"
+            variant="primary"
+            class="flex-1"
+            [disabled]="applying()"
+            (click)="onApply()"
+          >
+            {{ applying() ? 'Applying…' : 'Apply' }}
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -267,11 +280,17 @@ import type {
 export class FilterDrawerPanel {
   protected readonly data = inject<FilterDrawerData>(OVERLAY_DATA);
   protected readonly ref = inject(AiesOverlayRef<FilterDrawerResult>);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly config = this.data.config;
   protected readonly title = computed(
     () => this.data.title ?? 'Filters',
   );
+
+  /** True while {@link FilterDrawerData.onApply} is in flight. */
+  protected readonly applying = signal(false);
+  /** Last apply failure message (cleared on retry / success). */
+  protected readonly applyError = signal<string | null>(null);
 
   /** Local edit buffer — host state only updates on Apply. */
   protected readonly draft = signal<FilterState>(
@@ -475,8 +494,66 @@ export class FilterDrawerPanel {
   }
 
   protected onApply(): void {
+    if (this.applying()) {
+      return;
+    }
+
     const state = this.draft();
     const params = toFilterParams(state, this.config);
-    this.ref.close({ applied: true, state, params });
+    const result: FilterDrawerResult = { applied: true, state, params };
+    const hook = this.data.onApply;
+
+    if (!hook) {
+      this.ref.close(result);
+      return;
+    }
+
+    let pending: Observable<unknown> | Promise<unknown> | void;
+    try {
+      pending = hook({ state, params });
+    } catch (err) {
+      this.applyError.set(this.errorMessage(err));
+      return;
+    }
+
+    if (pending == null) {
+      this.ref.close(result);
+      return;
+    }
+
+    this.applying.set(true);
+    this.applyError.set(null);
+
+    const succeed = (): void => {
+      this.applying.set(false);
+      this.ref.close(result);
+    };
+    const fail = (err: unknown): void => {
+      this.applying.set(false);
+      this.applyError.set(this.errorMessage(err));
+    };
+
+    if (isObservable(pending)) {
+      pending.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => succeed(),
+        error: fail,
+      });
+      return;
+    }
+
+    void Promise.resolve(pending).then(succeed, fail);
+  }
+
+  private errorMessage(err: unknown): string {
+    if (typeof err === 'string' && err.trim()) {
+      return err;
+    }
+    if (err && typeof err === 'object' && 'message' in err) {
+      const msg = (err as { message?: unknown }).message;
+      if (typeof msg === 'string' && msg.trim()) {
+        return msg;
+      }
+    }
+    return 'Could not apply filters. Try again.';
   }
 }
