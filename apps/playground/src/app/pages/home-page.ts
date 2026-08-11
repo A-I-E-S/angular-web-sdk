@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ModeColorService } from '@aies/aies-theme';
 import { AiesIconComponent } from '@aies/aies-icons';
+import { ModeColorService } from '@aies/aies-theme';
 import { ButtonComponent } from '@aies/aies-ui';
 
 interface CatalogCard {
@@ -34,11 +34,6 @@ interface CatalogCard {
   template: `
     <div class="pg-page-enter flex flex-col gap-12">
       <section class="relative overflow-hidden rounded-2xl bg-ink-brand text-white">
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 w-1/2 opacity-40 pg-mode-glow"
-          [class]="modeColor.classes().bg"
-          style="mask-image: linear-gradient(90deg, transparent, black); -webkit-mask-image: linear-gradient(90deg, transparent, black);"
-        ></div>
         <div class="relative grid gap-8 px-6 py-10 sm:px-10 sm:py-14 lg:grid-cols-[1.4fr_1fr] lg:items-end">
           <div class="flex flex-col gap-5">
             <p class="m-0 text-caption font-medium uppercase tracking-[0.16em] text-white/70">

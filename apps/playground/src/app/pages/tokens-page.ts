@@ -20,6 +20,9 @@ interface TokenSwatch {
   group: string;
 }
 
+/**
+ * Design token catalog — Tailwind preset colors, typography scale, and mode accents.
+ */
 @Component({
   selector: 'app-tokens-page',
   standalone: true,
@@ -118,10 +121,18 @@ interface TokenSwatch {
       </app-demo-section>
 
       <app-demo-section
-        title="Mode accents in situ"
+        title="Mode accents in context"
+        hint="Not isolated swatches — accent tokens on real surfaces. Toggle STN/SFN in the header to see live primary buttons match these palettes."
         muted
         [code]="modeAccentsCode"
       >
+        <p class="m-0 mb-4 text-body-sm text-neutral-600 dark:text-neutral-400">
+          The color grids above show raw tokens. These cards show the same
+          <span class="pg-code">export</span> (SFN green) and
+          <span class="pg-code">import</span> (STN orange) families applied to
+          panels — the way mode accents appear in product UI. Switch shipping mode
+          in the sidebar header and compare with primary buttons elsewhere.
+        </p>
         <div class="grid gap-4 sm:grid-cols-2">
           <div class="rounded-xl bg-export-subtle p-5">
             <p class="m-0 text-caption font-medium uppercase tracking-wide text-export">SFN / export</p>

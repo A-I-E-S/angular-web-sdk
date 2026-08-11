@@ -78,20 +78,6 @@
   }
 }
 
-@keyframes pg-mode-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.pg-mode-glow {
-  animation: pg-mode-pulse 2.8s ease-in-out infinite;
-}
-
 /* Playground Show-code panels — VS Code Dark+ inspired token colors */
 .pg-code-block {
   color: #d4d4d4;
