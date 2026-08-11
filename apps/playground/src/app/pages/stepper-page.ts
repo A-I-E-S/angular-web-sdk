@@ -9,6 +9,7 @@ import {
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
 
 @Component({
   selector: 'app-stepper-page',
@@ -153,35 +154,8 @@ export class StepperPage {
     { key: 'confirm', label: 'Confirm' },
   ];
 
-  protected readonly linearCode = `import { StepperComponent, StepDefDirective, type StepDefinition } from '@aies/aies-ui';
-
-steps: StepDefinition[] = [
-  { key: 'route', label: 'Route', isValid: false },
-  { key: 'cargo', label: 'Cargo', isValid: true },
-  { key: 'review', label: 'Review' },
-];
-
-<aies-stepper
-  [steps]="steps"
-  [activeIndex]="index()"
-  [linear]="true"
-  (activeIndexChange)="index.set($event)"
->
-  <ng-template aiesStepDef="route">…</ng-template>
-  <ng-template aiesStepDef="cargo">…</ng-template>
-  <ng-template aiesStepDef="review">…</ng-template>
-</aies-stepper>`;
-
-  protected readonly freeCode = `<aies-stepper
-  [steps]="freeSteps"
-  [activeIndex]="freeIndex()"
-  [linear]="false"
-  (activeIndexChange)="freeIndex.set($event)"
->
-  <ng-template aiesStepDef="account">…</ng-template>
-  <ng-template aiesStepDef="billing">…</ng-template>
-  <ng-template aiesStepDef="confirm">…</ng-template>
-</aies-stepper>`;
+  protected readonly linearCode = STEPPER_LINEAR;
+  protected readonly freeCode = STEPPER_FREE;
 
   protected canGoNext(): boolean {
     const current = this.linearSteps()[this.linearIndex()];

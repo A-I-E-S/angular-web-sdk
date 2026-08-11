@@ -1,9 +1,9 @@
 # @aies/aies-ui
 
-Standalone Angular UI primitives for AIES apps: button, feedback states,
-overlays (modal / drawer / confirm), form controls, navigation chrome
-(breadcrumb / tabs / segment), table, pagination, and stepper. Styles use
-Tailwind utilities from `@aies/aies-theme`.
+Standalone Angular UI primitives for AIES apps: button, action menu,
+feedback states, overlays (modal / drawer / confirm), form controls,
+navigation chrome (breadcrumb / tabs / segment), table, pagination, and
+stepper. Styles use Tailwind utilities from `@aies/aies-theme`.
 
 ## Install
 
@@ -44,13 +44,17 @@ export const appConfig: ApplicationConfig = {
 | Area | Highlights |
 | --- | --- |
 | Button | `button[aies-button]` / `a[aies-button]` |
+| Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState` |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date |
 | Navigation | `Breadcrumb`, `Tabs` (+ `aiesTabDef`), `Segment` — optional `routerLink` per item |
-| Data | `TableComponent`, `PaginationComponent`, `StepperComponent` |
+| Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |
 
-Form control conventions: [docs/form-controls.md](./docs/form-controls.md).
+Form control conventions: [docs/form-controls.md](./docs/form-controls.md).  
+Action menu: [src/lib/action-menu/docs.md](./src/lib/action-menu/docs.md).  
+Table: [src/lib/table/docs.md](./src/lib/table/docs.md).  
+Pagination: [src/lib/pagination/docs.md](./src/lib/pagination/docs.md).
 
 ## Build / test
 

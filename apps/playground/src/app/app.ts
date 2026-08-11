@@ -45,6 +45,7 @@ export class App {
   protected readonly navLinks: NavLink[] = [
     { path: '/', label: 'Overview', group: 'Overview' },
     { path: '/components/button', label: 'Button', group: 'Components' },
+    { path: '/components/action-menu', label: 'Action menu', group: 'Components' },
     { path: '/components/feedback', label: 'Feedback', group: 'Components' },
     { path: '/components/overlays', label: 'Overlays', group: 'Components' },
     { path: '/components/forms', label: 'Forms', group: 'Components' },

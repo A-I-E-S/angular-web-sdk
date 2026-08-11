@@ -1,10 +1,21 @@
-import { booleanAttribute, Component, computed, input, signal } from '@angular/core';
+import {
+  booleanAttribute,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { AiesIconComponent } from '@aies/aies-icons';
 import { ButtonComponent } from '@aies/aies-ui';
 
+import { highlightSnippet } from './highlight-snippet';
+
 /**
  * Labeled demo canvas for showcasing a component variant group.
- * Optional `code` input reveals a Show code / Hide code toggle with a copyable snippet.
+ * Optional `code` input reveals a Show code / Hide code toggle with a
+ * syntax-highlighted, copyable implementation snippet.
  */
 @Component({
   selector: 'app-demo-section',
@@ -53,13 +64,14 @@ import { ButtonComponent } from '@aies/aies-ui';
 
       @if (hasCode() && codeOpen()) {
         <div
-          class="overflow-hidden rounded-xl border border-border bg-ink-950 text-white dark:border-white/10"
+          class="overflow-hidden rounded-xl border border-border bg-[#1e1e1e] text-white dark:border-white/10"
         >
           <div
             class="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-2"
           >
             <span class="text-caption font-medium uppercase tracking-wide text-white/50">
-              Example
+              Implementation
+              <span class="ml-2 normal-case tracking-normal text-white/35">TypeScript</span>
             </span>
             <button
               aies-button
@@ -74,14 +86,16 @@ import { ButtonComponent } from '@aies/aies-ui';
             </button>
           </div>
           <pre
-            class="m-0 max-h-[28rem] overflow-auto p-4 font-mono text-caption leading-relaxed text-white/90 whitespace-pre-wrap"
-          ><code>{{ code() }}</code></pre>
+            class="pg-code-block m-0 max-h-[min(70vh,40rem)] overflow-auto p-4 font-mono text-caption leading-relaxed"
+          ><code class="hljs language-typescript" [innerHTML]="highlightedCode()"></code></pre>
         </div>
       }
     </section>
   `,
 })
 export class DemoSectionComponent {
+  private readonly sanitizer = inject(DomSanitizer);
+
   /** Section heading. */
   readonly title = input.required<string>();
   /** Optional supporting sentence. */
@@ -102,6 +116,13 @@ export class DemoSectionComponent {
   protected readonly hasCode = computed(() => {
     const value = this.code();
     return value != null && value.trim().length > 0;
+  });
+
+  protected readonly highlightedCode = computed((): SafeHtml => {
+    const value = this.code() ?? '';
+    const html = highlightSnippet(value, 'typescript');
+    // Snippets are authored in-repo; highlight.js returns escaped markup.
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   });
 
   private copyResetTimer: ReturnType<typeof setTimeout> | null = null;

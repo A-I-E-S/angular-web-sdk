@@ -69,6 +69,8 @@ import { TableColumn, TableSortChange } from './table-column';
  *   </aies-table>
  * </aies-async-state>
  * ```
+ *
+ * Full prop tables and patterns: `src/lib/table/docs.md`.
  */
 @Component({
   selector: 'aies-table',

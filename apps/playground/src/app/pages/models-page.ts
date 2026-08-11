@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { MODELS_IMPORT } from '../snippets';
 
 interface ModelEntry {
   name: string;
@@ -55,20 +56,7 @@ interface ModelEntry {
   `,
 })
 export class ModelsPage {
-  protected readonly importCode = `import type {
-  ApiResponseModel,
-  AsyncQueryState,
-  PaginationMeta,
-  ShippingMode,
-} from '@aies/aies-models';
-
-const state: AsyncQueryState<Shipment[]> = {
-  data: undefined,
-  isLoading: true,
-  isFetching: true,
-  isError: false,
-  error: null,
-};`;
+  protected readonly importCode = MODELS_IMPORT;
 
   protected readonly models: ModelEntry[] = [
     {

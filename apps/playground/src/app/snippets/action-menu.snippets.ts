@@ -1,0 +1,231 @@
+/**
+ * Playground implementation snippets — action menu (@aies/aies-ui).
+ * Each export is a copy-paste-ready guide for consumer apps.
+ */
+
+export const ACTION_MENU_DEFAULT = `
+// =============================================================================
+// INTENT
+//   Overflow menu with the built-in ghost ellipsis trigger — typical for table
+//   action columns and compact toolbars.
+//
+// PREREQUISITES
+//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
+//
+// DO
+//   - Define items with stable string ids — actionSelect emits the chosen id.
+//   - Set ariaLabel when context is not obvious (row menus: include row name).
+//   - Branch in the handler on id (open, edit, delete, …).
+//
+// DON'T
+//   - Put navigation side effects inside the menu — handle in actionSelect.
+//   - Rely on array index — ids are the contract.
+//
+// CDK OVERLAY
+//   The menu panel renders in a CDK overlay attached to the document body, so
+//   it is not clipped by table overflow:hidden or scroll containers.
+// =============================================================================
+
+import { Component, signal } from '@angular/core';
+import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-shipment-row-actions-demo',
+  standalone: true,
+  imports: [ActionMenuComponent],
+  template: \`
+    <div class="flex flex-wrap items-center gap-4">
+      <aies-action-menu
+        [items]="items"
+        ariaLabel="Shipment actions"
+        (actionSelect)="onAction($event)"
+      />
+
+      <p class="m-0 text-body-sm">
+        Last action:
+        <span class="font-medium">{{ lastAction() ?? '—' }}</span>
+      </p>
+    </div>
+  \`,
+})
+export class ShipmentRowActionsDemoComponent {
+  protected readonly lastAction = signal<string | null>(null);
+
+  protected readonly items: AiesMenuItem[] = [
+    { id: 'open', label: 'Open', icon: 'eye' },
+    { id: 'edit', label: 'Edit', icon: 'edit' },
+    { id: 'copy', label: 'Copy reference', icon: 'copy' },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+    },
+  ];
+
+  protected onAction(id: string): void {
+    this.lastAction.set(id);
+    // switch (id) { case 'open': … case 'delete': … }
+  }
+}
+`;
+
+export const ACTION_MENU_CUSTOM = `
+// =============================================================================
+// INTENT
+//   Replace the default ellipsis with any projected control via aiesActionMenuTrigger.
+//   Useful for labeled toolbar buttons ("Actions", "More", icon-only custom chrome).
+//
+// PREREQUISITES
+//   @aies/aies-ui (ActionMenuComponent, ActionMenuTriggerDirective, ButtonComponent).
+//
+// DO
+//   - Wrap the trigger button inside <aies-action-menu> content projection.
+//   - Add aiesActionMenuTrigger on the clickable element.
+//   - Keep (actionSelect) on the host menu component.
+//
+// DON'T
+//   - Nest a second button without the directive — it will not toggle the menu.
+//   - Forget type="button" on buttons inside forms.
+// =============================================================================
+
+import { Component } from '@angular/core';
+import {
+  ActionMenuComponent,
+  ActionMenuTriggerDirective,
+  ButtonComponent,
+  type AiesMenuItem,
+} from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-shipment-toolbar-actions',
+  standalone: true,
+  imports: [ActionMenuComponent, ActionMenuTriggerDirective, ButtonComponent],
+  template: \`
+    <aies-action-menu
+      [items]="items"
+      ariaLabel="Shipment actions"
+      (actionSelect)="onAction($event)"
+    >
+      <button
+        type="button"
+        aies-button
+        aiesActionMenuTrigger
+        variant="secondary"
+        size="sm"
+      >
+        Actions
+      </button>
+    </aies-action-menu>
+  \`,
+})
+export class ShipmentToolbarActionsComponent {
+  protected readonly items: AiesMenuItem[] = [
+    { id: 'open', label: 'Open', icon: 'eye' },
+    { id: 'edit', label: 'Edit', icon: 'edit' },
+    { id: 'delete', label: 'Delete', icon: 'trash', danger: true, dividerBefore: true },
+  ];
+
+  protected onAction(id: string): void {
+    // handle id
+  }
+}
+`;
+
+export const ACTION_MENU_VARIANTS = `
+// =============================================================================
+// INTENT
+//   Item-level styling and interaction: danger destructive actions, disabled
+//   rows, and dividerBefore separators between groups.
+//
+// PREREQUISITES
+//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
+//
+// DO
+//   - Set danger: true on destructive actions (delete, void, revoke).
+//   - Use dividerBefore: true to separate destructive items from neutral ones.
+//   - Set disabled: true on items unavailable for the current row/state.
+//
+// DON'T
+//   - Hide destructive actions silently — disable with explanation in label or
+//     omit from items when the user lacks permission (server still validates).
+// =============================================================================
+
+import { Component } from '@angular/core';
+import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-shipment-action-variants',
+  standalone: true,
+  imports: [ActionMenuComponent],
+  template: \`
+    <aies-action-menu [items]="items" (actionSelect)="onAction($event)" />
+  \`,
+})
+export class ShipmentActionVariantsComponent {
+  protected readonly items: AiesMenuItem[] = [
+    { id: 'download', label: 'Download PDF', icon: 'download' },
+    { id: 'archive', label: 'Archive', disabled: true },
+    {
+      id: 'void',
+      label: 'Void shipment',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+    },
+  ];
+
+  protected onAction(id: string): void {
+    // disabled items never emit — only reachable ids fire here
+  }
+}
+`;
+
+export const ACTION_MENU_DISABLED = `
+// =============================================================================
+// INTENT
+//   Disable the entire menu — blocks opening the default trigger (or custom
+//   trigger when used with aiesActionMenuTrigger).
+//
+// PREREQUISITES
+//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
+//
+// DO
+//   - Bind [disabled] from row state (locked record, pending sync, no permission).
+//   - Keep items defined — re-enable when state clears.
+//
+// DON'T
+//   - Render an empty items array as a substitute for disabled — use [disabled].
+// =============================================================================
+
+import { Component, input } from '@angular/core';
+import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-shipment-action-menu-disabled',
+  standalone: true,
+  imports: [ActionMenuComponent],
+  template: \`
+    <aies-action-menu
+      [items]="items"
+      [disabled]="menuDisabled()"
+      (actionSelect)="onAction($event)"
+    />
+  \`,
+})
+export class ShipmentActionMenuDisabledComponent {
+  // Parent passes true when the row is locked or the user lacks edit rights.
+  readonly menuDisabled = input(false);
+
+  protected readonly items: AiesMenuItem[] = [
+    { id: 'open', label: 'Open', icon: 'eye' },
+    { id: 'edit', label: 'Edit', icon: 'edit' },
+    { id: 'delete', label: 'Delete', icon: 'trash', danger: true, dividerBefore: true },
+  ];
+
+  protected onAction(id: string): void {
+    // not reachable while [disabled]="true"
+  }
+}
+`;

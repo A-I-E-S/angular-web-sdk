@@ -10,6 +10,7 @@ interface CatalogCard {
   blurb: string;
   icon:
     | 'adjust'
+    | 'ellipsis-v'
     | 'warning'
     | 'modal'
     | 'accordion-menu'
@@ -120,6 +121,13 @@ export class HomePage {
       title: 'Button',
       blurb: 'Primary, secondary, ghost, danger — sizes and disabled.',
       icon: 'adjust',
+      group: 'Components',
+    },
+    {
+      path: '/components/action-menu',
+      title: 'Action menu',
+      blurb: 'Overflow menu for row and toolbar actions.',
+      icon: 'ellipsis-v',
       group: 'Components',
     },
     {

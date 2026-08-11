@@ -10,6 +10,12 @@ import {
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import {
+  FEEDBACK_ASYNC,
+  FEEDBACK_EMPTY,
+  FEEDBACK_ERROR,
+  FEEDBACK_LOADING,
+} from '../snippets';
 
 type DemoKind =
   | 'loading'
@@ -272,32 +278,10 @@ export class FeedbackPage {
     stale: 'Stale error',
   };
 
-  protected readonly loadingCode = `import { LoadingStateComponent } from '@aies/aies-ui';
-
-<aies-loading-state message="Loading shipments…" />
-<aies-loading-state mode="inline" message="Refreshing rates…" />`;
-
-  protected readonly errorCode = `import { ErrorStateComponent } from '@aies/aies-ui';
-
-<aies-error-state
-  message="Failed to load shipments."
-  (retry)="refetch()"
-/>`;
-
-  protected readonly emptyCode = `import { EmptyStateComponent } from '@aies/aies-ui';
-
-<aies-empty-state
-  message="No shipments match your filters."
-  (retry)="resetFilters()"
-/>`;
-
-  protected readonly asyncCode = `import { AsyncStateComponent } from '@aies/aies-ui';
-import type { AsyncQueryState } from '@aies/aies-models';
-
-<aies-async-state [state]="state()" (retry)="refetch()">
-  <!-- content when data is ready -->
-  <aies-table [columns]="columns" [rows]="state().data!" />
-</aies-async-state>`;
+  protected readonly loadingCode = FEEDBACK_LOADING;
+  protected readonly errorCode = FEEDBACK_ERROR;
+  protected readonly emptyCode = FEEDBACK_EMPTY;
+  protected readonly asyncCode = FEEDBACK_ASYNC;
 
   protected setDemo(kind: DemoKind): void {
     this.demo.set(kind);

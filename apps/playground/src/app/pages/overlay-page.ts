@@ -9,6 +9,11 @@ import {
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import {
+  OVERLAY_CONFIRM,
+  OVERLAY_DRAWER,
+  OVERLAY_MODAL,
+} from '../snippets';
+import {
   DemoDrawerPanel,
   DemoModalPanel,
 } from './overlay-demos';
@@ -114,42 +119,9 @@ export class OverlayPage {
   protected readonly drawerResult = signal<string | null>(null);
   protected readonly confirmResult = signal<string | null>(null);
 
-  protected readonly modalCode = `import { ModalService, provideAiesUiOverlays, OVERLAY_DATA, AiesOverlayRef } from '@aies/aies-ui';
-
-// app.config.ts
-providers: [provideAiesUiOverlays()]
-
-const modal = inject(ModalService);
-modal
-  .open(EditShipmentModal, {
-    data: { shipmentRef: 'SFN-1042' },
-    dismissible: false, // default
-  })
-  .afterClosed()
-  .subscribe((result) => { /* … */ });`;
-
-  protected readonly drawerCode = `import { DrawerService } from '@aies/aies-ui';
-
-inject(DrawerService)
-  .open(FiltersPanel, {
-    data: { facet: 'Status' },
-    dismissible: true,
-  })
-  .afterClosed()
-  .subscribe((result) => { /* … */ });`;
-
-  protected readonly confirmCode = `import { ConfirmService } from '@aies/aies-ui';
-
-inject(ConfirmService)
-  .confirm({
-    title: 'Delete shipment?',
-    message: 'This cannot be undone.',
-    confirmLabel: 'Delete',
-    danger: true,
-  })
-  .subscribe((ok) => {
-    if (ok) this.deleteShipment();
-  });`;
+  protected readonly modalCode = OVERLAY_MODAL;
+  protected readonly drawerCode = OVERLAY_DRAWER;
+  protected readonly confirmCode = OVERLAY_CONFIRM;
 
   protected openModal(dismissible: boolean): void {
     this.modal

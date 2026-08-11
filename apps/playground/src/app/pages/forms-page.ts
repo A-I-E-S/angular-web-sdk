@@ -18,6 +18,15 @@ import {
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import {
+  FORMS_CHOICE,
+  FORMS_DATE_FILE,
+  FORMS_LIVE_VALUES,
+  FORMS_NUMBER,
+  FORMS_SELECT,
+  FORMS_TEXT,
+  FORMS_TEXTAREA,
+} from '../snippets';
 
 @Component({
   selector: 'app-forms-page',
@@ -286,80 +295,13 @@ export class FormsPage {
   protected readonly cutoffDate = signal<string | null>(null);
   protected readonly files = signal<FileUploadResult[]>([]);
 
-  protected readonly textCode = `import { TextInputComponent } from '@aies/aies-ui';
-
-<aies-text-input
-  label="Tracking number"
-  hint="As printed on the airway bill"
-  placeholder="e.g. AWB-12345"
-  [(value)]="tracking"
-/>
-
-<aies-text-input label="Reference" [(value)]="reference">
-  <aies-icon prefix name="anchor" [size]="16" />
-</aies-text-input>
-
-<aies-text-input label="Email" error="Enter a valid email" [(value)]="email" />`;
-
-  protected readonly textareaCode = `<aies-textarea
-  label="Special instructions"
-  hint="Visible to warehouse staff"
-  placeholder="Fragile — keep upright"
-  [(value)]="instructions"
-/>`;
-
-  protected readonly numberCode = `<aies-number-input label="Declared value (USD)" [(value)]="amount">
-  <span prefix>$</span>
-</aies-number-input>
-
-<aies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
-  <span suffix>kg</span>
-</aies-number-input>`;
-
-  protected readonly selectCode = `<aies-select
-  label="Warehouse"
-  [options]="warehouses()"
-  [searchable]="true"
-  [(selected)]="selectedWarehouse"
->
-  <aies-icon prefix name="warehouse" [size]="16" />
-</aies-select>
-
-<aies-select
-  label="Tags"
-  [searchable]="true"
-  [allowFreeText]="true"
-  [multiple]="true"
-  [(options)]="tags"
-  [(selected)]="selectedTags"
-/>`;
-
-  protected readonly choiceCode = `<aies-checkbox label="Require signature on delivery" [(value)]="signature" />
-<aies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
-<aies-radio
-  label="Service level"
-  [options]="serviceLevels"
-  [(value)]="serviceLevel"
-/>`;
-
-  protected readonly dateFileCode = `<aies-date-picker label="Ready date" [(value)]="readyDate" />
-
-<aies-file-upload
-  label="Identity document"
-  accept="image/*,.pdf"
-  [allowCamera]="true"
-  [multiple]="true"
-  (filesSelected)="onFiles($event)"
-/>`;
-
-  protected readonly liveValuesCode = `// Two-way binds update signals — read them anywhere in the template
-tracking = signal('');
-amount = signal<number | null>(12500);
-selectedWarehouse = signal<SelectOption<string> | null>(null);
-
-{{ tracking() || '—' }}
-{{ amount() == null ? '—' : amount() }}
-{{ selectedWarehouse()?.label ?? '—' }}`;
+  protected readonly textCode = FORMS_TEXT;
+  protected readonly textareaCode = FORMS_TEXTAREA;
+  protected readonly numberCode = FORMS_NUMBER;
+  protected readonly selectCode = FORMS_SELECT;
+  protected readonly choiceCode = FORMS_CHOICE;
+  protected readonly dateFileCode = FORMS_DATE_FILE;
+  protected readonly liveValuesCode = FORMS_LIVE_VALUES;
 
   protected onFiles(next: FileUploadResult[]): void {
     this.files.set(next);

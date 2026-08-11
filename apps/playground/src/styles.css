@@ -91,3 +91,88 @@
 .pg-mode-glow {
   animation: pg-mode-pulse 2.8s ease-in-out infinite;
 }
+
+/* Playground Show-code panels — VS Code Dark+ inspired token colors */
+.pg-code-block {
+  color: #d4d4d4;
+  tab-size: 2;
+}
+
+.pg-code-block .hljs {
+  background: transparent;
+  color: inherit;
+}
+
+.pg-code-block .hljs-comment,
+.pg-code-block .hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.pg-code-block .hljs-keyword,
+.pg-code-block .hljs-selector-tag,
+.pg-code-block .hljs-literal,
+.pg-code-block .hljs-section,
+.pg-code-block .hljs-link {
+  color: #569cd6;
+}
+
+.pg-code-block .hljs-built_in,
+.pg-code-block .hljs-type {
+  color: #4ec9b0;
+}
+
+.pg-code-block .hljs-string,
+.pg-code-block .hljs-doctag,
+.pg-code-block .hljs-template-tag,
+.pg-code-block .hljs-template-variable,
+.pg-code-block .hljs-addition {
+  color: #ce9178;
+}
+
+.pg-code-block .hljs-number,
+.pg-code-block .hljs-regexp {
+  color: #b5cea8;
+}
+
+.pg-code-block .hljs-title,
+.pg-code-block .hljs-title.class_,
+.pg-code-block .hljs-title.function_ {
+  color: #dcdcaa;
+}
+
+.pg-code-block .hljs-attr,
+.pg-code-block .hljs-variable,
+.pg-code-block .hljs-params,
+.pg-code-block .hljs-property {
+  color: #9cdcfe;
+}
+
+.pg-code-block .hljs-tag,
+.pg-code-block .hljs-name,
+.pg-code-block .hljs-selector-id,
+.pg-code-block .hljs-selector-class {
+  color: #569cd6;
+}
+
+.pg-code-block .hljs-meta,
+.pg-code-block .hljs-meta .hljs-keyword {
+  color: #c586c0;
+}
+
+.pg-code-block .hljs-punctuation,
+.pg-code-block .hljs-operator {
+  color: #d4d4d4;
+}
+
+.pg-code-block .hljs-deletion {
+  color: #f44747;
+}
+
+.pg-code-block .hljs-emphasis {
+  font-style: italic;
+}
+
+.pg-code-block .hljs-strong {
+  font-weight: 600;
+}

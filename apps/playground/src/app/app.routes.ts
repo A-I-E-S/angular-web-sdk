@@ -12,6 +12,11 @@ export const appRoutes: Route[] = [
       import('./pages/button-page').then((m) => m.ButtonPage),
   },
   {
+    path: 'components/action-menu',
+    loadComponent: () =>
+      import('./pages/action-menu-page').then((m) => m.ActionMenuPage),
+  },
+  {
     path: 'components/feedback',
     loadComponent: () =>
       import('./pages/feedback-page').then((m) => m.FeedbackPage),

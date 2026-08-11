@@ -3,6 +3,7 @@ import { AiesIconComponent, ICON_NAMES, type IconName } from '@aies/aies-icons';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { ICONS_USAGE } from '../snippets';
 
 @Component({
   selector: 'app-icons-page',
@@ -86,11 +87,7 @@ export class IconsPage {
   protected readonly query = signal('');
   protected readonly copied = signal<string | null>(null);
 
-  protected readonly usageCode = `import { AiesIconComponent, type IconName } from '@aies/aies-icons';
-
-// Provide the sprite in app bootstrap / index (see package README), then:
-<aies-icon name="airplane" [size]="20" />
-<aies-icon [name]="icon" [size]="16" />`;
+  protected readonly usageCode = ICONS_USAGE;
 
   protected readonly filtered = computed(() => {
     const q = this.query().trim().toLowerCase();

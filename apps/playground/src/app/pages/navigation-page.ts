@@ -12,6 +12,12 @@ import { filter, map, startWith } from 'rxjs';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import {
+  NAV_BREADCRUMB,
+  NAV_LOCAL_TABS,
+  NAV_ROUTED_TABS,
+  NAV_SEGMENT,
+} from '../snippets';
 
 @Component({
   selector: 'app-navigation-page',
@@ -162,35 +168,10 @@ export class NavigationPage {
     { id: 'beta', label: 'Beta' },
   ];
 
-  protected readonly breadcrumbCode = `import { BreadcrumbComponent, type AiesNavItem } from '@aies/aies-ui';
-
-items: AiesNavItem[] = [
-  { id: 'home', label: 'Home', routerLink: '/' },
-  { id: 'shipments', label: 'Shipments', routerLink: '/shipments' },
-  { id: 'current', label: 'SFN-1042' }, // last = current page
-];
-
-<aies-breadcrumb [items]="items" />`;
-
-  protected readonly routedTabsCode = `items = [
-  { id: 'overview', label: 'Overview', routerLink: '/shipments/1/overview' },
-  { id: 'docs', label: 'Documents', routerLink: '/shipments/1/docs' },
-];
-
-<aies-tabs [items]="items" [(activeId)]="activeId" ariaLabel="Shipment" />
-<router-outlet />`;
-
-  protected readonly segmentCode = `items = [
-  { id: 'list', label: 'List', routerLink: '/shipments', queryParams: { view: 'list' } },
-  { id: 'map', label: 'Map', routerLink: '/shipments', queryParams: { view: 'map' } },
-];
-
-<aies-segment [items]="items" [(activeId)]="viewId" ariaLabel="View" />`;
-
-  protected readonly localTabsCode = `<aies-tabs [items]="localTabs" [(activeId)]="localTabId">
-  <ng-template aiesTabDef="alpha">Panel Alpha</ng-template>
-  <ng-template aiesTabDef="beta">Panel Beta</ng-template>
-</aies-tabs>`;
+  protected readonly breadcrumbCode = NAV_BREADCRUMB;
+  protected readonly routedTabsCode = NAV_ROUTED_TABS;
+  protected readonly segmentCode = NAV_SEGMENT;
+  protected readonly localTabsCode = NAV_LOCAL_TABS;
 
   /** Breadcrumb trail derived from the current URL (consumer pattern). */
   protected readonly crumbs = computed((): AiesNavItem[] => {

@@ -1,17 +1,20 @@
 import { Component, computed, signal } from '@angular/core';
 import type { AsyncQueryState, PaginationMeta } from '@aies/aies-models';
 import {
+  ActionMenuComponent,
   AsyncStateComponent,
   ButtonComponent,
   CellDefDirective,
   PaginationComponent,
   TableComponent,
+  type AiesMenuItem,
   type TableColumn,
   type TableSortChange,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { TABLE_COMPACT, TABLE_LIST } from '../snippets';
 
 interface DemoShipment {
   reference: string;
@@ -38,6 +41,7 @@ const PAGE_SIZE = 6;
     TableComponent,
     PaginationComponent,
     CellDefDirective,
+    ActionMenuComponent,
     ButtonComponent,
     AsyncStateComponent,
     PageHeaderComponent,
@@ -48,12 +52,12 @@ const PAGE_SIZE = 6;
       <app-page-header
         eyebrow="Components"
         title="Table & pagination"
-        description="Presentational table with template cells. Wrap in AsyncState for loading — the table never branches on fetch state itself."
+        description="Presentational table with template cells. Wrap in AsyncState for loading — the table never branches on fetch state itself. Full docs: libs/aies-ui/src/lib/table/docs.md"
       />
 
       <app-demo-section
         title="Shipments list"
-        hint="Sort emits upward; paging uses PaginationMeta from the API envelope."
+        hint="Sort emits upward; paging uses PaginationMeta. Row actions use aies-action-menu."
         badge="template cells"
         [code]="tableCode"
       >
@@ -108,14 +112,11 @@ const PAGE_SIZE = 6;
               </span>
             </ng-template>
             <ng-template aiesCellDef="actions" let-row>
-              <div class="flex gap-1">
-                <button aies-button type="button" variant="ghost" size="sm">
-                  Open
-                </button>
-                <button aies-button type="button" variant="ghost" size="sm">
-                  {{ row.reference }}
-                </button>
-              </div>
+              <aies-action-menu
+                [items]="rowActions"
+                [ariaLabel]="'Actions for ' + row.reference"
+                (actionSelect)="onRowAction($event, row)"
+              />
             </ng-template>
           </aies-table>
 
@@ -127,6 +128,11 @@ const PAGE_SIZE = 6;
             <aies-pagination [meta]="meta()" (pageChange)="onPageChange($event)" />
           </div>
         </aies-async-state>
+        @if (lastRowAction()) {
+          <p class="mt-3 m-0 text-caption text-neutral-600 dark:text-neutral-400">
+            Last row action: {{ lastRowAction() }}
+          </p>
+        }
       </app-demo-section>
 
       <app-demo-section title="Compact / text-only columns" muted [code]="compactCode">
@@ -139,8 +145,22 @@ export class TablePage {
   protected readonly page = signal(1);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly listDemo = signal<'ready' | 'loading' | 'empty' | 'error'>('ready');
+  protected readonly lastRowAction = signal<string | null>(null);
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
+
+  protected readonly rowActions: AiesMenuItem[] = [
+    { id: 'open', label: 'Open', icon: 'eye' },
+    { id: 'edit', label: 'Edit', icon: 'edit' },
+    { id: 'copy', label: 'Copy reference', icon: 'copy' },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: 'trash',
+      danger: true,
+      dividerBefore: true,
+    },
+  ];
 
   protected readonly columns: TableColumn<DemoShipment>[] = [
     { key: 'reference', header: 'Reference', sortable: true },
@@ -148,7 +168,7 @@ export class TablePage {
     { key: 'mode', header: 'Mode' },
     { key: 'destination', header: 'Destination', sortable: true },
     { key: 'valueUsd', header: 'Value', sortable: true, width: '7rem' },
-    { key: 'actions', header: '', width: '11rem' },
+    { key: 'actions', header: '', width: '3.5rem' },
   ];
 
   protected readonly compactColumns: TableColumn<DemoShipment>[] = [
@@ -157,28 +177,8 @@ export class TablePage {
     { key: 'status', header: 'Status' },
   ];
 
-  protected readonly tableCode = `import {
-  AsyncStateComponent,
-  TableComponent,
-  CellDefDirective,
-  PaginationComponent,
-} from '@aies/aies-ui';
-
-<aies-async-state [state]="listState()" (retry)="refetch()">
-  <aies-table
-    [columns]="columns"
-    [rows]="pageRows()"
-    [sort]="sort()"
-    (sortChange)="onSort($event)"
-  >
-    <ng-template aiesCellDef="status" let-row>
-      {{ row.status }}
-    </ng-template>
-  </aies-table>
-  <aies-pagination [meta]="meta()" (pageChange)="onPageChange($event)" />
-</aies-async-state>`;
-
-  protected readonly compactCode = `<aies-table [columns]="columns" [rows]="rows" />`;
+  protected readonly tableCode = TABLE_LIST;
+  protected readonly compactCode = TABLE_COMPACT;
 
   protected readonly sortedRows = computed(() => {
     const current = this.sort();
@@ -265,6 +265,10 @@ export class TablePage {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
+  }
+
+  protected onRowAction(id: string, row: DemoShipment): void {
+    this.lastRowAction.set(`${id} · ${row.reference}`);
   }
 
   protected formatUsd(value: number): string {

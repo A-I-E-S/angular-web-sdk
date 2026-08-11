@@ -9,6 +9,15 @@ import {
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { VariantLabelComponent } from '../shared/variant-label.component';
+import {
+  BUTTON_CONTEXT,
+  BUTTON_DISABLED,
+  BUTTON_ICONS,
+  BUTTON_LINKS,
+  BUTTON_MATRIX,
+  BUTTON_SIZES,
+  BUTTON_VARIANTS,
+} from '../snippets';
 
 @Component({
   selector: 'app-button-page',
@@ -173,35 +182,11 @@ export class ButtonPage {
     danger: 'Delete',
   };
 
-  protected readonly variantsCode = `import { ButtonComponent } from '@aies/aies-ui';
-
-<button aies-button type="button" variant="primary">Save shipment</button>
-<button aies-button type="button" variant="secondary">Save draft</button>
-<button aies-button type="button" variant="ghost">Cancel</button>
-<button aies-button type="button" variant="danger">Delete</button>`;
-
-  protected readonly sizesCode = `<button aies-button type="button" size="sm">Continue</button>
-<button aies-button type="button" size="md">Continue</button>
-<button aies-button type="button" size="lg">Continue</button>`;
-
-  protected readonly matrixCode = `<button aies-button type="button" [variant]="variant" [size]="size">
-  Action
-</button>`;
-
-  protected readonly iconsCode = `import { AiesIconComponent } from '@aies/aies-icons';
-
-<button aies-button type="button" variant="primary">
-  <aies-icon name="airplane" [size]="16" />
-  Create shipment
-</button>`;
-
-  protected readonly linksCode = `<a aies-button href="/shipments/new" variant="primary">Primary link</a>
-<a aies-button routerLink="/drafts" variant="secondary" size="sm">Secondary link</a>`;
-
-  protected readonly disabledCode = `<button aies-button type="button" variant="primary" disabled>Primary</button>
-<a aies-button href="/x" variant="ghost" [attr.aria-disabled]="true">Ghost link</a>`;
-
-  protected readonly contextCode = `<button aies-button type="button" variant="ghost" size="sm">Cancel</button>
-<button aies-button type="button" variant="secondary" size="sm">Save draft</button>
-<button aies-button type="button" variant="primary" size="sm">Submit</button>`;
+  protected readonly variantsCode = BUTTON_VARIANTS;
+  protected readonly sizesCode = BUTTON_SIZES;
+  protected readonly matrixCode = BUTTON_MATRIX;
+  protected readonly iconsCode = BUTTON_ICONS;
+  protected readonly linksCode = BUTTON_LINKS;
+  protected readonly disabledCode = BUTTON_DISABLED;
+  protected readonly contextCode = BUTTON_CONTEXT;
 }

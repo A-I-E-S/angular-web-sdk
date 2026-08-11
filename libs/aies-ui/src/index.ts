@@ -12,6 +12,13 @@ export {
   type ButtonVariant,
 } from './lib/button';
 
+// Action menu (overflow / row actions)
+export {
+  ActionMenuComponent,
+  ActionMenuTriggerDirective,
+  type AiesMenuItem,
+} from './lib/action-menu';
+
 // Feedback
 export {
   AsyncStateComponent,
