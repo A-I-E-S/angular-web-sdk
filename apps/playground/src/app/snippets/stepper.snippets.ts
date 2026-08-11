@@ -4,7 +4,7 @@
  */
 
 export const STEPPER_LINEAR = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Multi-step wizard with forward-blocking linear navigation.
 // Prerequisites: @aies/aies-ui StepperComponent + StepDefDirective; reactive
 //                step validity (forms, signals, or computed).
@@ -120,7 +120,7 @@ export class ShipmentWizardComponent {
 `;
 
 export const STEPPER_FREE = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Non-linear stepper — users jump to any step via header clicks.
 // Prerequisites: @aies/aies-ui StepperComponent + StepDefDirective; static or
 //                slowly-changing StepDefinition[] (no per-step validity gate).

@@ -1,6 +1,11 @@
 import { UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet,
+  type IsActiveMatchOptions,
+} from '@angular/router';
 import { ShippingModeService } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { ShippingMode } from '@aies/aies-models';
@@ -66,6 +71,28 @@ export class App {
 
   protected linksFor(group: NavLink['group']): NavLink[] {
     return this.navLinks.filter((l) => l.group === group);
+  }
+
+  /**
+   * Exact path match for catalog entries — subset matching caused stale active
+   * styling when {@link activeNavClass} changed (e.g. overlays kept SFN green
+   * while table showed STN orange). Navigation uses subset for child routes.
+   */
+  protected navActiveOptions(link: NavLink): IsActiveMatchOptions {
+    if (link.path.startsWith('/components/navigation')) {
+      return {
+        paths: 'subset',
+        queryParams: 'subset',
+        fragment: 'ignored',
+        matrixParams: 'ignored',
+      };
+    }
+    return {
+      paths: 'exact',
+      queryParams: 'exact',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    };
   }
 
   protected toggleTheme(): void {

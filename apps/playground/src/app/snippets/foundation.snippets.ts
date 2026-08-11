@@ -1,10 +1,10 @@
 /**
- * Playground code snippets — Foundation (tokens, icons, models).
+ * Playground code snippets — Foundation (tokens, icons).
  * Each export is a copy-ready implementation guide for demo panels.
  */
 
 export const TOKENS_SETUP = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Wire Tailwind to @aies/aies-theme so design tokens compile.
 // Prerequisites: tailwindcss + postcss in the app; aies-theme package linked.
 // Do:            Extend the published preset; scan app sources AND @aies/aies-ui
@@ -30,7 +30,7 @@ module.exports = {
 `;
 
 export const TOKENS_CORE = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Apply core ink / surface tokens for primary chrome and panels.
 // Prerequisites: TOKENS_SETUP applied; dark mode via ThemeService if needed.
 // Do:            Use literal utility strings (bg-ink, text-white, bg-ink-brand).
@@ -46,7 +46,7 @@ export const TOKENS_CORE = `
 `;
 
 export const TOKENS_NEUTRAL = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Neutral palette for borders, muted copy, and page backgrounds.
 // Prerequisites: TOKENS_SETUP applied.
 // Do:            Pair border-border with bg-background-welcome for cards;
@@ -65,7 +65,7 @@ export const TOKENS_NEUTRAL = `
 `;
 
 export const TOKENS_EXPORT = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       SFN / export green accents — static marketing or mode-fixed UI.
 // Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
 //                ModeColorService (see TOKENS_MODE_ACCENTS).
@@ -81,7 +81,7 @@ export const TOKENS_EXPORT = `
 `;
 
 export const TOKENS_IMPORT = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       STN / import orange accents — static marketing or mode-fixed UI.
 // Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
 //                ModeColorService (see TOKENS_MODE_ACCENTS).
@@ -97,7 +97,7 @@ export const TOKENS_IMPORT = `
 `;
 
 export const TOKENS_FEEDBACK = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Semantic status colors — independent of SFN/STN shipping mode.
 // Prerequisites: TOKENS_SETUP applied.
 // Do:            Pair bg-*-subtle with text-* for inline alerts and badges;
@@ -113,7 +113,7 @@ export const TOKENS_FEEDBACK = `
 `;
 
 export const TOKENS_TYPE = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Typography scale from the theme preset — headings through captions.
 // Prerequisites: TOKENS_SETUP applied; font stack inherited from preset.
 // Do:            Match semantic level to content hierarchy (heading-1 for page titles).
@@ -134,7 +134,7 @@ export const TOKENS_TYPE = `
 `;
 
 export const TOKENS_MODE_ACCENTS = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Dynamic primary chrome that follows the active shipping mode.
 // Prerequisites: ShippingModeService (via provideAiesSdk); ModeColorService from
 //                @aies/aies-theme; TOKENS_SETUP so export/import utilities compile.
@@ -181,7 +181,7 @@ export class ModeAccentDemoComponent {
 `;
 
 export const ICONS_USAGE = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
+// ── ARCHITECT GUIDE ─────────────────────────────────────────────────────
 // Intent:       Render icons from the shared SVG sprite with type-safe names.
 // Prerequisites: @aies/aies-icons package; sprite registered once at bootstrap
 //                (see package README / index.html symbol defs).
@@ -209,47 +209,4 @@ export class IconDemoComponent {
   // Typed binding — only valid sprite ids compile cleanly.
   protected readonly dynamicIcon: IconName = 'anchor';
 }
-`;
-
-export const MODELS_IMPORT = `
-// ── SENIOR ARCHITECT GUIDE ──────────────────────────────────────────────
-// Intent:       Share API and UI state shapes across features without Angular runtime.
-// Prerequisites: @aies/aies-models package; type-only imports (no providers).
-// Do:            Use AsyncQueryState with aies-async-state; PaginationMeta with
-//                aies-pagination; ShippingMode with ShippingModeService toggles.
-// Don't:        Duplicate these interfaces in feature code — import from aies-models.
-// ───────────────────────────────────────────────────────────────────────
-
-import type {
-  AsyncQueryState,
-  PaginationMeta,
-  ShippingMode,
-} from '@aies/aies-models';
-
-interface Shipment {
-  id: string;
-  reference: string;
-}
-
-// List fetch snapshot for aies-async-state bindings.
-const listState: AsyncQueryState<Shipment[]> = {
-  data: undefined,
-  isLoading: true,
-  isFetching: true,
-  isError: false,
-  error: null,
-};
-
-// API pagination envelope — pass directly to aies-pagination [meta].
-const meta: PaginationMeta = {
-  currentPage: 1,
-  perPage: 20,
-  totalItems: 128,
-  totalPages: 7,
-  hasNextPage: true,
-  hasPreviousPage: false,
-};
-
-// Product mode literal — aligns with ShippingModeService and theme accents.
-const mode: ShippingMode = 'sfn';
 `;
