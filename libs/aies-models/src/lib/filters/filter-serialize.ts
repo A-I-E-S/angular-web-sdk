@@ -7,10 +7,13 @@ import type {
 /**
  * Empty filter state — safe default before hydrate / after reset.
  *
- * @returns A state with an empty `values` map.
+ * Sort defaults to descending (`desc`) so list screens match the usual
+ * “newest first” API contract without an explicit Apply.
+ *
+ * @returns A state with an empty `values` map and `order: 'desc'`.
  */
 export function emptyFilterState(): FilterState {
-  return { values: {} };
+  return { values: {}, order: 'desc' };
 }
 
 /**

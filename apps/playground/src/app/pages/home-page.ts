@@ -22,7 +22,8 @@ interface CatalogCard {
     | 'abacus'
     | 'palette'
     | 'code'
-    | 'filter';
+    | 'filter'
+    | 'tags';
   group: string;
 }
 
@@ -126,6 +127,13 @@ export class HomePage {
       title: 'Alert',
       blurb: 'Dismissible info / success / warning / danger banners.',
       icon: 'info-circle',
+      group: 'Components',
+    },
+    {
+      path: '/components/chip',
+      title: 'Chip',
+      blurb: 'Compact status labels — soft fills, dark-safe tones.',
+      icon: 'tags',
       group: 'Components',
     },
     {

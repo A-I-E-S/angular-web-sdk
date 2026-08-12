@@ -57,9 +57,7 @@ const PAGE_SIZE = 20;
         (exportClick)="exportCsv()"
       >
         <ng-template aiesCellDef="status" let-row>
-          <span class="inline-flex rounded-md px-2 py-0.5 text-caption font-medium">
-            {{ row.status }}
-          </span>
+          <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
         </ng-template>
 
         <ng-template aiesCellDef="valueUsd" let-row>

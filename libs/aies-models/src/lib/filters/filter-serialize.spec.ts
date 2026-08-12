@@ -117,6 +117,7 @@ describe('filter-serialize', () => {
 
   it('clones without sharing the values object', () => {
     const state = emptyFilterState();
+    expect(state.order).toBe('desc');
     state.values['a'] = '1';
     const copy = cloneFilterState(state);
     copy.values['a'] = '2';

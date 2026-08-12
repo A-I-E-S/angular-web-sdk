@@ -22,7 +22,7 @@ export interface CellDefContext<T = unknown> {
  * @example
  * ```html
  * <ng-template aiesCellDef="status" let-row>
- *   <app-status-badge [status]="row.status" />
+ *   <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
  * </ng-template>
  * ```
  */

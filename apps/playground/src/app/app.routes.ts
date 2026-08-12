@@ -20,6 +20,11 @@ const appRoutes: Route[] = [
       import('./pages/alert-page').then((m) => m.AlertPage),
   },
   {
+    path: 'components/chip',
+    loadComponent: () =>
+      import('./pages/chip-page').then((m) => m.ChipPage),
+  },
+  {
     path: 'components/action-menu',
     loadComponent: () =>
       import('./pages/action-menu-page').then((m) => m.ActionMenuPage),

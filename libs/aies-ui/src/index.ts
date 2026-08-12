@@ -31,6 +31,13 @@ export {
 // Alert (inline banners — distinct from ErrorState / Toast)
 export { AlertComponent, type AlertVariant } from './lib/alert';
 
+// Chip (compact status labels)
+export {
+  ChipComponent,
+  type ChipSize,
+  type ChipVariant,
+} from './lib/chip';
+
 // Toast (transient stack — timed / persistent / HTTP-tagged)
 export {
   provideAiesToasts,

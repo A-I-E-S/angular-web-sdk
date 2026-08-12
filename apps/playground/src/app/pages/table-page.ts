@@ -7,6 +7,8 @@ import {
   AsyncStateComponent,
   ButtonComponent,
   CellDefDirective,
+  ChipComponent,
+  type ChipVariant,
   emptyFilterState,
   FilterDrawerService,
   PaginationComponent,
@@ -65,6 +67,7 @@ const PAGE_SIZE = 6;
     PaginationComponent,
     CellDefDirective,
     ActionMenuComponent,
+    ChipComponent,
     ButtonComponent,
     AsyncStateComponent,
     PageHeaderComponent,
@@ -113,30 +116,17 @@ const PAGE_SIZE = 6;
             (exportClick)="onExport()"
           >
             <ng-template aiesCellDef="status" let-row>
-              <span
-                class="inline-flex rounded-md px-2 py-0.5 text-caption font-medium"
-                [class.bg-export-subtle]="row.status === 'Delivered'"
-                [class.text-export]="row.status === 'Delivered'"
-                [class.bg-import-subtle]="row.status === 'In transit'"
-                [class.text-import]="row.status === 'In transit'"
-                [class.bg-warning-subtle]="row.status === 'Pending'"
-                [class.text-warning-dark]="row.status === 'Pending'"
-                [class.bg-danger-subtle]="row.status === 'Exception'"
-                [class.text-danger]="row.status === 'Exception'"
-              >
+              <aies-chip [variant]="statusVariant(row.status)">
                 {{ row.status }}
-              </span>
+              </aies-chip>
             </ng-template>
             <ng-template aiesCellDef="mode" let-row>
-              <span
-                class="text-caption font-medium uppercase tracking-wide"
-                [class.text-export]="row.mode === 'sfn'"
-                [class.text-import]="row.mode === 'stn'"
+              <aies-chip
+                [variant]="row.mode === 'sfn' ? 'export' : 'import'"
               >
-                {{ row.mode }}
-              </span>
-            </ng-template>
-            <ng-template aiesCellDef="valueUsd" let-row>
+                {{ row.mode.toUpperCase() }}
+              </aies-chip>
+            </ng-template>            <ng-template aiesCellDef="valueUsd" let-row>
               <span class="tabular-nums text-body-sm text-ink dark:text-white">
                 {{ formatUsd(row.valueUsd) }}
               </span>
@@ -351,6 +341,19 @@ export class TablePage {
     this.lastExport.set(
       `Export clicked · ${this.pageRows().length} rows on this page`,
     );
+  }
+
+  protected statusVariant(status: DemoShipment['status']): ChipVariant {
+    switch (status) {
+      case 'Delivered':
+        return 'success';
+      case 'In transit':
+        return 'import';
+      case 'Pending':
+        return 'warning';
+      case 'Exception':
+        return 'danger';
+    }
   }
 
   protected formatUsd(value: number): string {
