@@ -9,7 +9,7 @@ import {
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 
 import { AiesIconComponent } from '@aies/aies-icons';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ButtonComponent, CopyButtonComponent } from '@aies/aies-ui';
 
 import { highlightSnippet } from './highlight-snippet';
 
@@ -21,7 +21,7 @@ import { highlightSnippet } from './highlight-snippet';
 @Component({
   selector: 'app-demo-section',
   standalone: true,
-  imports: [ButtonComponent, AiesIconComponent],
+  imports: [ButtonComponent, AiesIconComponent, CopyButtonComponent],
   template: `
     <section class="flex flex-col gap-4">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -80,17 +80,11 @@ import { highlightSnippet } from './highlight-snippet';
               Implementation
               <span class="ml-2 normal-case tracking-normal text-white/35">TypeScript</span>
             </span>
-            <button
-              aies-button
-              type="button"
-              variant="ghost"
-              size="sm"
-              class="!text-white/80 hover:!bg-white/10 hover:!text-white"
-              (click)="copyCode()"
-            >
-              <aies-icon [name]="copied() ? 'check' : 'copy'" [size]="14" />
-              {{ copied() ? 'Copied' : 'Copy' }}
-            </button>
+            <aies-copy
+              [value]="code()!"
+              label="Copy"
+              buttonClass="!text-white/80 hover:!bg-white/10 hover:!text-white"
+            />
           </div>
           <pre
             class="pg-code-block m-0 max-h-[min(70vh,40rem)] overflow-auto p-4 font-mono text-caption leading-relaxed"
@@ -123,7 +117,6 @@ export class DemoSectionComponent {
   readonly code = input<string | null>(null);
 
   protected readonly codeOpen = signal(false);
-  protected readonly copied = signal(false);
 
   protected readonly hasCode = computed(() => {
     const value = this.code();
@@ -137,29 +130,7 @@ export class DemoSectionComponent {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   });
 
-  private copyResetTimer: ReturnType<typeof setTimeout> | null = null;
-
   protected toggleCode(): void {
     this.codeOpen.update((open) => !open);
-    if (!this.codeOpen()) {
-      this.copied.set(false);
-    }
-  }
-
-  protected async copyCode(): Promise<void> {
-    const value = this.code();
-    if (value == null || typeof navigator === 'undefined' || !navigator.clipboard) {
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(value);
-      this.copied.set(true);
-      if (this.copyResetTimer) {
-        clearTimeout(this.copyResetTimer);
-      }
-      this.copyResetTimer = setTimeout(() => this.copied.set(false), 1600);
-    } catch {
-      // Clipboard may be denied in some embedded contexts — leave UI unchanged.
-    }
   }
 }

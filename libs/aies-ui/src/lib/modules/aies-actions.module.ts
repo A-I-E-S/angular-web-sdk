@@ -5,15 +5,17 @@ import {
   ActionMenuTriggerDirective,
 } from '../action-menu';
 import { ButtonComponent } from '../button';
+import { CopyButtonComponent } from '../copy-button';
 
 const ACTIONS = [
   ButtonComponent,
+  CopyButtonComponent,
   ActionMenuComponent,
   ActionMenuTriggerDirective,
 ] as const;
 
 /**
- * Button + overflow action menu (and its trigger directive).
+ * Button, copy-to-clipboard control, and overflow action menu.
  *
  * @example
  * ```ts

@@ -14,6 +14,8 @@ import {
   ActionMenuComponent,
   AsyncStateComponent,
   CellDefDirective,
+  ChipComponent,
+  CopyButtonComponent,
   PaginationComponent,
   TableComponent,
   type AiesMenuItem,
@@ -41,6 +43,8 @@ const PAGE_SIZE = 20;
     CellDefDirective,
     PaginationComponent,
     ActionMenuComponent,
+    ChipComponent,
+    CopyButtonComponent,
   ],
   template: \`
     <aies-async-state [state]="listState()" (retry)="refetch()">
@@ -56,6 +60,16 @@ const PAGE_SIZE = 20;
         (filterClick)="openFilters()"
         (exportClick)="exportCsv()"
       >
+        <ng-template aiesCellDef="reference" let-row>
+          <div class="flex items-center gap-1">
+            <span class="font-medium">{{ row.reference }}</span>
+            <aies-copy
+              [value]="row.reference"
+              [ariaLabel]="'Copy ' + row.reference"
+            />
+          </div>
+        </ng-template>
+
         <ng-template aiesCellDef="status" let-row>
           <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
         </ng-template>

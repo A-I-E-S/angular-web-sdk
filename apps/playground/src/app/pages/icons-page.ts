@@ -1,13 +1,15 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
+import { copyToClipboard } from '@aies/aies-core';
 import { AiesIconComponent, ICON_NAMES, type IconName } from '@aies/aies-icons';
+import { ToastService } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { ICONS_USAGE } from '../snippets';
 
 /**
- *
+ * Icon sprite catalog — click a tile to copy an `<aies-icon>` usage snippet.
  */
 @Component({
   selector: 'app-icons-page',
@@ -18,10 +20,10 @@ import { ICONS_USAGE } from '../snippets';
       <app-page-header
         eyebrow="Foundation"
         title="Icons"
-        description="SVG sprite registry — click any tile to copy its IconName for autocomplete-safe usage."
+        description="SVG sprite registry — click any icon to copy its usage snippet to the clipboard."
       >
         <div actions class="flex flex-col items-stretch gap-2 sm:items-end">
-          <p class="m-0 text-caption text-neutral-600">
+          <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
             {{ filtered().length }} of {{ ICON_NAMES.length }} shown
           </p>
         </div>
@@ -29,13 +31,21 @@ import { ICONS_USAGE } from '../snippets';
 
       <app-demo-section
         title="Usage"
-        hint="Register the sprite once, then drop aies-icon wherever you need it."
+        hint="Register the sprite once, then drop aies-icon wherever you need it. Click a sample to copy its snippet."
         [code]="usageCode"
       >
-        <div class="flex flex-wrap items-center gap-4 text-ink dark:text-white">
-          <aies-icon name="airplane" [size]="24" />
-          <aies-icon name="warehouse" [size]="24" />
-          <aies-icon name="warning" [size]="24" />
+        <div class="flex flex-wrap items-center gap-3 text-ink dark:text-white">
+          @for (sample of samples; track sample) {
+            <button
+              type="button"
+              class="inline-flex items-center justify-center rounded-lg border border-border bg-white p-2.5 transition hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
+              [attr.aria-label]="'Copy snippet for ' + sample"
+              [title]="'Copy <aies-icon name=&quot;' + sample + '&quot; />'"
+              (click)="copySnippet(sample)"
+            >
+              <aies-icon [name]="sample" [size]="24" />
+            </button>
+          }
           <span class="text-body-sm text-neutral-600 dark:text-neutral-400">
             Prefer typed IconName — never free-string icon ids.
           </span>
@@ -52,10 +62,10 @@ import { ICONS_USAGE } from '../snippets';
         />
         @if (copied()) {
           <p
-            class="m-0 rounded-lg bg-export-subtle px-3 py-1.5 text-caption font-medium text-export"
+            class="m-0 max-w-full truncate rounded-lg bg-export-subtle px-3 py-1.5 font-mono text-caption font-medium text-export dark:bg-export/15 dark:text-export-light"
             role="status"
           >
-            Copied “{{ copied() }}”
+            Copied {{ copied() }}
           </p>
         }
       </div>
@@ -68,7 +78,9 @@ import { ICONS_USAGE } from '../snippets';
           <button
             type="button"
             class="group flex flex-col items-center gap-2.5 rounded-xl border border-border bg-white px-2 py-3.5 text-ink transition duration-150 hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-sm dark:border-white/10 dark:bg-ink dark:text-white dark:hover:border-white/25"
-            (click)="copyName(name)"
+            [attr.aria-label]="'Copy snippet for ' + name"
+            [title]="'Copy <aies-icon name=&quot;' + name + '&quot; />'"
+            (click)="copySnippet(name)"
           >
             <span
               class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-welcome text-ink transition group-hover:scale-105 dark:bg-ink-950 dark:text-white"
@@ -81,15 +93,21 @@ import { ICONS_USAGE } from '../snippets';
       </div>
 
       @if (!filtered().length) {
-        <p class="m-0 text-body text-neutral-600">No icons match “{{ query() }}”.</p>
+        <p class="m-0 text-body text-neutral-600 dark:text-neutral-400">
+          No icons match “{{ query() }}”.
+        </p>
       }
     </div>
   `,
 })
 export class IconsPage {
+  private readonly toast = inject(ToastService);
+
   protected readonly ICON_NAMES = ICON_NAMES;
   protected readonly query = signal('');
   protected readonly copied = signal<string | null>(null);
+
+  protected readonly samples: IconName[] = ['airplane', 'warehouse', 'warning'];
 
   protected readonly usageCode = ICONS_USAGE;
 
@@ -101,17 +119,33 @@ export class IconsPage {
     return ICON_NAMES.filter((n) => n.includes(q));
   });
 
-  protected async copyName(name: IconName): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(name);
-      this.copied.set(name);
-      window.setTimeout(() => {
-        if (this.copied() === name) {
-          this.copied.set(null);
-        }
-      }, 1600);
-    } catch {
+  /**
+   * Build a paste-ready `<aies-icon>` usage line for the given registry id.
+   * @param name - Icon slug.
+   * @returns HTML snippet string.
+   */
+  protected iconSnippet(name: IconName): string {
+    return `<aies-icon name="${name}" />`;
+  }
+
+  /**
+   * Copy the icon usage snippet to the clipboard and confirm via toast.
+   * @param name - Registry id to embed in the snippet.
+   */
+  protected async copySnippet(name: IconName): Promise<void> {
+    const snippet = this.iconSnippet(name);
+    const ok = await copyToClipboard(snippet);
+    if (!ok) {
+      this.toast.error('Could not copy to the clipboard.');
       this.copied.set(null);
+      return;
     }
+    this.copied.set(snippet);
+    this.toast.success(`Copied ${snippet}`);
+    window.setTimeout(() => {
+      if (this.copied() === snippet) {
+        this.copied.set(null);
+      }
+    }, 1600);
   }
 }

@@ -9,6 +9,7 @@ import {
   CellDefDirective,
   ChipComponent,
   type ChipVariant,
+  CopyButtonComponent,
   emptyFilterState,
   FilterDrawerService,
   PaginationComponent,
@@ -68,6 +69,7 @@ const PAGE_SIZE = 6;
     CellDefDirective,
     ActionMenuComponent,
     ChipComponent,
+    CopyButtonComponent,
     ButtonComponent,
     AsyncStateComponent,
     PageHeaderComponent,
@@ -115,6 +117,17 @@ const PAGE_SIZE = 6;
             (filterClick)="openFilters()"
             (exportClick)="onExport()"
           >
+            <ng-template aiesCellDef="reference" let-row>
+              <div class="flex items-center gap-1">
+                <span class="font-medium text-ink dark:text-white">{{
+                  row.reference
+                }}</span>
+                <aies-copy
+                  [value]="row.reference"
+                  [ariaLabel]="'Copy ' + row.reference"
+                />
+              </div>
+            </ng-template>
             <ng-template aiesCellDef="status" let-row>
               <aies-chip [variant]="statusVariant(row.status)">
                 {{ row.status }}
@@ -126,7 +139,8 @@ const PAGE_SIZE = 6;
               >
                 {{ row.mode.toUpperCase() }}
               </aies-chip>
-            </ng-template>            <ng-template aiesCellDef="valueUsd" let-row>
+            </ng-template>
+            <ng-template aiesCellDef="valueUsd" let-row>
               <span class="tabular-nums text-body-sm text-ink dark:text-white">
                 {{ formatUsd(row.valueUsd) }}
               </span>

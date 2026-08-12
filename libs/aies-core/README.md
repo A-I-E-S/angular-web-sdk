@@ -49,6 +49,7 @@ export const appConfig: ApplicationConfig = {
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
+| Browser | `copyToClipboard` |
 
 `MODAL_SERVICE` / `DRAWER_SERVICE` are tokens only — implementations ship in
 `@aies/aies-ui` to avoid circular dependencies.

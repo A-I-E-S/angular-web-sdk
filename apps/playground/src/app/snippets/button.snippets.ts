@@ -320,3 +320,36 @@ export class ShipmentToolbarComponent {
     // POST submit → on success close overlay or navigate to detail.
   }
 }`;
+
+export /**
+ *
+ */
+const BUTTON_COPY = `// Clipboard control — icon flips to check on success.
+// Optional [announce]="true" also fires a toast when ToastService is provided.
+
+import { Component, signal } from '@angular/core';
+import { CopyButtonComponent } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-copy-demo',
+  standalone: true,
+  imports: [CopyButtonComponent],
+  template: \`
+    <div class="flex flex-wrap items-center gap-4">
+      <code class="rounded-md bg-border/60 px-2 py-1 font-mono text-caption">
+        {{ reference() }}
+      </code>
+      <aies-copy [value]="reference()" ariaLabel="Copy reference" />
+      <aies-copy
+        [value]="snippet()"
+        label="Copy snippet"
+        [announce]="true"
+      />
+    </div>
+  \`,
+})
+export class CopyDemoComponent {
+  protected readonly reference = signal('SFN-1042');
+  protected readonly snippet = signal('<aies-icon name="airplane" />');
+}
+`;

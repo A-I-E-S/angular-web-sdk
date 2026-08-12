@@ -1,7 +1,7 @@
 <div class="flex min-h-full">
   <!-- Desktop sidebar -->
   <aside
-    class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-white dark:border-white/10 dark:bg-ink lg:flex"
+    class="pg-chrome sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border dark:border-white/10 lg:flex"
   >
     <div class="flex flex-col gap-1 border-b border-border px-5 py-5 dark:border-white/10">
       <a routerLink="/" class="text-heading-3 text-ink no-underline dark:text-white">
@@ -52,7 +52,7 @@
 
   <div class="flex min-w-0 flex-1 flex-col">
     <header
-      class="sticky top-0 z-30 border-b border-border bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-ink-950/90"
+      class="pg-chrome-blur sticky top-0 z-30 border-b border-border backdrop-blur-md dark:border-white/10"
     >
       <div class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div class="flex items-center gap-3 lg:hidden">
@@ -126,7 +126,7 @@
           aria-label="Close navigation"
           (click)="closeMobileNav()"
         ></button>
-        <div class="absolute inset-y-0 left-0 flex w-72 flex-col bg-white shadow-lg dark:bg-ink">
+        <div class="pg-chrome absolute inset-y-0 left-0 flex w-72 flex-col shadow-lg dark:bg-ink">
           <div
             class="flex items-center justify-between border-b border-border px-4 py-4 dark:border-white/10"
           >

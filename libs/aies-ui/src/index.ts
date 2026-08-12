@@ -12,6 +12,9 @@ export {
   type ButtonVariant,
 } from './lib/button';
 
+// Copy to clipboard
+export { CopyButtonComponent } from './lib/copy-button';
+
 // Action menu (overflow / row actions)
 export {
   ActionMenuComponent,

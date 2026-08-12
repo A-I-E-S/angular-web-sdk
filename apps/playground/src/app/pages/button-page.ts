@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
   ButtonComponent,
+  CopyButtonComponent,
   type ButtonSize,
   type ButtonVariant,
 } from '@aies/aies-ui';
@@ -12,6 +13,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 import { VariantLabelComponent } from '../shared/variant-label.component';
 import {
   BUTTON_CONTEXT,
+  BUTTON_COPY,
   BUTTON_DISABLED,
   BUTTON_ICONS,
   BUTTON_LINKS,
@@ -28,6 +30,7 @@ import {
   standalone: true,
   imports: [
     ButtonComponent,
+    CopyButtonComponent,
     AiesIconComponent,
     PageHeaderComponent,
     DemoSectionComponent,
@@ -150,6 +153,26 @@ import {
       </app-demo-section>
 
       <app-demo-section
+        title="Copy to clipboard"
+        hint="aies-copy wraps copyToClipboard — icon-only or labeled; flips to check on success."
+        [code]="copyCode"
+      >
+        <div class="flex flex-wrap items-center gap-4">
+          <code
+            class="rounded-md bg-border/60 px-2.5 py-1.5 font-mono text-caption text-ink dark:bg-white/10 dark:text-white"
+          >
+            {{ copyReference }}
+          </code>
+          <aies-copy [value]="copyReference" ariaLabel="Copy reference" />
+          <aies-copy
+            [value]="copySnippet"
+            label="Copy snippet"
+            [announce]="true"
+          />
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
         title="In context"
         hint="A typical toolbar strip."
         [code]="contextCode"
@@ -193,4 +216,8 @@ export class ButtonPage {
   protected readonly linksCode = BUTTON_LINKS;
   protected readonly disabledCode = BUTTON_DISABLED;
   protected readonly contextCode = BUTTON_CONTEXT;
+  protected readonly copyCode = BUTTON_COPY;
+
+  protected readonly copyReference = 'SFN-1042';
+  protected readonly copySnippet = '<aies-icon name="airplane" />';
 }

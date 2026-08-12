@@ -42,6 +42,7 @@ export const appConfig: ApplicationConfig = {
 | Area | Highlights |
 | --- | --- |
 | Button | `button[aies-button]` / `a[aies-button]` |
+| Copy | `aies-copy` — clipboard icon button (`copyToClipboard`) |
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
@@ -53,6 +54,7 @@ export const appConfig: ApplicationConfig = {
 
 Form control conventions: [docs/form-controls.md](./docs/form-controls.md).  
 Alert: [src/lib/alert/docs.md](./src/lib/alert/docs.md).  
+Copy: [src/lib/copy-button/docs.md](./src/lib/copy-button/docs.md).  
 Chip: [src/lib/chip/docs.md](./src/lib/chip/docs.md).  
 Action menu: [src/lib/action-menu/docs.md](./src/lib/action-menu/docs.md).  
 Table: [src/lib/table/docs.md](./src/lib/table/docs.md).  

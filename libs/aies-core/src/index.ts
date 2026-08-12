@@ -58,3 +58,6 @@ export {
 } from './lib/overlay/overlay-tokens';
 export { provideOverlayRoutes } from './lib/overlay/provide-overlay-routes';
 export { RouteOverlayService } from './lib/overlay/route-overlay.service';
+
+// Browser utilities
+export { copyToClipboard } from './lib/browser';
