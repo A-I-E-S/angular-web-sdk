@@ -113,7 +113,7 @@ export {
   provideAiesUiOverlays,
 } from './lib/overlay';
 
-// Form controls (see libs/aies-ui/docs/form-controls.md)
+// Form controls
 export {
   acceptLabels,
   CheckboxComponent,
@@ -135,17 +135,55 @@ export {
   ToggleComponent,
 } from './lib/forms';
 
-// Navigation (breadcrumb, tabs, segment — optional RouterLink on items)
+// Navigation (breadcrumb, tabs, segment, side-nav — optional RouterLink)
 export {
   type AiesNavItem,
+  type AiesSideNavItem,
   BreadcrumbComponent,
   isNavItemActive,
   navItemUrlTree,
   SegmentComponent,
+  SideNavComponent,
   type TabDefContext,
   TabDefDirective,
   TabsComponent,
 } from './lib/navigation';
+
+// Layout (app shell scaffold)
+export {
+  AppShellComponent,
+  type AppShellContentWidth,
+  AppShellHeaderComponent,
+  type AppShellHeaderDensity,
+  AppShellHeaderEndDirective,
+  AppShellHeaderSlotDirective,
+  AppShellHeaderStartDirective,
+  type AppShellLayoutPreview,
+} from './lib/layout';
+
+// Brand
+export {
+  AIES_BRAND_LOGO_MINI_URL,
+  AIES_BRAND_LOGO_URL,
+  BrandLogoComponent,
+  type BrandLogoSize,
+} from './lib/brand';
+
+// Avatar
+export {
+  AvatarComponent,
+  AvatarMenuComponent,
+  type AvatarSize,
+} from './lib/avatar';
+
+// Notifications drawer
+export {
+  type AiesNotification,
+  type NotificationDrawerData,
+  NotificationDrawerPanel,
+  type NotificationDrawerResult,
+  NotificationDrawerService,
+} from './lib/notifications';
 
 // Table
 export {

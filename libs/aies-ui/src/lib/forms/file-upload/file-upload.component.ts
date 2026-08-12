@@ -63,7 +63,7 @@ export interface FileUploadResult {
 let nextFileUploadId = 0;
 
 /**
- * File / camera / drag-and-drop picker following `libs/aies-ui/docs/form-controls.md`.
+ * File / camera / drag-and-drop picker following the shared AIES form field pattern.
  *
  * **Prefix/suffix slots are N/A** — drop zone / trigger set, not a text field.
  *

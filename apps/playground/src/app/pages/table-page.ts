@@ -78,7 +78,7 @@ const PAGE_SIZE = 6;
       <app-page-header
         eyebrow="Components"
         title="Table & pagination"
-        description="Presentational table with template cells. Wrap in AsyncState for loading — the table never branches on fetch state itself. Full docs: libs/aies-ui/src/lib/table/docs.md"
+        description="Presentational table with template cells. Wrap in AsyncState for loading — the table never branches on fetch state itself."
       />
 
       <app-demo-section

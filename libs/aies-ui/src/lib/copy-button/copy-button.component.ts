@@ -46,9 +46,9 @@ import { ToastService } from '../toast/toast.service';
       [title]="resolvedAriaLabel()"
       (click)="onCopy()"
     >
-      <aies-icon [name]="copied() ? 'check' : 'copy'" [size]="iconSize()" />
+      <aies-icon [name]="showCopied() ? 'check' : 'copy'" [size]="iconSize()" />
       @if (label(); as text) {
-        <span>{{ copied() ? copiedLabel() : text }}</span>
+        <span>{{ showCopied() ? copiedLabel() : text }}</span>
       }
     </button>
   `,
@@ -90,7 +90,7 @@ export class CopyButtonComponent {
   readonly announce = input(false, { transform: booleanAttribute });
 
   /** Emitted after a successful clipboard write. */
-  readonly copiedChange = output<string>({ alias: 'copied' });
+  readonly copied = output<string>();
 
   /** Emitted when the clipboard write fails. */
   readonly failed = output<void>();
@@ -99,8 +99,6 @@ export class CopyButtonComponent {
   protected readonly showCopied = signal(false);
 
   private feedbackTimer: ReturnType<typeof setTimeout> | null = null;
-
-  protected readonly copied = this.showCopied.asReadonly();
 
   protected readonly iconSize = computed(() => (this.size() === 'lg' ? 18 : 14));
 
@@ -133,7 +131,7 @@ export class CopyButtonComponent {
         return;
       }
       this.flashCopied();
-      this.copiedChange.emit(text);
+      this.copied.emit(text);
       if (this.announce() && this.toastService) {
         const preview =
           text.length > 64 ? `${text.slice(0, 61).trimEnd()}…` : text;

@@ -25,6 +25,11 @@
             "glob": "**/*",
             "input": "libs/aies-icons/src/assets",
             "output": "assets/aies-icons"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/aies-ui/src/assets",
+            "output": "assets/aies-ui"
           }
         ],
         "styles": [

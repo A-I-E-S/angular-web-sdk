@@ -16,6 +16,9 @@ import {
  *
  * Requires {@link AIES_HTTP_TOAST} (from `provideAiesToasts` in `@aies/aies-ui`).
  * Untagged requests never toast. Missing handler → silent no-op.
+ * @param req - Outgoing HTTP request.
+ * @param next - Next interceptor handler.
+ * @returns Observable for the HTTP response stream.
  */
 export const httpToastInterceptor: HttpInterceptorFn = (req, next) => {
   const options = req.context.get(TOAST_HTTP_OPTIONS);

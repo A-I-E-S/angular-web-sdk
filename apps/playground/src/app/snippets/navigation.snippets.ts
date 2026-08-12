@@ -223,3 +223,130 @@ export class ShipmentEditorLocalTabsComponent {
   ];
 }
 `;
+
+export /**
+ *
+ */
+const NAV_SIDE = `// Ink-spine side nav — icons, nested children, collapse to icon rail.
+// Soft active highlight; collapsed: hover an icon for a label blade.
+
+import { Component, signal } from '@angular/core';
+import {
+  SideNavComponent,
+  type AiesSideNavItem,
+} from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-shell-nav',
+  standalone: true,
+  imports: [SideNavComponent],
+  template: \`
+    <div class="h-[28rem] overflow-visible rounded-xl border border-border dark:border-white/10">
+      <aies-side-nav
+        [items]="nav"
+        [(collapsed)]="collapsed"
+        [(activeId)]="activeId"
+        ariaLabel="Portal"
+      >
+      </aies-side-nav>
+    </div>
+  \`,
+})
+export class ShellNavComponent {
+  protected readonly collapsed = signal(false);
+  protected readonly activeId = signal('shipments');
+
+  protected readonly nav: AiesSideNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    {
+      id: 'shipments',
+      label: 'Shipments',
+      icon: 'truck',
+      badge: true,
+      children: [
+        { id: 'track', label: 'Track', icon: 'map-marker', badge: true },
+        { id: 'create', label: 'Create', icon: 'plus' },
+      ],
+    },
+    { id: 'warehouse', label: 'Warehouse', icon: 'warehouse' },
+    { id: 'settings', label: 'Settings', icon: 'cog' },
+  ];
+}
+`;
+
+export /**
+ *
+ */
+const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs, logo, logout, clock, notifications, avatar.
+// Needs provideAiesUiOverlays() for the notification drawer.
+// Playground data is static — your app owns crumbs, auth, and the inbox feed.
+
+import { Component, signal } from '@angular/core';
+import {
+  AppShellComponent,
+  SideNavComponent,
+  type AiesMenuItem,
+  type AiesNavItem,
+  type AiesNotification,
+  type AiesSideNavItem,
+} from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-product-shell',
+  standalone: true,
+  imports: [AppShellComponent, SideNavComponent],
+  template: \`
+    <aies-app-shell
+      contentWidth="5xl"
+      [breadcrumbs]="crumbs"
+      userName="Jane Doe"
+      [userMenuItems]="accountMenu"
+      [notifications]="notifications"
+    >
+      <aies-side-nav
+        sidenav
+        [items]="nav"
+        [(collapsed)]="collapsed"
+        [(activeId)]="activeId"
+        [showLogout]="true"
+        (logout)="signOut()"
+      >
+      </aies-side-nav>
+
+      <router-outlet />
+    </aies-app-shell>
+  \`,
+})
+export class ProductShellComponent {
+  protected readonly collapsed = signal(false);
+  protected readonly activeId = signal('home');
+
+  protected readonly crumbs: AiesNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    { id: 'shipments', label: 'Shipments' },
+    { id: 'track', label: 'STN-1042' },
+  ];
+
+  protected readonly accountMenu: AiesMenuItem[] = [
+    { label: 'Profile', icon: 'user', onClick: () => {} },
+    { label: 'Settings', icon: 'cog', onClick: () => {} },
+  ];
+
+  protected readonly notifications: AiesNotification[] = [
+    {
+      id: 'n1',
+      title: 'Shipment delivered',
+      timestamp: new Date().toISOString(),
+    },
+  ];
+
+  protected readonly nav: AiesSideNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    { id: 'shipments', label: 'Shipments', icon: 'truck' },
+  ];
+
+  protected signOut(): void {
+    // auth.signOut();
+  }
+}
+`;

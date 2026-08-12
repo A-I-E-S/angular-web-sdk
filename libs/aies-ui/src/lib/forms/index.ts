@@ -1,7 +1,7 @@
 /**
  * Form control barrel for `@aies/aies-ui`.
  *
- * Shared pattern: `libs/aies-ui/docs/form-controls.md`.
+ * Shared AIES form field pattern (label, hint, error, ControlValueAccessor).
  */
 
 export { CheckboxComponent } from './checkbox';

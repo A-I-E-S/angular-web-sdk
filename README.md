@@ -80,9 +80,8 @@ npx nx serve playground
 
 ## Docs
 
-- [Development prompt playbook](./docs/prompt-playbook.md)
 - [Contributing & release](./CONTRIBUTING.md)
-- Per-library READMEs under `libs/aies-*`
+- Per-library READMEs under `libs/aies-*` (playground at `npx nx serve playground` for live examples)
 
 ## Workspace scripts
 

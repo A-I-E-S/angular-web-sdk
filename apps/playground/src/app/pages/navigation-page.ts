@@ -5,20 +5,27 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import {
+  type AiesMenuItem,
   type AiesNavItem,
+  type AiesNotification,
+  type AiesSideNavItem,
   BreadcrumbComponent,
   SegmentComponent,
+  SideNavComponent,
   TabDefDirective,
   TabsComponent,
 } from '@aies/aies-ui';
 
+import { AppShellViewportPreviewComponent } from '../shared/app-shell-viewport-preview.component';
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import {
+  NAV_APP_SHELL,
   NAV_BREADCRUMB,
   NAV_LOCAL_TABS,
   NAV_ROUTED_TABS,
   NAV_SEGMENT,
+  NAV_SIDE,
 } from '../snippets';
 
 /**
@@ -28,10 +35,12 @@ import {
   selector: 'app-navigation-page',
   standalone: true,
   imports: [
+    AppShellViewportPreviewComponent,
     BreadcrumbComponent,
     TabsComponent,
     TabDefDirective,
     SegmentComponent,
+    SideNavComponent,
     RouterOutlet,
     PageHeaderComponent,
     DemoSectionComponent,
@@ -41,8 +50,90 @@ import {
       <app-page-header
         eyebrow="Components"
         title="Navigation"
-        description="Tabs and segment follow the browser URL via the consumer’s Router — cold-load /components/navigation/documents and Documents is selected."
+        description="Tabs, segment, and side nav follow the browser URL when items set routerLink — cold loads stay in sync."
       />
+
+      <app-demo-section
+        title="App shell — mobile"
+        hint="375px — menu button opens the side nav drawer; compact header without the clock."
+        badge="new"
+      >
+        <app-shell-viewport-preview
+          layout="mobile"
+          [sideNav]="sideNav"
+          [breadcrumbs]="shellBreadcrumbs"
+          userName="Jane Doe"
+          [userMenuItems]="userMenuItems"
+          [notifications]="shellNotifications"
+        />
+      </app-demo-section>
+
+      <app-demo-section
+        title="App shell — tablet"
+        hint="768px — same drawer nav as mobile, with more room and date/time in the header."
+        badge="new"
+      >
+        <app-shell-viewport-preview
+          layout="tablet"
+          [sideNav]="sideNav"
+          [breadcrumbs]="shellBreadcrumbs"
+          userName="Jane Doe"
+          [userMenuItems]="userMenuItems"
+          [notifications]="shellNotifications"
+        />
+      </app-demo-section>
+
+      <app-demo-section
+        title="App shell — desktop"
+        hint="1024px+ — persistent side rail and full header chrome. Sample data only."
+        badge="new"
+        [code]="appShellCode"
+      >
+        <app-shell-viewport-preview
+          layout="desktop"
+          [sideNav]="sideNav"
+          [breadcrumbs]="shellBreadcrumbs"
+          userName="Jane Doe"
+          [userMenuItems]="userMenuItems"
+          [notifications]="shellNotifications"
+        />
+      </app-demo-section>
+
+      <app-demo-section
+        title="Side nav"
+        hint="Ink spine + soft active highlight. Collapse to icons; hover reveals a label blade with nested links. badge: true shows a live-update dot."
+        badge="new"
+        [code]="sideNavCode"
+      >
+        <div
+          class="flex h-[28rem] overflow-visible rounded-xl border border-border dark:border-white/10"
+        >
+          <aies-side-nav
+            [items]="sideNav"
+            [(collapsed)]="sideCollapsed"
+            [(activeId)]="sideActiveId"
+            ariaLabel="Demo portal"
+          >
+          </aies-side-nav>
+          <div
+            class="flex min-w-0 flex-1 flex-col justify-center gap-2 bg-background-welcome/60 p-6 dark:bg-ink-950/40"
+          >
+            <p class="m-0 text-caption uppercase tracking-wide text-neutral-500">
+              Active
+            </p>
+            <p class="m-0 text-heading-3 text-ink dark:text-white">
+              {{ sideActiveId() }}
+            </p>
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              {{
+                sideCollapsed()
+                  ? 'Rail collapsed — hover an icon for the label blade.'
+                  : 'Expanded — open Shipments for nested items.'
+              }}
+            </p>
+          </div>
+        </div>
+      </app-demo-section>
 
       <app-demo-section
         title="Breadcrumb"
@@ -125,6 +216,57 @@ export class NavigationPage {
   protected readonly routeTabId = signal<string | null>(null);
   protected readonly densityId = signal<string | null>(null);
   protected readonly localTabId = signal('alpha');
+  protected readonly sideCollapsed = signal(false);
+  protected readonly sideActiveId = signal('track');
+
+  protected readonly shellBreadcrumbs: AiesNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    { id: 'shipments', label: 'Shipments' },
+    { id: 'track', label: 'STN-1042' },
+  ];
+
+  protected readonly userMenuItems: AiesMenuItem[] = [
+    { label: 'Profile', icon: 'user', onClick: () => undefined },
+    { label: 'Settings', icon: 'cog', onClick: () => undefined },
+    {
+      label: 'Sign out',
+      icon: 'sign-out',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => undefined,
+    },
+  ];
+
+  protected readonly shellNotifications: AiesNotification[] = [
+    {
+      id: 'n1',
+      title: 'Shipment STN-1042 delivered',
+      body: 'POD captured at Lagos hub.',
+      timestamp: new Date().toISOString(),
+    },
+    {
+      id: 'n2',
+      title: 'Warehouse sync complete',
+      timestamp: new Date(Date.now() - 3_600_000).toISOString(),
+      read: true,
+    },
+  ];
+
+  protected readonly sideNav: AiesSideNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    {
+      id: 'shipments',
+      label: 'Shipments',
+      icon: 'truck',
+      badge: true,
+      children: [
+        { id: 'track', label: 'Track', icon: 'map-marker', badge: true },
+        { id: 'create', label: 'Create', icon: 'plus' },
+      ],
+    },
+    { id: 'warehouse', label: 'Warehouse', icon: 'warehouse' },
+    { id: 'settings', label: 'Settings', icon: 'cog' },
+  ];
 
   protected readonly routeTabs: AiesNavItem[] = [
     {
@@ -177,6 +319,8 @@ export class NavigationPage {
   protected readonly routedTabsCode = NAV_ROUTED_TABS;
   protected readonly segmentCode = NAV_SEGMENT;
   protected readonly localTabsCode = NAV_LOCAL_TABS;
+  protected readonly sideNavCode = NAV_SIDE;
+  protected readonly appShellCode = NAV_APP_SHELL;
 
   /** Breadcrumb trail derived from the current URL (consumer pattern). */
   protected readonly crumbs = computed((): AiesNavItem[] => {

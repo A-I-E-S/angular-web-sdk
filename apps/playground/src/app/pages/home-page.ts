@@ -23,7 +23,8 @@ interface CatalogCard {
     | 'palette'
     | 'code'
     | 'filter'
-    | 'tags';
+    | 'tags'
+    | 'book';
   group: string;
 }
 
@@ -226,6 +227,13 @@ export class HomePage {
       blurb: 'Domain types shared across AIES packages.',
       icon: 'code',
       group: 'Foundation',
+    },
+    {
+      path: '/lecture',
+      title: 'Lecture',
+      blurb: 'Angular & RxJS concepts linked from code snippets.',
+      icon: 'book',
+      group: 'Learn',
     },
   ];
 }

@@ -16,7 +16,7 @@ import { ButtonComponent } from '@aies/aies-ui';
 interface NavLink {
   path: string;
   label: string;
-  group: 'Overview' | 'Components' | 'Foundation';
+  group: 'Overview' | 'Components' | 'Foundation' | 'Learn';
 }
 
 /**
@@ -44,11 +44,11 @@ export class App {
   protected readonly shippingMode = this.shipping.mode;
   protected readonly mobileNavOpen = signal(false);
 
-  /** Active nav classes follow the current shipment mode accent. */
+  /** Active nav — soft mode accent + semibold label (not solid fill). */
   protected readonly activeNavClass = computed(() =>
     this.shippingMode() === 'sfn'
-      ? 'bg-export-subtle text-export font-medium dark:bg-export/15 dark:text-export-light'
-      : 'bg-import-subtle text-import font-medium dark:bg-import/15 dark:text-import-light',
+      ? 'bg-export-subtle text-export font-semibold dark:bg-export/15 dark:text-export-light'
+      : 'bg-import-subtle text-import font-semibold dark:bg-import/15 dark:text-import-light',
   );
 
   protected readonly navLinks: NavLink[] = [
@@ -69,12 +69,14 @@ export class App {
     { path: '/icons', label: 'Icons', group: 'Foundation' },
     { path: '/tokens', label: 'Tokens', group: 'Foundation' },
     { path: '/models', label: 'Models', group: 'Foundation' },
+    { path: '/lecture', label: 'Lecture', group: 'Learn' },
   ];
 
   protected readonly groups: Array<NavLink['group']> = [
     'Overview',
     'Components',
     'Foundation',
+    'Learn',
   ];
 
   protected linksFor(group: NavLink['group']): NavLink[] {

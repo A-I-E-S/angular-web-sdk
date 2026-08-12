@@ -4,7 +4,7 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { provideAiesHttpClient, provideAiesSdk } from '@aies/aies-core';
 import { ThemeService } from '@aies/aies-theme';
@@ -21,7 +21,13 @@ export /**
 const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes),
+    provideRouter(
+      appRoutes,
+      withInMemoryScrolling({
+        anchorScrolling: 'enabled',
+        scrollPositionRestoration: 'enabled',
+      }),
+    ),
     provideAiesSdk({ baseUrl: PLAYGROUND_API_BASE }),
     provideAiesHttpClient(),
     provideAiesUiOverlays(),

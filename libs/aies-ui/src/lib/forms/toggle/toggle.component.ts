@@ -25,7 +25,7 @@ import {
 let nextToggleId = 0;
 
 /**
- * Boolean switch following `libs/aies-ui/docs/form-controls.md`.
+ * Boolean switch following the shared AIES form field pattern.
  *
  * **Prefix/suffix slots are omitted** — a toggle is a binary control; affix
  * projection does not apply.

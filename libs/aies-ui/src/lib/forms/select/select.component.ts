@@ -58,7 +58,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
 ];
 
 /**
- * Option select following `libs/aies-ui/docs/form-controls.md`.
+ * Option select following the shared AIES form field pattern.
  *
  * ## Single vs multiple (`selectedChange` shape)
  *

@@ -15,6 +15,8 @@ interface ModelEntry {
   name: string;
   packagePath: string;
   description: string;
+  /** TypeScript shape from `@aies/aies-models` (display-only). */
+  structure: string;
 }
 
 interface ModelGroup {
@@ -26,7 +28,7 @@ interface ModelGroup {
 }
 
 /**
- *
+ * Catalog of `@aies/aies-models` types with their field structures.
  */
 @Component({
   selector: 'app-models-page',
@@ -37,7 +39,7 @@ interface ModelGroup {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="TypeScript exports from @aies/aies-models — shared shapes with no Angular runtime. Open Show code on each section for wiring patterns."
+        description="TypeScript exports from @aies/aies-models — shared shapes with no Angular runtime. Each card shows the type structure; open Show code for wiring patterns."
       />
 
       <app-demo-section
@@ -47,7 +49,8 @@ interface ModelGroup {
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
           Use these shapes in feature state, API clients, and UI bindings (e.g.
-          AsyncQueryState for aies-async-state, PaginationMeta for aies-pagination).
+          AsyncQueryState for aies-async-state, PaginationMeta for aies-pagination /
+          aies-table [meta]).
         </p>
       </app-demo-section>
 
@@ -58,24 +61,27 @@ interface ModelGroup {
           [badge]="group.models.length + ''"
           [code]="group.code"
         >
-          <div class="grid gap-3">
+          <div class="grid gap-4">
             @for (entry of group.models; track entry.name) {
               <article
-                class="grid gap-3 rounded-xl border border-border bg-background-welcome p-4 dark:border-white/10 dark:bg-ink-950 sm:grid-cols-[8rem_1fr]"
+                class="flex flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink sm:p-5"
               >
-                <p
-                  class="m-0 text-caption font-medium uppercase tracking-[0.12em] text-neutral-400"
-                >
-                  {{ entry.packagePath }}
-                </p>
-                <div class="flex flex-col gap-1">
-                  <h2 class="m-0 font-mono text-body-sm font-medium text-ink dark:text-white">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 class="m-0 font-mono text-body font-medium text-ink dark:text-white">
                     {{ entry.name }}
                   </h2>
-                  <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-                    {{ entry.description }}
+                  <p
+                    class="m-0 text-caption font-medium uppercase tracking-[0.12em] text-neutral-400"
+                  >
+                    {{ entry.packagePath }}
                   </p>
                 </div>
+                <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+                  {{ entry.description }}
+                </p>
+                <pre
+                  class="m-0 overflow-x-auto rounded-lg border border-border bg-[#1e1e1e] p-3 font-mono text-caption leading-relaxed text-[#d4d4d4] dark:border-white/10"
+                ><code>{{ entry.structure }}</code></pre>
               </article>
             }
           </div>
@@ -99,11 +105,24 @@ export class ModelsPage {
           packagePath: 'api',
           description:
             'Canonical envelope: success, data, message, errors, pagination, statusCode.',
+          structure: `interface ApiResponseModel<T> {
+  success: boolean;
+  message: string | null;
+  data: T | null;
+  errors: ApiErrorDetail[] | null;
+  pagination: PaginationMeta | null;
+  statusCode: number | null;
+}`,
         },
         {
           name: 'ApiErrorDetail',
           packagePath: 'api',
           description: 'Field-level or global error detail on failed responses.',
+          structure: `interface ApiErrorDetail {
+  field: string | null;
+  message: string;
+  code: string | null;
+}`,
         },
       ],
     },
@@ -118,16 +137,30 @@ export class ModelsPage {
           packagePath: 'api',
           description:
             'Response-side slice: currentPage, perPage, totals, hasNext/PreviousPage.',
+          structure: `interface PaginationMeta {
+  currentPage: number;
+  perPage: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}`,
         },
         {
           name: 'PaginationQueryParams',
           packagePath: 'api',
           description: 'Request-side page / size / order helpers for list fetches.',
+          structure: `interface PaginationQueryParams {
+  page?: number;
+  size?: number;
+  order?: string;
+}`,
         },
         {
           name: 'ResourceId',
           packagePath: 'api',
           description: "Path segment union: null (list) | 'all' | number (detail).",
+          structure: `type ResourceId = number | 'all' | null;`,
         },
       ],
     },
@@ -142,6 +175,13 @@ export class ModelsPage {
           packagePath: 'async',
           description:
             'data, isLoading, isFetching, isError, error — map from injectQuery() or manual fetches.',
+          structure: `interface AsyncQueryState<T> {
+  data: T | undefined;
+  isLoading: boolean;
+  isFetching: boolean;
+  isError: boolean;
+  error: string | null;
+}`,
         },
       ],
     },
@@ -155,6 +195,7 @@ export class ModelsPage {
           name: 'ShippingMode',
           packagePath: 'shipping',
           description: "Product mode literal: 'stn' | 'sfn'.",
+          structure: `type ShippingMode = 'stn' | 'sfn';`,
         },
       ],
     },
@@ -168,17 +209,41 @@ export class ModelsPage {
           name: 'ModeConfigData',
           packagePath: 'mode',
           description: 'Top-level STN/SFN region, currency, and unit configuration.',
+          structure: `interface ModeConfigData {
+  sfn: ModeSfnConfig;
+  stn: ModeStnConfig;
+}`,
         },
         {
           name: 'ModeRegionConfig',
           packagePath: 'mode',
           description: 'Per-region currency symbol and measurement units.',
+          structure: `interface ModeRegionConfig {
+  dimensionUnit: 'cm' | 'inches';
+  massUnit: 'KG' | 'LBS';
+  currency: 'NGN' | 'USD';
+  currencySymbol: string;
+}`,
         },
         {
-          name: 'ModeSfnConfig / ModeStnConfig',
+          name: 'ModeSfnConfig',
           packagePath: 'mode',
-          description:
-            'Mode-specific region maps — different country keys by design (ng vs us/cn/gb).',
+          description: 'SFN region map — default + Nigeria (ng) only.',
+          structure: `interface ModeSfnConfig {
+  default: ModeRegionConfig;
+  ng: ModeRegionConfig;
+}`,
+        },
+        {
+          name: 'ModeStnConfig',
+          packagePath: 'mode',
+          description: 'STN region map — default + us / cn / gb.',
+          structure: `interface ModeStnConfig {
+  default: ModeRegionConfig;
+  us: ModeRegionConfig;
+  cn: ModeRegionConfig;
+  gb: ModeRegionConfig;
+}`,
         },
       ],
     },

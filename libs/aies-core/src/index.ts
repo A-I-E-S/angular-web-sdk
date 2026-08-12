@@ -14,17 +14,17 @@ export {
   type AuthTokenProvider,
 } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
+export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
 export { normalize } from './lib/http/normalize';
 export {
   type AiesHttpClientOptions,
   provideAiesHttpClient,
 } from './lib/http/provide-aies-http-client';
-export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
 export {
   AIES_HTTP_TOAST,
   type AiesHttpToastHandler,
-  type ToastHttpOptions,
   TOAST_HTTP_OPTIONS,
+  type ToastHttpOptions,
   withToast,
 } from './lib/http/toast-http.context';
 

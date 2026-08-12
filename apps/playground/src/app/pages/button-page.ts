@@ -3,9 +3,9 @@ import { Component } from '@angular/core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
   ButtonComponent,
-  CopyButtonComponent,
   type ButtonSize,
   type ButtonVariant,
+  CopyButtonComponent,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';

@@ -2,16 +2,18 @@ import {
   booleanAttribute,
   Component,
   computed,
+  HostListener,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import { ButtonComponent, CopyButtonComponent } from '@aies/aies-ui';
 
-import { highlightSnippet } from './highlight-snippet';
+import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
 
 /**
  * Labeled demo canvas for showcasing a component variant group.
@@ -96,6 +98,7 @@ import { highlightSnippet } from './highlight-snippet';
 })
 export class DemoSectionComponent {
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly router = inject(Router);
 
   /** Section heading. */
   readonly title = input.required<string>();
@@ -125,12 +128,29 @@ export class DemoSectionComponent {
 
   protected readonly highlightedCode = computed((): SafeHtml => {
     const value = this.code() ?? '';
-    const html = highlightSnippet(value, 'typescript');
+    const html = highlightSnippetWithGlossary(value, 'typescript');
     // Snippets are authored in-repo; highlight.js returns escaped markup.
     return this.sanitizer.bypassSecurityTrustHtml(html);
   });
 
   protected toggleCode(): void {
     this.codeOpen.update((open) => !open);
+  }
+
+  /**
+   * In-snippet glossary links use plain `<a>` tags — route in-app without reload.
+   * @param event
+   */
+  @HostListener('click', ['$event'])
+  protected onGlossaryLinkClick(event: MouseEvent): void {
+    const anchor = (event.target as HTMLElement).closest('a.pg-glossary-link');
+    if (!(anchor instanceof HTMLAnchorElement)) {
+      return;
+    }
+    event.preventDefault();
+    const url = new URL(anchor.href, window.location.origin);
+    void this.router.navigate([url.pathname], {
+      fragment: url.hash.replace(/^#/, '') || undefined,
+    });
   }
 }

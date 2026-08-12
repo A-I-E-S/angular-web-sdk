@@ -143,12 +143,12 @@ export class SegmentComponent {
 
   protected readonly selectedClass = computed(() => {
     const colors = this.modeColor.classes();
-    return `${colors.soft} ${colors.text} shadow-sm font-medium`;
+    return `${colors.soft} ${colors.text} shadow-sm font-semibold`;
   });
 
   protected readonly idleClass = computed(
     () =>
-      'text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white',
+      'font-medium text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white',
   );
 
   constructor() {

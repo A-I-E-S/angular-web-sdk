@@ -1,0 +1,229 @@
+import { DatePipe } from '@angular/common';
+import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  Directive,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { AiesIconComponent } from '@aies/aies-icons';
+
+import type { AiesMenuItem } from '../action-menu/menu-item';
+import { AvatarMenuComponent } from '../avatar';
+import { BreadcrumbComponent } from '../navigation/breadcrumb';
+import type { AiesNavItem } from '../navigation/nav-item';
+import type { AiesNotification } from '../notifications';
+import { NotificationDrawerService } from '../notifications';
+
+/** Header density — affects clock visibility in narrow layouts. */
+export type AppShellHeaderDensity = 'mobile' | 'tablet' | 'desktop';
+
+/**
+ * Marks projected content as extra leading chrome in {@link AppShellHeaderComponent}.
+ */
+@Directive({
+  selector: '[aiesAppShellHeaderStart]',
+  standalone: true,
+})
+export class AppShellHeaderStartDirective {}
+
+/**
+ * Marks projected content as extra trailing chrome in {@link AppShellHeaderComponent}.
+ */
+@Directive({
+  selector: '[aiesAppShellHeaderEnd]',
+  standalone: true,
+})
+export class AppShellHeaderEndDirective {}
+
+/**
+ * Product header bar for {@link AppShellComponent}: breadcrumbs, title, live
+ * clock, notification inbox drawer, and avatar account menu.
+ *
+ * @example
+ * ```html
+ * <aies-app-shell-header
+ *   title="Shipments"
+ *   [breadcrumbs]="crumbs"
+ *   userName="Jane Doe"
+ *   [userMenuItems]="accountMenu"
+ *   [notifications]="notifications"
+ * />
+ * ```
+ */
+@Component({
+  selector: 'aies-app-shell-header',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AiesIconComponent, AvatarMenuComponent, BreadcrumbComponent, DatePipe],
+  template: `
+    <div
+      class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
+    >
+      <div class="flex min-w-0 flex-1 flex-col gap-1">
+        <ng-content select="[aiesAppShellHeaderStart]" />
+        @if (breadcrumbs().length) {
+          <aies-breadcrumb [items]="breadcrumbs()" />
+        }
+        @if (title()) {
+          <h1
+            class="m-0 truncate text-body font-semibold text-ink dark:text-white"
+          >
+            {{ title() }}
+          </h1>
+        }
+      </div>
+
+      <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+        @if (showClock()) {
+          <div
+            [class]="clockClass()"
+            aria-live="polite"
+          >
+            <time
+              [dateTime]="nowIso()"
+              class="text-neutral-600 dark:text-neutral-400"
+            >
+              {{ now() | date: clockDateFormat() }}
+            </time>
+            <time
+              [dateTime]="nowIso()"
+              class="font-medium text-ink dark:text-white"
+            >
+              {{ now() | date: clockFormat() }}
+            </time>
+          </div>
+        }
+
+        @if (showNotifications()) {
+          <button
+            type="button"
+            class="relative inline-flex size-9 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+            [attr.aria-label]="notificationAriaLabel()"
+            (click)="openNotifications()"
+          >
+            <aies-icon name="bell" [size]="18" />
+            @if (unreadCount() > 0) {
+              <span
+                class="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold leading-none text-white"
+                aria-hidden="true"
+              >
+                {{ unreadBadge() }}
+              </span>
+            }
+          </button>
+        }
+
+        <ng-content select="[aiesAppShellHeaderEnd]" />
+
+        @if (userName()) {
+          <aies-avatar-menu
+            [name]="userName()!"
+            [src]="userAvatarSrc()"
+            [menuItems]="userMenuItems()"
+            [size]="'md'"
+          />
+        }
+      </div>
+    </div>
+  `,
+})
+export class AppShellHeaderComponent {
+  private readonly notificationsDrawer = inject(NotificationDrawerService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Page title shown on the leading edge. */
+  readonly title = input('');
+
+  /** Breadcrumb trail — last item is the current page (see {@link BreadcrumbComponent}). */
+  readonly breadcrumbs = input<AiesNavItem[]>([]);
+
+  /** Account display name for the avatar menu. */
+  readonly userName = input<string | null>(null);
+
+  /** Optional avatar image URL. */
+  readonly userAvatarSrc = input<string | null>(null);
+
+  /** Menu entries for the avatar overflow menu. */
+  readonly userMenuItems = input<AiesMenuItem[]>([]);
+
+  /** Notifications listed in the drawer. */
+  readonly notifications = input<AiesNotification[]>([]);
+
+  /** Drawer heading override. */
+  readonly notificationsTitle = input('Notifications');
+
+  /** When false, hides the live clock. */
+  readonly showClock = input(true, { transform: booleanAttribute });
+
+  /** When false, hides the bell control. */
+  readonly showNotifications = input(true, { transform: booleanAttribute });
+
+  /**
+   * Layout density — `mobile` hides the clock; `tablet` always shows it.
+   * Defaults to `desktop` (clock from `sm` breakpoint up).
+   */
+  readonly density = input<AppShellHeaderDensity>('desktop');
+
+  /** Angular DatePipe format for the clock date line. */
+  readonly clockDateFormat = input('EEE, MMM d, y');
+
+  /** Angular DatePipe format for the clock time line (include seconds by default). */
+  readonly clockFormat = input('h:mm:ss a');
+
+  protected readonly now = signal(new Date());
+
+  protected readonly nowIso = computed(() => this.now().toISOString());
+
+  protected readonly clockClass = computed(() => {
+    const base =
+      'flex-col items-end gap-0.5 text-caption leading-tight tabular-nums';
+    switch (this.density()) {
+      case 'mobile':
+        return `hidden ${base}`;
+      case 'tablet':
+        return `flex ${base}`;
+      default:
+        return `hidden sm:flex ${base}`;
+    }
+  });
+
+  protected readonly unreadCount = computed(
+    () => this.notifications().filter((n) => !n.read).length,
+  );
+
+  protected readonly unreadBadge = computed(() => {
+    const count = this.unreadCount();
+    return count > 9 ? '9+' : `${count}`;
+  });
+
+  protected readonly notificationAriaLabel = computed(() => {
+    const unread = this.unreadCount();
+    if (unread === 0) {
+      return 'Open notifications';
+    }
+    return `Open notifications, ${unread} unread`;
+  });
+
+  constructor() {
+    const tick = setInterval(() => this.now.set(new Date()), 1_000);
+    this.destroyRef.onDestroy(() => clearInterval(tick));
+  }
+
+  protected openNotifications(): void {
+    this.notificationsDrawer
+      .open({
+        title: this.notificationsTitle(),
+        notifications: this.notifications(),
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+  }
+}

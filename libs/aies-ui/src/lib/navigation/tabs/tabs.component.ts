@@ -200,17 +200,17 @@ export class TabsComponent {
 
   protected readonly tabChrome = computed(
     () =>
-      'inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-body-sm font-medium transition-colors -mb-px',
+      'inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-body-sm transition-colors -mb-px',
   );
 
   protected readonly activeTabClass = computed(() => {
     const colors = this.modeColor.classes();
-    return `${colors.text} border-current`;
+    return `${colors.text} border-current font-semibold`;
   });
 
   protected readonly inactiveTabClass = computed(
     () =>
-      'border-transparent text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white',
+      'border-transparent font-medium text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white',
   );
 
   constructor() {

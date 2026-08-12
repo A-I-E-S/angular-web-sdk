@@ -28,8 +28,12 @@
                   routerLinkActive
                   #rla="routerLinkActive"
                   [routerLinkActiveOptions]="navActiveOptions(link)"
-                  [class]="rla.isActive ? activeNavClass() : null"
-                  class="flex items-center rounded-lg px-3 py-2 text-body-sm text-neutral-600 no-underline transition duration-150 hover:bg-background-welcome hover:text-ink dark:text-neutral-400 dark:hover:bg-ink-950 dark:hover:text-white"
+                  class="flex items-center rounded-lg px-3 py-2 text-body-sm no-underline transition duration-150"
+                  [class]="
+                    rla.isActive
+                      ? activeNavClass()
+                      : 'text-neutral-600 hover:bg-background-welcome hover:text-ink dark:text-neutral-400 dark:hover:bg-ink-950 dark:hover:text-white'
+                  "
                 >
                   {{ link.label }}
                 </a>
@@ -147,8 +151,12 @@
                     routerLinkActive
                     #rla="routerLinkActive"
                     [routerLinkActiveOptions]="navActiveOptions(link)"
-                    [class]="rla.isActive ? activeNavClass() : null"
-                    class="mb-0.5 block rounded-lg px-3 py-2 text-body-sm text-neutral-600 no-underline dark:text-neutral-400"
+                    class="mb-0.5 block rounded-lg px-3 py-2 text-body-sm no-underline"
+                    [class]="
+                      rla.isActive
+                        ? activeNavClass()
+                        : 'text-neutral-600 dark:text-neutral-400'
+                    "
                     (click)="closeMobileNav()"
                   >
                     {{ link.label }}

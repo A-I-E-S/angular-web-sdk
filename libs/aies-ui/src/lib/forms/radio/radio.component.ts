@@ -39,7 +39,7 @@ export interface RadioOption<T = string> {
 let nextRadioId = 0;
 
 /**
- * Radio group following `libs/aies-ui/docs/form-controls.md`.
+ * Radio group following the shared AIES form field pattern.
  *
  * **Prefix/suffix slots are omitted** — radios are mutually exclusive options
  * with labels; affix projection does not apply.

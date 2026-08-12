@@ -93,6 +93,11 @@ const appRoutes: Route[] = [
     ],
   },
   {
+    path: 'lecture',
+    loadComponent: () =>
+      import('./pages/lecture-page').then((m) => m.LecturePage),
+  },
+  {
     path: 'icons',
     loadComponent: () =>
       import('./pages/icons-page').then((m) => m.IconsPage),

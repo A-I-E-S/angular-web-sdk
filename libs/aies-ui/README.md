@@ -44,21 +44,17 @@ export const appConfig: ApplicationConfig = {
 | Button | `button[aies-button]` / `a[aies-button]` |
 | Copy | `aies-copy` — clipboard icon button (`copyToClipboard`) |
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
+| Avatar | `Avatar`, `AvatarMenu` — initials/image + account dropdown |
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date, OTP |
-| Navigation | `Breadcrumb`, `Tabs` (+ `aiesTabDef`), `Segment` — optional `routerLink` per item |
+| Navigation | `AppShell` (clock, notifications, avatar menu), `SideNav` (SDK logo, logout), `Breadcrumb`, `Tabs`, `Segment` |
+| Notifications | `NotificationDrawerService` — inbox drawer (via `DrawerService`) |
 | Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |
 | NgModules | `AiesFormsModule`, `AiesFeedbackModule`, `AiesActionsModule`, `AiesNavigationModule`, `AiesTableModule`, `AiesStepperModule`, `AiesTooltipModule` — optional one-import facades over the standalones |
 
-Form control conventions: [docs/form-controls.md](./docs/form-controls.md).  
-Alert: [src/lib/alert/docs.md](./src/lib/alert/docs.md).  
-Copy: [src/lib/copy-button/docs.md](./src/lib/copy-button/docs.md).  
-Chip: [src/lib/chip/docs.md](./src/lib/chip/docs.md).  
-Action menu: [src/lib/action-menu/docs.md](./src/lib/action-menu/docs.md).  
-Table: [src/lib/table/docs.md](./src/lib/table/docs.md).  
-Pagination: [src/lib/pagination/docs.md](./src/lib/pagination/docs.md).
+Live examples: run the workspace playground (`npx nx serve playground`).
 
 ## Build / test
 

@@ -11,8 +11,8 @@ import {
   TemplateRef,
 } from '@angular/core';
 
-import type { PaginationMeta } from '@aies/aies-models';
 import { AiesIconComponent } from '@aies/aies-icons';
+import type { PaginationMeta } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -64,7 +64,7 @@ import { TableColumn, TableSortChange } from './table-column';
  * </aies-table>
  * ```
  *
- * Full prop tables and patterns: `src/lib/table/docs.md`.
+ * Sortable columns and template cells. Wrap in AsyncState for loading.
  */
 @Component({
   selector: 'aies-table',

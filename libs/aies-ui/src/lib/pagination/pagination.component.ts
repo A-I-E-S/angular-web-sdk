@@ -46,7 +46,7 @@ import { ButtonComponent } from '../button/button.component';
  * }
  * ```
  *
- * Full prop table: `src/lib/pagination/docs.md`.
+ * Page controls for server-style lists (bind to {@link PaginationMeta}).
  */
 @Component({
   selector: 'aies-pagination',

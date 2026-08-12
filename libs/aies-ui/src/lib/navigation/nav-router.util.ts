@@ -2,6 +2,12 @@ import type { IsActiveMatchOptions, Router, UrlTree } from '@angular/router';
 
 import type { AiesNavItem } from './nav-item';
 
+/** Minimal shape needed to build a UrlTree (tabs, segment, side-nav). */
+export type NavRouteTarget = Pick<
+  AiesNavItem,
+  'routerLink' | 'queryParams' | 'fragment'
+>;
+
 /**
  * Builds a {@link UrlTree} for an item’s `routerLink` / query / fragment.
  *
@@ -11,7 +17,7 @@ import type { AiesNavItem } from './nav-item';
  */
 export function navItemUrlTree(
   router: Router,
-  item: AiesNavItem,
+  item: NavRouteTarget,
 ): UrlTree | null {
   if (item.routerLink == null) {
     return null;
@@ -35,7 +41,7 @@ export function navItemUrlTree(
  */
 export function isNavItemActive(
   router: Router,
-  item: AiesNavItem,
+  item: NavRouteTarget,
   options: IsActiveMatchOptions,
 ): boolean {
   const tree = navItemUrlTree(router, item);

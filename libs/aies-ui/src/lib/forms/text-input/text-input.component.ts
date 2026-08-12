@@ -29,7 +29,7 @@ let nextTextInputId = 0;
 /**
  * Single-line text field — **reference** form control for `@aies/aies-ui`.
  *
- * Follows `libs/aies-ui/docs/form-controls.md`: label, hint, field-level
+ * Follows the shared AIES form field pattern: label, hint, field-level
  * `error` (distinct from `ErrorStateComponent`), prefix/suffix projection
  * slots, and {@link ControlValueAccessor} plus `value` / `valueChange` for
  * template bindings.

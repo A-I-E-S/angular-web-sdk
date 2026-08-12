@@ -4,6 +4,7 @@ import {
   ActionMenuComponent,
   ActionMenuTriggerDirective,
 } from '../action-menu';
+import { AvatarComponent, AvatarMenuComponent } from '../avatar';
 import { ButtonComponent } from '../button';
 import { CopyButtonComponent } from '../copy-button';
 
@@ -12,10 +13,12 @@ const ACTIONS = [
   CopyButtonComponent,
   ActionMenuComponent,
   ActionMenuTriggerDirective,
+  AvatarComponent,
+  AvatarMenuComponent,
 ] as const;
 
 /**
- * Button, copy-to-clipboard control, and overflow action menu.
+ * Button, copy-to-clipboard control, overflow action menu, and avatar menu.
  *
  * @example
  * ```ts

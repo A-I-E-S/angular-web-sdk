@@ -33,7 +33,7 @@ let nextDatePickerId = 0;
 
 /**
  * Date field wrapping native `input[type=date]`, following
- * `libs/aies-ui/docs/form-controls.md`.
+ * shared AIES form field pattern.
  *
  * Value is an ISO calendar date string (`YYYY-MM-DD`) or `null` — matching the
  * native control — not a `Date` object (avoids timezone surprises).

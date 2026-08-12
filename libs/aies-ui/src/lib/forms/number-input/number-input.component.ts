@@ -85,7 +85,7 @@ function formatWhileTyping(raw: string): {
 }
 
 /**
- * Numeric field following `libs/aies-ui/docs/form-controls.md`.
+ * Numeric field following the shared AIES form field pattern.
  *
  * The public contract is always a plain `number | null` — comma grouping is
  * **display-only** via `Intl.NumberFormat('en-US')`, applied **as the user types**

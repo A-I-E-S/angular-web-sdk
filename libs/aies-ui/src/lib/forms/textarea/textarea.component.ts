@@ -29,7 +29,7 @@ let nextTextareaId = 0;
 
 /**
  * Multi-line text field following the shared form-control pattern
- * (`libs/aies-ui/docs/form-controls.md`). Supports prefix/suffix slots,
+ * (`shared AIES form field pattern`). Supports prefix/suffix slots,
  * field-level `error`, and {@link ControlValueAccessor}.
  *
  * @example

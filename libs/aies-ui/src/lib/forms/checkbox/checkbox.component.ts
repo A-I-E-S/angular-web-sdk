@@ -25,7 +25,7 @@ import {
 let nextCheckboxId = 0;
 
 /**
- * Boolean checkbox following `libs/aies-ui/docs/form-controls.md`.
+ * Boolean checkbox following the shared AIES form field pattern.
  *
  * **Prefix/suffix slots are omitted** — a checkbox is a binary control with a
  * label; affix projection does not apply.

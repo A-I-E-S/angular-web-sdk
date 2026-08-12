@@ -189,3 +189,34 @@
 .pg-code-block .hljs-strong {
   font-weight: 600;
 }
+
+/* Glossary term links inside Show code panels */
+.pg-code-block .pg-glossary-link {
+  color: #4fc1ff;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.pg-code-block .pg-glossary-link:hover {
+  color: #9cdcfe;
+  text-decoration-style: solid;
+}
+
+.pg-lecture-chip {
+  @apply inline-flex rounded-md border border-border bg-background-welcome px-2.5 py-1 font-mono text-caption text-ink no-underline transition hover:border-export hover:text-export dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:border-export-light dark:hover:text-export-light;
+}
+
+.pg-lecture-category-link {
+  @apply block rounded-lg border border-border px-3 py-2.5 no-underline transition hover:-translate-y-0.5 hover:border-export hover:shadow-sm dark:border-white/10 dark:hover:border-export-light;
+}
+
+.pg-lecture-category-link--active,
+.pg-lecture-category-link:focus-visible {
+  @apply border-export ring-2 ring-export dark:border-export-light dark:ring-export-light;
+}
+
+.pg-lecture-example {
+  tab-size: 2;
+}
