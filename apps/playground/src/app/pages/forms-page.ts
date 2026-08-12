@@ -64,7 +64,7 @@ import {
 
       <app-demo-section
         title="Text input"
-        hint="Default, with affixes, error, and disabled."
+        hint="Plain field, with an icon, with an error, and disabled."
         [code]="textCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
@@ -104,7 +104,7 @@ import {
 
       <app-demo-section
         title="Number input"
-        hint="Comma formatting is display-only — value stays a number."
+        hint="Commas are display-only; the bound value stays a number."
         [code]="numberCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
@@ -123,7 +123,7 @@ import {
 
       <app-demo-section
         title="Select"
-        hint="Searchable, free-text, and multi-select modes."
+        hint="Search, creatable, and multi-select."
         badge="3 modes"
         [code]="selectCode"
       >
@@ -189,8 +189,8 @@ import {
 
       <app-demo-section
         title="OTP input"
-        hint="Digit cells for SMS/email verification codes. Paste fills multiple cells; completed fires when all digits are entered."
-        subtext="value is a single string. Digits only. Resend row starts a cooldown (default 60s); listen to (resend) to call your API. Set showResend=false to hide it."
+        hint="One digit per cell. Paste works. completed fires when the code is full."
+        subtext="value is one string (digits only). Resend runs a cooldown — listen to (resend) for your API, or hide it with showResend=false."
         [code]="otpCode"
       >
         <div class="flex flex-col gap-6">
@@ -242,12 +242,12 @@ import {
       <app-demo-section
         title="File upload"
         [code]="fileUploadCode"
-        subtext="Variants: dropzone (default), button, compact. Drag & drop on all. accept drives chips + client filter (invalid files skipped with a message). Images show thumbnails; other types get an icon + extension badge."
+        subtext="dropzone, button, or compact. Drag files onto any of them. accept filters types and labels the chips. Images preview; other files get an icon + extension."
       >
         <div class="flex flex-col gap-8">
           <aies-file-upload
             label="Dropzone · multi · images & PDF"
-            hint="Default variant — drag files onto the zone or use Camera"
+            hint="Drag files here, or use Camera"
             accept="image/*,.pdf"
             variant="dropzone"
             [allowCamera]="true"

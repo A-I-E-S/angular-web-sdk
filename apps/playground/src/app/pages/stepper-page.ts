@@ -36,7 +36,7 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
 
       <app-demo-section
         title="Linear wizard"
-        hint="Forward is blocked while the active step sets isValid to false."
+        hint="Next stays blocked while the active step says isValid is false."
         badge="linear"
         [code]="linearCode"
       >
@@ -114,7 +114,7 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
 
       <app-demo-section
         title="Non-linear"
-        hint="Click any step header to jump — useful for review/edit flows."
+        hint="Click a step header to jump around — handy for review flows."
         badge="free nav"
         [code]="freeCode"
       >

@@ -1,33 +1,11 @@
-/**
- * Playground implementation snippets — action menu (@aies/aies-ui).
- * Each export is a copy-paste-ready guide for consumer apps.
- */
+// Action menu copy-paste examples.
 
 export /**
  *
  */
-const ACTION_MENU_DEFAULT = `
-// =============================================================================
-// INTENT
-//   Overflow menu with the built-in ghost ellipsis trigger — typical for table
-//   action columns and compact toolbars.
-//
-// PREREQUISITES
-//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
-//
-// DO
-//   - Put side effects on each item's onClick — the menu closes after it runs.
-//   - Set ariaLabel when context is not obvious (row menus: include row name).
-//   - For table rows, build items in a factory so onClick closes over row.
-//
-// DON'T
-//   - Use a single host (actionSelect) handler with string ids — prefer onClick.
-//   - Share one static items array across rows when actions need row context.
-//
-// CDK OVERLAY
-//   The menu panel renders in a CDK overlay attached to the document body, so
-//   it is not clipped by table overflow:hidden or scroll containers.
-// =============================================================================
+const ACTION_MENU_DEFAULT = `// Default ellipsis trigger — good for table rows.
+// Put side effects on each item's onClick; the menu closes after it runs.
+// Panel renders in a CDK overlay so it won't get clipped by overflow:hidden.
 
 import { Component, signal } from '@angular/core';
 import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
@@ -80,23 +58,7 @@ export class ShipmentRowActionsDemoComponent {
 export /**
  *
  */
-const ACTION_MENU_CUSTOM = `
-// =============================================================================
-// INTENT
-//   Replace the default ellipsis with any projected control via aiesActionMenuTrigger.
-//   Useful for labeled toolbar buttons ("Actions", "More", icon-only custom chrome).
-//
-// PREREQUISITES
-//   @aies/aies-ui (ActionMenuComponent, ActionMenuTriggerDirective, ButtonComponent).
-//
-// DO
-//   - Wrap the trigger button inside <aies-action-menu> content projection.
-//   - Add aiesActionMenuTrigger on the clickable element.
-//
-// DON'T
-//   - Nest a second button without the directive — it will not toggle the menu.
-//   - Forget type="button" on buttons inside forms.
-// =============================================================================
+const ACTION_MENU_CUSTOM = `// Swap the ellipsis for your own trigger — project it inside and add aiesActionMenuTrigger.
 
 import { Component } from '@angular/core';
 import {
@@ -162,24 +124,7 @@ export class ShipmentToolbarActionsComponent {
 export /**
  *
  */
-const ACTION_MENU_VARIANTS = `
-// =============================================================================
-// INTENT
-//   Item-level styling and interaction: danger destructive actions, disabled
-//   rows, and dividerBefore separators between groups.
-//
-// PREREQUISITES
-//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
-//
-// DO
-//   - Set danger: true on destructive actions (delete, void, revoke).
-//   - Use dividerBefore: true to separate destructive items from neutral ones.
-//   - Set disabled: true on items unavailable for the current row/state.
-//
-// DON'T
-//   - Hide destructive actions silently — disable with explanation in label or
-//     omit from items when the user lacks permission (server still validates).
-// =============================================================================
+const ACTION_MENU_VARIANTS = `// Item flags: danger for destructive, disabled when unavailable, dividerBefore to separate groups.
 
 import { Component } from '@angular/core';
 import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
@@ -226,22 +171,7 @@ export class ShipmentActionVariantsComponent {
 export /**
  *
  */
-const ACTION_MENU_DISABLED = `
-// =============================================================================
-// INTENT
-//   Disable the entire menu — blocks opening the default trigger (or custom
-//   trigger when used with aiesActionMenuTrigger).
-//
-// PREREQUISITES
-//   @aies/aies-ui (ActionMenuComponent, type AiesMenuItem).
-//
-// DO
-//   - Bind [disabled] from row state (locked record, pending sync, no permission).
-//   - Keep items defined — re-enable when state clears.
-//
-// DON'T
-//   - Render an empty items array as a substitute for disabled — use [disabled].
-// =============================================================================
+const ACTION_MENU_DISABLED = `// [disabled] locks the whole menu (won't open). Prefer this over an empty items array.
 
 import { Component, input } from '@angular/core';
 import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';

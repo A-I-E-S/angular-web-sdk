@@ -32,7 +32,7 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Variants"
-        hint="Semantic tones using theme tokens. warning/danger use role=alert."
+        hint="info / success / warning / danger. Warning and danger announce as alerts."
         badge="4"
         [code]="variantsCode"
       >
@@ -50,7 +50,7 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Dismissible"
-        hint="Default dismissible=true. Wire (dismissed) to hide via @if."
+        hint="Dismissible by default — hide it with @if when (dismissed) fires."
         [code]="dismissibleCode"
       >
         <div class="flex flex-col gap-4">

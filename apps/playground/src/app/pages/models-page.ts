@@ -42,7 +42,7 @@ interface ModelGroup {
 
       <app-demo-section
         title="Import"
-        hint="Type-only imports — no Angular providers required."
+        hint="Types only — no Angular providers needed."
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">

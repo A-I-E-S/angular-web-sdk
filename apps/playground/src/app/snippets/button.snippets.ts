@@ -1,26 +1,10 @@
-// Playground snippet modules — copy-paste implementation guides for aies-button.
+// aies-button copy-paste examples.
 
 export /**
  *
  */
-const BUTTON_VARIANTS = `// Intent
-// Show the four visual variants of aies-button and how primary follows shipping mode
-// (SFN export green / STN import orange via ModeColorService inside ButtonComponent).
-//
-// Prerequisites
-// - Import ButtonComponent in the standalone component imports array.
-// - Theme + mode wiring from @aies/aies-theme (provideAiesSdk / shipmentModeInterceptor
-//   in production; playground sidebar toggles mode for preview).
-//
-// Do
-// - Use native <button type="button"> for actions; one primary CTA per toolbar/dialog.
-// - Set variant explicitly in product UI so intent is obvious in code review.
-// - Rely on ButtonComponent for mode-aware primary styling — do not hard-code green/orange.
-//
-// Don't
-// - Nest <button> inside another interactive element.
-// - Use primary for destructive actions — use variant="danger".
-// - Duplicate ModeColorService logic in feature code; the directive handles it.
+const BUTTON_VARIANTS = `// Four variants. Primary picks up SFN green / STN orange from ModeColorService —
+// don't hard-code those colors yourself.
 
 import { Component } from '@angular/core';
 import {
@@ -46,7 +30,6 @@ import {
   \`,
 })
 export class ShipmentActionsComponent {
-  // Canonical variant set — matches ButtonVariant union in @aies/aies-ui.
   protected readonly variants: ButtonVariant[] = [
     'primary',
     'secondary',
@@ -54,7 +37,6 @@ export class ShipmentActionsComponent {
     'danger',
   ];
 
-  // Domain labels per variant — primary reads as the main forward action.
   protected readonly labels: Record<ButtonVariant, string> = {
     primary: 'Save shipment',
     secondary: 'Save draft',
@@ -66,20 +48,7 @@ export class ShipmentActionsComponent {
 export /**
  *
  */
-const BUTTON_SIZES = `// Intent
-// Demonstrate sm | md | lg sizing for dense toolbars vs hero CTAs.
-//
-// Prerequisites
-// - ButtonComponent imported; size defaults to md when omitted.
-//
-// Do
-// - Use sm in table toolbars, dialog footers, and inline row actions.
-// - Use lg sparingly for landing / empty-state hero CTAs.
-// - Keep label copy short at sm — truncation fights min-height tokens.
-//
-// Don't
-// - Mix sizes arbitrarily within one button group — pick one density per strip.
-// - Override min-height with ad-hoc CSS; size tokens encode touch targets.
+const BUTTON_SIZES = `// sm | md | lg. Default is md. Use sm in toolbars/dialogs; save lg for hero CTAs.
 
 import { Component } from '@angular/core';
 import {
@@ -111,18 +80,7 @@ export class ButtonSizesComponent {
 export /**
  *
  */
-const BUTTON_MATRIX = `// Intent
-// Render the full variant × size matrix for QA / design review surfaces.
-//
-// Prerequisites
-// - ButtonVariant and ButtonSize types from @aies/aies-ui.
-//
-// Do
-// - Drive both axes from typed arrays so the matrix stays in sync with the design system.
-// - Use this pattern in Storybook/playground only — product screens pick one combo per action.
-//
-// Don't
-// - Ship a variant×size picker to end users unless it is an admin theme tool.
+const BUTTON_MATRIX = `// Full variant × size grid — handy for QA, not something you'd ship on a product page.
 
 import { Component } from '@angular/core';
 import {
@@ -175,21 +133,8 @@ export class ButtonMatrixComponent {
 export /**
  *
  */
-const BUTTON_ICONS = `// Intent
-// Project aies-icon inside the button host — icon + label share one focus ring.
-//
-// Prerequisites
-// - AiesIconComponent from @aies/aies-icons alongside ButtonComponent.
-// - Icon size 14–16px for sm/md buttons; match visual weight to text-body-sm/body.
-//
-// Do
-// - Place icon before label for LTR action semantics (Create, Filter, Delete).
-// - Size icons down one step on sm buttons ([size]="14" vs 16).
-// - Keep icon name stable — registry lives in @aies/aies-icons.
-//
-// Don't
-// - Wrap icon in an extra span with pointer-events — the host button handles clicks.
-// - Use icon-only buttons without aria-label on the host.
+const BUTTON_ICONS = `// Drop <aies-icon> inside the button — same focus ring as the label.
+// Icon-only? Put aria-label on the host.
 
 import { Component } from '@angular/core';
 import { AiesIconComponent } from '@aies/aies-icons';
@@ -228,21 +173,7 @@ export class ButtonIconsComponent {}`;
 export /**
  *
  */
-const BUTTON_LINKS = `// Intent
-// Apply aies-button on anchors for navigation-shaped CTAs (same styling as buttons).
-//
-// Prerequisites
-// - RouterLink / RouterLinkActive when using in-app routes.
-// - ButtonComponent still required in imports — attribute directive lives on the host.
-//
-// Do
-// - Use <a aies-button routerLink="..."> for in-app navigation CTAs.
-// - Use href for external or hash-only links.
-// - Keep variant/size attributes identical to button usage.
-//
-// Don't
-// - Use routerLink on <button> — use (click) + Router.navigate for imperative nav.
-// - Forget focus styles — the directive applies the same focus-visible ring as buttons.
+const BUTTON_LINKS = `// Same look on <a> — use routerLink for in-app, href for external.
 
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -273,20 +204,8 @@ export class ButtonLinksComponent {}`;
 export /**
  *
  */
-const BUTTON_DISABLED = `// Intent
-// Disable activation on buttons and links — native disabled vs aria-disabled.
-//
-// Prerequisites
-// - ButtonComponent maps [disabled] to aria-disabled + tabindex=-1 on anchors.
-//
-// Do
-// - Bind [disabled]="busy()" or [disabled]="form.invalid" on <button> hosts.
-// - On anchors, prefer [disabled]="true" input (booleanAttribute) — directive sets aria-disabled.
-// - Disable all actions in a submitting dialog footer while the mutation runs.
-//
-// Don't
-// - Rely on CSS pointer-events alone — use the disabled input for a11y + keyboard block.
-// - Leave enabled Cancel open while primary submit is in flight unless UX requires it.
+const BUTTON_DISABLED = `// [disabled] works on buttons and anchors (anchors get aria-disabled + tabindex=-1).
+// Bind it to your in-flight mutation flag.
 
 import { Component, signal } from '@angular/core';
 import { ButtonComponent } from '@aies/aies-ui';
@@ -320,29 +239,14 @@ import { ButtonComponent } from '@aies/aies-ui';
   \`,
 })
 export class ButtonDisabledComponent {
-  // Mirror mutation in-flight from your API layer (TanStack mutation.isPending(), etc.).
   protected readonly saving = signal(false);
 }`;
 
 export /**
  *
  */
-const BUTTON_CONTEXT = `// Intent
-// Typical dialog / detail toolbar: ghost cancel, secondary draft, primary submit.
-// Primary accent follows active shipping mode (SFN green / STN orange).
-//
-// Prerequisites
-// - ModeColorService is injected inside ButtonComponent — no feature wiring needed.
-// - Playground: toggle SFN/STN in the sidebar to preview primary color shift.
-//
-// Do
-// - Order actions cancel → secondary → primary (low → high emphasis, end-aligned).
-// - Use size="sm" in compact chrome (drawers, sticky footers, detail headers).
-// - Wire (click) handlers to command methods — keep templates declarative.
-//
-// Don't
-// - Place danger variant in the same group as primary without intentional spacing.
-// - Hard-code export/import colors on primary — ModeColorService owns that mapping.
+const BUTTON_CONTEXT = `// Typical toolbar: ghost cancel → secondary draft → primary submit.
+// Toggle SFN/STN in the sidebar to see primary shift color.
 
 import { Component, inject, signal } from '@angular/core';
 import { ModeColorService } from '@aies/aies-theme';
@@ -396,7 +300,6 @@ import { ButtonComponent } from '@aies/aies-ui';
   \`,
 })
 export class ShipmentToolbarComponent {
-  // Optional: read mode in feature chrome (badges, headings) — primary button already reacts.
   protected readonly modeColor = inject(ModeColorService);
 
   protected readonly ref = signal('SFN-1042');

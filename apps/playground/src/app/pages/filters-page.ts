@@ -63,8 +63,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Open drawer + onApply"
-        hint="Pick a seed config, open the drawer, Apply. The drawer stays open until the fake list request succeeds, then closes."
-        subtext="Pass onApply: ({ params }) => yourHttpCall(params). Errors leave the drawer open with a message. Omit onApply only for sync/local demos."
+        hint="Pick a config, open the drawer, hit Apply — it waits for the fake request before closing."
+        subtext="Wire onApply to your list fetch. If the call fails, the drawer stays open with an error. Skip onApply for local-only demos."
         [code]="openApplyCode"
       >
         <div class="flex flex-col gap-4">
@@ -138,8 +138,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Author a ModuleFilterConfig"
-        hint="Full update-shipments schema: search, date, sort, pagination, enums with colors, static + async selects, booleans."
-        subtext="Field type picks the control. transport picks serialize shape. Seed configs live in @aies/aies-models (FILTER_CONFIGS)."
+        hint="One seed config with most field types — search, dates, enums, selects, booleans."
+        subtext="Field type chooses the control; transport chooses the query shape. Seeds are in FILTER_CONFIGS."
         [code]="authorConfigCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -151,8 +151,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Enum chips + colors"
-        hint="Optional color on each option tints the selected chip only. Idle chips use neutral borders."
-        subtext="color is never included in toFilterParams — it is a UI hint only."
+        hint="Optional color only shows when the chip is selected."
+        subtext="color stays in the UI — it never goes out in toFilterParams."
         [code]="enumColorsCode"
       >
         <div class="flex flex-wrap gap-2">
@@ -184,8 +184,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Filter by (multi-select)"
-        hint="Choosing fields in “Filter by” reveals their controls. Deselecting a chip removes that section."
-        subtext="field.key must stay stable — it becomes the API column name (legacy) or query key (named)."
+        hint="Pick fields under Filter by to show their controls; remove a chip to hide that section."
+        subtext="Keep field.key stable — it becomes the API column (legacy) or query key (named)."
         [code]="filterByCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -197,8 +197,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Date range"
-        hint="Date column select + From / To. Clear resets only the date block. To cannot be before From."
-        subtext="Serialized as from, to, and date (column name) — not as filterColumn entries."
+        hint="Pick a date column, then From / To. Clear only resets this block. From and To keep each other honest."
+        subtext="Goes out as from, to, and date — not as filterColumn pairs."
         [code]="dateRangeCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -210,8 +210,8 @@ interface DemoModule {
 
       <app-demo-section
         title="legacy-parallel transport"
-        hint="filterColumn + filterValue CSV pairs aligned by index — current Laravel list contract."
-        subtext="Only fields with values are included. Empty strings are omitted. Prefer an internal values map; flatten at the boundary."
+        hint="Legacy wire format: filterColumn / filterValue CSV pairs, aligned by index."
+        subtext="Empty values are skipped. Keep a values map inside the app; flatten when you hit the API."
         [code]="legacyCode"
       >
         <div class="flex flex-col gap-3">
@@ -232,8 +232,8 @@ interface DemoModule {
 
       <app-demo-section
         title="named transport"
-        hint="Each field key is its own query param (no filterColumn / filterValue)."
-        subtext="Same drawer + FilterState — only ModuleFilterConfig.transport changes the wire format."
+        hint="Named transport: each field key is its own query param."
+        subtext="Same drawer and state — only transport flips the wire format."
         [code]="namedCode"
       >
         <button
@@ -248,8 +248,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Async option lists"
-        hint="Host resolves warehouses / carriers / manifests and passes optionLists keyed by field.key."
-        subtext="Keys must match field.key (warehouse_id), not optionsSource (warehouses). Static selects use inline options instead."
+        hint="Load async options yourself, then pass them in optionLists keyed by field.key."
+        subtext="Key by field.key (warehouse_id), not optionsSource. Static selects just use inline options."
         [code]="asyncOptionsCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -261,8 +261,8 @@ interface DemoModule {
 
       <app-demo-section
         title="Cold load from URL"
-        hint="Rebuild FilterState from router queryParams on first paint so shared links restore filters."
-        subtext="fromFilterParams zips legacy CSV pairs back into values[key]. Unknown columns are still restored so round-trips survive config drift."
+        hint="Hydrate from query params on first paint so shared links bring filters back."
+        subtext="fromFilterParams rebuilds values[key] from the CSV pairs. Unknown columns still round-trip."
         [code]="hydrateCode"
       >
         <button

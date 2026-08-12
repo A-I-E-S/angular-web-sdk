@@ -1,24 +1,13 @@
-// Playground snippet modules — copy-paste implementation guides for feedback states.
+/**
+ * Playground snippets — feedback states.
+ */
 
 export /**
  *
  */
-const FEEDBACK_LOADING = `// Intent
-// Show blocking (block) vs compact (inline) loading indicators for async surfaces.
-// Spinner accent follows ModeColorService (SFN green / STN orange).
-//
-// Prerequisites
-// - LoadingStateComponent from @aies/aies-ui.
-//
-// Do
-// - Use mode="block" (default) for page/panel first-load placeholders.
-// - Use mode="inline" inside toolbars, table headers, or nested slots during refresh.
-// - Provide a short message ("Loading shipments…") for screen readers (aria-live polite).
-//
-// Don't
-// - Put LoadingState inside aies-table — wrap the whole table region in AsyncState instead.
-// - Use inline mode for initial page load — block gives correct vertical rhythm.
-// - Stack multiple spinners — one loading surface per logical fetch.
+const FEEDBACK_LOADING = `
+// Block for first load; inline for a quiet refresh in a toolbar or header.
+// Spinner color follows ModeColorService. Don’t drop this inside aies-table — use AsyncState.
 
 import { Component } from '@angular/core';
 import { LoadingStateComponent } from '@aies/aies-ui';
@@ -49,27 +38,15 @@ import { LoadingStateComponent } from '@aies/aies-ui';
     </div>
   \`,
 })
-export class LoadingDemoComponent {}`;
+export class LoadingDemoComponent {}
+`;
 
 export /**
  *
  */
-const FEEDBACK_ERROR = `// Intent
-// Blocking error state for failed fetches — always includes a Retry control.
-//
-// Prerequisites
-// - ErrorStateComponent from @aies/aies-ui.
-// - A (retry) handler wired to refetch() / reload() — omitting it is a misuse.
-//
-// Do
-// - Pass a concrete message from the API layer (error?.message ?? fallback).
-// - Route (retry) to the same refetch entry point your query layer exposes.
-// - Use for section/page-level fetch failures — not field validation errors.
-//
-// Don't
-// - Hide or omit the retry button — the component always renders it by design.
-// - Use ErrorState for 404 on a single row — that belongs in row UI or toast.
-// - Nest ErrorState inside Table — wrap with AsyncState at the list boundary.
+const FEEDBACK_ERROR = `
+// Fetch failed — always wire (retry) to your refetch. Message from the API layer is fine.
+// Section/page failures only; not field validation or a single missing row.
 
 import { Component, inject, signal } from '@angular/core';
 import { ErrorStateComponent } from '@aies/aies-ui';
@@ -98,27 +75,15 @@ export class ErrorDemoComponent {
   protected refetch(): void {
     // query.refetch() or resource.reload() — same handler AsyncState uses via (retry).
   }
-}`;
+}
+`;
 
 export /**
  *
  */
-const FEEDBACK_EMPTY = `// Intent
-// Blocking empty state when fetch succeeded but produced no rows / value.
-// Retry is always visible — often wired to resetFilters() or refetch().
-//
-// Prerequisites
-// - EmptyStateComponent from @aies/aies-ui.
-//
-// Do
-// - Override message for filter-specific copy ("No shipments match your filters.").
-// - Wire (retry) to resetFilters(), clear search, or refetch — same as AsyncState empty branch.
-// - Prefer AsyncState for list pages — it chooses EmptyState when data is [] after load.
-//
-// Don't
-// - Use EmptyState while isLoading is true — user should see LoadingState first.
-// - Omit (retry) — empty often changes after filter reset; the button must do something.
-// - Show EmptyState inside table body — AsyncState replaces the whole content region.
+const FEEDBACK_EMPTY = `
+// Load succeeded but nothing matched. Retry often means resetFilters() or refetch.
+// Prefer AsyncState on list pages — it picks EmptyState when data is [].
 
 import { Component, signal } from '@angular/core';
 import { EmptyStateComponent } from '@aies/aies-ui';
@@ -140,29 +105,15 @@ export class EmptyDemoComponent {
   protected resetFilters(): void {
     // Clear facet signals → triggers list refetch with default params.
   }
-}`;
+}
+`;
 
 export /**
  *
  */
-const FEEDBACK_ASYNC = `// Intent
-// Wrap list/detail content in AsyncState — maps AsyncQueryState<T> to loading / error /
-// empty / success with non-blocking badges for background refetch and stale errors.
-//
-// Prerequisites
-// - AsyncStateComponent from @aies/aies-ui.
-// - AsyncQueryState<T> from @aies/aies-models (mirrors TanStack Query signals).
-// - In production: computed() that maps injectQuery() into AsyncQueryState shape.
-//
-// Do
-// - Wrap aies-table (and pagination) in aies-async-state — table stays presentational.
-// - Wire one (retry) handler → query.refetch() for error, empty, and stale badge paths.
-// - Map all five flags: data, isLoading, isFetching, isError, error.
-//
-// Don't
-// - Branch on isLoading inside TableComponent or row templates.
-// - Block UI on isFetching when data exists — AsyncState shows "Updating…" badge instead.
-// - Use LoadingState as a table row — violates separation; AsyncState owns blocking states.
+const FEEDBACK_ASYNC = `
+// Wrap the list (table + pagination). Maps loading / error / empty / success for you.
+// Background refetch shows an “Updating…” badge instead of blocking. One (retry) → refetch.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import type { AsyncQueryState } from '@aies/aies-models';
@@ -231,4 +182,5 @@ export class ShipmentListComponent {
 //   isFetching: this.query.isFetching(),
 //   isError: this.query.isError(),
 //   error: this.query.error()?.message ?? null,
-// }));`;
+// }));
+`;

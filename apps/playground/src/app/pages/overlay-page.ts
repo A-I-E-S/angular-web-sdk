@@ -37,7 +37,7 @@ import {
 
       <app-demo-section
         title="Modal"
-        hint="Default requires Cancel / Save. Opt in with dismissible: true."
+        hint="Stays open until Cancel or Save — set dismissible: true to allow backdrop/Escape."
         badge="ModalService"
         [code]="modalCode"
       >
@@ -59,7 +59,7 @@ import {
 
       <app-demo-section
         title="Drawer"
-        hint="Same dismissible contract as modals."
+        hint="Same dismissible rules as modals."
         badge="DrawerService"
         [code]="drawerCode"
       >
@@ -81,7 +81,7 @@ import {
 
       <app-demo-section
         title="Confirm"
-        hint="Requires Confirm or Cancel unless dismissible is set."
+        hint="Needs Confirm or Cancel unless you set dismissible."
         badge="ConfirmService"
         [code]="confirmCode"
       >

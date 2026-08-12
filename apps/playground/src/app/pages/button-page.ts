@@ -43,7 +43,7 @@ import {
 
       <app-demo-section
         title="Variants"
-        hint="Primary uses the active mode accent. Flip SFN/STN in the sidebar to preview."
+        hint="Primary follows SFN/STN — flip the mode in the sidebar to see it."
         badge="4"
         [code]="variantsCode"
       >
@@ -58,7 +58,7 @@ import {
 
       <app-demo-section
         title="Sizes"
-        hint="sm for dense toolbars, lg for hero CTAs."
+        hint="sm for dense toolbars; lg when you need a bigger CTA."
         [code]="sizesCode"
       >
         <div class="flex flex-wrap items-end gap-6">
@@ -101,7 +101,7 @@ import {
 
       <app-demo-section
         title="With icons"
-        hint="Project aies-icon inside the button host."
+        hint="Drop an aies-icon inside the button."
         [code]="iconsCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -126,7 +126,7 @@ import {
 
       <app-demo-section
         title="As links"
-        hint="Same aies-button attribute on anchors."
+        hint="Same attribute works on anchors."
         [code]="linksCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -138,7 +138,7 @@ import {
 
       <app-demo-section
         title="Disabled"
-        hint="aria-disabled applied for anchors; native disabled for buttons."
+        hint="Buttons use disabled; anchors get aria-disabled."
         [code]="disabledCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -151,7 +151,7 @@ import {
 
       <app-demo-section
         title="In context"
-        hint="Toolbar strip as it often appears in product UI."
+        hint="A typical toolbar strip."
         [code]="contextCode"
       >
         <div

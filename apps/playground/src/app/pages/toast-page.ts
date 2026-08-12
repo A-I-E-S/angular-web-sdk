@@ -23,7 +23,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Variants"
-        hint="Error is persistent. Warning ~8s. Info / success ~4.5s — hover pauses the countdown."
+        hint="Errors stay until you close them. Warnings linger ~8s; info/success ~4.5s. Hover pauses the timer."
         [code]="variantsCode"
       >
         <div class="flex flex-wrap gap-2">
@@ -45,7 +45,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Collapse"
-        hint="Fire the same error a few times. X peels one copy; Expand shows them all; Close all clears the group (or use Expand all / Close all above the stack)."
+        hint="Spam the same error to stack it. X peels one; Expand shows them; Close all clears the group."
         [code]="stackCode"
       >
         <button aies-button type="button" variant="danger" (click)="spamError()">
@@ -55,7 +55,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="HTTP tagging"
-        hint="In apps, tag calls with withToast() (see Show code). These buttons mirror what the interceptor would show."
+        hint="In real apps, tag requests with withToast(). These buttons fake what that looks like."
         [code]="httpCode"
       >
         <div class="flex flex-wrap gap-2">

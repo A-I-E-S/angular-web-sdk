@@ -40,8 +40,8 @@ import {
 
       <app-demo-section
         title="Default icon"
-        hint="Ghost info-circle button — drop next to labels without custom markup."
-        subtext="Hover, Tab-focus, or tap the icon. Escape or click outside (after tap) closes a sticky tip."
+        hint="Default info icon — drop it next to a label."
+        subtext="Opens on hover, focus, or tap. Escape or an outside click closes a sticky tip."
         [code]="defaultCode"
       >
         <div class="flex flex-wrap items-center gap-6">
@@ -64,8 +64,8 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="Project any interactive element with aiesTooltipTrigger — the default icon hides."
-        subtext="The trigger must be focusable (button / link) so keyboard users can open the tip."
+        hint="Put aiesTooltipTrigger on your own button — the default icon goes away."
+        subtext="Use a focusable trigger (button or link) so keyboard users can open it."
         [code]="customTriggerCode"
       >
         <aies-tooltip text="Required when the declared value exceeds $2,000.">
@@ -83,8 +83,8 @@ import {
 
       <app-demo-section
         title="Placement"
-        hint="Prefer a side; the overlay flips when there is no room."
-        subtext="Values: top (default), bottom, left, right."
+        hint="Pick a preferred side — it flips if there is no room."
+        subtext="top (default), bottom, left, or right."
         [code]="placementCode"
       >
         <div class="flex flex-wrap items-center gap-8 py-6">
@@ -97,8 +97,8 @@ import {
 
       <app-demo-section
         title="Next to a form label"
-        hint="Typical consuming-app pattern: label row + tip, input below — tip does not wrap the field."
-        subtext="Use ariaLabel on the default icon when the visible label is not enough for screen readers."
+        hint="Usual pattern: label + tip on one row, input underneath."
+        subtext="Add ariaLabel on the icon when the visible label is not enough for screen readers."
         [code]="formLabelCode"
       >
         <div class="flex max-w-sm flex-col gap-1.5">

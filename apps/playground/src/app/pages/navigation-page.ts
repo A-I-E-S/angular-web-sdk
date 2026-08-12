@@ -46,7 +46,7 @@ import {
 
       <app-demo-section
         title="Breadcrumb"
-        hint="Crumbs reflect the active child route (built from the Router URL)."
+        hint="Crumbs follow the active child route."
         [code]="breadcrumbCode"
       >
         <aies-breadcrumb [items]="crumbs()" />
@@ -54,7 +54,7 @@ import {
 
       <app-demo-section
         title="Tabs (routed)"
-        hint="Child routes under /components/navigation/*. Active tab = Router.isActive (works on refresh)."
+        hint="Child routes under /components/navigation/*. Active tab survives refresh."
         [code]="routedTabsCode"
       >
         <aies-tabs
@@ -69,7 +69,7 @@ import {
 
       <app-demo-section
         title="Segment (routed via query)"
-        hint="Same path, different ?density=… — selected pill matches the query on load."
+        hint="Same path, different ?density= — the pill matches the query on load."
         [code]="segmentCode"
       >
         <aies-segment
@@ -87,7 +87,7 @@ import {
 
       <app-demo-section
         title="Tabs (local)"
-        hint="No routerLink — selection is only [(activeId)] + aiesTabDef panels."
+        hint="No router — just [(activeId)] and aiesTabDef panels."
         [code]="localTabsCode"
       >
         <aies-tabs

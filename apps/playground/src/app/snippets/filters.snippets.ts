@@ -1,30 +1,13 @@
 /**
- * Playground implementation snippets — schema-driven filters (full examples).
+ * Playground snippets — schema-driven filters.
  */
 
 export /**
- * Open the drawer, await list refetch, then commit state.
+ *
  */
 const FILTERS_OPEN_APPLY = `
-// =============================================================================
-// GUIDE — Open drawer + onApply
-//
-// INTENT
-//   One shared drawer for every list module. Host owns FilterState; the drawer
-//   edits a clone and only commits when Apply succeeds.
-//
-// PREREQUISITES
-//   provideAiesUiOverlays() in app.config (registers FilterDrawerService).
-//
-// DO
-//   - Pass onApply: ({ params }) => this.api.loadList(params) so the drawer
-//     stays open until the HTTP call succeeds (errors keep it open + show a tip).
-//   - After afterClosed with applied=true, save result.state (and sync the URL).
-//
-// DON'T
-//   - Close the drawer yourself on Apply — onApply owns that.
-//   - Mutate host state before afterClosed; the drawer works on a clone.
-// =============================================================================
+// Open the drawer, await the list refetch, then commit state on success.
+// Host owns FilterState; drawer edits a clone. Needs provideAiesUiOverlays().
 
 import { Component, inject, signal } from '@angular/core';
 import {
@@ -58,7 +41,7 @@ export class ShipmentListFiltersComponent {
         config: trackShipmentsFilterConfig,
         state: this.state(),
         title: 'Track shipments',
-        // Drawer shows “Applying…” and closes only when this completes.
+        // Stays open until this settles; errors keep it open + show a tip.
         onApply: ({ params }) => this.http.get('/api/shipments', { params }),
       })
       .afterClosed()
@@ -75,25 +58,11 @@ export class ShipmentListFiltersComponent {
 `;
 
 export /**
- * Full ModuleFilterConfig — every common field type.
+ *
  */
 const FILTERS_AUTHOR_CONFIG = `
-// =============================================================================
-// GUIDE — Author a ModuleFilterConfig
-//
-// INTENT
-//   The drawer UI is 100% driven by this schema. Field \`type\` picks the control;
-//   \`transport\` picks how toFilterParams flattens values for the API/URL.
-//
-// FIELD TYPES
-//   enum     — colored chips (optional color hex; UI-only)
-//   text     — free text input
-//   select   — aies-select; static options or host optionLists via optionsSource
-//   boolean  — Yes/No radio mapped to API scalars (often '1' / '0')
-//
-// SHARED BLOCKS
-//   search / date / sort / pagination — rendered above “Filter by” when present
-// =============================================================================
+// Full ModuleFilterConfig — field \`type\` picks the control, \`transport\` how params flatten.
+// Shared blocks (search / date / sort / pagination) sit above “Filter by” when present.
 
 import type { ModuleFilterConfig } from '@aies/aies-models';
 
@@ -211,26 +180,17 @@ export const updateShipmentsFilterConfig: ModuleFilterConfig = {
 `;
 
 export /**
- * Enum chips with optional color.
+ *
  */
 const FILTERS_ENUM_COLORS = `
-// =============================================================================
-// GUIDE — Enum chips + color
-//
-// INTENT
-//   Status filters render as chips. Optional \`color\` tints the selected chip
-//   (text, border, light fill). Idle chips stay neutral.
-//
-// IMPORTANT
-//   color is UI-only — toFilterParams never sends it. Reuse the same hex when
-//   the same status meaning appears in multiple modules (pending yellow, etc.).
-// =============================================================================
+// Status chips. Optional \`color\` tints the selected chip; idle stays neutral.
+// color is UI-only — never sent in params.
 
 {
   key: 'shipment_status',
   label: 'Shipment Status',
   type: 'enum',
-  exclusive: true, // one value at a time for this key (default intent for chips)
+  exclusive: true, // one value at a time
   options: [
     { value: 'pending', label: 'Pending', color: '#DBB316' },
     { value: 'in-process', label: 'In Process', color: '#3B82F6' },
@@ -240,46 +200,22 @@ const FILTERS_ENUM_COLORS = `
 `;
 
 export /**
- * Filter by multi-select sections.
+ *
  */
 const FILTERS_FILTER_BY = `
-// =============================================================================
-// GUIDE — Filter by (multi-select)
-//
-// INTENT
-//   The drawer’s “Filter by” control lists every config.fields entry. Choosing
-//   a field reveals its control below. Deselecting removes that section and
-//   clears its value on Apply.
-//
-// DO
-//   - Use stable field.key values — they become filterColumn names (legacy)
-//     or query keys (named).
-// =============================================================================
+// “Filter by” lists every config.fields entry; picking one reveals its control.
+// Deselect clears that section’s value on Apply. Keep field.key stable.
 
 // User picks “Payment Status” + “Warehouse” in Filter by →
 // draft.values = { payment_status: 'paid', warehouse_id: '12' }
 `;
 
 export /**
- * Date range + Clear + To min.
+ *
  */
 const FILTERS_DATE_RANGE = `
-// =============================================================================
-// GUIDE — Date range
-//
-// INTENT
-//   When config.date is set, the drawer shows:
-//     1) which date column (date field select)
-//     2) From / To pickers
-//     3) Clear — resets date + from + to only (other filters stay)
-//
-// BEHAVIOR
-//   To cannot be before From — the To picker gets [min]=From, and moving From
-//   past To clears To automatically.
-//
-// SERIALIZE
-//   from / to / date query params (names from rangeParams + fieldParam)
-// =============================================================================
+// Date column select + From / To. Clear resets only those three.
+// To can’t be before From — moving From past To clears To.
 
 date: {
   rangeParams: { from: 'from', to: 'to' },
@@ -295,21 +231,11 @@ date: {
 `;
 
 export /**
- * legacy-parallel serialize round-trip.
+ *
  */
 const FILTERS_LEGACY = `
-// =============================================================================
-// GUIDE — legacy-parallel transport
-//
-// INTENT
-//   Match existing Laravel list endpoints: filterColumn + filterValue CSVs
-//   aligned by index, plus search / from / to / date / order / page / size.
-//
-// DO
-//   - Keep an internal values map keyed by field.key.
-//   - Only call toFilterParams at the URL / HTTP boundary.
-//   - Use fromFilterParams on cold load to rebuild the map from the query string.
-// =============================================================================
+// Laravel-style: filterColumn + filterValue CSVs by index, plus search/date/sort/page.
+// Keep values keyed by field.key; only call toFilterParams at the URL/HTTP boundary.
 
 import {
   fromFilterParams,
@@ -352,16 +278,11 @@ const restored = fromFilterParams(params, trackShipmentsFilterConfig);
 `;
 
 export /**
- * named transport.
+ *
  */
 const FILTERS_NAMED = `
-// =============================================================================
-// GUIDE — named transport
-//
-// INTENT
-//   Newer endpoints expose each filter as its own query key (claim_status, …)
-//   instead of parallel CSVs. Same drawer + FilterState; different serialize.
-// =============================================================================
+// Newer endpoints: each filter is its own query key (no filterColumn CSVs).
+// Same drawer + FilterState; different serialize.
 
 import {
   shipmentTrackingItemFilterConfig,
@@ -380,21 +301,11 @@ toFilterParams(state, shipmentTrackingItemFilterConfig);
 `;
 
 export /**
- * Async option catalogs.
+ *
  */
 const FILTERS_ASYNC_OPTIONS = `
-// =============================================================================
-// GUIDE — async option catalogs
-//
-// INTENT
-//   Select fields declare optionsSource ('warehouses', 'shipmentMethods', …).
-//   The SDK does not fetch them — the host resolves lists and passes optionLists
-//   keyed by the same field.key as in ModuleFilterConfig.
-//
-// DO
-//   - Match optionLists keys to field.key exactly (warehouse_id, not warehouses).
-//   - Static selects use optionsSource: 'static' + inline options[] instead.
-// =============================================================================
+// Select fields declare optionsSource; you fetch the lists and pass optionLists.
+// Keys must match field.key (warehouse_id, not warehouses).
 
 import { inject } from '@angular/core';
 import {
@@ -420,16 +331,10 @@ export function openUpdateShipmentFilters(
 `;
 
 export /**
- * Hydrate from URL on cold load.
+ *
  */
 const FILTERS_HYDRATE = `
-// =============================================================================
-// GUIDE — Cold load from URL
-//
-// INTENT
-//   On first paint, rebuild FilterState from router queryParams so shared links
-//   and back/forward restore the same filters the API last used.
-// =============================================================================
+// First paint: rebuild FilterState from queryParams so shared links restore filters.
 
 import { inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';

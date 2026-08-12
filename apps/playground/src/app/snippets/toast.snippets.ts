@@ -6,9 +6,8 @@ export /**
  *
  */
 const TOAST_VARIANTS = `
-// Fire a toast from anywhere you can inject ToastService.
-// Error (danger) stays until the user closes it. Warning runs longer (~8s).
-// Info / success auto-dismiss (~4.5s). Hover pauses the timer.
+// Inject ToastService and fire away.
+// Error stays until closed; warning ~8s; info/success ~4.5s. Hover pauses.
 
 import { Component, inject } from '@angular/core';
 import { ButtonComponent, ToastService } from '@aies/aies-ui';
@@ -44,9 +43,8 @@ export /**
  *
  */
 const TOAST_STACK = `
-// Identical toasts collapse into one with ×N.
-// X peels the outermost copy. Expand shows every copy; Close all clears the group.
-// When any stack exists, the host also offers Expand all / Close all.
+// Same message twice? They collapse into one with ×N.
+// X peels one copy; Expand shows all; Close all clears the group.
 
 this.toast.error('Warehouse offline');
 this.toast.error('Warehouse offline'); // ×2
@@ -56,7 +54,7 @@ export /**
  *
  */
 const TOAST_HTTP = `
-// Tag HttpClient calls with withToast(). Defaults: success + error both on.
+// Wrap HttpClient calls with withToast(). Success + error on by default.
 // Needs provideAiesHttpClient() + provideAiesToasts() in app.config.
 
 import { HttpClient } from '@angular/common/http';

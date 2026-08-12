@@ -1,19 +1,10 @@
-/**
- * Playground code snippets — Foundation (tokens, icons).
- * Each export is a copy-ready implementation guide for demo panels.
- */
+// Tokens & icons copy-paste examples.
 
 export /**
  *
  */
-const TOKENS_SETUP = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Wire Tailwind to @aies/aies-theme so design tokens compile.
-// Prerequisites: tailwindcss + postcss in the app; aies-theme package linked.
-// Do:            Extend the published preset; scan app sources AND @aies/aies-ui
-//                so component utilities are not purged.
-// Don't:        Re-declare token colors locally — extend the preset instead.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_SETUP = `// Point Tailwind at the aies-theme preset and scan @aies/aies-ui so its classes aren't purged.
+// Don't re-declare token colors locally — extend the preset.
 
 // tailwind.config.js — monorepo paths (adjust __dirname to your app root)
 const path = require('node:path');
@@ -35,15 +26,8 @@ module.exports = {
 export /**
  *
  */
-const TOKENS_CORE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Apply core ink / surface tokens for primary chrome and panels.
-// Prerequisites: TOKENS_SETUP applied; dark mode via ThemeService if needed.
-// Do:            Use literal utility strings (bg-ink, text-white, bg-ink-brand).
-// Don't:        Build class names dynamically — Tailwind cannot see them at build time.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_CORE = `// Ink / surface utilities — use literal class strings (Tailwind can't see dynamic names).
 
-// Core ink / surface utilities
 <div class="bg-ink text-white">Ink surface</div>
 <div class="bg-ink-brand text-white">Brand ink panel</div>
 <div class="bg-ink-950 text-white">Near-black panel</div>
@@ -54,16 +38,8 @@ const TOKENS_CORE = `
 export /**
  *
  */
-const TOKENS_NEUTRAL = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Neutral palette for borders, muted copy, and page backgrounds.
-// Prerequisites: TOKENS_SETUP applied.
-// Do:            Pair border-border with bg-background-welcome for cards;
-//                use text-neutral-600 for secondary copy.
-// Don't:        Use raw hex for neutrals — stay on the token scale.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_NEUTRAL = `// Borders, muted copy, page chrome — stay on the token scale, skip raw hex.
 
-// Borders & page chrome
 <div class="rounded-lg border border-border bg-background-welcome p-4">
   <p class="text-neutral-600">Muted supporting copy</p>
   <p class="text-ink dark:text-white">Primary body on welcome background</p>
@@ -76,16 +52,8 @@ const TOKENS_NEUTRAL = `
 export /**
  *
  */
-const TOKENS_EXPORT = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       SFN / export green accents — static marketing or mode-fixed UI.
-// Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
-//                ModeColorService (see TOKENS_MODE_ACCENTS).
-// Do:            Use export / export-subtle / export-light as literal classes.
-// Don't:        Hard-code export green when the control should follow STN/SFN toggle.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_EXPORT = `// SFN / export green — fine for static marketing. Mode-aware chrome? Use ModeColorService.
 
-// SFN / export green
 <span class="rounded-md bg-export px-2 py-1 text-white">Primary</span>
 <span class="rounded-md bg-export-subtle px-2 py-1 text-export">Subtle</span>
 <span class="text-export-light">Light accent text</span>
@@ -95,16 +63,8 @@ const TOKENS_EXPORT = `
 export /**
  *
  */
-const TOKENS_IMPORT = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       STN / import orange accents — static marketing or mode-fixed UI.
-// Prerequisites: TOKENS_SETUP applied; for dynamic primary chrome prefer
-//                ModeColorService (see TOKENS_MODE_ACCENTS).
-// Do:            Use import / import-subtle / import-light as literal classes.
-// Don't:        Hard-code import orange when the control should follow STN/SFN toggle.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_IMPORT = `// STN / import orange — same idea as export; prefer ModeColorService when mode can flip.
 
-// STN / import orange
 <span class="rounded-md bg-import px-2 py-1 text-white">Primary</span>
 <span class="rounded-md bg-import-subtle px-2 py-1 text-import">Subtle</span>
 <span class="text-import-light">Light accent text</span>
@@ -114,16 +74,8 @@ const TOKENS_IMPORT = `
 export /**
  *
  */
-const TOKENS_FEEDBACK = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Semantic status colors — independent of SFN/STN shipping mode.
-// Prerequisites: TOKENS_SETUP applied.
-// Do:            Pair bg-*-subtle with text-* for inline alerts and badges;
-//                reserve danger-strong for high-emphasis errors.
-// Don't:        Map danger/warning to export/import — they are mode-agnostic.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_FEEDBACK = `// Status colors — mode-agnostic. Don't map danger/warning to export/import.
 
-// Status colors
 <span class="rounded-md bg-danger-subtle px-2 py-1 text-danger">Danger</span>
 <span class="rounded-md bg-danger px-2 py-1 text-white">Danger solid</span>
 <span class="rounded-md bg-warning-subtle px-2 py-1 text-warning-dark">Warning</span>
@@ -133,13 +85,7 @@ const TOKENS_FEEDBACK = `
 export /**
  *
  */
-const TOKENS_TYPE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Typography scale from the theme preset — headings through captions.
-// Prerequisites: TOKENS_SETUP applied; font stack inherited from preset.
-// Do:            Match semantic level to content hierarchy (heading-1 for page titles).
-// Don't:        Mix arbitrary text-[Npx] sizes when a token exists.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_TYPE = `// Typography scale from the theme preset. Prefer these over arbitrary text-[Npx].
 
 <h1 class="text-heading-1 text-ink dark:text-white">Ship across continents</h1>
 <h2 class="text-heading-2 text-ink dark:text-white">Shipment details</h2>
@@ -157,15 +103,8 @@ const TOKENS_TYPE = `
 export /**
  *
  */
-const TOKENS_MODE_ACCENTS = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Dynamic primary chrome that follows the active shipping mode.
-// Prerequisites: ShippingModeService (via provideAiesSdk); ModeColorService from
-//                @aies/aies-theme; TOKENS_SETUP so export/import utilities compile.
-// Do:            Bind [class] to modeColor.classes() literals (primary, text, soft);
-//                toggle SFN/STN in product shell to verify both palettes.
-// Don't:        Interpolate Tailwind token names — use the service's literal strings.
-// ───────────────────────────────────────────────────────────────────────
+const TOKENS_MODE_ACCENTS = `// Primary chrome that follows SFN/STN. Bind [class] to modeColor.classes() literals —
+// don't interpolate Tailwind token names yourself.
 
 import { Component, inject } from '@angular/core';
 import { ModeColorService } from '@aies/aies-theme';
@@ -207,16 +146,7 @@ export class ModeAccentDemoComponent {
 export /**
  *
  */
-const ICONS_USAGE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Render icons from the shared SVG sprite with type-safe names.
-// Prerequisites: @aies/aies-icons package; sprite registered once at bootstrap
-//                (see package README / index.html symbol defs).
-// Do:            Import AiesIconComponent; type dynamic names as IconName;
-//                use [size] for consistent scaling; prefer literal name="…" in templates.
-// Don't:        Pass free-form strings for icon ids — autocomplete and compile-time
-//                safety come from IconName.
-// ───────────────────────────────────────────────────────────────────────
+const ICONS_USAGE = `// Shared SVG sprite via <aies-icon>. Type dynamic names as IconName for autocomplete.
 
 import { Component } from '@angular/core';
 import { AiesIconComponent, type IconName } from '@aies/aies-icons';
@@ -233,7 +163,6 @@ import { AiesIconComponent, type IconName } from '@aies/aies-icons';
   \`,
 })
 export class IconDemoComponent {
-  // Typed binding — only valid sprite ids compile cleanly.
   protected readonly dynamicIcon: IconName = 'anchor';
 }
 `;

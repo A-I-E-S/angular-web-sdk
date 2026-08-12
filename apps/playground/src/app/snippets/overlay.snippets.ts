@@ -1,26 +1,11 @@
-// Playground snippet modules — copy-paste implementation guides for overlay services.
+// Overlay service copy-paste examples.
 
 export /**
  *
  */
-const OVERLAY_MODAL = `// Intent
-// Open a centered modal via ModalService — inject OVERLAY_DATA in the panel,
-// close with AiesOverlayRef.close(result), observe via afterClosed().
-//
-// Prerequisites
-// - provideAiesUiOverlays() in app.config.ts providers (registers ModalService + DrawerService).
-// - Hosted panel must be a standalone Component.
-//
-// Do
-// - Type open<TData, TResult>() so data injection and close result are compile-time checked.
-// - Default dismissible: false — user must click Cancel/Save (or explicit close()).
-// - Pass dismissible: true only for low-stakes quick-look / preview modals.
-// - Close with a result when the caller should apply changes without a second fetch.
-//
-// Don't
-// - Expect backdrop/Escape to close unless dismissible: true is set.
-// - Open modals from library code without bootstrap provider — Select will console.error.
-// - Subscribe without teardown in components — prefer takeUntilDestroyed() or async pipe.
+const OVERLAY_MODAL = `// Centered modal via ModalService. Needs provideAiesUiOverlays() in app.config.
+// Inject OVERLAY_DATA in the panel, close with AiesOverlayRef.close(result).
+// dismissible defaults to false — backdrop/Escape only work when you opt in.
 
 // app.config.ts
 import { ApplicationConfig } from '@angular/core';
@@ -144,21 +129,8 @@ export class OpenModalDemoComponent {
 export /**
  *
  */
-const OVERLAY_DRAWER = `// Intent
-// Open a right-edge drawer via DrawerService — same OVERLAY_DATA / AiesOverlayRef
-// contract as modals; ideal for filters, detail chrome, and secondary workflows.
-//
-// Prerequisites
-// - provideAiesUiOverlays() at bootstrap (same as ModalService).
-//
-// Do
-// - Reuse the same panel patterns: inject(OVERLAY_DATA), inject(AiesOverlayRef).close(result).
-// - Set dismissible: true for filter panels users may abandon via backdrop.
-// - Keep primary actions in the drawer footer (Cancel / Apply) — mirrors modal footers.
-//
-// Don't
-// - Assume drawer == dismissible — default is locked like modals.
-// - Nest a second overlay opener inside drawer content without closing the parent first.
+const OVERLAY_DRAWER = `// Right-edge drawer — same OVERLAY_DATA / AiesOverlayRef contract as modals.
+// Good for filters and detail chrome. Default is locked; set dismissible: true for abandonable panels.
 
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -255,22 +227,8 @@ export class OpenDrawerDemoComponent {
 export /**
  *
  */
-const OVERLAY_CONFIRM = `// Intent
-// One-line destructive / neutral confirmation via ConfirmService.confirm().
-// Built on ModalService — returns Observable<boolean> (true = confirmed).
-//
-// Prerequisites
-// - provideAiesUiOverlays() at bootstrap.
-//
-// Do
-// - Set danger: true for destructive copy (Delete, Void, Revoke).
-// - Map afterClosed boolean: if (ok) run mutation; else no-op.
-// - Pass dismissible: true only when abandoning via backdrop should count as Cancel (false).
-//
-// Don't
-// - Open ConfirmDialogComponent directly — ConfirmService owns the plumbing.
-// - Assume backdrop closes the dialog unless dismissible: true — default is locked.
-// - Chain confirm inside another modal without closing the parent — confirm opens its own modal.
+const OVERLAY_CONFIRM = `// One-liner confirm via ConfirmService — returns Observable<boolean>.
+// Set danger: true for delete/void. Don't open ConfirmDialogComponent yourself.
 
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

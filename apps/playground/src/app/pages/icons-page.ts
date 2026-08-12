@@ -29,7 +29,7 @@ import { ICONS_USAGE } from '../snippets';
 
       <app-demo-section
         title="Usage"
-        hint="Import the sprite once in the app; then use aies-icon anywhere."
+        hint="Register the sprite once, then drop aies-icon wherever you need it."
         [code]="usageCode"
       >
         <div class="flex flex-wrap items-center gap-4 text-ink dark:text-white">

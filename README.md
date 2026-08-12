@@ -72,11 +72,10 @@ Serve the icon sprite from `node_modules/@aies/aies-icons/assets/icons.sprite.sv
 
 ## Playground
 
-Living catalog of components, icons, tokens, and models:
+Local catalog of the components and tokens:
 
 ```bash
 npx nx serve playground
-npx nx build playground
 ```
 
 ## Docs

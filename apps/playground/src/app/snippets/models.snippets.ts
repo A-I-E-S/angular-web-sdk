@@ -1,18 +1,9 @@
-/**
- * Playground code snippets — Models (@aies/aies-models).
- */
+// @aies/aies-models copy-paste examples.
 
 export /**
  *
  */
-const MODELS_IMPORT = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Share API and UI state shapes across features without Angular runtime.
-// Prerequisites: @aies/aies-models package; type-only imports (no providers).
-// Do:            Use AsyncQueryState with aies-async-state; PaginationMeta with
-//                aies-pagination; ShippingMode with ShippingModeService toggles.
-// Don't:        Duplicate these interfaces in feature code — import from aies-models.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_IMPORT = `// Shared API/UI shapes — type-only, no providers. Import from here instead of reinventing.
 
 import type {
   AsyncQueryState,
@@ -23,24 +14,13 @@ import type {
   ShippingMode,
   ModeConfigData,
 } from '@aies/aies-models';
-
-// Types only — safe to import from services, components, and plain TS modules.
-// No NgModule / provider setup required for this package.
 `;
 
 export /**
  *
  */
-const MODELS_API_RESPONSE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Handle the canonical API envelope from ApiClient (wrapped mode).
-// Prerequisites: @aies/aies-models (ApiResponseModel, ApiErrorDetail);
-//                @aies/aies-core ApiClient.
-// Do:            Null-check every envelope field — all are T | null, never undefined.
-//                Map res.errors to form field messages when present.
-// Don't:        Assume pagination exists on single-resource responses.
-//                Treat res.success === false as failure even when HTTP status is 200.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_API_RESPONSE = `// Canonical ApiClient envelope. Fields are T | null — null-check before use.
+// res.success === false is a failure even on HTTP 200; pagination may be null on detail GETs.
 
 import { inject } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -82,16 +62,8 @@ export class ShipmentApi {
 export /**
  *
  */
-const MODELS_PAGINATION = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       List fetches with ResourceId + PaginationQueryParams → PaginationMeta.
-// Prerequisites: @aies/aies-models; @aies/aies-core ApiClient.getResource;
-//                aies-pagination for UI.
-// Do:            Pass null id for paginated lists; 'all' for unpaginated exports;
-//                number id for detail. Bind res.pagination to aies-pagination [meta].
-// Don't:        Client-slice a full dataset when the API supports page/size.
-//                Send pagination query params on single-record GETs.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_PAGINATION = `// Lists: getResource(name, null, { page, size }). Detail: number id. Export dump: 'all'.
+// Bind res.pagination to aies-pagination [meta].
 
 import { Component, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -159,16 +131,8 @@ export class ShipmentListComponent {
 export /**
  *
  */
-const MODELS_ASYNC_STATE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Map fetch signals into AsyncQueryState for aies-async-state.
-// Prerequisites: @aies/aies-models AsyncQueryState; @aies/aies-ui AsyncStateComponent.
-// Do:            Distinguish isLoading (first paint) from isFetching (background refresh).
-//                Keep error as string | null — map query errors to human copy.
-//                Wire (retry) on AsyncState to the same refetch entry point.
-// Don't:        Set data to null on refetch — use undefined until first success.
-//                Show ErrorState inside the table — wrap the list boundary.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_ASYNC_STATE = `// Map fetch signals into AsyncQueryState for aies-async-state.
+// isLoading = first paint; isFetching = background refresh. Keep data undefined until first success.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -246,15 +210,8 @@ export class ShipmentAsyncListComponent {
 export /**
  *
  */
-const MODELS_SHIPPING_MODE = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       Type-safe STN / SFN mode literals across theme and HTTP layers.
-// Prerequisites: @aies/aies-models ShippingMode; @aies/aies-core ShippingModeService.
-// Do:            Read active mode from ShippingModeService in UI; persist user choice
-//                via the service API. Align feature flags and copy with 'stn' | 'sfn'.
-// Don't:        Hard-code accent colors — ModeColorService follows active mode.
-//                Send arbitrary strings on x-shipment-mode — use the literal union.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_SHIPPING_MODE = `// 'stn' | 'sfn' literals for theme + HTTP. Read/set via ShippingModeService —
+// ModeColorService and the mode interceptor follow along.
 
 import { Component, inject } from '@angular/core';
 import { ShippingModeService } from '@aies/aies-core';
@@ -285,16 +242,8 @@ export class ModeSwitcherComponent {
 export /**
  *
  */
-const MODELS_MODE_CONFIG = `
-// ── GUIDE ─────────────────────────────────────────────────────
-// Intent:       ModeConfigService is the source of truth for region currency
-//               and measurement units — fetch once, persist, resolve by country.
-// Prerequisites: provideAiesSdk({ baseUrl }) + provideHttpClient; mode config
-//                loads automatically (or call provideModeConfig() explicitly).
-// Do:            Use getRegionConfig(countryCode) with active ShippingModeService.
-//                Let the service save the server record — do not duplicate maps.
-// Don't:        Hard-code units/currency per country in feature components.
-// ───────────────────────────────────────────────────────────────────────
+const MODELS_MODE_CONFIG = `// Region currency/units from ModeConfigService — loads with provideAiesSdk.
+// Call getRegionConfig(countryCode); don't hard-code maps in feature code.
 
 import { Component, inject } from '@angular/core';
 import { ModeConfigService, ShippingModeService } from '@aies/aies-core';

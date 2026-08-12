@@ -1,39 +1,11 @@
-/**
- * Playground implementation snippets — table & pagination (@aies/aies-ui).
- * Each export is a copy-paste-ready guide for consumer apps.
- */
+// Table & pagination copy-paste examples.
 
 export /**
  *
  */
-const TABLE_LIST = `
-// =============================================================================
-// INTENT
-//   Production list screen: server-driven rows, sort, pagination, row actions.
-//   Wrap fetch state in AsyncStateComponent; table stays presentational.
-//
-// PREREQUISITES
-//   @aies/aies-ui (TableComponent, CellDefDirective, PaginationComponent,
-//     AsyncStateComponent, ActionMenuComponent, types TableColumn, TableSortChange,
-//     AiesMenuItem).
-//   @aies/aies-models (AsyncQueryState, PaginationMeta, ApiResponseModel).
-//   @aies/aies-core ApiClient.getResource for list fetches.
-//
-// DO
-//   - Treat getResource() response.data as [rows] and response.pagination as [meta].
-//   - Refetch on sortChange and pageChange — do not client-slice as primary paging.
-//   - Use aiesCellDef templates for non-text cells (badges, actions, currency).
-//   - Handle row actions via aies-action-menu — each item carries onClick.
-//
-// DON'T
-//   - Put loading / error branches inside aies-table — use aies-async-state.
-//   - Client-sort a full dataset when the API supports server-side order.
-//
-// PLAYGROUND NOTE
-//   The playground table page uses in-memory ALL_ROWS + pageRows computed slice
-//   to demo sort/pagination without a live API. Copy the wiring below for prod;
-//   swap pageRows/meta/listState for getResource() results.
-// =============================================================================
+const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
+// Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
+// Playground demos with an in-memory slice — swap that for getResource() in prod.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -240,23 +212,8 @@ export class ShipmentListPageComponent {
 export /**
  *
  */
-const TABLE_COMPACT = `
-// =============================================================================
-// INTENT
-//   Minimal read-only table — text columns only, no custom cell templates.
-//   Columns without aiesCellDef fall back to String(row[key]).
-//
-// PREREQUISITES
-//   @aies/aies-ui (TableComponent, type TableColumn).
-//
-// DO
-//   - Use for simple pickers, previews, or secondary summaries.
-//   - Keep column keys aligned with row object properties.
-//
-// DON'T
-//   - Add AsyncState / pagination when the row set is small and static.
-//   - Expect badges or menus without aiesCellDef templates.
-// =============================================================================
+const TABLE_COMPACT = `// Plain text columns only — no aiesCellDef needed; cells render String(row[key]).
+// Fine for small previews; skip AsyncState/pagination if the set is static.
 
 import { Component } from '@angular/core';
 import { TableComponent, type TableColumn } from '@aies/aies-ui';
@@ -282,7 +239,6 @@ export class ShipmentCompactPreviewComponent {
     { key: 'status', header: 'Status' },
   ];
 
-  // Static preview rows — no aiesCellDef → each cell renders row[key] as plain text.
   protected readonly rows: Shipment[] = [
     { reference: 'SFN-1042', destination: 'Lagos', status: 'In transit' },
     { reference: 'STN-2088', destination: 'Accra', status: 'Delivered' },

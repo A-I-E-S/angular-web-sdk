@@ -1,31 +1,13 @@
 /**
- * Playground implementation snippets — form controls (@aies/aies-ui).
- * Each export is a copy-paste-ready guide for consumer apps.
+ * Playground snippets — form controls (@aies/aies-ui).
  */
 
 export /**
  *
  */
 const FORMS_TEXT = `
-// =============================================================================
-// INTENT
-//   Single-line text fields with the shared label / hint / error pattern.
-//   Bind with [(value)] — each control implements ControlValueAccessor.
-//
-// PREREQUISITES
-//   @aies/aies-ui (TextInputComponent), @aies/aies-icons (optional prefix slot).
-//
-// DO
-//   - Provide label for every field; use hint for non-obvious context.
-//   - Surface validation with the error input (string message).
-//   - Project prefix/suffix content with attribute selectors: prefix, suffix.
-//   - Store bound values in signals when the parent reads them elsewhere.
-//
-// DON'T
-//   - Mix reactive forms and [(value)] on the same control without a bridge.
-//   - Use placeholder as the only label (accessibility).
-//   - Put business validation inside the component — validate in the parent.
-// =============================================================================
+// Text fields: label + optional hint/error. Bind with [(value)].
+// Prefix/suffix slots use attribute selectors (prefix, suffix).
 
 import { Component, signal } from '@angular/core';
 import { AiesIconComponent } from '@aies/aies-icons';
@@ -59,7 +41,6 @@ import { TextInputComponent } from '@aies/aies-ui';
   \`,
 })
 export class ShipmentReferenceFormComponent {
-  // Two-way bind targets — signals keep template reads explicit with ()
   protected readonly tracking = signal('');
   protected readonly reference = signal('');
   protected readonly email = signal('not-an-email');
@@ -71,20 +52,7 @@ export /**
  *
  */
 const FORMS_TEXTAREA = `
-// =============================================================================
-// INTENT
-//   Multi-line text with the same label / hint / error contract as text inputs.
-//
-// PREREQUISITES
-//   @aies/aies-ui (TextareaComponent).
-//
-// DO
-//   - Use hint for audience or visibility notes (e.g. "Visible to warehouse staff").
-//   - Bind [(value)] to a signal or plain property.
-//
-// DON'T
-//   - Rely on native maxlength alone — show error when server rejects length.
-// =============================================================================
+// Same label / hint / error pattern as text inputs, just multi-line.
 
 import { Component, signal } from '@angular/core';
 import { TextareaComponent } from '@aies/aies-ui';
@@ -120,23 +88,8 @@ export /**
  *
  */
 const FORMS_NUMBER = `
-// =============================================================================
-// INTENT
-//   Numeric entry with optional prefix/suffix slots and display comma formatting.
-//   The bound [(value)] stays number | null — commas are display-only in the UI.
-//
-// PREREQUISITES
-//   @aies/aies-ui (NumberInputComponent).
-//
-// DO
-//   - Type the signal as number | null for optional / cleared fields.
-//   - Use prefix/suffix for currency or unit chrome ($, kg, %).
-//   - Format for display elsewhere with DecimalPipe or Intl.NumberFormat.
-//
-// DON'T
-//   - Persist comma-formatted strings to the API — always send the numeric value.
-//   - Use text inputs with manual parsing for amounts.
-// =============================================================================
+// Bound value is number | null. Prefix/suffix are display chrome only —
+// commas in the UI are cosmetic; send the numeric value to the API.
 
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
@@ -173,27 +126,8 @@ export /**
  *
  */
 const FORMS_SELECT = `
-// =============================================================================
-// INTENT
-//   Searchable single/multi select with optional free-text and entity creation.
-//   Single mode binds [(selected)]; multi mode binds [(selected)] to an array.
-//   Dynamic option lists can use [(options)] when users add tags inline.
-//
-// PREREQUISITES
-//   @aies/aies-ui (SelectComponent, type SelectOption, type SelectCreateConfig).
-//   @aies/aies-icons for trigger prefix icons.
-//   provideAiesUiOverlays() at bootstrap when using [create] (opens ModalService).
-//
-// DO
-//   - Enable [searchable] for long lists; cap multi picks with [maxSelected].
-//   - Use allowFreeText for simple string tags (no backing entity).
-//   - Use [create] + SelectCreateConfig when creation needs a form modal.
-//   - Call provideAiesUiOverlays() in app.config / bootstrap providers.
-//
-// DON'T
-//   - Use [create] without provideAiesUiOverlays — select logs a console error.
-//   - Confuse allowFreeText (inline string) with create (modal + mapResult).
-// =============================================================================
+// Single/multi select binds [(selected)]. [searchable] for long lists.
+// allowFreeText = inline tags; [create] opens a modal (needs provideAiesUiOverlays()).
 
 import { Component, signal } from '@angular/core';
 import { AiesIconComponent } from '@aies/aies-icons';
@@ -312,23 +246,7 @@ export /**
  *
  */
 const FORMS_CHOICE = `
-// =============================================================================
-// INTENT
-//   Boolean and single-choice inputs: checkbox, toggle, radio group.
-//   All bind with [(value)]; radio options use RadioOption<T>[].
-//
-// PREREQUISITES
-//   @aies/aies-ui (CheckboxComponent, ToggleComponent, RadioComponent, type RadioOption).
-//
-// DO
-//   - Use checkbox for independent booleans; radio for exactly-one-of-many.
-//   - Use toggle for immediate on/off settings (same CVA contract as checkbox).
-//   - Provide label on the control; add hint for cost or policy notes.
-//
-// DON'T
-//   - Use radio for a single on/off — use checkbox or toggle instead.
-//   - Nest interactive elements inside labels manually — use control label input.
-// =============================================================================
+// Checkbox / toggle for booleans; radio for exactly-one-of. All use [(value)].
 
 import { Component, signal } from '@angular/core';
 import {
@@ -391,19 +309,7 @@ export /**
  *
  */
 const FORMS_DATE_FILE = `
-// =============================================================================
-// INTENT
-//   Date selection (ISO string | null) via native input[type=date].
-//
-// PREREQUISITES
-//   DatePickerComponent from @aies/aies-ui.
-//
-// DO
-//   - Bind with [(value)] as string | null (YYYY-MM-DD).
-//
-// DON'T
-//   - Parse locale display strings — keep the ISO date the control emits.
-// =============================================================================
+// Date picker emits YYYY-MM-DD (string | null). Keep that ISO string as-is.
 
 import { Component, signal } from '@angular/core';
 import { DatePickerComponent } from '@aies/aies-ui';
@@ -430,33 +336,11 @@ export class ShipmentScheduleFormComponent {
 `;
 
 export /**
- * File upload — variants, drag-drop, accept filtering.
+ *
  */
 const FORMS_FILE_UPLOAD = `
-// =============================================================================
-// GUIDE — File upload
-//
-// INTENT
-//   Pick files via browse, drag-and-drop, or camera. Three layouts:
-//   dropzone (default), button, compact. Emits FileUploadResult[] via
-//   (filesSelected). Images get object-URL thumbnails; other types get an
-//   icon + extension badge. Invalid files (vs accept) are skipped with a message.
-//
-// PREREQUISITES
-//   FileUploadComponent from @aies/aies-ui.
-//   provideAiesUiOverlays() for the live camera path.
-//
-// DO
-//   - Set accept (e.g. image/*,.pdf) — drives chips + client-side filter.
-//   - Use [multiple] for multi-file; omit / false for single replace.
-//   - Pick variant for density: dropzone | button | compact.
-//   - Store results in a signal; revoke is handled inside the control for
-//     URLs it created while mounted.
-//
-// DON'T
-//   - Upload inside the control — host owns the API call.
-//   - Assume every dropped file is kept — mismatches vs accept are skipped.
-// =============================================================================
+// Browse, drag-drop, or camera. You get FileUploadResult[] on (filesSelected) —
+// upload them yourself. accept filters client-side; mismatches are skipped.
 
 import { Component, signal } from '@angular/core';
 import {
@@ -489,30 +373,11 @@ export class KycUploadFormComponent {
 `;
 
 export /**
- * OTP / verification code input.
+ *
  */
 const FORMS_OTP = `
-// =============================================================================
-// GUIDE — OTP input
-//
-// INTENT
-//   Discrete digit cells for SMS/email one-time codes. Single string model
-//   (not string[]). Digits only; paste fills multiple cells. Built-in resend
-//   row with cooldown — UI only; host calls the API on (resend).
-//
-// PREREQUISITES
-//   OtpInputComponent from @aies/aies-ui.
-//
-// DO
-//   - Bind [(value)] to a signal<string>.
-//   - Listen to (completed) when the code reaches [length] to verify/submit.
-//   - Listen to (resend) to request a new code; cooldown restarts automatically.
-//   - Set length for 4-digit PINs vs 6-digit SMS codes (default 6).
-//
-// DON'T
-//   - Put verify/API logic inside the control — host owns that on completed/resend.
-//   - Expect alphanumeric codes — non-digits are stripped.
-// =============================================================================
+// OTP is one string, not an array. (resend) is your cue to call the API —
+// the control only runs the cooldown UI. (completed) fires when all digits are in.
 
 import { Component, signal } from '@angular/core';
 import { OtpInputComponent } from '@aies/aies-ui';
@@ -551,23 +416,8 @@ export /**
  *
  */
 const FORMS_LIVE_VALUES = `
-// =============================================================================
-// INTENT
-//   Read bound form signals anywhere in the template — summary panels, debug
-//   strips, or conditional actions driven by current field values.
-//
-// PREREQUISITES
-//   Signals for each [(value)] / [(selected)] target; DecimalPipe for numbers.
-//
-// DO
-//   - Call signals as functions in the template: tracking(), amount().
-//   - Use nullish coalescing for optional selects: selectedWarehouse()?.label ?? '—'.
-//   - Derive display strings in methods when formatting is non-trivial.
-//
-// DON'T
-//   - Forget () on signals — the template will not react to updates.
-//   - Duplicate state — the control is the source of truth via two-way bind.
-// =============================================================================
+// Same signals you bound with [(value)] / [(selected)] — read them anywhere.
+// Call them as functions: tracking(), amount(). Don't forget the ().
 
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';

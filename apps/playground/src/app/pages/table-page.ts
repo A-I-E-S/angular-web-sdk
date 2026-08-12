@@ -76,7 +76,7 @@ const PAGE_SIZE = 6;
 
       <app-demo-section
         title="Shipments list"
-        hint="Sort emits upward; paging uses PaginationMeta. Row actions use aies-action-menu."
+        hint="Sort bubbles up; paging uses PaginationMeta. Row actions go through aies-action-menu."
         badge="template cells"
         [code]="tableCode"
       >

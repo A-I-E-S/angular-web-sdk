@@ -1,22 +1,13 @@
 /**
- * Playground implementation snippets — tooltip.
+ * Playground snippets — tooltip.
  */
 
 export /**
- * Default info-icon trigger.
+ *
  */
 const TOOLTIP_DEFAULT = `
-// =============================================================================
-// GUIDE — Default icon tooltip
-//
-// INTENT
-//   Drop-in help next to labels or dense UI. Renders a ghost info icon that
-//   opens on hover, keyboard focus, and click/tap.
-//
-// PREREQUISITES
-//   Import TooltipComponent from @aies/aies-ui (no overlay provider required —
-//   uses CDK connected overlay like select / action-menu).
-// =============================================================================
+// Help next to a label. Ghost info icon; opens on hover, focus, or tap.
+// No overlay provider needed — uses CDK like select / action-menu.
 
 import { TooltipComponent } from '@aies/aies-ui';
 
@@ -35,16 +26,10 @@ export class Example {}
 `;
 
 export /**
- * Custom projected trigger.
+ *
  */
 const TOOLTIP_CUSTOM_TRIGGER = `
-// =============================================================================
-// GUIDE — Custom trigger target
-//
-// INTENT
-//   Reuse the tip chrome around any control (link, button, icon). Mark the
-//   interactive child with aiesTooltipTrigger — the default info icon hides.
-// =============================================================================
+// Wrap any control and mark it with aiesTooltipTrigger — default info icon hides.
 
 import { ButtonComponent, TooltipComponent, TooltipTriggerDirective } from '@aies/aies-ui';
 
@@ -68,16 +53,11 @@ export class Example {}
 `;
 
 export /**
- * Placement variants.
+ *
  */
 const TOOLTIP_PLACEMENT = `
-// =============================================================================
-// GUIDE — Placement
-//
-// INTENT
-//   placement prefers a side; CDK flips when there is no room.
-//   Values: 'top' | 'bottom' | 'left' | 'right' (default 'top').
-// =============================================================================
+// placement prefers a side; CDK flips if there’s no room.
+// 'top' | 'bottom' | 'left' | 'right' (default 'top').
 
 <aies-tooltip text="Opens above when possible." placement="top" />
 <aies-tooltip text="Opens below when possible." placement="bottom" />
@@ -86,15 +66,10 @@ const TOOLTIP_PLACEMENT = `
 `;
 
 export /**
- * Form label pattern.
+ *
  */
 const TOOLTIP_FORM_LABEL = `
-// =============================================================================
-// GUIDE — Next to a form label
-//
-// INTENT
-//   Typical consuming-app pattern: label + tip without wrapping the input.
-// =============================================================================
+// Label + tip beside it — don’t wrap the input itself.
 
 import { TextInputComponent, TooltipComponent } from '@aies/aies-ui';
 

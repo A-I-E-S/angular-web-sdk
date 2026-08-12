@@ -39,7 +39,7 @@ import {
 
       <app-demo-section
         title="Default trigger"
-        hint="Ghost ellipsis button — typical for table action columns."
+        hint="Default ellipsis — the usual table row actions trigger."
         [code]="defaultCode"
       >
         <div class="flex flex-wrap items-center gap-4">
@@ -55,7 +55,7 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="Project any control with aiesActionMenuTrigger."
+        hint="Point aiesActionMenuTrigger at your own button."
         [code]="customCode"
       >
         <aies-action-menu [items]="demoItems" ariaLabel="Shipment actions">
@@ -73,7 +73,7 @@ import {
 
       <app-demo-section
         title="Danger, disabled, divider"
-        hint="dividerBefore draws a rule above the item; danger uses destructive styling."
+        hint="dividerBefore adds a rule; danger styles destructive actions."
         [code]="variantsCode"
       >
         <aies-action-menu [items]="variantItems" />
@@ -81,7 +81,7 @@ import {
 
       <app-demo-section
         title="Disabled menu"
-        hint="Host disabled blocks opening the default trigger."
+        hint="Disabled host means the menu will not open."
         [code]="disabledCode"
       >
         <aies-action-menu [items]="demoItems" [disabled]="true" />

@@ -1,27 +1,13 @@
 /**
- * Playground implementation snippets — Alert (@aies/aies-ui).
+ * Playground snippets — Alert.
  */
 
 export /**
  *
  */
 const ALERT_VARIANTS = `
-// =============================================================================
-// INTENT
-//   Inline page/section banners for info, success, warning, and danger.
-//   Not for full-page async failures (use ErrorState / AsyncState) and not a toast.
-//
-// PREREQUISITES
-//   Import AlertComponent (and ButtonComponent if projecting actions).
-//
-// DO
-//   - Parent-own visibility with @if + (dismissed) so dismiss unmounts the banner.
-//   - Use warning/danger for urgent copy (role=alert); info/success for soft status.
-//
-// DON'T
-//   - Replace aies-error-state with an alert when the whole list failed to load.
-//   - Expect the alert to hide itself — it only emits dismissed.
-// =============================================================================
+// Inline banners for info / success / warning / danger.
+// Parent owns visibility. Not a toast, and not for full-page fetch failures.
 
 import { Component, signal } from '@angular/core';
 import { AlertComponent, ButtonComponent, type AlertVariant } from '@aies/aies-ui';
@@ -65,15 +51,8 @@ export /**
  *
  */
 const ALERT_DISMISSIBLE = `
-// =============================================================================
-// INTENT
-//   Dismissible banners — default dismissible=true. Parent removes the node
-//   when (dismissed) fires.
-//
-// DO
-//   - Store a boolean/signal and gate with @if.
-//   - Set [dismissible]="false" for permanent notices the user must keep seeing.
-// =============================================================================
+// Dismissible by default — listen to (dismissed) and unmount with @if.
+// Set [dismissible]="false" when the notice has to stay.
 
 import { Component, signal } from '@angular/core';
 import { AlertComponent, ButtonComponent } from '@aies/aies-ui';

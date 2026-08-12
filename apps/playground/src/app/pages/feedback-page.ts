@@ -79,7 +79,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="LoadingState"
-        hint="Block vs inline for full-page vs toolbar refresh."
+        hint="block for a full page; inline for a toolbar refresh."
         [code]="loadingCode"
       >
         <div class="grid gap-6 md:grid-cols-2">
@@ -108,7 +108,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="ErrorState"
-        hint="Retry is always visible — omitting (retry) is a misuse, not a supported config."
+        hint="Retry is always shown — wire (retry) to refetch."
         [code]="errorCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
@@ -133,7 +133,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="EmptyState"
-        hint="Same always-retry rule — empty can change after a filter reset."
+        hint="Same idea as error — empty often clears after a filter reset."
         [code]="emptyCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
@@ -150,7 +150,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="AsyncState playground"
-        hint="Flip scenarios to see blocking states vs non-blocking badges."
+        hint="Flip the scenarios to see blocking states vs the quiet badges."
         badge="6 scenarios"
         [code]="asyncCode"
       >

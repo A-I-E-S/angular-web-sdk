@@ -45,7 +45,7 @@ export const appConfig: ApplicationConfig = {
 |------|---------|
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG` |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
-| HTTP | `provideAiesHttpClient`, `ApiClient`, `normalize`, `authInterceptor`, `AUTH_TOKEN_PROVIDER` |
+| HTTP | `provideAiesHttpClient`, `ApiClient`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |

@@ -1,8 +1,7 @@
 # @aies/aies-models
 
-Shared TypeScript models for the AIES Web SDK. Pure types only — no Angular
-runtime dependency — so the package can be consumed from Angular apps and
-non-Angular TypeScript tooling alike.
+Shared TypeScript models for the AIES Web SDK. Types only — no Angular
+runtime — so you can import them from apps or plain TypeScript tooling.
 
 ## Domains
 

@@ -37,7 +37,7 @@ interface TokenSwatch {
 
       <app-demo-section
         title="Tailwind setup"
-        hint="Required once per consuming app — without content paths, UI utility classes are purged."
+        hint="Do this once in the consuming app — without content paths, UI classes get purged."
         [code]="setupCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -81,7 +81,7 @@ interface TokenSwatch {
 
       <app-demo-section
         title="Typography scale"
-        hint="Provisional sizes — flagged for design confirmation."
+        hint="Type scale is provisional — still waiting on design sign-off."
         [code]="typeCode"
       >
         <ul class="m-0 flex list-none flex-col gap-5 p-0">
@@ -122,7 +122,7 @@ interface TokenSwatch {
 
       <app-demo-section
         title="Mode accents in context"
-        hint="Not isolated swatches — accent tokens on real surfaces. Toggle STN/SFN in the header to see live primary buttons match these palettes."
+        hint="Accents on real surfaces. Flip STN/SFN in the header to see primary buttons follow."
         muted
         [code]="modeAccentsCode"
       >

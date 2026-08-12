@@ -1,9 +1,7 @@
 # @aies/aies-ui
 
-Standalone Angular UI primitives for AIES apps: button, action menu,
-feedback states, alerts, toasts, overlays (modal / drawer / confirm), form controls,
-navigation chrome (breadcrumb / tabs / segment), table, pagination, and
-stepper. Styles use Tailwind utilities from `@aies/aies-theme`.
+Standalone Angular UI for AIES apps — buttons, forms, filters, toasts, overlays,
+tables, and the rest. Styles come from the `@aies/aies-theme` Tailwind preset.
 
 ## Install
 
