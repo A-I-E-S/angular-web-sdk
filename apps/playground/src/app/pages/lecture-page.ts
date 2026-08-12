@@ -1,10 +1,18 @@
+import { DOCUMENT } from '@angular/common';
 import {
   afterNextRender,
   Component,
+  DestroyRef,
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+
+import { fromEvent } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
+
+import { AiesIconComponent } from '@aies/aies-icons';
 
 import {
   categoryFragmentId,
@@ -24,9 +32,9 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 @Component({
   selector: 'app-lecture-page',
   standalone: true,
-  imports: [RouterLink, PageHeaderComponent],
+  imports: [RouterLink, PageHeaderComponent, AiesIconComponent],
   template: `
-    <div class="pg-page-enter flex flex-col gap-10">
+    <div class="pg-page-enter relative flex flex-col gap-10">
       <app-page-header
         eyebrow="Learn"
         title="Lecture"
@@ -169,6 +177,18 @@ import { PageHeaderComponent } from '../shared/page-header.component';
         </section>
       }
     </div>
+
+    <button
+      type="button"
+      class="pg-lecture-scroll-top"
+      [class.pg-lecture-scroll-top--visible]="showScrollTop()"
+      aria-label="Scroll to top"
+      [attr.aria-hidden]="showScrollTop() ? null : true"
+      [tabindex]="showScrollTop() ? 0 : -1"
+      (click)="scrollToTop()"
+    >
+      <aies-icon name="chevron-up" [size]="20" />
+    </button>
   `,
 })
 export class LecturePage {
@@ -179,23 +199,51 @@ export class LecturePage {
   protected readonly categoryFragmentId = categoryFragmentId;
 
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly activeId = signal<string | null>(null);
+  protected readonly showScrollTop = signal(false);
 
   constructor() {
     afterNextRender(() => {
+      const view = this.document.defaultView;
+      if (!view) {
+        return;
+      }
+
+      const syncScrollTop = (): void => {
+        this.showScrollTop.set(view.scrollY > 320);
+      };
+
+      syncScrollTop();
+      fromEvent(view, 'scroll', { passive: true })
+        .pipe(throttleTime(100), takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => syncScrollTop());
+
       this.route.fragment.subscribe((fragment) => {
         this.activeId.set(fragment);
         if (!fragment) {
           return;
         }
         queueMicrotask(() => {
-          document.getElementById(fragment)?.scrollIntoView({
+          this.document.getElementById(fragment)?.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
           });
         });
       });
+    });
+  }
+
+  protected scrollToTop(): void {
+    this.document.defaultView?.scrollTo({ top: 0, behavior: 'smooth' });
+    this.activeId.set(null);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      fragment: undefined,
+      replaceUrl: true,
     });
   }
 
