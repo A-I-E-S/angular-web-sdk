@@ -12,7 +12,6 @@ import {
   CopyButtonComponent,
   emptyFilterState,
   FilterDrawerService,
-  PaginationComponent,
   type TableColumn,
   TableComponent,
   type TableSortChange,
@@ -65,7 +64,6 @@ const PAGE_SIZE = 6;
   standalone: true,
   imports: [
     TableComponent,
-    PaginationComponent,
     CellDefDirective,
     ActionMenuComponent,
     ChipComponent,
@@ -85,7 +83,7 @@ const PAGE_SIZE = 6;
 
       <app-demo-section
         title="Shipments list"
-        hint="Refresh on the left; Filters and Export on the right. Sort bubbles up; paging uses PaginationMeta."
+        hint="Refresh on the left; Filters and Export on the right. Pass [meta] for the built-in pager."
         badge="template cells"
         [code]="tableCode"
       >
@@ -107,6 +105,7 @@ const PAGE_SIZE = 6;
           <aies-table
             [columns]="columns"
             [rows]="pageRows()"
+            [meta]="meta()"
             [sort]="sort()"
             [showRefresh]="true"
             [showFilter]="true"
@@ -116,6 +115,7 @@ const PAGE_SIZE = 6;
             (refreshClick)="onRefresh()"
             (filterClick)="openFilters()"
             (exportClick)="onExport()"
+            (pageChange)="onPageChange($event)"
           >
             <ng-template aiesCellDef="reference" let-row>
               <div class="flex items-center gap-1">
@@ -152,14 +152,6 @@ const PAGE_SIZE = 6;
               />
             </ng-template>
           </aies-table>
-
-          <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
-            <p class="m-0 text-caption text-neutral-600">
-              Showing {{ pageRows().length }} of {{ meta().totalItems }} · page
-              {{ meta().currentPage }} / {{ meta().totalPages }}
-            </p>
-            <aies-pagination [meta]="meta()" (pageChange)="onPageChange($event)" />
-          </div>
         </aies-async-state>
         @if (lastRowAction()) {
           <p class="mt-3 m-0 text-caption text-neutral-600 dark:text-neutral-400">

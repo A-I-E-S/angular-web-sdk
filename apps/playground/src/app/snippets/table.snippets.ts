@@ -4,7 +4,7 @@ export /**
  *
  */
 const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
-// Toolbar: Refresh (left); Filters + Export (right). Host owns refetch / drawer / download.
+// Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
 
 import { Component, computed, inject, signal } from '@angular/core';
@@ -16,7 +16,6 @@ import {
   CellDefDirective,
   ChipComponent,
   CopyButtonComponent,
-  PaginationComponent,
   TableComponent,
   type AiesMenuItem,
   type TableColumn,
@@ -41,7 +40,6 @@ const PAGE_SIZE = 20;
     AsyncStateComponent,
     TableComponent,
     CellDefDirective,
-    PaginationComponent,
     ActionMenuComponent,
     ChipComponent,
     CopyButtonComponent,
@@ -51,6 +49,7 @@ const PAGE_SIZE = 20;
       <aies-table
         [columns]="columns"
         [rows]="rows()"
+        [meta]="meta()"
         [sort]="sort()"
         [showRefresh]="true"
         [showFilter]="true"
@@ -59,6 +58,7 @@ const PAGE_SIZE = 20;
         (refreshClick)="refetch()"
         (filterClick)="openFilters()"
         (exportClick)="exportCsv()"
+        (pageChange)="onPageChange($event)"
       >
         <ng-template aiesCellDef="reference" let-row>
           <div class="flex items-center gap-1">
@@ -85,16 +85,6 @@ const PAGE_SIZE = 20;
           />
         </ng-template>
       </aies-table>
-
-      @if (meta(); as pager) {
-        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="m-0 text-caption text-neutral-600">
-            Page {{ pager.currentPage }} / {{ pager.totalPages }}
-            · {{ pager.totalItems }} total
-          </p>
-          <aies-pagination [meta]="pager" (pageChange)="onPageChange($event)" />
-        </div>
-      }
     </aies-async-state>
   \`,
 })

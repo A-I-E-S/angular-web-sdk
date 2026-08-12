@@ -11,9 +11,11 @@ import {
   TemplateRef,
 } from '@angular/core';
 
+import type { PaginationMeta } from '@aies/aies-models';
 import { AiesIconComponent } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
 import { TableColumn, TableSortChange } from './table-column';
 
@@ -27,6 +29,10 @@ import { TableColumn, TableSortChange } from './table-column';
  * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick});
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
+ *
+ * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
+ * the host still owns refetch via {@link pageChange}. Rows are never sliced
+ * client-side.
  *
  * WHY no loading / error / empty UI: those branches belong on
  * {@link AsyncStateComponent}. This component only renders whatever `rows`
@@ -42,6 +48,7 @@ import { TableColumn, TableSortChange } from './table-column';
  * <aies-table
  *   [columns]="columns"
  *   [rows]="state().data!"
+ *   [meta]="meta()"
  *   [showRefresh]="true"
  *   [showFilter]="true"
  *   [showExport]="true"
@@ -49,6 +56,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *   (refreshClick)="refetch()"
  *   (filterClick)="openFilters()"
  *   (exportClick)="exportCsv()"
+ *   (pageChange)="onPageChange($event)"
  *   [sort]="sort()"
  *   (sortChange)="onSort($event)"
  * >
@@ -62,7 +70,12 @@ import { TableColumn, TableSortChange } from './table-column';
   selector: 'aies-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, ButtonComponent, AiesIconComponent],
+  imports: [
+    NgTemplateOutlet,
+    ButtonComponent,
+    AiesIconComponent,
+    PaginationComponent,
+  ],
   template: `
     <div class="flex w-full flex-col gap-3">
       @if (showRefresh() || showFilter() || showExport()) {
@@ -182,6 +195,13 @@ import { TableColumn, TableSortChange } from './table-column';
           </tbody>
         </table>
       </div>
+
+      @if (meta(); as pager) {
+        <aies-pagination
+          [meta]="pager"
+          (pageChange)="pageChange.emit($event)"
+        />
+      }
     </div>
   `,
 })
@@ -234,6 +254,12 @@ export class TableComponent<T = unknown> {
   readonly exportLabel = input('Export');
 
   /**
+   * When set, embeds {@link PaginationComponent} under the grid. Host still
+   * owns refetch via {@link pageChange} — rows are never sliced here.
+   */
+  readonly meta = input<PaginationMeta | null>(null);
+
+  /**
    * Emitted when a sortable header is activated. Consumers must refetch;
    * this component never sorts `rows` locally.
    */
@@ -247,6 +273,12 @@ export class TableComponent<T = unknown> {
 
   /** Emitted when the Export control is clicked. */
   readonly exportClick = output<void>();
+
+  /**
+   * Target 1-based page after prev/next. Host should refetch; this component
+   * does not change `rows`.
+   */
+  readonly pageChange = output<number>();
 
   /** Projected cell templates keyed by column. */
   private readonly cellDefs = contentChildren(CellDefDirective);
