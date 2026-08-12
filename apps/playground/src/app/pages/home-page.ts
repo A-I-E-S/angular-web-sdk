@@ -171,6 +171,13 @@ export class HomePage {
       group: 'Components',
     },
     {
+      path: '/components/toast',
+      title: 'Toast',
+      blurb: 'Corner stack — timed, persistent errors, collapse, HTTP tags.',
+      icon: 'warning',
+      group: 'Components',
+    },
+    {
       path: '/components/navigation/overview',
       title: 'Navigation',
       blurb: 'Breadcrumb, tabs, and segment — router or local.',

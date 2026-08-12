@@ -28,8 +28,20 @@ export {
   type LoadingStateMode,
 } from './lib/feedback';
 
-// Alert (inline banners — distinct from ErrorState)
+// Alert (inline banners — distinct from ErrorState / Toast)
 export { AlertComponent, type AlertVariant } from './lib/alert';
+
+// Toast (transient stack — timed / persistent / HTTP-tagged)
+export {
+  provideAiesToasts,
+  TOAST_DURATION_MS,
+  TOAST_ICONS,
+  toastFingerprint,
+  type ToastItem,
+  ToastService,
+  type ToastShowOptions,
+  type ToastVariant,
+} from './lib/toast';
 
 // Tooltip (contextual help — default icon or custom trigger)
 export {

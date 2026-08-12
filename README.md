@@ -40,16 +40,15 @@ import {
   provideAiesSdk,
   provideAiesHttpClient,
 } from '@aies/aies-core';
-import { provideAiesUiOverlays } from '@aies/aies-ui';
+import { provideAiesUiOverlays, provideAiesToasts } from '@aies/aies-ui';
 import { ThemeService } from '@aies/aies-theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAiesSdk({ baseUrl: 'https://api.example.com' }),
-    // Ships shipment-mode + auth interceptors; pass extras if needed:
-    // provideAiesHttpClient({ interceptors: [myInterceptor] })
     provideAiesHttpClient(),
     provideAiesUiOverlays(),
+    // provideAiesToasts(), // enables ToastService + withToast() HTTP bridge
     provideAppInitializer(() => {
       inject(ThemeService); // applies light/dark class early
     }),

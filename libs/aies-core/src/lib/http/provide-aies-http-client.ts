@@ -9,6 +9,7 @@ import { type EnvironmentProviders } from '@angular/core';
 
 import { shipmentModeInterceptor } from '../shipping/shipment-mode.interceptor';
 import { authInterceptor } from './auth.interceptor';
+import { httpToastInterceptor } from './http-toast.interceptor';
 
 /**
  * Options for {@link provideAiesHttpClient}.
@@ -16,9 +17,7 @@ import { authInterceptor } from './auth.interceptor';
 export interface AiesHttpClientOptions {
   /**
    * Extra interceptors appended **after** the SDK defaults
-   * (`shipmentModeInterceptor`, then `authInterceptor`).
-   *
-   * Use for app-specific concerns (logging, correlation IDs, error toasts).
+   * (`shipmentModeInterceptor`, `authInterceptor`, `httpToastInterceptor`).
    */
   interceptors?: HttpInterceptorFn[];
 }
@@ -29,13 +28,9 @@ export interface AiesHttpClientOptions {
  * Defaults (in order):
  * 1. {@link shipmentModeInterceptor} — `x-shipment-mode`
  * 2. {@link authInterceptor} — `Authorization` when {@link AUTH_TOKEN_PROVIDER} returns a token
- * 3. Any {@link AiesHttpClientOptions.interceptors} from the host
- *
- * Pass additional {@link provideHttpClient} features (e.g. `withFetch()`) as
- * trailing arguments — same composition model as Angular’s own helper.
- *
- * Prefer this over a bare `provideHttpClient(withInterceptors([...]))` so hosts
- * cannot forget the SDK defaults.
+ * 3. {@link httpToastInterceptor} — toasts for requests tagged with {@link withToast}
+ *    (no-op until `provideAiesToasts()` registers {@link AIES_HTTP_TOAST})
+ * 4. Any {@link AiesHttpClientOptions.interceptors} from the host
  *
  * @param options - Optional extra interceptors.
  * @param features - Extra `provideHttpClient` features (`withFetch`, etc.).
@@ -43,15 +38,9 @@ export interface AiesHttpClientOptions {
  *
  * @example
  * ```ts
- * // Minimal — SDK interceptors only
  * provideAiesSdk({ baseUrl: 'https://api.example.com' }),
  * provideAiesHttpClient(),
- *
- * // With app interceptors + fetch backend
- * provideAiesHttpClient(
- *   { interceptors: [correlationInterceptor, errorToastInterceptor] },
- *   withFetch(),
- * ),
+ * provideAiesToasts(), // from @aies/aies-ui — enables HTTP toasts
  * ```
  */
 export function provideAiesHttpClient(
@@ -63,6 +52,7 @@ export function provideAiesHttpClient(
     withInterceptors([
       shipmentModeInterceptor,
       authInterceptor,
+      httpToastInterceptor,
       ...extras,
     ]),
     ...features,

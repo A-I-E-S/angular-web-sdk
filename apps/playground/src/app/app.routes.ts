@@ -50,6 +50,11 @@ const appRoutes: Route[] = [
       import('./pages/tooltip-page').then((m) => m.TooltipPage),
   },
   {
+    path: 'components/toast',
+    loadComponent: () =>
+      import('./pages/toast-page').then((m) => m.ToastPage),
+  },
+  {
     path: 'components/table',
     loadComponent: () =>
       import('./pages/table-page').then((m) => m.TablePage),

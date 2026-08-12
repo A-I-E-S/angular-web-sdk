@@ -15,4 +15,5 @@ export * from './navigation.snippets';
 export * from './overlay.snippets';
 export * from './stepper.snippets';
 export * from './table.snippets';
+export * from './toast.snippets';
 export * from './tooltip.snippets';

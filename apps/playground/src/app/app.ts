@@ -61,6 +61,7 @@ export class App {
     { path: '/components/forms', label: 'Forms', group: 'Components' },
     { path: '/components/filters', label: 'Filters', group: 'Components' },
     { path: '/components/tooltip', label: 'Tooltip', group: 'Components' },
+    { path: '/components/toast', label: 'Toast', group: 'Components' },
     { path: '/components/navigation/overview', label: 'Navigation', group: 'Components' },
     { path: '/components/table', label: 'Table', group: 'Components' },
     { path: '/components/stepper', label: 'Stepper', group: 'Components' },

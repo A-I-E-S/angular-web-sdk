@@ -1,7 +1,7 @@
 # @aies/aies-ui
 
 Standalone Angular UI primitives for AIES apps: button, action menu,
-feedback states, alerts, overlays (modal / drawer / confirm), form controls,
+feedback states, alerts, toasts, overlays (modal / drawer / confirm), form controls,
 navigation chrome (breadcrumb / tabs / segment), table, pagination, and
 stepper. Styles use Tailwind utilities from `@aies/aies-theme`.
 
@@ -25,10 +25,10 @@ drawer positioning):
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
-import { provideAiesUiOverlays, ButtonComponent } from '@aies/aies-ui';
+import { provideAiesUiOverlays, provideAiesToasts, ButtonComponent } from '@aies/aies-ui';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideAiesUiOverlays()],
+  providers: [provideAiesUiOverlays(), provideAiesToasts()],
 };
 ```
 
@@ -45,7 +45,7 @@ export const appConfig: ApplicationConfig = {
 | --- | --- |
 | Button | `button[aies-button]` / `a[aies-button]` |
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
-| Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert` |
+| Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date |

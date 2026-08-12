@@ -19,6 +19,14 @@ export {
   type AiesHttpClientOptions,
   provideAiesHttpClient,
 } from './lib/http/provide-aies-http-client';
+export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
+export {
+  AIES_HTTP_TOAST,
+  type AiesHttpToastHandler,
+  type ToastHttpOptions,
+  TOAST_HTTP_OPTIONS,
+  withToast,
+} from './lib/http/toast-http.context';
 
 // Query defaults (plain object — no @tanstack dependency)
 export {
