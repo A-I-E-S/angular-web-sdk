@@ -1,14 +1,19 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
   input,
+  numberAttribute,
   output,
   TemplateRef,
 } from '@angular/core';
 
+import { AiesIconComponent } from '@aies/aies-icons';
+
+import { ButtonComponent } from '../button/button.component';
 import { CellDefDirective } from './cell-def.directive';
 import { TableColumn, TableSortChange } from './table-column';
 
@@ -18,6 +23,10 @@ import { TableColumn, TableSortChange } from './table-column';
  * Columns come from the `columns` input; cell bodies come from projected
  * `<ng-template aiesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
+ *
+ * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick});
+ * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
+ * does not own fetch, filter, or export logic — the host handles those events.
  *
  * WHY no loading / error / empty UI: those branches belong on
  * {@link AsyncStateComponent}. This component only renders whatever `rows`
@@ -29,45 +38,22 @@ import { TableColumn, TableSortChange } from './table-column';
  * @typeParam T - Row record shape.
  *
  * @example
- * ```ts
- * readonly columns: TableColumn<Shipment>[] = [
- *   { key: 'reference', header: 'Reference', sortable: true },
- *   { key: 'status', header: 'Status' },
- *   { key: 'actions', header: '', width: '6rem' },
- * ];
- *
- * readonly sort = signal<TableSortChange | null>(null);
- *
- * onSort(change: TableSortChange): void {
- *   this.sort.set(change);
- *   // Refetch with order derived from change.key / change.direction
- *   this.loadPage(this.page());
- * }
- * ```
  * ```html
- * <aies-async-state [state]="state()" (retry)="query.refetch()">
- *   <aies-table
- *     [columns]="columns"
- *     [rows]="state().data!"
- *     [sort]="sort()"
- *     (sortChange)="onSort($event)"
- *   >
- *     <!-- Text column uses the default row[key] renderer (no template). -->
- *
- *     <!-- Component-in-cell -->
- *     <ng-template aiesCellDef="status" let-row>
- *       <app-shipment-status [status]="row.status" />
- *     </ng-template>
- *
- *     <!-- Actions column -->
- *     <ng-template aiesCellDef="actions" let-row>
- *       <button aies-button type="button" variant="ghost" size="sm"
- *         (click)="openShipment(row)">
- *         Open
- *       </button>
- *     </ng-template>
- *   </aies-table>
- * </aies-async-state>
+ * <aies-table
+ *   [columns]="columns"
+ *   [rows]="state().data!"
+ *   [showRefresh]="true"
+ *   [showFilter]="true"
+ *   [showExport]="true"
+ *   [filterCount]="activeFilterCount()"
+ *   (refreshClick)="refetch()"
+ *   (filterClick)="openFilters()"
+ *   (exportClick)="exportCsv()"
+ *   [sort]="sort()"
+ *   (sortChange)="onSort($event)"
+ * >
+ *   <ng-template aiesCellDef="status" let-row>…</ng-template>
+ * </aies-table>
  * ```
  *
  * Full prop tables and patterns: `src/lib/table/docs.md`.
@@ -76,58 +62,126 @@ import { TableColumn, TableSortChange } from './table-column';
   selector: 'aies-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, ButtonComponent, AiesIconComponent],
   template: `
-    <div class="w-full overflow-x-auto rounded-md border border-border dark:border-white/10">
-      <table class="w-full border-collapse text-left text-body text-ink dark:text-white">
-        <thead class="bg-background-welcome border-b border-border dark:bg-ink-950 dark:border-white/10">
-          <tr>
-            @for (col of columns(); track col.key) {
-              <th
-                scope="col"
-                class="px-3 py-2.5 font-medium text-neutral-600 dark:text-neutral-400 whitespace-nowrap"
-                [style.width]="col.width ?? null"
+    <div class="flex w-full flex-col gap-3">
+      @if (showRefresh() || showFilter() || showExport()) {
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            @if (showRefresh()) {
+              <button
+                aies-button
+                type="button"
+                variant="secondary"
+                size="sm"
+                [attr.aria-label]="refreshLabel()"
+                (click)="refreshClick.emit()"
               >
-                @if (col.sortable) {
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-1 font-medium text-neutral-600 dark:text-neutral-400 hover:text-ink dark:hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink rounded-sm"
-                    (click)="onSortHeaderClick(col.key)"
-                  >
-                    <span>{{ col.header }}</span>
-                    <span class="text-caption text-neutral-400" aria-hidden="true">
-                      {{ sortIndicator(col.key) }}
-                    </span>
-                  </button>
-                } @else {
-                  {{ col.header }}
-                }
-              </th>
+                <aies-icon name="refresh" [size]="16" />
+                {{ refreshLabel() }}
+              </button>
             }
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of rows(); track $index) {
-            <tr class="border-b border-border last:border-b-0 hover:bg-background-welcome/60 dark:border-white/10 dark:hover:bg-white/5">
+          </div>
+          <div class="flex items-center gap-2">
+            @if (showFilter()) {
+              <button
+                aies-button
+                type="button"
+                variant="secondary"
+                size="sm"
+                [attr.aria-label]="filterLabel()"
+                (click)="filterClick.emit()"
+              >
+                <aies-icon name="filter" [size]="16" />
+                {{ filterLabel() }}
+                @if (filterCount() > 0) {
+                  <span
+                    class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
+                  >
+                    {{ filterCount() }}
+                  </span>
+                }
+              </button>
+            }
+            @if (showExport()) {
+              <button
+                aies-button
+                type="button"
+                variant="secondary"
+                size="sm"
+                [attr.aria-label]="exportLabel()"
+                (click)="exportClick.emit()"
+              >
+                <aies-icon name="download" [size]="16" />
+                {{ exportLabel() }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <div
+        class="w-full overflow-x-auto rounded-md border border-border dark:border-white/10"
+      >
+        <table
+          class="w-full border-collapse text-left text-body text-ink dark:text-white"
+        >
+          <thead
+            class="border-b border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
+          >
+            <tr>
               @for (col of columns(); track col.key) {
-                <td
-                  class="px-3 py-2.5 align-middle"
+                <th
+                  scope="col"
+                  class="whitespace-nowrap px-3 py-2.5 font-medium text-neutral-600 dark:text-neutral-400"
                   [style.width]="col.width ?? null"
                 >
-                  @if (templateFor(col.key); as tpl) {
-                    <ng-container
-                      [ngTemplateOutlet]="tpl"
-                      [ngTemplateOutletContext]="cellContext(row)"
-                    />
+                  @if (col.sortable) {
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:text-white"
+                      (click)="onSortHeaderClick(col.key)"
+                    >
+                      <span>{{ col.header }}</span>
+                      <span
+                        class="text-caption text-neutral-400"
+                        aria-hidden="true"
+                      >
+                        {{ sortIndicator(col.key) }}
+                      </span>
+                    </button>
                   } @else {
-                    {{ defaultCellText(row, col.key) }}
+                    {{ col.header }}
                   }
-                </td>
+                </th>
               }
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (row of rows(); track $index) {
+              <tr
+                class="border-b border-border last:border-b-0 hover:bg-background-welcome/60 dark:border-white/10 dark:hover:bg-white/5"
+              >
+                @for (col of columns(); track col.key) {
+                  <td
+                    class="px-3 py-2.5 align-middle"
+                    [style.width]="col.width ?? null"
+                  >
+                    @if (templateFor(col.key); as tpl) {
+                      <ng-container
+                        [ngTemplateOutlet]="tpl"
+                        [ngTemplateOutletContext]="cellContext(row)"
+                      />
+                    } @else {
+                      {{ defaultCellText(row, col.key) }}
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   `,
 })
@@ -148,10 +202,51 @@ export class TableComponent<T = unknown> {
   readonly sort = input<TableSortChange | null>(null);
 
   /**
+   * Show a Refresh button above the table (top-left). Host should refetch from
+   * {@link refreshClick}.
+   */
+  readonly showRefresh = input(false, { transform: booleanAttribute });
+
+  /** Label on the refresh trigger. Defaults to `Refresh`. */
+  readonly refreshLabel = input('Refresh');
+
+  /**
+   * Show a Filters button above the table (top-right). Host should open
+   * {@link FilterDrawerService} from {@link filterClick}.
+   */
+  readonly showFilter = input(false, { transform: booleanAttribute });
+
+  /** Label on the filter trigger. Defaults to `Filters`. */
+  readonly filterLabel = input('Filters');
+
+  /**
+   * Optional badge count on the filter trigger (active filters). Hidden when 0.
+   */
+  readonly filterCount = input(0, { transform: numberAttribute });
+
+  /**
+   * Show an Export button to the right of Filters. Host handles the download
+   * from {@link exportClick}.
+   */
+  readonly showExport = input(false, { transform: booleanAttribute });
+
+  /** Label on the export trigger. Defaults to `Export`. */
+  readonly exportLabel = input('Export');
+
+  /**
    * Emitted when a sortable header is activated. Consumers must refetch;
    * this component never sorts `rows` locally.
    */
   readonly sortChange = output<TableSortChange>();
+
+  /** Emitted when the top-left Refresh control is clicked. */
+  readonly refreshClick = output<void>();
+
+  /** Emitted when the top-right Filters control is clicked. */
+  readonly filterClick = output<void>();
+
+  /** Emitted when the Export control is clicked. */
+  readonly exportClick = output<void>();
 
   /** Projected cell templates keyed by column. */
   private readonly cellDefs = contentChildren(CellDefDirective);

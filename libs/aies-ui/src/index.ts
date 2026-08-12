@@ -162,3 +162,14 @@ export {
   type StepDefinition,
   StepperComponent,
 } from './lib/stepper';
+
+// Shared NgModules (re-export related standalones)
+export {
+  AiesActionsModule,
+  AiesFeedbackModule,
+  AiesFormsModule,
+  AiesNavigationModule,
+  AiesStepperModule,
+  AiesTableModule,
+  AiesTooltipModule,
+} from './lib/modules';

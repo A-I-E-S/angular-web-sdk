@@ -1,16 +1,20 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
-import type { AsyncQueryState, PaginationMeta } from '@aies/aies-models';
+import type { AsyncQueryState, FilterState, PaginationMeta } from '@aies/aies-models';
 import {
   ActionMenuComponent,
   type AiesMenuItem,
   AsyncStateComponent,
   ButtonComponent,
   CellDefDirective,
+  emptyFilterState,
+  FilterDrawerService,
   PaginationComponent,
   type TableColumn,
   TableComponent,
   type TableSortChange,
+  toFilterParams,
+  trackShipmentsFilterConfig,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
@@ -76,7 +80,7 @@ const PAGE_SIZE = 6;
 
       <app-demo-section
         title="Shipments list"
-        hint="Sort bubbles up; paging uses PaginationMeta. Row actions go through aies-action-menu."
+        hint="Refresh on the left; Filters and Export on the right. Sort bubbles up; paging uses PaginationMeta."
         badge="template cells"
         [code]="tableCode"
       >
@@ -99,7 +103,14 @@ const PAGE_SIZE = 6;
             [columns]="columns"
             [rows]="pageRows()"
             [sort]="sort()"
+            [showRefresh]="true"
+            [showFilter]="true"
+            [showExport]="true"
+            [filterCount]="activeFilterCount()"
             (sortChange)="onSort($event)"
+            (refreshClick)="onRefresh()"
+            (filterClick)="openFilters()"
+            (exportClick)="onExport()"
           >
             <ng-template aiesCellDef="status" let-row>
               <span
@@ -151,6 +162,11 @@ const PAGE_SIZE = 6;
             Last row action: {{ lastRowAction() }}
           </p>
         }
+        @if (lastExport()) {
+          <p class="mt-1 m-0 text-caption text-neutral-600 dark:text-neutral-400">
+            {{ lastExport() }}
+          </p>
+        }
       </app-demo-section>
 
       <app-demo-section title="Compact / text-only columns" muted [code]="compactCode">
@@ -160,12 +176,24 @@ const PAGE_SIZE = 6;
   `,
 })
 export class TablePage {
+  private readonly filterDrawer = inject(FilterDrawerService);
+
   protected readonly page = signal(1);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly listDemo = signal<'ready' | 'loading' | 'empty' | 'error'>('ready');
   protected readonly lastRowAction = signal<string | null>(null);
+  protected readonly lastExport = signal<string | null>(null);
+  protected readonly filterState = signal<FilterState>(emptyFilterState());
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
+
+  protected readonly activeFilterCount = computed(() => {
+    const state = this.filterState();
+    const params = toFilterParams(state, trackShipmentsFilterConfig);
+    return Object.keys(params).filter(
+      (key) => key !== 'page' && key !== 'per_page' && key !== 'order',
+    ).length;
+  });
 
   protected readonly rowActions = (row: DemoShipment): AiesMenuItem[] => [
     {
@@ -295,6 +323,34 @@ export class TablePage {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
+  }
+
+  protected openFilters(): void {
+    this.filterDrawer
+      .open({
+        config: trackShipmentsFilterConfig,
+        state: this.filterState(),
+        title: 'Filter shipments',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result?.applied) {
+          this.filterState.set(result.state);
+          this.page.set(1);
+        }
+      });
+  }
+
+  protected onRefresh(): void {
+    // Demo: flash loading then back to ready.
+    this.setListDemo('loading');
+    setTimeout(() => this.setListDemo('ready'), 600);
+  }
+
+  protected onExport(): void {
+    this.lastExport.set(
+      `Export clicked · ${this.pageRows().length} rows on this page`,
+    );
   }
 
   protected formatUsd(value: number): string {

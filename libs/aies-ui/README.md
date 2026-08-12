@@ -46,9 +46,10 @@ export const appConfig: ApplicationConfig = {
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
-| Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date |
+| Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date, OTP |
 | Navigation | `Breadcrumb`, `Tabs` (+ `aiesTabDef`), `Segment` — optional `routerLink` per item |
 | Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |
+| NgModules | `AiesFormsModule`, `AiesFeedbackModule`, `AiesActionsModule`, `AiesNavigationModule`, `AiesTableModule`, `AiesStepperModule`, `AiesTooltipModule` — optional one-import facades over the standalones |
 
 Form control conventions: [docs/form-controls.md](./docs/form-controls.md).  
 Alert: [src/lib/alert/docs.md](./src/lib/alert/docs.md).  

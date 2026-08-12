@@ -4,8 +4,8 @@ export /**
  *
  */
 const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
+// Toolbar: Refresh (left); Filters + Export (right). Host owns refetch / drawer / download.
 // Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
-// Playground demos with an in-memory slice — swap that for getResource() in prod.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -48,7 +48,13 @@ const PAGE_SIZE = 20;
         [columns]="columns"
         [rows]="rows()"
         [sort]="sort()"
+        [showRefresh]="true"
+        [showFilter]="true"
+        [showExport]="true"
         (sortChange)="onSort($event)"
+        (refreshClick)="refetch()"
+        (filterClick)="openFilters()"
+        (exportClick)="exportCsv()"
       >
         <ng-template aiesCellDef="status" let-row>
           <span class="inline-flex rounded-md px-2 py-0.5 text-caption font-medium">
