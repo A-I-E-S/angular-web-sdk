@@ -65,7 +65,7 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AiesIconComponent, AppShellHeaderComponent],
   host: {
-    class: 'block min-h-full',
+    '[class]': 'hostClass()',
   },
   templateUrl: './app-shell.component.html',
 })
@@ -137,6 +137,17 @@ export class AppShellComponent {
     () => this.customHeader() != null,
   );
 
+  /** Full height in preview embeds so absolute drawers stay inside the frame. */
+  protected readonly hostClass = computed(() =>
+    this.layoutPreview() ? 'block h-full' : 'block min-h-full',
+  );
+
+  protected readonly shellRootClass = computed(() =>
+    this.layoutPreview()
+      ? 'relative flex h-full min-h-0'
+      : 'relative flex min-h-full',
+  );
+
   protected readonly headerDensity = computed((): 'mobile' | 'tablet' | 'desktop' => {
     const preview = this.layoutPreview();
     if (preview === 'mobile') {
@@ -159,18 +170,20 @@ export class AppShellComponent {
   protected readonly sidenavHostClass = computed(() => {
     const preview = this.layoutPreview();
     const open = this.mobileNavOpen();
-    const base = 'z-50 shrink-0 self-start h-dvh';
 
+    // Preview embeds: absolute/h-full so the drawer stays inside the frame.
+    // Production: h-dvh so the rail fills the viewport (h-full only matches parent).
     if (preview === 'desktop') {
-      return `${base} sticky top-0 block`;
+      return 'z-50 shrink-0 self-start sticky top-0 block h-full';
     }
 
     if (preview === 'mobile' || preview === 'tablet') {
       return open
-        ? `${base} fixed inset-y-0 left-0 shadow-xl`
+        ? 'z-50 shrink-0 self-start absolute inset-y-0 left-0 h-full shadow-xl'
         : 'hidden';
     }
 
+    const base = 'z-50 shrink-0 self-start h-dvh';
     if (open) {
       return `${base} fixed inset-y-0 left-0 shadow-xl lg:sticky lg:top-0 lg:block`;
     }

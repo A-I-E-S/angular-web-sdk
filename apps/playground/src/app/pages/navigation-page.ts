@@ -55,7 +55,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="App shell — mobile"
-        hint="Phone layout (375px): hamburger opens the side nav as a drawer; header stays compact without the clock."
+        hint="Phone layout (375px): hamburger opens the side nav as a drawer inside this frame; header stays compact without the clock."
         badge="new"
       >
         <app-shell-viewport-preview
@@ -70,7 +70,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="App shell — tablet"
-        hint="Tablet layout (768px): same drawer nav as mobile, with more room and date/time in the header."
+        hint="Tablet layout (768px): same in-frame drawer as mobile, with more room and date/time in the header."
         badge="new"
       >
         <app-shell-viewport-preview
