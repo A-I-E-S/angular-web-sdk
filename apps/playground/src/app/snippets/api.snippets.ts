@@ -32,7 +32,7 @@ export /**
  *
  */
 const API_COUNTRY = `// GET /public/country/read/{id|all} — default id is 'all'.
-// CountryService maps state_code → stateCode; data is always CountryModel[].
+// CountryService maps into CountryModel[] (snake_case keys, e.g. state_code).
 
 import { Component, inject, signal } from '@angular/core';
 import { CountryService } from '@aies/aies-core';
@@ -79,7 +79,7 @@ import { ModeConfigService } from '@aies/aies-core';
   standalone: true,
   template: \`
     @if (region(); as r) {
-      <p>{{ r.currencySymbol }} · {{ r.massUnit }} · {{ r.dimensionUnit }}</p>
+      <p>{{ r.currency_symbol }} · {{ r.mass_unit }} · {{ r.dimension_unit }}</p>
     }
   \`,
 })
@@ -100,7 +100,7 @@ export /**
  *
  */
 const API_SHIPMENT_METHOD = `// GET /shipment_method/read/{id|all} — carriers / shipment methods.
-// ShipmentMethodService maps snake_case + string numbers; zone_values → zoneValues.
+// ShipmentMethodService maps into ShipmentMethodModel[] (snake_case, including zone_values).
 
 import { Component, inject, signal } from '@angular/core';
 import { ShipmentMethodService } from '@aies/aies-core';
@@ -113,7 +113,7 @@ import { firstValueFrom } from 'rxjs';
   template: \`
     <p>{{ methods().length }} methods</p>
     @if (methods()[0]; as first) {
-      <p>{{ first.name }} · {{ first.mode }} · {{ first.zoneValues.total }} zones</p>
+      <p>{{ first.name }} · {{ first.mode }} · {{ first.zone_values.total }} zones</p>
     }
   \`,
 })
@@ -202,7 +202,7 @@ export /**
  *
  */
 const API_USER = `// GET /user — bare user object (no { success, data } wrapper).
-// ApiClient wraps it; UserService.me() maps snake_case → UserModel.
+// ApiClient wraps it; UserService.me() maps into UserModel (snake_case keys).
 // Provide AUTH_TOKEN_PROVIDER so the auth interceptor can attach a bearer token.
 
 import { Component, inject, signal } from '@angular/core';
@@ -215,7 +215,7 @@ import { firstValueFrom } from 'rxjs';
   standalone: true,
   template: \`
     @if (user(); as u) {
-      <p>{{ u.name }} · {{ u.email }} · {{ u.mainRegion }}</p>
+      <p>{{ u.name }} · {{ u.email }} · {{ u.main_region }}</p>
     }
   \`,
 })

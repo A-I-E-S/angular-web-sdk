@@ -73,17 +73,17 @@ describe('shipment-method.mapper', () => {
     const mapped = mapShipmentMethod(WIRE_AIR_EXPEDITED);
     expect(mapped.id).toBe(12);
     expect(mapped.name).toBe('Africanies Air Expedited');
-    expect(mapped.minDeliveryBusinessDay).toBe(4);
-    expect(mapped.minWeight).toBe(0.5);
-    expect(mapped.seaOnly).toBe(false);
+    expect(mapped.min_delivery_business_day).toBe(4);
+    expect(mapped.min_weight).toBe(0.5);
+    expect(mapped.sea_only).toBe(false);
     expect(mapped.mode).toBe('sfn');
-    expect(mapped.discountType).toBe('percentage');
-    expect(mapped.zoneValues.total).toBe(1216);
-    expect(mapped.zoneValues.items).toHaveLength(1);
-    expect(mapped.zoneValues.items[0]).toEqual({
+    expect(mapped.discount_type).toBe('percentage');
+    expect(mapped.zone_values.total).toBe(1216);
+    expect(mapped.zone_values.data).toHaveLength(1);
+    expect(mapped.zone_values.data[0]).toEqual({
       id: 57,
-      zoneId: 10,
-      shipmentMethodId: 12,
+      zone_id: 10,
+      shipment_method_id: 12,
       active: true,
       mode: 'sfn',
       zone: { id: 10, name: '1', type: 'default', active: true },
@@ -97,11 +97,11 @@ describe('shipment-method.mapper', () => {
 
   it('mapShipmentMethodZonePage returns an empty page for null', () => {
     expect(mapShipmentMethodZonePage(null)).toEqual({
-      items: [],
-      currentPage: 0,
-      perPage: 0,
+      data: [],
+      current_page: 0,
+      per_page: 0,
       total: 0,
-      lastPage: 0,
+      last_page: 0,
     });
   });
 
@@ -119,39 +119,39 @@ describe('shipment-method.mapper', () => {
       name: 'Sea',
       slug: 'sea',
       model: '',
-      minDeliveryBusinessDay: 10,
-      maxDeliveryBusinessDay: 20,
+      min_delivery_business_day: 10,
+      max_delivery_business_day: 20,
       notes: '',
-      blacklistedWords: null,
+      blacklisted_words: null,
       position: 1,
-      minWeight: 1,
-      maxWeight: 2,
-      maxLength: 3,
-      maxWidth: 4,
-      maxHeight: 5,
+      min_weight: 1,
+      max_weight: 2,
+      max_length: 3,
+      max_width: 4,
+      max_height: 5,
       markup: 0,
       surcharge: 0,
-      insuranceBenchmark: 0,
+      insurance_benchmark: 0,
       insurance: 0,
-      clearingHandling: 0,
+      clearing_handling: 0,
       destination: 'domestic',
-      seaOnly: true,
+      sea_only: true,
       currency: 'USD',
       type: 'default',
       active: true,
-      multipleRates: true,
-      firstShipmentDiscount: 0,
-      discountType: 'fixed',
-      discountActive: false,
+      multiple_rates: true,
+      first_shipment_discount: 0,
+      discount_type: 'fixed',
+      discount_active: false,
       mode: 'stn',
-      deletedAt: null,
-      createdAt: null,
-      updatedAt: null,
+      deleted_at: null,
+      created_at: null,
+      updated_at: null,
       markdown: 0,
-      zoneValues: { items: [], currentPage: 1, perPage: 10, total: 0, lastPage: 1 },
+      zone_values: { data: [], current_page: 1, per_page: 10, total: 0, last_page: 1 },
     });
-    expect(mapped.seaOnly).toBe(true);
+    expect(mapped.sea_only).toBe(true);
     expect(mapped.mode).toBe('stn');
-    expect(mapped.zoneValues.lastPage).toBe(1);
+    expect(mapped.zone_values.last_page).toBe(1);
   });
 });

@@ -14,42 +14,27 @@ export const MODE_CONFIG_PATH = '/public/mode/config';
 
 /** Fallback region when the wire omits a required branch/key. */
 const DEFAULT_REGION: ModeRegionConfigModel = {
-  dimensionUnit: 'cm',
-  massUnit: 'KG',
+  dimension_unit: 'cm',
+  mass_unit: 'KG',
   currency: 'NGN',
-  currencySymbol: '',
+  currency_symbol: '',
 };
 
-/**
- * @param value - Raw dimension unit.
- * @returns Valid {@link ModeDimensionUnit} (defaults to `'cm'`).
- */
 function asDimensionUnit(value: unknown): ModeDimensionUnit {
   return value === 'inches' ? 'inches' : 'cm';
 }
 
-/**
- * @param value - Raw mass unit.
- * @returns Valid {@link ModeMassUnit} (defaults to `'KG'`).
- */
 function asMassUnit(value: unknown): ModeMassUnit {
   return value === 'LBS' ? 'LBS' : 'KG';
 }
 
-/**
- * @param value - Raw currency code.
- * @returns Valid {@link ModeCurrencyCode} (defaults to `'NGN'`).
- */
 function asCurrency(value: unknown): ModeCurrencyCode {
   return value === 'USD' ? 'USD' : 'NGN';
 }
 
 /**
- * Map a possibly snake_case region object into {@link ModeRegionConfigModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- * Missing/invalid union fields fall back to safe defaults (never `undefined`).
- * @param raw - Region object from the wire (camel or snake case).
- * @returns Normalized {@link ModeRegionConfigModel}.
+ * Map a region object into {@link ModeRegionConfigModel} (snake_case).
+ * @param raw
  */
 export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
   const record =
@@ -57,21 +42,20 @@ export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
       ? (raw as Record<string, unknown>)
       : {};
   return {
-    dimensionUnit: asDimensionUnit(
-      record['dimensionUnit'] ?? record['dimension_unit'],
+    dimension_unit: asDimensionUnit(
+      record['dimension_unit'] ?? record['dimensionUnit'],
     ),
-    massUnit: asMassUnit(record['massUnit'] ?? record['mass_unit']),
+    mass_unit: asMassUnit(record['mass_unit'] ?? record['massUnit']),
     currency: asCurrency(record['currency']),
-    currencySymbol: String(
-      record['currencySymbol'] ?? record['currency_symbol'] ?? '',
+    currency_symbol: String(
+      record['currency_symbol'] ?? record['currencySymbol'] ?? '',
     ),
   };
 }
 
 /**
  * Map every region entry under a mode branch (`default`, `ng`, `us`, …).
- * @param modeRaw - SFN or STN branch object keyed by region code.
- * @returns Map of region code → {@link ModeRegionConfigModel}.
+ * @param modeRaw
  */
 export function mapModeRegions(
   modeRaw: unknown,
@@ -87,12 +71,6 @@ export function mapModeRegions(
   return out;
 }
 
-/**
- * Pick a region key or fall back through `default` then {@link DEFAULT_REGION}.
- * @param regions - Mapped region map.
- * @param key - Preferred key.
- * @returns Always a concrete {@link ModeRegionConfigModel}.
- */
 function regionOrDefault(
   regions: Record<string, ModeRegionConfigModel>,
   key: string,
@@ -101,12 +79,8 @@ function regionOrDefault(
 }
 
 /**
- * Deep-map mode config so SDK consumers never see wire snake_case.
- * Always returns full {@link ModeSfnConfigModel} / {@link ModeStnConfigModel}
- * trees with every required key present.
- *
- * @param raw - `data` payload from `/public/mode/config` (before or after mapping).
- * @returns Fully camelCased {@link ModeConfigDataModel}.
+ * Deep-map mode config preserving snake_case region fields.
+ * @param raw
  */
 export function mapModeConfigData(
   raw: ModeConfigDataModel | Record<string, unknown>,
@@ -135,8 +109,7 @@ export function mapModeConfigData(
 
 /**
  * Minimal runtime guard for hydrated storage payloads.
- * @param value - Candidate hydrated payload.
- * @returns True when both `sfn.default` and `stn.default` objects exist.
+ * @param value
  */
 export function isModeConfigData(value: unknown): value is ModeConfigDataModel {
   if (value === null || typeof value !== 'object') {
@@ -163,14 +136,9 @@ export function isModeConfigData(value: unknown): value is ModeConfigDataModel {
 
 /**
  * Resolve currency and measurement units for a country within a shipping mode.
- *
- * Unknown country codes fall back to the mode's `default` region — the server
- * record is the source of truth; no client-side region tables.
- *
- * @param config - Loaded {@link ModeConfigDataModel} (from API or storage).
- * @param mode - Active `'stn'` or `'sfn'` branch.
- * @param countryCode - Lower/upper ISO-ish key (`ng`, `us`, …) or empty for default.
- * @returns Region config for the country, or the mode `default` fallback.
+ * @param config
+ * @param mode
+ * @param countryCode
  */
 export function resolveModeRegionConfig(
   config: ModeConfigDataModel,

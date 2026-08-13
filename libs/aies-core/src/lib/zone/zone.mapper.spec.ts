@@ -21,9 +21,9 @@ describe('zone.mapper', () => {
       name: 'R',
       type: 'standard',
       active: true,
-      deletedAt: null,
-      createdAt: '2024-12-17T12:05:49.000000Z',
-      updatedAt: null,
+      deleted_at: null,
+      created_at: '2024-12-17T12:05:49.000000Z',
+      updated_at: null,
     });
   });
 

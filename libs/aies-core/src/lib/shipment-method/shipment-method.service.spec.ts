@@ -35,7 +35,7 @@ describe('ShipmentMethodService', () => {
     ],
     errors: null,
     pagination: null,
-    statusCode: 200,
+    status_code: 200,
   };
 
   beforeEach(() => {
@@ -59,8 +59,8 @@ describe('ShipmentMethodService', () => {
       });
       expect(res.success).toBe(true);
       expect(res.data?.[0]?.name).toBe('Africanies Air Expedited');
-      expect(res.data?.[0]?.seaOnly).toBe(false);
-      expect(res.data?.[0]?.minWeight).toBe(0.5);
+      expect(res.data?.[0]?.sea_only).toBe(false);
+      expect(res.data?.[0]?.min_weight).toBe(0.5);
       done();
     });
   });

@@ -40,7 +40,7 @@ import {
  * const modeConfig = inject(ModeConfigService);
  * const region = modeConfig.getRegionConfig('us');
  * if (region) {
- *   console.log(region.currencySymbol, region.massUnit);
+ *   console.log(region.currency_symbol, region.mass_unit);
  * }
  * ```
  */

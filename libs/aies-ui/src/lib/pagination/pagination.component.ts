@@ -17,7 +17,7 @@ import { ButtonComponent } from '../button/button.component';
  * component wires straight to `response().pagination` with no mapping layer.
  *
  * Prev/next disable via `hasPreviousPage` / `hasNextPage` rather than
- * recomputing bounds from `currentPage` / `totalPages`.
+ * recomputing bounds from `current_page` / `total_pages`.
  *
  * @example
  * ```ts
@@ -59,9 +59,9 @@ import { ButtonComponent } from '../button/button.component';
       aria-label="Pagination"
     >
       <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-        Page {{ meta().currentPage }} of {{ meta().totalPages }}
+        Page {{ meta().current_page }} of {{ meta().total_pages }}
         <span class="text-neutral-400 dark:text-neutral-500">
-          ({{ meta().totalItems }} items)
+          ({{ meta().total_items }} items)
         </span>
       </p>
       <div class="inline-flex items-center gap-2">
@@ -70,8 +70,8 @@ import { ButtonComponent } from '../button/button.component';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="!meta().hasPreviousPage"
-          (click)="emitPage(meta().currentPage - 1)"
+          [disabled]="!meta().has_previous_page"
+          (click)="emitPage(meta().current_page - 1)"
         >
           Previous
         </button>
@@ -80,8 +80,8 @@ import { ButtonComponent } from '../button/button.component';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="!meta().hasNextPage"
-          (click)="emitPage(meta().currentPage + 1)"
+          [disabled]="!meta().has_next_page"
+          (click)="emitPage(meta().current_page + 1)"
         >
           Next
         </button>
@@ -106,13 +106,13 @@ export class PaginationComponent {
   readonly pageChange = output<number>();
 
   /**
-   * Emits only when the requested page differs from `currentPage`.
+   * Emits only when the requested page differs from `current_page`.
    *
    * @param page - Candidate page index (already clamped by disabled buttons
    *   in the common case; still guard against no-ops).
    */
   protected emitPage(page: number): void {
-    if (page === this.meta().currentPage) {
+    if (page === this.meta().current_page) {
       return;
     }
     this.pageChange.emit(page);

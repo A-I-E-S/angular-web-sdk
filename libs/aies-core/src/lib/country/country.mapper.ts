@@ -4,23 +4,21 @@ import type { CountryModel, CountryStateModel } from '@aies/aies-models';
 export const COUNTRY_READ_PATH = '/public/country/read';
 
 /**
- * Map a wire state object into {@link CountryStateModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- * @param raw - State object from the wire (camel or snake case).
+ * Map a wire state object into {@link CountryStateModel} (snake_case preserved).
+ * @param raw - State object from the wire.
  * @returns Normalized {@link CountryStateModel}.
  */
 export function mapCountryState(raw: unknown): CountryStateModel {
   const record = (raw ?? {}) as Record<string, unknown>;
   return {
     name: String(record['name'] ?? ''),
-    stateCode: String(record['stateCode'] ?? record['state_code'] ?? ''),
+    state_code: String(record['state_code'] ?? record['stateCode'] ?? ''),
   };
 }
 
 /**
- * Map a wire country object into {@link CountryModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- * @param raw - Country object from the wire (camel or snake case).
+ * Map a wire country object into {@link CountryModel} (snake_case preserved).
+ * @param raw - Country object from the wire.
  * @returns Normalized {@link CountryModel}.
  */
 export function mapCountry(raw: unknown): CountryModel {
@@ -45,9 +43,6 @@ export function mapCountry(raw: unknown): CountryModel {
 
 /**
  * Map a list (or single object) payload into {@link CountryModel}[].
- *
- * Some by-id responses may still arrive as a single object; normalize to an
- * array so callers always get `CountryModel[]`.
  *
  * @param raw - `data` payload from `/public/country/read/{id|all}`.
  * @returns Mapped country list (empty when `raw` is null/undefined).

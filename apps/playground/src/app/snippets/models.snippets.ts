@@ -254,8 +254,8 @@ import { ModeConfigService, ShippingModeService } from '@aies/aies-core';
   standalone: true,
   template: \`
     @if (region(); as r) {
-      <p>Value: {{ r.currencySymbol }}{{ amount }}</p>
-      <p>Weight unit: {{ r.massUnit }}</p>
+      <p>Value: {{ r.currency_symbol }}{{ amount }}</p>
+      <p>Weight unit: {{ r.mass_unit }}</p>
     }
   \`,
 })
@@ -283,7 +283,7 @@ export /**
  *
  */
 const MODELS_COUNTRY = `// Public country utility — GET /public/country/read/{id|all}. Default id is 'all'.
-// CountryService maps state_code → stateCode; data is always CountryModel[].
+// CountryService maps into CountryModel[] (snake_case keys, e.g. state_code).
 
 import { Component, inject, signal } from '@angular/core';
 import { CountryService } from '@aies/aies-core';
@@ -321,7 +321,7 @@ export /**
  *
  */
 const MODELS_SHIPMENT_METHOD = `// Carriers — GET /shipment_method/read/{id|all}. Default id is 'all'.
-// ShipmentMethodService maps snake_case + string numbers; zone_values → zoneValues.
+// ShipmentMethodService maps into ShipmentMethodModel[] (snake_case, including zone_values).
 
 import { Component, inject, signal } from '@angular/core';
 import { ShipmentMethodService } from '@aies/aies-core';
@@ -334,7 +334,7 @@ import { firstValueFrom } from 'rxjs';
   template: \`
     <p>{{ methods().length }} methods</p>
     @if (methods()[0]; as first) {
-      <p>{{ first.name }} ({{ first.mode }}) — {{ first.zoneValues.total }} zones</p>
+      <p>{{ first.name }} ({{ first.mode }}) — {{ first.zone_values.total }} zones</p>
     }
   \`,
 })
@@ -420,7 +420,7 @@ export class ZoneSetupComponent {
 export /**
  *
  */
-const MODELS_USER = `// Current user — bare GET /user (no envelope). UserService.me() maps to UserModel.
+const MODELS_USER = `// Current user — bare GET /user (no envelope). UserService.me() → UserModel (snake_case).
 
 import { Component, inject, signal } from '@angular/core';
 import { UserService } from '@aies/aies-core';
@@ -432,7 +432,7 @@ import { firstValueFrom } from 'rxjs';
   standalone: true,
   template: \`
     @if (user(); as u) {
-      <p>{{ u.firstName }} {{ u.lastName }} · {{ u.email }}</p>
+      <p>{{ u.first_name }} {{ u.last_name }} · {{ u.email }}</p>
     }
   \`,
 })

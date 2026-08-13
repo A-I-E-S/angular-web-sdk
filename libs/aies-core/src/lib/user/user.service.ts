@@ -12,7 +12,7 @@ import { mapUser, USER_PATH } from './user.mapper';
  *
  * The backend returns a **bare** user object (no `{ success, data }` wrapper).
  * {@link ApiClient} normalizes that into {@link ApiResponseModel}; this service
- * maps snake_case fields once into {@link UserModel}.
+ * maps wire fields once into {@link UserModel} (snake_case preserved).
  *
  * Requires an auth token via {@link AUTH_TOKEN_PROVIDER}. Not cached — profile
  * data is auth-sensitive and can change per session.

@@ -59,23 +59,23 @@ describe('warehouse.mapper', () => {
   it('maps snake_case, string numbers, and api_enabled flags', () => {
     const mapped = mapWarehouse(WIRE_FUSHAN);
     expect(mapped.id).toBe(37);
-    expect(mapped.partnerId).toBeNull();
+    expect(mapped.partner_id).toBeNull();
     expect(mapped.name).toBe('Test China Fushan');
-    expect(mapped.apiEnabled).toBe(false);
-    expect(mapped.zipCode).toBe('510620');
+    expect(mapped.api_enabled).toBe(false);
+    expect(mapped.zip_code).toBe('510620');
     expect(mapped.longitude).toBeCloseTo(113.3247658);
     expect(mapped.latitude).toBeCloseTo(23.1423581);
-    expect(mapped.storageCharge).toBe(1500);
-    expect(mapped.storagePeriod).toBe(7);
-    expect(mapped.noShippo).toBe(true);
+    expect(mapped.storage_charge).toBe(1500);
+    expect(mapped.storage_period).toBe(7);
+    expect(mapped.no_shippo).toBe(true);
     expect(mapped.country?.iso2).toBe('CN');
-    expect(mapped.country?.states[0]?.stateCode).toBe('GD');
+    expect(mapped.country?.states[0]?.state_code).toBe('GD');
     expect(mapped.state).toEqual({
       id: 787,
       name: 'Guangdong',
-      stateCode: 'GD',
+      state_code: 'GD',
       country: 'China',
-      countryCode: 'CN',
+      country_code: 'CN',
     });
   });
 
@@ -90,7 +90,7 @@ describe('warehouse.mapper', () => {
   });
 
   it('treats api_enabled "1" as true', () => {
-    expect(mapWarehouse({ ...WIRE_FUSHAN, api_enabled: '1' }).apiEnabled).toBe(
+    expect(mapWarehouse({ ...WIRE_FUSHAN, api_enabled: '1' }).api_enabled).toBe(
       true,
     );
   });

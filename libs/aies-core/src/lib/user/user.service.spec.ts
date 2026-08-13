@@ -31,7 +31,7 @@ describe('UserService', () => {
     },
     errors: null,
     pagination: null,
-    statusCode: null,
+    status_code: null,
   };
 
   beforeEach(() => {
@@ -51,9 +51,9 @@ describe('UserService', () => {
     service.me().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(USER_PATH);
       expect(res.data?.email).toBe('oladotun.a@africanies.com');
-      expect(res.data?.centralId).toBe('50fb183b-af87-4e4d-9384-c960d8a1b852');
-      expect(res.data?.formSignup).toBe(true);
-      expect(res.data?.socialiteSignup).toBe(false);
+      expect(res.data?.central_id).toBe('50fb183b-af87-4e4d-9384-c960d8a1b852');
+      expect(res.data?.form_signup).toBe(1);
+      expect(res.data?.socialite_signup).toBe(0);
       done();
     });
   });

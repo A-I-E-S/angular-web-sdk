@@ -90,8 +90,16 @@ export {
 // Current user (bare /user payload — auth required)
 export {
   mapUser,
+  mapUserAccountManager,
+  mapUserBusinessAccount,
   mapUserCountry,
-  mapUserState,
+  mapUserCountryState,
+  mapUserGatewayPayload,
+  mapUserPaymentPayload,
+  mapUserPlan,
+  mapUserPlanPackage,
+  mapUserStateLabel,
+  mapUserSubscription,
   USER_PATH,
   UserService,
 } from './lib/user';

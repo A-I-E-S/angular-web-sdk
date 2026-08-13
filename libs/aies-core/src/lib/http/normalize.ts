@@ -6,10 +6,7 @@ import type {
 
 /**
  * Narrow unknown JSON into a record for defensive key reads.
- * Primitives and arrays are treated as non-objects so callers fall through
- * to the "unwrapped payload" path.
- * @param value - Candidate JSON value.
- * @returns A record when `value` is a plain object; otherwise `null`.
+ * @param value
  */
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
@@ -20,10 +17,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 
 /**
  * Whether the payload looks like an AIES API envelope.
- * Requires both `success` and `data` so accidental objects with only one
- * of those keys are not mis-classified as envelopes.
- * @param value - Candidate JSON value.
- * @returns True when both `success` and `data` keys are present.
+ * @param value
  */
 function isWrappedEnvelope(value: unknown): boolean {
   const record = asRecord(value);
@@ -32,9 +26,7 @@ function isWrappedEnvelope(value: unknown): boolean {
 
 /**
  * Coalesce a single error entry so missing field/code become `null`.
- * `message` falls back to empty string because {@link ApiErrorDetailModel} requires it.
- * @param value - Raw error entry from the wire.
- * @returns A null-safe {@link ApiErrorDetailModel}.
+ * @param value
  */
 function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
   const record = asRecord(value) ?? {};
@@ -46,10 +38,8 @@ function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
 }
 
 /**
- * Map pagination from camelCase or snake_case wire forms.
- * Backends are inconsistent; reading both keeps consumers on one SDK shape.
- * @param value - Raw pagination object (camelCase or snake_case).
- * @returns Normalized meta, or `null` when `value` is not an object.
+ * Map pagination from snake_case (preferred) or legacy camelCase wire forms.
+ * @param value
  */
 function normalizePagination(value: unknown): PaginationMetaModel | null {
   const record = asRecord(value);
@@ -57,48 +47,38 @@ function normalizePagination(value: unknown): PaginationMetaModel | null {
     return null;
   }
 
-  const currentPage = record['currentPage'] ?? record['current_page'];
-  const perPage = record['perPage'] ?? record['per_page'];
-  const totalItems = record['totalItems'] ?? record['total_items'];
-  const totalPages = record['totalPages'] ?? record['total_pages'];
-  const hasNextPage = record['hasNextPage'] ?? record['has_next_page'];
-  const hasPreviousPage =
-    record['hasPreviousPage'] ?? record['has_previous_page'];
+  const current_page = record['current_page'] ?? record['currentPage'];
+  const per_page = record['per_page'] ?? record['perPage'];
+  const total_items = record['total_items'] ?? record['totalItems'];
+  const total_pages = record['total_pages'] ?? record['totalPages'];
+  const has_next_page = record['has_next_page'] ?? record['hasNextPage'];
+  const has_previous_page =
+    record['has_previous_page'] ?? record['hasPreviousPage'];
 
-  // If the object is empty of known keys, still return a fully-null-safe
-  // numeric/boolean shape rather than undefined fields.
   return {
-    currentPage: Number(currentPage ?? 0),
-    perPage: Number(perPage ?? 0),
-    totalItems: Number(totalItems ?? 0),
-    totalPages: Number(totalPages ?? 0),
-    hasNextPage: Boolean(hasNextPage),
-    hasPreviousPage: Boolean(hasPreviousPage),
+    current_page: Number(current_page ?? 0),
+    per_page: Number(per_page ?? 0),
+    total_items: Number(total_items ?? 0),
+    total_pages: Number(total_pages ?? 0),
+    has_next_page: Boolean(has_next_page),
+    has_previous_page: Boolean(has_previous_page),
   };
 }
 
 /**
  * Normalize any HTTP JSON body into a fully null-safe {@link ApiResponseModel}.
  *
- * Every envelope field is explicitly set (never left `undefined`) so the
- * SDK's `| null` types match runtime reality — backends often omit
- * `errors` / `pagination` / `statusCode` on success.
- *
- * - Wrapped bodies (`success` + `data`): coalesce fields; map `status_code`
- *   → `statusCode` and snake_case pagination keys when present.
- * - Unwrapped bodies: wrap as `{ success: true, data: raw, …null }`.
- *
- * @typeParam T - Expected `data` payload type.
- * @param raw - Parsed response body from HttpClient.
- * @returns A complete {@link ApiResponseModel} with no undefined fields.
+ * Envelope fields use snake_case where the wire does (`status_code`,
+ * pagination keys). Unwrapped bodies are wrapped as success envelopes.
+ * @param raw
  */
 export function normalize<T>(raw: unknown): ApiResponseModel<T> {
   if (isWrappedEnvelope(raw)) {
     const record = asRecord(raw);
     if (record !== null) {
       const success = record['success'];
-      const statusCode =
-        record['statusCode'] ?? record['status_code'] ?? null;
+      const status_code =
+        record['status_code'] ?? record['statusCode'] ?? null;
 
       return {
         success: typeof success === 'boolean' ? success : Boolean(success),
@@ -108,10 +88,10 @@ export function normalize<T>(raw: unknown): ApiResponseModel<T> {
           ? record['errors'].map(normalizeErrorDetail)
           : null,
         pagination: normalizePagination(record['pagination']),
-        statusCode:
-          statusCode === null || statusCode === undefined
+        status_code:
+          status_code === null || status_code === undefined
             ? null
-            : Number(statusCode),
+            : Number(status_code),
       };
     }
   }
@@ -122,6 +102,6 @@ export function normalize<T>(raw: unknown): ApiResponseModel<T> {
     data: (raw as T | null | undefined) ?? null,
     errors: null,
     pagination: null,
-    statusCode: null,
+    status_code: null,
   };
 }

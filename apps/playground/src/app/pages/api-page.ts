@@ -213,8 +213,8 @@ import {
                 first.name
               }}</span>
               ({{ first.mode.toUpperCase() }}) ·
-              {{ first.minDeliveryBusinessDay }}–{{ first.maxDeliveryBusinessDay }}
-              days · {{ first.zoneValues.total }} zone links
+              {{ first.min_delivery_business_day }}–{{ first.max_delivery_business_day }}
+              days · {{ first.zone_values.total }} zone links
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
@@ -274,7 +274,7 @@ import {
               @if (first.country; as country) {
                 ({{ country.iso2 }})
               }
-              · {{ first.currency }} {{ first.storageCharge }}
+              · {{ first.currency }} {{ first.storage_charge }}
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
@@ -375,7 +375,7 @@ import {
               @if (profile.country; as country) {
                 · {{ country.iso2 }}
               }
-              · {{ profile.mainRegion }} · {{ profile.shippingType }}
+              · {{ profile.main_region }} · {{ profile.shipping_type }}
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
@@ -425,10 +425,10 @@ import {
                   </p>
                   @if (regionFor(sample.code); as region) {
                     <p class="m-0 mt-2 text-body font-medium text-ink dark:text-white">
-                      {{ region.currencySymbol }} {{ region.currency }}
+                      {{ region.currency_symbol }} {{ region.currency }}
                     </p>
                     <p class="m-0 mt-1 text-caption text-neutral-600 dark:text-neutral-400">
-                      {{ region.massUnit }} · {{ region.dimensionUnit }}
+                      {{ region.mass_unit }} · {{ region.dimension_unit }}
                     </p>
                   } @else {
                     <p class="m-0 mt-2 text-caption text-neutral-500">No config yet</p>

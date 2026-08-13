@@ -10,11 +10,6 @@ import { mapApiJsonValue } from '../http/map-api-json';
 /** Warehouse read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const WAREHOUSE_READ_PATH = '/warehouse/read';
 
-/**
- * Narrow unknown JSON into a record for defensive key reads.
- * @param value - Candidate JSON value.
- * @returns A record when `value` is a plain object; otherwise `null`.
- */
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
     return value as Record<string, unknown>;
@@ -22,21 +17,11 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return null;
 }
 
-/**
- * Coerce a wire number that may arrive as a string.
- * @param value - Raw numeric field.
- * @returns Finite number, or `0` when missing/invalid.
- */
 function asNumber(value: unknown): number {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
 }
 
-/**
- * Coerce `"0"` / `"1"` / boolean into a boolean.
- * @param value - Raw flag.
- * @returns `true` for boolean `true` or string `"1"`.
- */
 function asFlag01(value: unknown): boolean {
   if (typeof value === 'boolean') {
     return value;
@@ -44,11 +29,6 @@ function asFlag01(value: unknown): boolean {
   return String(value ?? '').trim() === '1';
 }
 
-/**
- * Coerce a nullable string field (missing → `null`).
- * @param value - Raw string field.
- * @returns String or `null`.
- */
 function asNullableString(value: unknown): string | null {
   if (value == null) {
     return null;
@@ -57,9 +37,8 @@ function asNullableString(value: unknown): string | null {
 }
 
 /**
- * Map warehouse state into {@link WarehouseStateModel}.
- * @param raw - State object from the wire.
- * @returns Normalized state, or `null` when `raw` is not an object.
+ * Map warehouse state into {@link WarehouseStateModel} (snake_case).
+ * @param raw
  */
 export function mapWarehouseState(raw: unknown): WarehouseStateModel | null {
   const record = asRecord(raw);
@@ -69,18 +48,17 @@ export function mapWarehouseState(raw: unknown): WarehouseStateModel | null {
   return {
     id: asNumber(record['id']),
     name: String(record['name'] ?? ''),
-    stateCode: String(record['stateCode'] ?? record['state_code'] ?? ''),
+    state_code: String(record['state_code'] ?? record['stateCode'] ?? ''),
     country: String(record['country'] ?? ''),
-    countryCode: String(
-      record['countryCode'] ?? record['country_code'] ?? '',
+    country_code: String(
+      record['country_code'] ?? record['countryCode'] ?? '',
     ),
   };
 }
 
 /**
  * Map nested country (same shape as public country utility).
- * @param raw - Country object from the wire.
- * @returns Mapped {@link CountryModel}, or `null`.
+ * @param raw
  */
 export function mapWarehouseCountry(raw: unknown): CountryModel | null {
   if (raw == null) {
@@ -90,72 +68,68 @@ export function mapWarehouseCountry(raw: unknown): CountryModel | null {
 }
 
 /**
- * Map a wire warehouse into {@link WarehouseModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- * @param raw - Warehouse object from the wire.
- * @returns Normalized {@link WarehouseModel}.
+ * Map a wire warehouse into {@link WarehouseModel} (snake_case preserved).
+ * @param raw
  */
 export function mapWarehouse(raw: unknown): WarehouseModel {
   const record = asRecord(raw) ?? {};
 
-  const partnerIdRaw = record['partnerId'] ?? record['partner_id'];
-  const partnerId =
+  const partnerIdRaw = record['partner_id'] ?? record['partnerId'];
+  const partner_id =
     partnerIdRaw == null || partnerIdRaw === ''
       ? null
       : asNumber(partnerIdRaw);
 
   return {
     id: asNumber(record['id']),
-    partnerId,
+    partner_id,
     name: String(record['name'] ?? ''),
     phone: String(record['phone'] ?? ''),
     email: String(record['email'] ?? ''),
     country: mapWarehouseCountry(record['country']),
-    apiEnabled: asFlag01(record['apiEnabled'] ?? record['api_enabled']),
+    api_enabled: asFlag01(record['api_enabled'] ?? record['apiEnabled']),
     state: mapWarehouseState(record['state']),
     city: String(record['city'] ?? ''),
     address: String(record['address'] ?? ''),
     longitude: asNumber(record['longitude']),
     latitude: asNumber(record['latitude']),
-    zipCode: String(record['zipCode'] ?? record['zip_code'] ?? ''),
+    zip_code: String(record['zip_code'] ?? record['zipCode'] ?? ''),
     usage: asNumber(record['usage']),
     active: Boolean(record['active']),
-    deletedAt: asNullableString(
-      record['deletedAt'] ?? record['deleted_at'],
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
     ),
-    createdAt: asNullableString(
-      record['createdAt'] ?? record['created_at'],
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
     ),
-    updatedAt: asNullableString(
-      record['updatedAt'] ?? record['updated_at'],
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
     ),
-    storageCharge: asNumber(
-      record['storageCharge'] ?? record['storage_charge'],
+    storage_charge: asNumber(
+      record['storage_charge'] ?? record['storageCharge'],
     ),
-    storagePeriod: asNumber(
-      record['storagePeriod'] ?? record['storage_period'],
+    storage_period: asNumber(
+      record['storage_period'] ?? record['storagePeriod'],
     ),
-    deliveryCharge: asNumber(
-      record['deliveryCharge'] ?? record['delivery_charge'],
+    delivery_charge: asNumber(
+      record['delivery_charge'] ?? record['deliveryCharge'],
     ),
-    deliveryCount: asNumber(
-      record['deliveryCount'] ?? record['delivery_count'],
+    delivery_count: asNumber(
+      record['delivery_count'] ?? record['deliveryCount'],
     ),
     currency: String(record['currency'] ?? ''),
-    etwShipmentAvailable: Boolean(
-      record['etwShipmentAvailable'] ?? record['etw_shipment_available'],
+    etw_shipment_available: Boolean(
+      record['etw_shipment_available'] ?? record['etwShipmentAvailable'],
     ),
     local: Boolean(record['local']),
-    noShippo: Boolean(record['noShippo'] ?? record['no_shippo']),
+    no_shippo: Boolean(record['no_shippo'] ?? record['noShippo']),
     partner: mapApiJsonValue(record['partner']),
   };
 }
 
 /**
  * Map a list (or single object) payload into {@link WarehouseModel}[].
- *
- * @param raw - `data` payload from `/warehouse/read/{id|all}`.
- * @returns Mapped warehouse list (empty when `raw` is null/undefined).
+ * @param raw
  */
 export function mapWarehouseList(raw: unknown): WarehouseModel[] {
   if (raw == null) {

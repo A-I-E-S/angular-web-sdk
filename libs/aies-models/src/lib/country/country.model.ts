@@ -2,8 +2,8 @@
  * Country and subdivision shapes from public utility endpoints.
  *
  * Domain interfaces in `@aies/aies-models` use a `*Model` suffix.
- * Field names are camelCase in the SDK. Wire payloads may use snake_case
- * (`state_code`); mapping happens once in `@aies/aies-core` CountryService.
+ * Field names match the wire (snake_case). Mapping in `@aies/aies-core`
+ * preserves those keys.
  */
 
 /**
@@ -13,11 +13,8 @@ export interface CountryStateModel {
   /** Display name (e.g. `"Lagos"`, `"California"`). */
   name: string;
 
-  /**
-   * Subdivision code for the country (e.g. `"LA"`, `"CA"`).
-   * Mapped from wire `state_code`.
-   */
-  stateCode: string;
+  /** Subdivision code (e.g. `"LA"`, `"CA"`). */
+  state_code: string;
 }
 
 /**

@@ -1,14 +1,35 @@
 import type {
-  CountryModel,
+  AccountType,
+  PlanType,
+  ShippingType,
+  UserAccountManagerModel,
+  UserBusinessAccountModel,
+  UserCountryModel,
+  UserGatewayPayloadModel,
   UserModel,
+  UserModelType,
+  UserPaymentPayloadModel,
+  UserPlanModel,
+  UserPlanPackageModel,
   UserStateModel,
+  UserSubscriptionModel,
 } from '@aies/aies-models';
-
-import { mapCountry } from '../country/country.mapper';
-import { mapApiJsonList, mapApiJsonValue } from '../http/map-api-json';
 
 /** Current-user path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const USER_PATH = '/user';
+
+const ACCOUNT_TYPES = new Set<AccountType>(['business', 'individual']);
+const SHIPPING_TYPES = new Set<ShippingType>(['instant', 'consolidation']);
+const PLAN_TYPES = new Set<PlanType>([
+  'monthly',
+  'quarterly',
+  'biannually',
+  'annually',
+]);
+const USER_MODEL_TYPES = new Set<UserModelType>([
+  'App\\Models\\Customer',
+  'App\\Models\\Admin',
+]);
 
 /**
  * Narrow unknown JSON into a record for defensive key reads.
@@ -25,30 +46,18 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 /**
  * Coerce a wire number that may arrive as a string.
  * @param value - Raw numeric field.
- * @returns Finite number, or `0` when missing/invalid.
+ * @returns Finite number, or `null` when missing/invalid.
  */
-function asNumber(value: unknown): number {
+function asNumber(value: unknown): number | null {
+  if (value == null || value === '') {
+    return null;
+  }
   const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : null;
 }
 
 /**
- * Coerce `"0"` / `"1"` / numeric / boolean into a boolean.
- * @param value - Raw flag.
- * @returns `true` for boolean `true`, number `1`, or string `"1"`.
- */
-function asFlag01(value: unknown): boolean {
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  if (typeof value === 'number') {
-    return value === 1;
-  }
-  return String(value ?? '').trim() === '1';
-}
-
-/**
- * Nullable string from wire (empty string stays empty; null stays null).
+ * Nullable string from wire.
  * @param value - Raw string field.
  * @returns String or `null`.
  */
@@ -56,126 +65,507 @@ function asNullableString(value: unknown): string | null {
   if (value == null) {
     return null;
   }
-  return String(value);
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return null;
 }
 
 /**
- * Map user state into {@link UserStateModel}.
- * @param raw - State object from the wire.
- * @returns Normalized state, or `null`.
+ * Nullable boolean (keeps explicit `false`).
+ * @param value - Raw flag.
+ * @returns Boolean or `null` when absent.
  */
-export function mapUserState(raw: unknown): UserStateModel | null {
+function asNullableBoolean(value: unknown): boolean | null {
+  if (value == null) {
+    return null;
+  }
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'number') {
+    return value === 1;
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim().toLowerCase();
+    if (trimmed === '1' || trimmed === 'true') {
+      return true;
+    }
+    if (trimmed === '0' || trimmed === 'false') {
+      return false;
+    }
+  }
+  return null;
+}
+
+/**
+ * Wire `0` / `1` flag (socialite / form signup).
+ * @param value - Raw flag.
+ * @returns `0`, `1`, or `null`.
+ */
+function asFlag01(value: unknown): 0 | 1 | null {
+  if (value == null || value === '') {
+    return null;
+  }
+  if (value === 1 || value === '1' || value === true) {
+    return 1;
+  }
+  if (value === 0 || value === '0' || value === false) {
+    return 0;
+  }
+  return null;
+}
+
+/**
+ * @param value - Candidate union member.
+ * @param allowed - Allowed set.
+ * @returns Value when allowed; otherwise `null`.
+ */
+function asEnumMember<T extends string>(
+  value: unknown,
+  allowed: Set<T>,
+): T | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  return allowed.has(value as T) ? (value as T) : null;
+}
+
+/**
+ * Map a state row under country.states.
+ * @param raw - State object from the wire.
+ * @returns {@link UserStateModel}, or `null`.
+ */
+export function mapUserCountryState(raw: unknown): UserStateModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    name: asNullableString(record['name']),
+    state_code: asNullableString(
+      record['state_code'] ?? record['stateCode'],
+    ),
+  };
+}
+
+/**
+ * Map nested country on the user profile.
+ * @param raw - Country object from the wire.
+ * @returns {@link UserCountryModel}, or `null`.
+ */
+export function mapUserCountry(raw: unknown): UserCountryModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  const statesRaw = record['states'];
+  const states = Array.isArray(statesRaw)
+    ? statesRaw
+        .map((entry) => mapUserCountryState(entry))
+        .filter((entry): entry is UserStateModel => entry !== null)
+    : null;
+
+  return {
+    id: asNumber(record['id']),
+    name: asNullableString(record['name']),
+    iso3: asNullableString(record['iso3']),
+    iso2: asNullableString(record['iso2']),
+    states,
+  };
+}
+
+/**
+ * Normalize `state` when the API returns a string (or an object with `name`).
+ * @param raw - Wire `state` field.
+ * @returns String label, or `null`.
+ */
+export function mapUserStateLabel(raw: unknown): string | null {
+  if (raw == null) {
+    return null;
+  }
+  if (typeof raw === 'string') {
+    return raw;
+  }
+  const record = asRecord(raw);
+  if (record !== null) {
+    return asNullableString(record['name'] ?? record['state']);
+  }
+  return null;
+}
+
+/**
+ * @param raw - Plan package object.
+ * @returns {@link UserPlanPackageModel}, or `null`.
+ */
+export function mapUserPlanPackage(raw: unknown): UserPlanPackageModel | null {
   const record = asRecord(raw);
   if (record === null) {
     return null;
   }
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    stateCode: String(record['stateCode'] ?? record['state_code'] ?? ''),
-    country: String(record['country'] ?? ''),
-    countryCode: String(
-      record['countryCode'] ?? record['country_code'] ?? '',
+    plan_id: asNumber(record['plan_id'] ?? record['planId']),
+    company_service_id: asNumber(
+      record['company_service_id'] ?? record['companyServiceId'],
+    ),
+    name: asNullableString(record['name']),
+    metrics: asNullableString(record['metrics']),
+    volume: asNumber(record['volume']),
+    discount: asNullableString(record['discount']),
+    model: asNullableString(record['model']),
+    monthly: asNullableString(record['monthly']),
+    quarterly: asNullableString(record['quarterly']),
+    biannually: asNullableString(record['biannually']),
+    annually: asNullableString(record['annually']),
+    active: asNullableBoolean(record['active']),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
+    ),
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
+    ),
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
     ),
   };
 }
 
 /**
- * Map nested country (same shape as public country utility).
- * @param raw - Country object from the wire.
- * @returns Mapped {@link CountryModel}, or `null`.
+ * @param raw - Plan object.
+ * @returns {@link UserPlanModel}, or `null`.
  */
-export function mapUserCountry(raw: unknown): CountryModel | null {
-  if (raw == null) {
+export function mapUserPlan(raw: unknown): UserPlanModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
     return null;
   }
-  return mapCountry(raw);
+  const packagesRaw = record['packages'];
+  const packages = Array.isArray(packagesRaw)
+    ? packagesRaw
+        .map((entry) => mapUserPlanPackage(entry))
+        .filter((entry): entry is UserPlanPackageModel => entry !== null)
+    : null;
+
+  return {
+    id: asNumber(record['id']),
+    name: asNullableString(record['name']),
+    active: asNullableBoolean(record['active']),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
+    ),
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
+    ),
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
+    ),
+    packages,
+  };
 }
 
 /**
- * Map a bare wire user object into {@link UserModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
+ * @param raw - Gateway payload object.
+ * @returns {@link UserGatewayPayloadModel}, or `null`.
+ */
+export function mapUserGatewayPayload(
+  raw: unknown,
+): UserGatewayPayloadModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    authorization_url: asNullableString(
+      record['authorization_url'] ?? record['authorizationUrl'],
+    ),
+    access_code: asNullableString(
+      record['access_code'] ?? record['accessCode'],
+    ),
+    reference: asNullableString(record['reference']),
+    redirect_url: asNullableString(
+      record['redirect_url'] ?? record['redirectUrl'],
+    ),
+  };
+}
+
+/**
+ * @param raw - Payment payload object (already parsed).
+ * @returns {@link UserPaymentPayloadModel}, or `null`.
+ */
+export function mapUserPaymentPayload(
+  raw: unknown,
+): UserPaymentPayloadModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    url: asNullableString(record['url']),
+    redirect_url: asNullableString(
+      record['redirect_url'] ?? record['redirectUrl'],
+    ),
+    gateway_payload: mapUserGatewayPayload(
+      record['gateway_payload'] ?? record['gatewayPayload'],
+    ),
+    reference: asNullableString(record['reference']),
+  };
+}
+
+/**
+ * @param raw - Subscription object.
+ * @returns {@link UserSubscriptionModel}, or `null`.
+ */
+export function mapUserSubscription(
+  raw: unknown,
+): UserSubscriptionModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    id: asNumber(record['id']),
+    user_id: asNumber(record['user_id'] ?? record['userId']),
+    plan_id: asNumber(record['plan_id'] ?? record['planId']),
+    account_id: asNumber(record['account_id'] ?? record['accountId']),
+    reference: asNullableString(record['reference']),
+    process_url: asNullableString(
+      record['process_url'] ?? record['processUrl'],
+    ),
+    reference_salt: asNullableString(
+      record['reference_salt'] ?? record['referenceSalt'],
+    ),
+    amount: asNullableString(record['amount']),
+    currency: asNullableString(record['currency']),
+    payment_amount: asNullableString(
+      record['payment_amount'] ?? record['paymentAmount'],
+    ),
+    payment_currency: asNullableString(
+      record['payment_currency'] ?? record['paymentCurrency'],
+    ),
+    coupon_id: asNumber(record['coupon_id'] ?? record['couponId']),
+    coupon_discount: asNullableString(
+      record['coupon_discount'] ?? record['couponDiscount'],
+    ),
+    coupon_amount: asNullableString(
+      record['coupon_amount'] ?? record['couponAmount'],
+    ),
+    payment_payload: asNullableString(
+      record['payment_payload'] ?? record['paymentPayload'],
+    ),
+    plan_type: asEnumMember(
+      record['plan_type'] ?? record['planType'],
+      PLAN_TYPES,
+    ),
+    used: asNullableBoolean(record['used']),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
+    ),
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
+    ),
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
+    ),
+  };
+}
+
+/**
+ * @param raw - Business account object.
+ * @returns {@link UserBusinessAccountModel}, or `null`.
+ */
+export function mapUserBusinessAccount(
+  raw: unknown,
+): UserBusinessAccountModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    id: asNumber(record['id']),
+    user_id: asNumber(record['user_id'] ?? record['userId']),
+    plan_id: asNumber(record['plan_id'] ?? record['planId']),
+    name: asNullableString(record['name']),
+    account_email: asNullableString(
+      record['account_email'] ?? record['accountEmail'],
+    ),
+    plan_type: asEnumMember(
+      record['plan_type'] ?? record['planType'],
+      PLAN_TYPES,
+    ),
+    first_payment: asNullableBoolean(
+      record['first_payment'] ?? record['firstPayment'],
+    ),
+    is_whitelisted: asNullableBoolean(
+      record['is_whitelisted'] ?? record['isWhitelisted'],
+    ),
+    no_state_validation: asNullableBoolean(
+      record['no_state_validation'] ?? record['noStateValidation'],
+    ),
+    show_waybill: asNullableBoolean(
+      record['show_waybill'] ?? record['showWaybill'],
+    ),
+    notify_api_shipment: asNullableBoolean(
+      record['notify_api_shipment'] ?? record['notifyApiShipment'],
+    ),
+    active: asNullableBoolean(record['active']),
+    expires_at: asNullableString(
+      record['expires_at'] ?? record['expiresAt'],
+    ),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
+    ),
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
+    ),
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
+    ),
+    type: asEnumMember(record['type'], ACCOUNT_TYPES),
+    days_left: asNumber(record['days_left'] ?? record['daysLeft']),
+    plan: mapUserPlan(record['plan']),
+    subscription: mapUserSubscription(record['subscription']),
+  };
+}
+
+/**
+ * @param raw - Account manager object.
+ * @returns {@link UserAccountManagerModel}, or `null`.
+ */
+export function mapUserAccountManager(
+  raw: unknown,
+): UserAccountManagerModel | null {
+  const record = asRecord(raw);
+  if (record === null) {
+    return null;
+  }
+  return {
+    id: asNumber(record['id']),
+    user_id: asNumber(record['user_id'] ?? record['userId']),
+    manager_id: asNumber(record['manager_id'] ?? record['managerId']),
+    account_id: asNumber(record['account_id'] ?? record['accountId']),
+    name: asNullableString(record['name']),
+    email: asNullableString(record['email']),
+    phone: asNullableString(record['phone']),
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
+    ),
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
+    ),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
+    ),
+  };
+}
+
+/**
+ * Map a bare wire user object into {@link UserModel} (snake_case preserved).
  * @param raw - User object from `GET /user` (unwrapped).
  * @returns Normalized {@link UserModel}.
  */
 export function mapUser(raw: unknown): UserModel {
   const record = asRecord(raw) ?? {};
+  const accountsRaw = record['accounts'];
 
   return {
     id: asNumber(record['id']),
-    centralId: String(record['centralId'] ?? record['central_id'] ?? ''),
-    name: String(record['name'] ?? ''),
-    firstName: String(record['firstName'] ?? record['first_name'] ?? ''),
-    middleName: asNullableString(
-      record['middleName'] ?? record['middle_name'],
+    central_id: asNullableString(
+      record['central_id'] ?? record['centralId'],
     ),
-    lastName: String(record['lastName'] ?? record['last_name'] ?? ''),
-    email: String(record['email'] ?? ''),
-    phone: String(record['phone'] ?? ''),
-    unitNumber: String(record['unitNumber'] ?? record['unit_number'] ?? ''),
-    referralCode: String(
-      record['referralCode'] ?? record['referral_code'] ?? '',
+    name: asNullableString(record['name']),
+    first_name: asNullableString(
+      record['first_name'] ?? record['firstName'],
     ),
-    oldUnitNumber: asNullableString(
-      record['oldUnitNumber'] ?? record['old_unit_number'],
+    middle_name: asNullableString(
+      record['middle_name'] ?? record['middleName'],
     ),
-    accountEmail: asNullableString(
-      record['accountEmail'] ?? record['account_email'],
+    last_name: asNullableString(
+      record['last_name'] ?? record['lastName'],
     ),
-    twoFactor: Boolean(record['twoFactor'] ?? record['two_factor']),
-    defaultPin: Boolean(record['defaultPin'] ?? record['default_pin']),
-    model: String(record['model'] ?? ''),
+    email: asNullableString(record['email']),
+    phone: asNullableString(record['phone']),
+    unit_number: asNullableString(
+      record['unit_number'] ?? record['unitNumber'],
+    ),
+    referral_code: asNullableString(
+      record['referral_code'] ?? record['referralCode'],
+    ),
+    old_unit_number: asNullableString(
+      record['old_unit_number'] ?? record['oldUnitNumber'],
+    ),
+    account_email: asNullableString(
+      record['account_email'] ?? record['accountEmail'],
+    ),
+    two_factor: asNullableBoolean(
+      record['two_factor'] ?? record['twoFactor'],
+    ),
+    default_pin: asNullableBoolean(
+      record['default_pin'] ?? record['defaultPin'],
+    ),
+    model: asEnumMember(
+      record['model'],
+      USER_MODEL_TYPES,
+    ),
     country: mapUserCountry(record['country']),
-    state: mapUserState(record['state']),
-    emailVerifiedAt: asNullableString(
-      record['emailVerifiedAt'] ?? record['email_verified_at'],
+    state: mapUserStateLabel(record['state']),
+    email_verified_at: asNullableString(
+      record['email_verified_at'] ?? record['emailVerifiedAt'],
     ),
-    phoneVerifiedAt: asNullableString(
-      record['phoneVerifiedAt'] ?? record['phone_verified_at'],
+    phone_verified_at: asNullableString(
+      record['phone_verified_at'] ?? record['phoneVerifiedAt'],
     ),
-    kycVerifiedAt: asNullableString(
-      record['kycVerifiedAt'] ?? record['kyc_verified_at'],
+    kyc_verified_at: asNullableString(
+      record['kyc_verified_at'] ?? record['kycVerifiedAt'],
     ),
-    passportVerifiedAt: asNullableString(
-      record['passportVerifiedAt'] ?? record['passport_verified_at'],
+    passport_verified_at: asNullableString(
+      record['passport_verified_at'] ?? record['passportVerifiedAt'],
     ),
-    suspendedAt: asNullableString(
-      record['suspendedAt'] ?? record['suspended_at'],
+    suspended_at: asNullableString(
+      record['suspended_at'] ?? record['suspendedAt'],
     ),
-    deactivatedAt: asNullableString(
-      record['deactivatedAt'] ?? record['deactivated_at'],
+    deactivated_at: asNullableString(
+      record['deactivated_at'] ?? record['deactivatedAt'],
     ),
-    active: Boolean(record['active']),
-    defaultPassword: Boolean(
-      record['defaultPassword'] ?? record['default_password'],
+    active: asNullableBoolean(record['active']),
+    default_password: asNullableBoolean(
+      record['default_password'] ?? record['defaultPassword'],
     ),
-    type: String(record['type'] ?? ''),
-    deletedAt: asNullableString(
-      record['deletedAt'] ?? record['deleted_at'],
+    type: asEnumMember(record['type'], ACCOUNT_TYPES),
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
     ),
-    createdAt: asNullableString(
-      record['createdAt'] ?? record['created_at'],
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
     ),
-    updatedAt: asNullableString(
-      record['updatedAt'] ?? record['updated_at'],
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
     ),
-    lastLoginAt: asNullableString(
-      record['lastLoginAt'] ?? record['last_login_at'],
+    last_login_at: asNullableString(
+      record['last_login_at'] ?? record['lastLoginAt'],
     ),
-    socialiteSignup: asFlag01(
-      record['socialiteSignup'] ?? record['socialite_signup'],
+    socialite_signup: asFlag01(
+      record['socialite_signup'] ?? record['socialiteSignup'],
     ),
-    formSignup: asFlag01(record['formSignup'] ?? record['form_signup']),
-    mainRegion: String(record['mainRegion'] ?? record['main_region'] ?? ''),
-    shippingType: String(
-      record['shippingType'] ?? record['shipping_type'] ?? '',
+    form_signup: asFlag01(
+      record['form_signup'] ?? record['formSignup'],
     ),
-    accounts: mapApiJsonList(record['accounts']),
-    businessAccount: mapApiJsonValue(
-      record['businessAccount'] ?? record['business_account'],
+    main_region: asNullableString(
+      record['main_region'] ?? record['mainRegion'],
     ),
-    accountManager: mapApiJsonValue(
-      record['accountManager'] ?? record['account_manager'],
+    shipping_type: asEnumMember(
+      record['shipping_type'] ?? record['shippingType'],
+      SHIPPING_TYPES,
+    ),
+    accounts: Array.isArray(accountsRaw) ? accountsRaw : null,
+    business_account: mapUserBusinessAccount(
+      record['business_account'] ?? record['businessAccount'],
+    ),
+    account_manager: mapUserAccountManager(
+      record['account_manager'] ?? record['accountManager'],
     ),
   };
 }

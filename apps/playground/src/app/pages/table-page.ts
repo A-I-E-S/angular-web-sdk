@@ -258,16 +258,16 @@ export class TablePage {
   });
 
   protected readonly meta = computed((): PaginationMetaModel => {
-    const totalItems = this.sortedRows().length;
-    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
-    const currentPage = Math.min(this.page(), totalPages);
+    const total_items = this.sortedRows().length;
+    const total_pages = Math.max(1, Math.ceil(total_items / PAGE_SIZE));
+    const current_page = Math.min(this.page(), total_pages);
     return {
-      currentPage,
-      perPage: PAGE_SIZE,
-      totalItems,
-      totalPages,
-      hasNextPage: currentPage < totalPages,
-      hasPreviousPage: currentPage > 1,
+      current_page,
+      per_page: PAGE_SIZE,
+      total_items,
+      total_pages,
+      has_next_page: current_page < total_pages,
+      has_previous_page: current_page > 1,
     };
   });
 

@@ -9,11 +9,6 @@ import type {
 /** Shipment-method read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const SHIPMENT_METHOD_READ_PATH = '/shipment_method/read';
 
-/**
- * Narrow unknown JSON into a record for defensive key reads.
- * @param value - Candidate JSON value.
- * @returns A record when `value` is a plain object; otherwise `null`.
- */
 function asRecord(value: unknown): Record<string, unknown> | null {
   if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
     return value as Record<string, unknown>;
@@ -21,11 +16,6 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return null;
 }
 
-/**
- * Coerce wire yes/no (or boolean) into a boolean.
- * @param value - Raw flag.
- * @returns `true` only for boolean `true` or string `"yes"` (case-insensitive).
- */
 function asYesNo(value: unknown): boolean {
   if (typeof value === 'boolean') {
     return value;
@@ -35,21 +25,11 @@ function asYesNo(value: unknown): boolean {
     .toLowerCase() === 'yes';
 }
 
-/**
- * Coerce a wire number that may arrive as a string.
- * @param value - Raw numeric field.
- * @returns Finite number, or `0` when missing/invalid.
- */
 function asNumber(value: unknown): number {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
 }
 
-/**
- * Coerce a nullable string field (missing → `null`).
- * @param value - Raw string field.
- * @returns String or `null`.
- */
 function asNullableString(value: unknown): string | null {
   if (value == null) {
     return null;
@@ -57,19 +37,13 @@ function asNullableString(value: unknown): string | null {
   return String(value);
 }
 
-/**
- * Coerce shipping mode; unknown values fall back to `'sfn'`.
- * @param value - Raw mode string.
- * @returns `'stn'` or `'sfn'`.
- */
 function asShippingMode(value: unknown): ShippingMode {
   return value === 'stn' ? 'stn' : 'sfn';
 }
 
 /**
  * Map a nested zone object into {@link ShipmentZoneModel}.
- * @param raw - Zone object from the wire (camel or snake case).
- * @returns Normalized zone, or `null` when `raw` is not an object.
+ * @param raw
  */
 export function mapShipmentZone(raw: unknown): ShipmentZoneModel | null {
   const record = asRecord(raw);
@@ -86,8 +60,7 @@ export function mapShipmentZone(raw: unknown): ShipmentZoneModel | null {
 
 /**
  * Map a method↔zone link into {@link ShipmentMethodZoneLinkModel}.
- * @param raw - Link row from `zone_values.data`.
- * @returns Normalized link.
+ * @param raw
  */
 export function mapShipmentMethodZoneLink(
   raw: unknown,
@@ -95,9 +68,9 @@ export function mapShipmentMethodZoneLink(
   const record = asRecord(raw) ?? {};
   return {
     id: asNumber(record['id']),
-    zoneId: asNumber(record['zoneId'] ?? record['zone_id']),
-    shipmentMethodId: asNumber(
-      record['shipmentMethodId'] ?? record['shipment_method_id'],
+    zone_id: asNumber(record['zone_id'] ?? record['zoneId']),
+    shipment_method_id: asNumber(
+      record['shipment_method_id'] ?? record['shipmentMethodId'],
     ),
     active: Boolean(record['active']),
     mode: asShippingMode(record['mode']),
@@ -107,8 +80,7 @@ export function mapShipmentMethodZoneLink(
 
 /**
  * Map a Laravel-style `zone_values` page into {@link ShipmentMethodZonePageModel}.
- * @param raw - Paginated zone payload (or null/undefined).
- * @returns Normalized page (empty when missing).
+ * @param raw
  */
 export function mapShipmentMethodZonePage(
   raw: unknown,
@@ -116,33 +88,31 @@ export function mapShipmentMethodZonePage(
   const record = asRecord(raw);
   if (record === null) {
     return {
-      items: [],
-      currentPage: 0,
-      perPage: 0,
+      data: [],
+      current_page: 0,
+      per_page: 0,
       total: 0,
-      lastPage: 0,
+      last_page: 0,
     };
   }
 
-  const data = record['data'] ?? record['items'];
-  const items = Array.isArray(data)
-    ? data.map((entry) => mapShipmentMethodZoneLink(entry))
+  const rows = record['data'] ?? record['items'];
+  const data = Array.isArray(rows)
+    ? rows.map((entry) => mapShipmentMethodZoneLink(entry))
     : [];
 
   return {
-    items,
-    currentPage: asNumber(record['currentPage'] ?? record['current_page']),
-    perPage: asNumber(record['perPage'] ?? record['per_page']),
+    data,
+    current_page: asNumber(record['current_page'] ?? record['currentPage']),
+    per_page: asNumber(record['per_page'] ?? record['perPage']),
     total: asNumber(record['total']),
-    lastPage: asNumber(record['lastPage'] ?? record['last_page']),
+    last_page: asNumber(record['last_page'] ?? record['lastPage']),
   };
 }
 
 /**
- * Map a wire shipment method into {@link ShipmentMethodModel}.
- * Accepts already-camelCased payloads so double-mapping is harmless.
- * @param raw - Method object from the wire.
- * @returns Normalized {@link ShipmentMethodModel}.
+ * Map a wire shipment method into {@link ShipmentMethodModel} (snake_case).
+ * @param raw
  */
 export function mapShipmentMethod(raw: unknown): ShipmentMethodModel {
   const record = asRecord(raw) ?? {};
@@ -152,74 +122,74 @@ export function mapShipmentMethod(raw: unknown): ShipmentMethodModel {
     name: String(record['name'] ?? ''),
     slug: String(record['slug'] ?? ''),
     model: String(record['model'] ?? ''),
-    minDeliveryBusinessDay: asNumber(
-      record['minDeliveryBusinessDay'] ?? record['min_delivery_business_day'],
+    min_delivery_business_day: asNumber(
+      record['min_delivery_business_day'] ??
+        record['minDeliveryBusinessDay'],
     ),
-    maxDeliveryBusinessDay: asNumber(
-      record['maxDeliveryBusinessDay'] ?? record['max_delivery_business_day'],
+    max_delivery_business_day: asNumber(
+      record['max_delivery_business_day'] ??
+        record['maxDeliveryBusinessDay'],
     ),
     notes: String(record['notes'] ?? ''),
-    blacklistedWords: (() => {
-      const value = record['blacklistedWords'] ?? record['blacklisted_words'];
+    blacklisted_words: (() => {
+      const value = record['blacklisted_words'] ?? record['blacklistedWords'];
       if (value == null) {
         return null;
       }
       return String(value);
     })(),
     position: asNumber(record['position']),
-    minWeight: asNumber(record['minWeight'] ?? record['min_weight']),
-    maxWeight: asNumber(record['maxWeight'] ?? record['max_weight']),
-    maxLength: asNumber(record['maxLength'] ?? record['max_length']),
-    maxWidth: asNumber(record['maxWidth'] ?? record['max_width']),
-    maxHeight: asNumber(record['maxHeight'] ?? record['max_height']),
+    min_weight: asNumber(record['min_weight'] ?? record['minWeight']),
+    max_weight: asNumber(record['max_weight'] ?? record['maxWeight']),
+    max_length: asNumber(record['max_length'] ?? record['maxLength']),
+    max_width: asNumber(record['max_width'] ?? record['maxWidth']),
+    max_height: asNumber(record['max_height'] ?? record['maxHeight']),
     markup: asNumber(record['markup']),
     surcharge: asNumber(record['surcharge']),
-    insuranceBenchmark: asNumber(
-      record['insuranceBenchmark'] ?? record['insurance_benchmark'],
+    insurance_benchmark: asNumber(
+      record['insurance_benchmark'] ?? record['insuranceBenchmark'],
     ),
     insurance: asNumber(record['insurance']),
-    clearingHandling: asNumber(
-      record['clearingHandling'] ?? record['clearing_handling'],
+    clearing_handling: asNumber(
+      record['clearing_handling'] ?? record['clearingHandling'],
     ),
     destination: String(record['destination'] ?? ''),
-    seaOnly: asYesNo(record['seaOnly'] ?? record['sea_only']),
+    sea_only: asYesNo(record['sea_only'] ?? record['seaOnly']),
     currency: String(record['currency'] ?? ''),
     type: String(record['type'] ?? ''),
     active: Boolean(record['active']),
-    multipleRates: Boolean(
-      record['multipleRates'] ?? record['multiple_rates'],
+    multiple_rates: Boolean(
+      record['multiple_rates'] ?? record['multipleRates'],
     ),
-    firstShipmentDiscount: asNumber(
-      record['firstShipmentDiscount'] ?? record['first_shipment_discount'],
+    first_shipment_discount: asNumber(
+      record['first_shipment_discount'] ?? record['firstShipmentDiscount'],
     ),
-    discountType: String(
-      record['discountType'] ?? record['discount_type'] ?? '',
+    discount_type: String(
+      record['discount_type'] ?? record['discountType'] ?? '',
     ),
-    discountActive: Boolean(
-      record['discountActive'] ?? record['discount_active'],
+    discount_active: Boolean(
+      record['discount_active'] ?? record['discountActive'],
     ),
     mode: asShippingMode(record['mode']),
-    deletedAt: asNullableString(
-      record['deletedAt'] ?? record['deleted_at'],
+    deleted_at: asNullableString(
+      record['deleted_at'] ?? record['deletedAt'],
     ),
-    createdAt: asNullableString(
-      record['createdAt'] ?? record['created_at'],
+    created_at: asNullableString(
+      record['created_at'] ?? record['createdAt'],
     ),
-    updatedAt: asNullableString(
-      record['updatedAt'] ?? record['updated_at'],
+    updated_at: asNullableString(
+      record['updated_at'] ?? record['updatedAt'],
     ),
     markdown: asNumber(record['markdown']),
-    zoneValues: mapShipmentMethodZonePage(
-      record['zoneValues'] ?? record['zone_values'],
+    zone_values: mapShipmentMethodZonePage(
+      record['zone_values'] ?? record['zoneValues'],
     ),
   };
 }
 
 /**
  * Map a list (or single object) payload into {@link ShipmentMethodModel}[].
- *
- * @param raw - `data` payload from `/shipment_method/read/{id|all}`.
- * @returns Mapped method list (empty when `raw` is null/undefined).
+ * @param raw
  */
 export function mapShipmentMethodList(raw: unknown): ShipmentMethodModel[] {
   if (raw == null) {

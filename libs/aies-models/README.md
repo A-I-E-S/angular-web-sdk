@@ -19,11 +19,14 @@ suffix.
 - **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
 - **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads
-- **user** — `UserModel`, `UserStateModel` for bare `GET /user` (auth)
+- **user** — `UserModel` (+ nested business account / plan / subscription) for bare `GET /user` (auth)
 - **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `toFilterParams` / `fromFilterParams`
 - **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
 - **async** — `AsyncQueryStateModel` for UI async wrappers
+
+API wire models use **snake_case** field names to match server payloads. Filter/async
+UI models stay camelCase.
 
 ## Usage
 

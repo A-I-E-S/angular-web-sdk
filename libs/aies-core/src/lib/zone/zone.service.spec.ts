@@ -28,7 +28,7 @@ describe('ZoneService', () => {
     ],
     errors: null,
     pagination: null,
-    statusCode: 200,
+    status_code: 200,
   };
 
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('ZoneService', () => {
         cacheTtlMs: 5 * 60_000,
       });
       expect(res.data?.[0]?.name).toBe('R');
-      expect(res.data?.[0]?.createdAt).toBe('2024-12-17T12:05:49.000000Z');
+      expect(res.data?.[0]?.created_at).toBe('2024-12-17T12:05:49.000000Z');
       done();
     });
   });

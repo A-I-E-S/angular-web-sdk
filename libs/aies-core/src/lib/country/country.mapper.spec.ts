@@ -25,14 +25,14 @@ describe('country.mapper', () => {
   it('maps snake_case state_code to stateCode', () => {
     expect(mapCountryState({ name: 'Lagos', state_code: 'LA' })).toEqual({
       name: 'Lagos',
-      stateCode: 'LA',
+      state_code: 'LA',
     });
   });
 
   it('accepts already-camelCased state payloads', () => {
-    expect(mapCountryState({ name: 'Lagos', stateCode: 'LA' })).toEqual({
+    expect(mapCountryState({ name: 'Lagos', state_code: 'LA' })).toEqual({
       name: 'Lagos',
-      stateCode: 'LA',
+      state_code: 'LA',
     });
   });
 
@@ -43,8 +43,8 @@ describe('country.mapper', () => {
       iso3: 'AFG',
       iso2: 'AF',
       states: [
-        { name: 'Badakhshan', stateCode: 'BDS' },
-        { name: 'Kabul', stateCode: 'KAB' },
+        { name: 'Badakhshan', state_code: 'BDS' },
+        { name: 'Kabul', state_code: 'KAB' },
       ],
     });
   });
@@ -53,7 +53,7 @@ describe('country.mapper', () => {
     const list = mapCountryList([WIRE_AFGHANISTAN]);
     expect(list).toHaveLength(1);
     expect(list[0]?.iso2).toBe('AF');
-    expect(list[0]?.states[0]?.stateCode).toBe('BDS');
+    expect(list[0]?.states[0]?.state_code).toBe('BDS');
   });
 
   it('wraps a single object payload as a one-element list', () => {

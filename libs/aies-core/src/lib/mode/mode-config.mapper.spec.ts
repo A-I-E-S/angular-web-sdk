@@ -59,41 +59,41 @@ describe('mode-config.mapper', () => {
 
   it('maps snake_case wire fields to camelCase ModeConfigDataModel', () => {
     expect(config.stn.cn).toEqual({
-      dimensionUnit: 'cm',
-      massUnit: 'KG',
+      dimension_unit: 'cm',
+      mass_unit: 'KG',
       currency: 'USD',
-      currencySymbol: '$',
+      currency_symbol: '$',
     });
-    expect(config.sfn.ng.currencySymbol).toBe('₦');
+    expect(config.sfn.ng.currency_symbol).toBe('₦');
   });
 
   it('resolves STN country regions from saved record', () => {
-    expect(resolveModeRegionConfig(config, 'stn', 'us').massUnit).toBe('LBS');
-    expect(resolveModeRegionConfig(config, 'stn', 'cn').dimensionUnit).toBe('cm');
+    expect(resolveModeRegionConfig(config, 'stn', 'us').mass_unit).toBe('LBS');
+    expect(resolveModeRegionConfig(config, 'stn', 'cn').dimension_unit).toBe('cm');
     expect(resolveModeRegionConfig(config, 'stn', 'gb').currency).toBe('USD');
   });
 
   it('falls back to mode default for unknown country codes', () => {
-    expect(resolveModeRegionConfig(config, 'stn', 'fr').massUnit).toBe('LBS');
+    expect(resolveModeRegionConfig(config, 'stn', 'fr').mass_unit).toBe('LBS');
     expect(resolveModeRegionConfig(config, 'sfn', 'us').currency).toBe('NGN');
   });
 
   it('uses default when country code is empty', () => {
-    expect(resolveModeRegionConfig(config, 'stn', null).currencySymbol).toBe('$');
+    expect(resolveModeRegionConfig(config, 'stn', null).currency_symbol).toBe('$');
   });
 
   it('fills missing mode branches with safe defaults (never undefined)', () => {
     const empty = mapModeConfigData({});
     expect(empty.sfn.default).toEqual({
-      dimensionUnit: 'cm',
-      massUnit: 'KG',
+      dimension_unit: 'cm',
+      mass_unit: 'KG',
       currency: 'NGN',
-      currencySymbol: '',
+      currency_symbol: '',
     });
     expect(empty.sfn.ng).toEqual(empty.sfn.default);
     expect(empty.stn.us.currency).toBe('NGN');
-    expect(empty.stn.cn.dimensionUnit).toBe('cm');
-    expect(empty.stn.gb.massUnit).toBe('KG');
+    expect(empty.stn.cn.dimension_unit).toBe('cm');
+    expect(empty.stn.gb.mass_unit).toBe('KG');
   });
 
   it('coerces invalid region unions to defaults', () => {
@@ -102,8 +102,8 @@ describe('mode-config.mapper', () => {
       mass_unit: 'stones',
       currency: 'EUR',
     });
-    expect(mapped.dimensionUnit).toBe('cm');
-    expect(mapped.massUnit).toBe('KG');
+    expect(mapped.dimension_unit).toBe('cm');
+    expect(mapped.mass_unit).toBe('KG');
     expect(mapped.currency).toBe('NGN');
   });
 });

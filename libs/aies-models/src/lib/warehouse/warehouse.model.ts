@@ -5,8 +5,7 @@ import type { CountryModel } from '../country/country.model';
  * Warehouse shapes from utility read endpoints.
  *
  * Domain interfaces in `@aies/aies-models` use a `*Model` suffix.
- * Field names are camelCase in the SDK. Wire payloads may use snake_case;
- * mapping happens once in `@aies/aies-core` WarehouseService.
+ * Field names match the wire (snake_case).
  */
 
 /**
@@ -19,101 +18,49 @@ export interface WarehouseStateModel {
   /** Display name (e.g. `"Guangdong"`). */
   name: string;
 
-  /** Subdivision code — mapped from wire `state_code`. */
-  stateCode: string;
+  /** Subdivision code. */
+  state_code: string;
 
   /** Country display name on the wire (e.g. `"China"`). */
   country: string;
 
-  /** ISO 3166-1 alpha-2 — mapped from wire `country_code`. */
-  countryCode: string;
+  /** ISO 3166-1 alpha-2. */
+  country_code: string;
 }
 
 /**
  * Warehouse record from `GET /warehouse/read/{id|all}`.
  */
 export interface WarehouseModel {
-  /** Numeric warehouse id. */
   id: number;
-
-  /** Linked partner id when present. */
-  partnerId: number | null;
-
-  /** Display name. */
+  partner_id: number | null;
   name: string;
-
-  /** Contact phone. */
   phone: string;
-
-  /** Contact email. */
   email: string;
-
-  /** Nested country (ISO + states), or `null`. */
   country: CountryModel | null;
-
   /** Whether API integrations are enabled (wire `"0"` / `"1"`). */
-  apiEnabled: boolean;
-
-  /** Selected state for the warehouse address, or `null`. */
+  api_enabled: boolean;
   state: WarehouseStateModel | null;
-
-  /** City name. */
   city: string;
-
-  /** Full street / postal address. */
   address: string;
-
-  /** Longitude. */
   longitude: number;
-
-  /** Latitude. */
   latitude: number;
-
-  /** Postal / ZIP code — mapped from wire `zip_code`. */
-  zipCode: string;
-
-  /** Usage counter from the API. */
+  zip_code: string;
   usage: number;
-
-  /** Whether the warehouse is active. */
   active: boolean;
-
-  /** Soft-delete timestamp, or `null`. */
-  deletedAt: string | null;
-
-  /** Created timestamp, or `null`. */
-  createdAt: string | null;
-
-  /** Updated timestamp, or `null`. */
-  updatedAt: string | null;
-
-  /** Storage charge amount. */
-  storageCharge: number;
-
-  /** Storage period (days). */
-  storagePeriod: number;
-
-  /** Delivery charge amount. */
-  deliveryCharge: number;
-
-  /** Included delivery count. */
-  deliveryCount: number;
-
-  /** Currency code (e.g. `"NGN"`). */
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  storage_charge: number;
+  storage_period: number;
+  delivery_charge: number;
+  delivery_count: number;
   currency: string;
-
-  /** Whether ETW shipment is available. */
-  etwShipmentAvailable: boolean;
-
-  /** Whether this is a local warehouse. */
+  etw_shipment_available: boolean;
   local: boolean;
-
-  /** When true, Shippo is not used for this warehouse. */
-  noShippo: boolean;
-
+  no_shippo: boolean;
   /**
    * Nested partner payload when present (null-safe JSON tree).
-   * Shape varies by partner type — dedicated partner model can replace this later.
    */
   partner: ApiJsonValue | null;
 }

@@ -35,7 +35,7 @@ describe('WarehouseService', () => {
     ],
     errors: null,
     pagination: null,
-    statusCode: 200,
+    status_code: 200,
   };
 
   beforeEach(() => {
@@ -58,8 +58,8 @@ describe('WarehouseService', () => {
         cacheTtlMs: 5 * 60_000,
       });
       expect(res.data?.[0]?.name).toBe('Test China Fushan');
-      expect(res.data?.[0]?.apiEnabled).toBe(false);
-      expect(res.data?.[0]?.zipCode).toBe('510620');
+      expect(res.data?.[0]?.api_enabled).toBe(false);
+      expect(res.data?.[0]?.zip_code).toBe('510620');
       done();
     });
   });

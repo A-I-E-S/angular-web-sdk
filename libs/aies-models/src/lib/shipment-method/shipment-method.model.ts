@@ -4,24 +4,16 @@ import type { ShippingMode } from '../shipping/shipping-mode.model';
  * Shipment method (carrier) shapes from utility read endpoints.
  *
  * Domain interfaces in `@aies/aies-models` use a `*Model` suffix.
- * Field names are camelCase in the SDK. Wire payloads may use snake_case;
- * mapping happens once in `@aies/aies-core` ShipmentMethodService.
+ * Field names match the wire (snake_case), including nested `zone_values`.
  */
 
 /**
  * Geographic zone nested under a method↔zone link.
  */
 export interface ShipmentZoneModel {
-  /** Zone id. */
   id: number;
-
-  /** Display name (often a numeric label like `"1"`). */
   name: string;
-
-  /** Zone type from the API (e.g. `"default"`). */
   type: string;
-
-  /** Whether the zone is active. */
   active: boolean;
 }
 
@@ -29,151 +21,64 @@ export interface ShipmentZoneModel {
  * Link row tying a shipment method to a {@link ShipmentZoneModel}.
  */
 export interface ShipmentMethodZoneLinkModel {
-  /** Link row id. */
   id: number;
-
-  /** Foreign key to the zone. */
-  zoneId: number;
-
-  /** Foreign key to the shipment method. */
-  shipmentMethodId: number;
-
-  /** Whether this link is active. */
+  zone_id: number;
+  shipment_method_id: number;
   active: boolean;
-
-  /** Shipping mode for this link (`stn` / `sfn`). */
   mode: ShippingMode;
-
-  /** Nested zone when the API includes it; otherwise `null`. */
   zone: ShipmentZoneModel | null;
 }
 
 /**
- * One Laravel-style page of zone links embedded on a method payload.
- *
- * `read/all` typically returns the first page only; use `total` / `lastPage`
- * when the consumer needs to know more pages exist.
+ * One Laravel-style page of zone links embedded on a method payload
+ * (`zone_values` on the wire).
  */
 export interface ShipmentMethodZonePageModel {
-  /** Rows on this page. */
-  items: ShipmentMethodZoneLinkModel[];
-
-  /** 1-based page index. */
-  currentPage: number;
-
-  /** Page size. */
-  perPage: number;
-
-  /** Total matching links across all pages. */
+  /** Rows on this page (wire key `data`). */
+  data: ShipmentMethodZoneLinkModel[];
+  current_page: number;
+  per_page: number;
   total: number;
-
-  /** Last page index. */
-  lastPage: number;
+  last_page: number;
 }
 
 /**
  * Carrier / shipment method from `GET /shipment_method/read/{id|all}`.
  */
 export interface ShipmentMethodModel {
-  /** Numeric method id. */
   id: number;
-
-  /** Display name (e.g. `"Africanies Air Expedited"`). */
   name: string;
-
-  /** URL-safe slug (often includes mode suffix). */
   slug: string;
-
-  /** Backend model class name when provided. */
   model: string;
-
-  /** Minimum delivery business days. */
-  minDeliveryBusinessDay: number;
-
-  /** Maximum delivery business days. */
-  maxDeliveryBusinessDay: number;
-
-  /** Free-form notes (`"-"` when empty on the wire). */
+  min_delivery_business_day: number;
+  max_delivery_business_day: number;
   notes: string;
-
-  /** Comma-separated blacklist, or `null`. */
-  blacklistedWords: string | null;
-
-  /** Sort / display position. */
+  blacklisted_words: string | null;
   position: number;
-
-  /** Minimum accepted weight. */
-  minWeight: number;
-
-  /** Maximum accepted weight. */
-  maxWeight: number;
-
-  /** Max package length. */
-  maxLength: number;
-
-  /** Max package width. */
-  maxWidth: number;
-
-  /** Max package height. */
-  maxHeight: number;
-
-  /** Markup percentage or amount (API numeric). */
+  min_weight: number;
+  max_weight: number;
+  max_length: number;
+  max_width: number;
+  max_height: number;
   markup: number;
-
-  /** Flat surcharge. */
   surcharge: number;
-
-  /** Insurance benchmark value. */
-  insuranceBenchmark: number;
-
-  /** Insurance rate. */
+  insurance_benchmark: number;
   insurance: number;
-
-  /** Clearing / handling fee. */
-  clearingHandling: number;
-
-  /** Destination scope (e.g. `"international"`). */
+  clearing_handling: number;
   destination: string;
-
   /** Whether the method is sea-only (wire `"yes"` / `"no"`). */
-  seaOnly: boolean;
-
-  /** Currency code (e.g. `"NGN"`). */
+  sea_only: boolean;
   currency: string;
-
-  /** Method type (e.g. `"default"`). */
   type: string;
-
-  /** Whether the method is active. */
   active: boolean;
-
-  /** Whether multiple rates apply. */
-  multipleRates: boolean;
-
-  /** First-shipment discount amount. */
-  firstShipmentDiscount: number;
-
-  /** Discount kind (e.g. `"percentage"`). */
-  discountType: string;
-
-  /** Whether the first-shipment discount is active. */
-  discountActive: boolean;
-
-  /** Shipping mode (`stn` / `sfn`). */
+  multiple_rates: boolean;
+  first_shipment_discount: number;
+  discount_type: string;
+  discount_active: boolean;
   mode: ShippingMode;
-
-  /** Soft-delete timestamp, or `null`. */
-  deletedAt: string | null;
-
-  /** Created timestamp, or `null`. */
-  createdAt: string | null;
-
-  /** Updated timestamp, or `null`. */
-  updatedAt: string | null;
-
-  /** Markdown / markdown amount from the API. */
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
   markdown: number;
-
-  /** First page of zone links (`zone_values` on the wire). */
-  zoneValues: ShipmentMethodZonePageModel;
+  zone_values: ShipmentMethodZonePageModel;
 }

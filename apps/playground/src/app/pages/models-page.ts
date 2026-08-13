@@ -110,14 +110,14 @@ export class ModelsPage {
           name: 'ApiResponseModel<T>',
           packagePath: 'api',
           description:
-            'Canonical envelope: success, data, message, errors, pagination, statusCode.',
+            'Canonical envelope: success, data, message, errors, pagination, status_code.',
           structure: `interface ApiResponseModel<T> {
   success: boolean;
   message: string | null;
   data: T | null;
   errors: ApiErrorDetailModel[] | null;
   pagination: PaginationMetaModel | null;
-  statusCode: number | null;
+  status_code: number | null;
 }`,
         },
         {
@@ -142,14 +142,14 @@ export class ModelsPage {
           name: 'PaginationMetaModel',
           packagePath: 'api',
           description:
-            'Response-side slice: currentPage, perPage, totals, hasNext/PreviousPage.',
+            'Response-side slice: current_page, per_page, totals, has_next/previous_page.',
           structure: `interface PaginationMetaModel {
-  currentPage: number;
-  perPage: number;
-  totalItems: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+  current_page: number;
+  per_page: number;
+  total_items: number;
+  total_pages: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
 }`,
         },
         {
@@ -228,10 +228,10 @@ export class ModelsPage {
           name: 'CountryStateModel',
           packagePath: 'country',
           description:
-            'Subdivision under a country — wire state_code maps to stateCode.',
+            'Subdivision under a country — wire `state_code`.',
           structure: `interface CountryStateModel {
   name: string;
-  stateCode: string;
+  state_code: string;
 }`,
         },
       ],
@@ -246,28 +246,28 @@ export class ModelsPage {
           name: 'ShipmentMethodModel',
           packagePath: 'shipment-method',
           description:
-            'Carrier record with delivery windows, weight/dim limits, discounts, and zoneValues page.',
+            'Carrier record with delivery windows, weight/dim limits, discounts, and zone_values page.',
           structure: `interface ShipmentMethodModel {
   id: number;
   name: string;
   slug: string;
   mode: ShippingMode;
-  seaOnly: boolean;
+  sea_only: boolean;
   // …commercial + dimension fields
-  zoneValues: ShipmentMethodZonePageModel;
+  zone_values: ShipmentMethodZonePageModel;
 }`,
         },
         {
           name: 'ShipmentMethodZonePageModel',
           packagePath: 'shipment-method',
           description:
-            'First Laravel page of zone links embedded on a method (items + total/lastPage).',
+            'First Laravel page of zone links embedded on a method (`data` + total/last_page).',
           structure: `interface ShipmentMethodZonePageModel {
-  items: ShipmentMethodZoneLinkModel[];
-  currentPage: number;
-  perPage: number;
+  data: ShipmentMethodZoneLinkModel[];
+  current_page: number;
+  per_page: number;
   total: number;
-  lastPage: number;
+  last_page: number;
 }`,
         },
       ],
@@ -287,10 +287,10 @@ export class ModelsPage {
   id: number;
   name: string;
   city: string;
-  zipCode: string;
+  zip_code: string;
   country: CountryModel | null;
   state: WarehouseStateModel | null;
-  apiEnabled: boolean;
+  api_enabled: boolean;
   // …charges, geo, flags
 }`,
         },
@@ -302,9 +302,9 @@ export class ModelsPage {
           structure: `interface WarehouseStateModel {
   id: number;
   name: string;
-  stateCode: string;
+  state_code: string;
   country: string;
-  countryCode: string;
+  country_code: string;
 }`,
         },
       ],
@@ -324,9 +324,9 @@ export class ModelsPage {
   name: string;
   type: string;
   active: boolean;
-  deletedAt: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }`,
         },
       ],
@@ -341,30 +341,45 @@ export class ModelsPage {
           name: 'UserModel',
           packagePath: 'user',
           description:
-            'Authenticated profile with nested CountryModel, verification timestamps, and region prefs.',
+            'Authenticated profile (snake_case wire keys) with nested country, business_account, and account_manager.',
           structure: `interface UserModel {
-  id: number;
-  centralId: string;
-  name: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  country: CountryModel | null;
-  mainRegion: string;
-  shippingType: string;
+  id?: number | null;
+  central_id?: string | null;
+  name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
+  country?: UserCountryModel | null;
+  state?: string | null;
+  main_region?: string | null;
+  shipping_type?: ShippingType | null;
+  business_account?: UserBusinessAccountModel | null;
+  account_manager?: UserAccountManagerModel | null;
   // …verification, flags, accounts
 }`,
         },
         {
-          name: 'UserStateModel',
+          name: 'UserBusinessAccountModel',
           packagePath: 'user',
-          description: 'Optional subdivision on the profile — wire state_code / country_code.',
-          structure: `interface UserStateModel {
-  id: number;
-  name: string;
-  stateCode: string;
-  country: string;
-  countryCode: string;
+          description: 'Optional business account with plan + subscription.',
+          structure: `interface UserBusinessAccountModel {
+  id?: number | null;
+  name?: string | null;
+  type?: AccountType | null;
+  plan?: UserPlanModel | null;
+  subscription?: UserSubscriptionModel | null;
+  // …
+}`,
+        },
+        {
+          name: 'UserCountryModel',
+          packagePath: 'user',
+          description: 'Country nested on the profile — states use state_code.',
+          structure: `interface UserCountryModel {
+  id?: number | null;
+  name?: string | null;
+  iso2?: string | null;
+  states?: UserStateModel[] | null;
 }`,
         },
       ],
@@ -389,10 +404,10 @@ export class ModelsPage {
           packagePath: 'mode',
           description: 'Per-region currency symbol and measurement units.',
           structure: `interface ModeRegionConfigModel {
-  dimensionUnit: 'cm' | 'inches';
-  massUnit: 'KG' | 'LBS';
+  dimension_unit: 'cm' | 'inches';
+  mass_unit: 'KG' | 'LBS';
   currency: 'NGN' | 'USD';
-  currencySymbol: string;
+  currency_symbol: string;
 }`,
         },
         {

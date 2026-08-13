@@ -26,7 +26,7 @@ describe('CountryService', () => {
     ],
     errors: null,
     pagination: null,
-    statusCode: 200,
+    status_code: 200,
   };
 
   beforeEach(() => {
@@ -55,7 +55,7 @@ describe('CountryService', () => {
           name: 'Afghanistan',
           iso3: 'AFG',
           iso2: 'AF',
-          states: [{ name: 'Kabul', stateCode: 'KAB' }],
+          states: [{ name: 'Kabul', state_code: 'KAB' }],
         },
       ]);
       done();

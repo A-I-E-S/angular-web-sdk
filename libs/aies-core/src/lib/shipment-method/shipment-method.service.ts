@@ -27,7 +27,7 @@ const SHIPMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
  *
  * Default id is `'all'`. Response `data` is always mapped to
  * {@link ShipmentMethodModel}[] (snake_case wire fields become camelCase;
- * embedded `zone_values` become {@link ShipmentMethodModel.zoneValues}).
+ * embedded `zone_values` become {@link ShipmentMethodModel.zone_values}).
  *
  * @example
  * ```ts
