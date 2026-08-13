@@ -43,8 +43,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * (name + children) instead of a plain tooltip.
  *
  * ## Parent items with children
- * **Expanded rail:** clicking a parent only opens/closes the branch (no route
- * change). **Collapsed rail:** clicking a parent expands the rail, opens the
+ * **Expanded rail:** branches start open by default (`expandBranchesByDefault`).
+ * Clicking a parent only opens/closes the branch (no route change).
+ * **Collapsed rail:** clicking a parent expands the rail, opens the
  * branch, and activates the first enabled child (router or `activeId`).
  *
  * ## Router mode
@@ -103,6 +104,14 @@ export class SideNavComponent {
    */
   readonly expandParents = input(true, { transform: booleanAttribute });
 
+  /**
+   * When true (default), every parent with children starts expanded on first
+   * render. Users can still collapse branches manually.
+   */
+  readonly expandBranchesByDefault = input(true, {
+    transform: booleanAttribute,
+  });
+
   /** Router active-match options for items with `routerLink`. */
   readonly linkActiveOptions = input<IsActiveMatchOptions>(
     DEFAULT_LINK_ACTIVE,
@@ -137,6 +146,9 @@ export class SideNavComponent {
   private readonly openBranches = signal<ReadonlySet<string>>(new Set());
   protected readonly hoverId = signal<string | null>(null);
 
+  /** Ensures default-expanded seeding runs once per mount (after items arrive). */
+  private branchesSeeded = false;
+
   private readonly url = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -147,6 +159,19 @@ export class SideNavComponent {
   );
 
   constructor() {
+    effect(() => {
+      const parents = this.collectParentIds(this.items());
+      if (
+        !this.expandBranchesByDefault() ||
+        this.branchesSeeded ||
+        parents.length === 0
+      ) {
+        return;
+      }
+      this.openBranches.set(new Set(parents));
+      this.branchesSeeded = true;
+    });
+
     effect(() => {
       const id = this.activeId();
       if (id) {
@@ -368,6 +393,18 @@ export class SideNavComponent {
       }
     }
     return out;
+  }
+
+  /** Ids of every node that has nested children (any depth). */
+  private collectParentIds(items: AiesSideNavItem[]): string[] {
+    const ids: string[] = [];
+    for (const item of items) {
+      if (item.children?.length) {
+        ids.push(item.id);
+        ids.push(...this.collectParentIds(item.children));
+      }
+    }
+    return ids;
   }
 
   private ensureAncestorsOpen(activeId: string): void {
