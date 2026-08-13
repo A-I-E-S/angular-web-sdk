@@ -2,17 +2,16 @@
 export { AIES_SDK_CONFIG, type AiesSdkConfig } from './lib/config/aies-sdk.config';
 export { provideAiesSdk } from './lib/config/provide-aies-sdk';
 
+// Auth
+export { AuthTokenService } from './lib/auth';
+
 // Shipping mode
 export { shipmentModeInterceptor } from './lib/shipping/shipment-mode.interceptor';
 export { ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';
-export {
-  AUTH_TOKEN_PROVIDER,
-  authInterceptor,
-  type AuthTokenProvider,
-} from './lib/http/auth.interceptor';
+export { authInterceptor } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
 export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
 export { mapApiJsonList, mapApiJsonValue } from './lib/http/map-api-json';

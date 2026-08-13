@@ -382,7 +382,7 @@ import {
             >{{ formatJson(profile) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-              No user loaded yet — provide AUTH_TOKEN_PROVIDER and call me().
+              No user loaded yet — call AuthTokenService.set(access_token) after login, then me().
             </p>
           }
         </div>
@@ -601,7 +601,7 @@ export class ApiPage implements OnInit {
       error: () => {
         this.userLoading.set(false);
         this.userError.set(
-          'Could not load user — ensure AUTH_TOKEN_PROVIDER is configured.',
+          'Could not load user — call AuthTokenService.set(access_token) after login.',
         );
       },
     });

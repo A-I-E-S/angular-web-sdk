@@ -44,6 +44,7 @@ export const appConfig: ApplicationConfig = {
 | Area | Exports |
 |------|---------|
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG` |
+| Auth | `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
 | HTTP | `provideAiesHttpClient`, `ApiClient`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
@@ -52,7 +53,7 @@ export const appConfig: ApplicationConfig = {
 | Shipment method | `ShipmentMethodService`, `SHIPMENT_METHOD_READ_PATH`, `mapShipmentMethod` / `mapShipmentMethodList` |
 | Warehouse | `WarehouseService`, `WAREHOUSE_READ_PATH`, `mapWarehouse` / `mapWarehouseList` |
 | Zone | `ZoneService`, `ZONE_READ_PATH`, `mapZone` / `mapZoneList` |
-| User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body) |
+| User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Browser | `copyToClipboard` |
 

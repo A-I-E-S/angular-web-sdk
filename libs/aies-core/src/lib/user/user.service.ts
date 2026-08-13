@@ -14,7 +14,7 @@ import { mapUser, USER_PATH } from './user.mapper';
  * {@link ApiClient} normalizes that into {@link ApiResponseModel}; this service
  * maps wire fields once into {@link UserModel} (snake_case preserved).
  *
- * Requires an auth token via {@link AUTH_TOKEN_PROVIDER}. Not cached — profile
+ * Requires an access token via {@link AuthTokenService.set}. Not cached — profile
  * data is auth-sensitive and can change per session.
  *
  * @example

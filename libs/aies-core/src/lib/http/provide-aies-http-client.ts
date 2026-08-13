@@ -27,7 +27,7 @@ export interface AiesHttpClientOptions {
  *
  * Defaults (in order):
  * 1. {@link shipmentModeInterceptor} — `x-shipment-mode`
- * 2. {@link authInterceptor} — `Authorization` when {@link AUTH_TOKEN_PROVIDER} returns a token
+ * 2. {@link authInterceptor} — `Authorization` when {@link AuthTokenService} has a token
  * 3. {@link httpToastInterceptor} — toasts for requests tagged with {@link withToast}
  *    (no-op until `provideAiesToasts()` registers {@link AIES_HTTP_TOAST})
  * 4. Any {@link AiesHttpClientOptions.interceptors} from the host

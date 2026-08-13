@@ -202,11 +202,12 @@ export /**
  *
  */
 const API_USER = `// GET /user — bare user object (no { success, data } wrapper).
-// ApiClient wraps it; UserService.me() maps into UserModel (snake_case keys).
-// Provide AUTH_TOKEN_PROVIDER so the auth interceptor can attach a bearer token.
+// After login/register in your app:
+//   inject(AuthTokenService).set(access_token);
+// UserService.me() then sends Authorization: Bearer …
 
 import { Component, inject, signal } from '@angular/core';
-import { UserService } from '@aies/aies-core';
+import { AuthTokenService, UserService } from '@aies/aies-core';
 import type { UserModel } from '@aies/aies-models';
 import { firstValueFrom } from 'rxjs';
 
@@ -221,9 +222,12 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ProfileComponent {
   private readonly users = inject(UserService);
+  private readonly auth = inject(AuthTokenService);
   protected readonly user = signal<UserModel | null>(null);
 
   async ngOnInit(): Promise<void> {
+    // typically called right after login elsewhere:
+    // this.auth.set(loginResponse.access_token);
     const res = await firstValueFrom(this.users.me());
     if (res.success && res.data) {
       this.user.set(res.data);
