@@ -58,6 +58,8 @@ export /**
  */
 const NAV_ROUTED_TABS = `// URL-driven tabs + child routes. Active tab follows Router.isActive (survives refresh).
 // Put routerLink on each item, render <router-outlet /> below. Don't mix with aiesTabDef.
+// keepScroll defaults to true — navigates with { scroll: 'manual' } so the page does not jump to the top.
+// Pass [keepScroll]="false" if you want the app's normal scrollPositionRestoration behaviour.
 
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -123,6 +125,7 @@ export /**
  */
 const NAV_SEGMENT = `// Pill switcher on one path — same routerLink, different queryParams per segment.
 // Active pill matches the query on cold load.
+// keepScroll defaults to true — no jump to top when the query changes (same as routed tabs).
 
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';

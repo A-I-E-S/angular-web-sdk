@@ -400,7 +400,7 @@ protected save(): void {
     category: 'Angular routing',
     summary: 'Directive that navigates without full page reloads.',
     detail:
-      "Use on `<a routerLink=\"/path\">` or `[routerLink]=\"['/shipments', id]\"` with optional `queryParams`. SDK nav components (`aies-breadcrumb`, `aies-tabs`, `aies-side-nav`) accept `routerLink` on items so active state follows the URL.",
+      "Use on `<a routerLink=\"/path\">` or `[routerLink]=\"['/shipments', id]\"` with optional `queryParams`. SDK nav items accept `routerLink` so active state follows the URL. Routed `aies-tabs` / `aies-segment` navigate with `{ scroll: 'manual' }` by default (no jump to top); side nav and breadcrumb still use Angular `RouterLink`.",
     seeAlso: ['toSignal', 'ActivatedRoute', 'standalone'],
   },
   {
