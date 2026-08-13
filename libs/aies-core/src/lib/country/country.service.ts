@@ -2,40 +2,50 @@ import { inject, Injectable } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
-import type { ApiResponseModel, CountryModel } from '@aies/aies-models';
+import type {
+  ApiResponseModel,
+  CountryModel,
+  ResourceId,
+} from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
 import {
+  buildResourcePath,
+  buildResourceQueryParams,
+  mapResourcePayload,
+  resourceCacheTtlMs,
+  type ResourceQueryParams,
+} from '../http/resource-path';
+import {
   COUNTRY_READ_PATH,
+  mapCountry,
   mapCountryList,
 } from './country.mapper';
 
-/** Optional query string for country reads (null/undefined entries omitted). */
-export type CountryReadParams = Record<
-  string,
-  string | number | boolean | null | undefined
->;
+/** Query bag for country reads (pagination applies only when `id` is `null`). */
+export type CountryReadParams = ResourceQueryParams;
 
-/** In-memory GET cache TTL for country reference data (5 minutes). */
+/** In-memory GET cache TTL for country reference dumps / by-id (5 minutes). */
 const COUNTRY_CACHE_TTL_MS = 5 * 60_000;
 
 /**
- * Public country utility reads (`GET /public/country/read/{id|all}`).
+ * Public country utility reads (`GET /public/country/read/{id?}`).
  *
- * Default id is `'all'`. Response `data` is always mapped to {@link CountryModel}[]
- * (snake_case wire fields such as `state_code` become `stateCode`).
+ * Uses the AIES {@link ResourceId} convention:
+ * - `null` (default) → paginated page
+ * - `'all'` → full list
+ * - `number` → single {@link CountryModel}
  *
  * @example
  * ```ts
  * const countries = inject(CountryService);
  *
- * countries.read().subscribe((res) => {
- *   if (res.success) console.log(res.data?.length);
+ * countries.read(null, { page: 1 }).subscribe((res) => {
+ *   console.log(res.data, res.pagination);
  * });
  *
- * countries.readById(1).subscribe((res) => {
- *   console.log(res.data?.[0]?.name);
- * });
+ * countries.readAll().subscribe((res) => console.log(res.data?.length));
+ * countries.readById(1).subscribe((res) => console.log(res.data?.name));
  * ```
  */
 @Injectable({ providedIn: 'root' })
@@ -43,35 +53,66 @@ export class CountryService {
   private readonly api = inject(ApiClient);
 
   /**
-   * Fetch countries for `id` (defaults to `'all'`).
+   * Paginated country page — {@link ResourceId} `null`.
    *
-   * @param id - Numeric country id or `'all'`.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link CountryModel}[].
+   * @param id - Omit or pass `null` for a paginated list.
+   * @param params - Optional page/size/order and filters.
    */
   read(
-    id: number | 'all' = 'all',
+    id?: null,
     params?: CountryReadParams,
-  ): Observable<ApiResponseModel<CountryModel[]>> {
-    const path = `${COUNTRY_READ_PATH}/${id}`;
+  ): Observable<ApiResponseModel<CountryModel[]>>;
+
+  /**
+   * Full country list — {@link ResourceId} `'all'`.
+   *
+   * @param id - Must be `'all'`.
+   * @param params - Optional filters (pagination fields ignored).
+   */
+  read(
+    id: 'all',
+    params?: CountryReadParams,
+  ): Observable<ApiResponseModel<CountryModel[]>>;
+
+  /**
+   * Single country — {@link ResourceId} number.
+   *
+   * @param id - Country id.
+   * @param params - Optional filters (pagination fields ignored).
+   */
+  read(
+    id: number,
+    params?: CountryReadParams,
+  ): Observable<ApiResponseModel<CountryModel>>;
+
+  read(
+    id: ResourceId = null,
+    params?: CountryReadParams,
+  ): Observable<ApiResponseModel<CountryModel | CountryModel[]>> {
     return this.api
-      .get<unknown>(path, {
-        params,
-        cacheTtlMs: COUNTRY_CACHE_TTL_MS,
+      .get<unknown>(buildResourcePath(COUNTRY_READ_PATH, id), {
+        params: buildResourceQueryParams(id, params),
+        cacheTtlMs: resourceCacheTtlMs(id, COUNTRY_CACHE_TTL_MS),
       })
       .pipe(
         map((res) => ({
           ...res,
-          data: res.data == null ? null : mapCountryList(res.data),
+          data: mapResourcePayload(id, res.data, mapCountry, mapCountryList),
         })),
       );
   }
 
   /**
-   * Full country list — alias for {@link read}(`'all'`).
-   *
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link CountryModel}[].
+   * Paginated page — alias for {@link read}(`null`, params).
+   */
+  readPage(
+    params?: CountryReadParams,
+  ): Observable<ApiResponseModel<CountryModel[]>> {
+    return this.read(null, params);
+  }
+
+  /**
+   * Full list — alias for {@link read}(`'all'`).
    */
   readAll(
     params?: CountryReadParams,
@@ -80,16 +121,12 @@ export class CountryService {
   }
 
   /**
-   * Single-country read by numeric id (still returns a one-element array).
-   *
-   * @param id - Country id.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link CountryModel}[].
+   * Single record — alias for {@link read}(id).
    */
   readById(
     id: number,
     params?: CountryReadParams,
-  ): Observable<ApiResponseModel<CountryModel[]>> {
+  ): Observable<ApiResponseModel<CountryModel>> {
     return this.read(id, params);
   }
 }

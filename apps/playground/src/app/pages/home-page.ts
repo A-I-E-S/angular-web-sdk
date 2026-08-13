@@ -233,7 +233,7 @@ export class HomePage {
     {
       path: '/api',
       title: 'SDK API',
-      blurb: 'Live Country, ModeConfig, Warehouse, Zone, Method, and User calls.',
+      blurb: 'Built-in service paths and usage — Country, Product, Warehouse, and more.',
       icon: 'globe',
       group: 'Foundation',
     },

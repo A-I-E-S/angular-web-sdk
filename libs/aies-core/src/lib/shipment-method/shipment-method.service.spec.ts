@@ -51,11 +51,11 @@ describe('ShipmentMethodService', () => {
     service = TestBed.inject(ShipmentMethodService);
   });
 
-  it('defaults to /shipment_method/read/all with cache TTL', (done) => {
+  it('defaults to paginated /shipment_method/read without cache', (done) => {
     service.read().subscribe((res) => {
-      expect(getMock).toHaveBeenCalledWith(`${SHIPMENT_METHOD_READ_PATH}/all`, {
+      expect(getMock).toHaveBeenCalledWith(SHIPMENT_METHOD_READ_PATH, {
         params: undefined,
-        cacheTtlMs: 5 * 60_000,
+        cacheTtlMs: undefined,
       });
       expect(res.success).toBe(true);
       expect(res.data?.[0]?.name).toBe('Africanies Air Expedited');
@@ -75,13 +75,13 @@ describe('ShipmentMethodService', () => {
     });
   });
 
-  it('readById hits /shipment_method/read/{id}', (done) => {
+  it('readById returns a single mapped method', (done) => {
     service.readById(12).subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(`${SHIPMENT_METHOD_READ_PATH}/12`, {
         params: undefined,
         cacheTtlMs: 5 * 60_000,
       });
-      expect(res.data?.[0]?.id).toBe(12);
+      expect(res.data?.id).toBe(12);
       done();
     });
   });

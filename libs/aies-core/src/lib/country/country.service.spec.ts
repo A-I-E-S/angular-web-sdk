@@ -25,7 +25,14 @@ describe('CountryService', () => {
       },
     ],
     errors: null,
-    pagination: null,
+    pagination: {
+      current_page: 1,
+      per_page: 20,
+      total_items: 1,
+      total_pages: 1,
+      has_next_page: false,
+      has_previous_page: false,
+    },
     status_code: 200,
   };
 
@@ -42,11 +49,11 @@ describe('CountryService', () => {
     service = TestBed.inject(CountryService);
   });
 
-  it('defaults to /public/country/read/all with cache TTL', (done) => {
+  it('defaults to paginated /public/country/read without cache', (done) => {
     service.read().subscribe((res) => {
-      expect(getMock).toHaveBeenCalledWith(`${COUNTRY_READ_PATH}/all`, {
+      expect(getMock).toHaveBeenCalledWith(COUNTRY_READ_PATH, {
         params: undefined,
-        cacheTtlMs: 5 * 60_000,
+        cacheTtlMs: undefined,
       });
       expect(res.success).toBe(true);
       expect(res.data).toEqual([
@@ -62,8 +69,18 @@ describe('CountryService', () => {
     });
   });
 
-  it('readAll forwards optional query params', (done) => {
-    service.readAll({ region: 'africa' }).subscribe(() => {
+  it('readPage forwards pagination params', (done) => {
+    service.readPage({ page: 2, size: 10 }).subscribe(() => {
+      expect(getMock).toHaveBeenCalledWith(COUNTRY_READ_PATH, {
+        params: { page: 2, size: 10 },
+        cacheTtlMs: undefined,
+      });
+      done();
+    });
+  });
+
+  it('readAll hits /all with cache TTL and strips pagination params', (done) => {
+    service.readAll({ region: 'africa', page: 1 }).subscribe(() => {
       expect(getMock).toHaveBeenCalledWith(`${COUNTRY_READ_PATH}/all`, {
         params: { region: 'africa' },
         cacheTtlMs: 5 * 60_000,
@@ -72,13 +89,14 @@ describe('CountryService', () => {
     });
   });
 
-  it('readById hits /public/country/read/{id}', (done) => {
+  it('readById returns a single mapped country', (done) => {
     service.readById(1, { include: 'states' }).subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(`${COUNTRY_READ_PATH}/1`, {
         params: { include: 'states' },
         cacheTtlMs: 5 * 60_000,
       });
-      expect(res.data?.[0]?.id).toBe(1);
+      expect(res.data?.id).toBe(1);
+      expect(res.data?.name).toBe('Afghanistan');
       done();
     });
   });

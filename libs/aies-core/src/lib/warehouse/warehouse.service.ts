@@ -2,91 +2,114 @@ import { inject, Injectable } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
-import type { ApiResponseModel, WarehouseModel } from '@aies/aies-models';
+import type {
+  ApiResponseModel,
+  ResourceId,
+  WarehouseModel,
+} from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
 import {
+  buildResourcePath,
+  buildResourceQueryParams,
+  mapResourcePayload,
+  resourceCacheTtlMs,
+  type ResourceQueryParams,
+} from '../http/resource-path';
+import {
+  mapWarehouse,
   mapWarehouseList,
   WAREHOUSE_READ_PATH,
 } from './warehouse.mapper';
 
-/** Optional query string for warehouse reads (null/undefined omitted). */
-export type WarehouseReadParams = Record<
-  string,
-  string | number | boolean | null | undefined
->;
+/** Query bag for warehouse reads (pagination applies only when `id` is `null`). */
+export type WarehouseReadParams = ResourceQueryParams;
 
-/** In-memory GET cache TTL for warehouse reference data (5 minutes). */
+/** In-memory GET cache TTL for warehouse reference dumps / by-id (5 minutes). */
 const WAREHOUSE_CACHE_TTL_MS = 5 * 60_000;
 
 /**
- * Warehouse utility reads (`GET /warehouse/read/{id|all}`).
+ * Warehouse utility reads (`GET /warehouse/read/{id?}`).
  *
- * Default id is `'all'`. Response `data` is always mapped to
- * {@link WarehouseModel}[] (snake_case wire fields become camelCase;
- * nested `country` reuses the country mapper).
+ * Uses the AIES {@link ResourceId} convention:
+ * - `null` (default) → paginated page
+ * - `'all'` → full list
+ * - `number` → single {@link WarehouseModel}
  *
  * @example
  * ```ts
  * const warehouses = inject(WarehouseService);
  *
- * warehouses.read().subscribe((res) => {
- *   if (res.success) console.log(res.data?.[0]?.name);
+ * warehouses.readPage({ page: 1 }).subscribe((res) => {
+ *   console.log(res.data, res.pagination);
  * });
+ * warehouses.readAll().subscribe((res) => console.log(res.data?.length));
+ * warehouses.readById(37).subscribe((res) => console.log(res.data?.name));
  * ```
  */
 @Injectable({ providedIn: 'root' })
 export class WarehouseService {
   private readonly api = inject(ApiClient);
 
-  /**
-   * Fetch warehouses for `id` (defaults to `'all'`).
-   *
-   * @param id - Numeric warehouse id or `'all'`.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link WarehouseModel}[].
-   */
+  /** Paginated warehouse page — {@link ResourceId} `null`. */
   read(
-    id: number | 'all' = 'all',
+    id?: null,
     params?: WarehouseReadParams,
-  ): Observable<ApiResponseModel<WarehouseModel[]>> {
-    const path = `${WAREHOUSE_READ_PATH}/${id}`;
+  ): Observable<ApiResponseModel<WarehouseModel[]>>;
+
+  /** Full warehouse list — {@link ResourceId} `'all'`. */
+  read(
+    id: 'all',
+    params?: WarehouseReadParams,
+  ): Observable<ApiResponseModel<WarehouseModel[]>>;
+
+  /** Single warehouse — {@link ResourceId} number. */
+  read(
+    id: number,
+    params?: WarehouseReadParams,
+  ): Observable<ApiResponseModel<WarehouseModel>>;
+
+  read(
+    id: ResourceId = null,
+    params?: WarehouseReadParams,
+  ): Observable<ApiResponseModel<WarehouseModel | WarehouseModel[]>> {
     return this.api
-      .get<unknown>(path, {
-        params,
-        cacheTtlMs: WAREHOUSE_CACHE_TTL_MS,
+      .get<unknown>(buildResourcePath(WAREHOUSE_READ_PATH, id), {
+        params: buildResourceQueryParams(id, params),
+        cacheTtlMs: resourceCacheTtlMs(id, WAREHOUSE_CACHE_TTL_MS),
       })
       .pipe(
         map((res) => ({
           ...res,
-          data: res.data == null ? null : mapWarehouseList(res.data),
+          data: mapResourcePayload(
+            id,
+            res.data,
+            mapWarehouse,
+            mapWarehouseList,
+          ),
         })),
       );
   }
 
-  /**
-   * Full warehouse list — alias for {@link read}(`'all'`).
-   *
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link WarehouseModel}[].
-   */
+  /** Paginated page — alias for {@link read}(`null`, params). */
+  readPage(
+    params?: WarehouseReadParams,
+  ): Observable<ApiResponseModel<WarehouseModel[]>> {
+    return this.read(null, params);
+  }
+
+  /** Full list — alias for {@link read}(`'all'`). */
   readAll(
     params?: WarehouseReadParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>> {
     return this.read('all', params);
   }
 
-  /**
-   * Single-warehouse read by numeric id (still returns a one-element array).
-   *
-   * @param id - Warehouse id.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link WarehouseModel}[].
-   */
+  /** Single record — alias for {@link read}(id). */
   readById(
     id: number,
     params?: WarehouseReadParams,
-  ): Observable<ApiResponseModel<WarehouseModel[]>> {
+  ): Observable<ApiResponseModel<WarehouseModel>> {
     return this.read(id, params);
   }
 }

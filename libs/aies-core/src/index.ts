@@ -21,6 +21,13 @@ export {
   provideAiesHttpClient,
 } from './lib/http/provide-aies-http-client';
 export {
+  buildResourcePath,
+  buildResourceQueryParams,
+  mapResourcePayload,
+  resourceCacheTtlMs,
+  type ResourceQueryParams,
+} from './lib/http/resource-path';
+export {
   AIES_HTTP_TOAST,
   type AiesHttpToastHandler,
   TOAST_HTTP_OPTIONS,
@@ -102,6 +109,22 @@ export {
   USER_PATH,
   UserService,
 } from './lib/user';
+
+// File reads (POST /file/read — may require auth)
+export {
+  FILE_READ_PATH,
+  FileService,
+  mapFileRead,
+} from './lib/file';
+
+// Products
+export {
+  mapProduct,
+  mapProductList,
+  PRODUCT_READ_PATH,
+  type ProductReadParams,
+  ProductService,
+} from './lib/product';
 
 // Route-driven overlays (openers provided by aies-ui)
 export type {

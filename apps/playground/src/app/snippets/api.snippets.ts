@@ -6,10 +6,19 @@ export /**
  *
  */
 const API_OVERVIEW = `// Domain services in @aies/aies-core own paths and mapping.
-// Apps call inject(CountryService) / ModeConfigService / ShipmentMethodService /
-// WarehouseService / ZoneService / UserService — not raw URLs.
-// ApiClient normalizes every response to ApiResponseModel<T>
-// (including bare GET /user bodies with no success/data wrapper).
+// Apps call inject(CountryService) / ProductService / … — or ApiClient for custom routes.
+//
+// List GET convention (ResourceId) — built-in services AND custom calls:
+//   null  → paginated page   GET {base}           (+ page/size/order)
+//   'all' → full dump        GET {base}/all
+//   42    → single record    GET {base}/42
+//
+// Custom endpoints — IDE helpers on ApiClient:
+//   api.getResourcePage<T>('shipments', { page: 1 })
+//   api.getResourceAll<T>('shipments')
+//   api.getResourceById<T>('shipments', 42)
+//   // or overloads: getResource(base, null | 'all' | number, query?)
+//   // path helper:  buildResourcePath('/my/read', id)
 
 import { ApplicationConfig } from '@angular/core';
 import {
@@ -31,12 +40,14 @@ export const appConfig: ApplicationConfig = {
 export /**
  *
  */
-const API_COUNTRY = `// GET /public/country/read/{id|all} — default id is 'all'.
-// CountryService maps into CountryModel[] (snake_case keys, e.g. state_code).
+const API_COUNTRY = `// GET /public/country/read/{id?} — ResourceId: null | 'all' | number.
+// read() / readPage() → paginated CountryModel[]
+// readAll()            → full CountryModel[]
+// readById(1)          → single CountryModel
 
 import { Component, inject, signal } from '@angular/core';
 import { CountryService } from '@aies/aies-core';
-import type { CountryModel } from '@aies/aies-models';
+import type { CountryModel, PaginationMetaModel } from '@aies/aies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -52,15 +63,18 @@ import { firstValueFrom } from 'rxjs';
 export class CountryLoaderComponent {
   private readonly countriesApi = inject(CountryService);
   protected readonly countries = signal<CountryModel[]>([]);
+  protected readonly meta = signal<PaginationMetaModel | null>(null);
 
   async ngOnInit(): Promise<void> {
-    const res = await firstValueFrom(this.countriesApi.read());
-    if (res.success && res.data) {
-      this.countries.set(res.data);
+    // Paginated (default):
+    const page = await firstValueFrom(this.countriesApi.readPage({ page: 1 }));
+    if (page.success && page.data) {
+      this.countries.set(page.data);
+      this.meta.set(page.pagination);
     }
 
-    // Single country (still an array):
-    // await firstValueFrom(this.countriesApi.readById(1));
+    // Full dump:  await firstValueFrom(this.countriesApi.readAll());
+    // One record: await firstValueFrom(this.countriesApi.readById(1));
   }
 }
 `;
@@ -99,8 +113,8 @@ export class RegionUnitsComponent {
 export /**
  *
  */
-const API_SHIPMENT_METHOD = `// GET /shipment_method/read/{id|all} — carriers / shipment methods.
-// ShipmentMethodService maps into ShipmentMethodModel[] (snake_case, including zone_values).
+const API_SHIPMENT_METHOD = `// GET /shipment_method/read/{id?} — ResourceId: null | 'all' | number.
+// readPage() → paginated · readAll() → full · readById(n) → single ShipmentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
 import { ShipmentMethodService } from '@aies/aies-core';
@@ -122,7 +136,7 @@ export class CarrierLoaderComponent {
   protected readonly methods = signal<ShipmentMethodModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const res = await firstValueFrom(this.methodsApi.read());
+    const res = await firstValueFrom(this.methodsApi.readAll());
     if (res.success && res.data) {
       this.methods.set(res.data);
     }
@@ -133,8 +147,8 @@ export class CarrierLoaderComponent {
 export /**
  *
  */
-const API_WAREHOUSE = `// GET /warehouse/read/{id|all} — warehouses with nested country + state.
-// WarehouseService maps snake_case; nested country reuses the country mapper.
+const API_WAREHOUSE = `// GET /warehouse/read/{id?} — ResourceId: null | 'all' | number.
+// readPage() → paginated · readAll() → full · readById(n) → single WarehouseModel
 
 import { Component, inject, signal } from '@angular/core';
 import { WarehouseService } from '@aies/aies-core';
@@ -156,7 +170,7 @@ export class WarehouseLoaderComponent {
   protected readonly warehouses = signal<WarehouseModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const res = await firstValueFrom(this.warehousesApi.read());
+    const res = await firstValueFrom(this.warehousesApi.readAll());
     if (res.success && res.data) {
       this.warehouses.set(res.data);
     }
@@ -167,8 +181,8 @@ export class WarehouseLoaderComponent {
 export /**
  *
  */
-const API_ZONE = `// GET /zone/read/records/{id|all} — shipping zones.
-// ZoneService maps snake_case timestamps; data is always ZoneModel[].
+const API_ZONE = `// GET /zone/read/records/{id?} — ResourceId: null | 'all' | number.
+// readPage() → paginated · readAll() → full · readById(n) → single ZoneModel
 
 import { Component, inject, signal } from '@angular/core';
 import { ZoneService } from '@aies/aies-core';
@@ -190,7 +204,7 @@ export class ZoneLoaderComponent {
   protected readonly zones = signal<ZoneModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const res = await firstValueFrom(this.zonesApi.read());
+    const res = await firstValueFrom(this.zonesApi.readAll());
     if (res.success && res.data) {
       this.zones.set(res.data);
     }
@@ -231,6 +245,74 @@ export class ProfileComponent {
     const res = await firstValueFrom(this.users.me());
     if (res.success && res.data) {
       this.user.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const API_PRODUCT = `// GET /product/read/{id?} — ResourceId: null | 'all' | number.
+// readPage() → paginated · readAll() → full · readById(n) → single ProductModel
+
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ProductService } from '@aies/aies-core';
+import type { ProductModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-product-loader',
+  standalone: true,
+  template: \`
+    <p>{{ products().length }} products</p>
+    @if (products()[0]; as first) {
+      <p>{{ first.name }} — {{ first.hs_code }}</p>
+    }
+  \`,
+})
+export class ProductLoaderComponent implements OnInit {
+  private readonly productsApi = inject(ProductService);
+  protected readonly products = signal<ProductModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.productsApi.readAll());
+    if (res.success && res.data) {
+      this.products.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const API_FILE = `// POST /file/read — body { ref }.
+// data is a single FileReadModel (not a list). Prefer url for downloads.
+
+import { Component, inject, signal } from '@angular/core';
+import { FileService } from '@aies/aies-core';
+import type { FileReadModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-file-loader',
+  standalone: true,
+  template: \`
+    @if (file(); as f) {
+      <p>{{ f.mime_type }}</p>
+      <a [href]="f.url" target="_blank" rel="noopener">Open signed URL</a>
+    }
+  \`,
+})
+export class FileLoaderComponent {
+  private readonly filesApi = inject(FileService);
+  protected readonly file = signal<FileReadModel | null>(null);
+
+  async load(ref: string): Promise<void> {
+    const res = await firstValueFrom(this.filesApi.read(ref));
+    if (res.success && res.data) {
+      this.file.set(res.data);
     }
   }
 }

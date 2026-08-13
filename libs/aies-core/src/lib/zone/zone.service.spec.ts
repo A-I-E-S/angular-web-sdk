@@ -44,11 +44,11 @@ describe('ZoneService', () => {
     service = TestBed.inject(ZoneService);
   });
 
-  it('defaults to /zone/read/records/all with cache TTL', (done) => {
+  it('defaults to paginated /zone/read/records without cache', (done) => {
     service.read().subscribe((res) => {
-      expect(getMock).toHaveBeenCalledWith(`${ZONE_READ_PATH}/all`, {
+      expect(getMock).toHaveBeenCalledWith(ZONE_READ_PATH, {
         params: undefined,
-        cacheTtlMs: 5 * 60_000,
+        cacheTtlMs: undefined,
       });
       expect(res.data?.[0]?.name).toBe('R');
       expect(res.data?.[0]?.created_at).toBe('2024-12-17T12:05:49.000000Z');
@@ -56,13 +56,13 @@ describe('ZoneService', () => {
     });
   });
 
-  it('readById hits /zone/read/records/{id}', (done) => {
+  it('readById returns a single mapped zone', (done) => {
     service.readById(1).subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(`${ZONE_READ_PATH}/1`, {
         params: undefined,
         cacheTtlMs: 5 * 60_000,
       });
-      expect(res.data?.[0]?.id).toBe(1);
+      expect(res.data?.id).toBe(1);
       done();
     });
   });

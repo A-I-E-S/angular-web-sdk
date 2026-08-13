@@ -46,16 +46,20 @@ export const appConfig: ApplicationConfig = {
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG` |
 | Auth | `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
-| HTTP | `provideAiesHttpClient`, `ApiClient`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
+| HTTP | `provideAiesHttpClient`, `ApiClient` (`getResource` / `getResourcePage` / `getResourceAll` / `getResourceById`), `buildResourcePath`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
-| Country | `CountryService`, `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
-| Shipment method | `ShipmentMethodService`, `SHIPMENT_METHOD_READ_PATH`, `mapShipmentMethod` / `mapShipmentMethodList` |
-| Warehouse | `WarehouseService`, `WAREHOUSE_READ_PATH`, `mapWarehouse` / `mapWarehouseList` |
-| Zone | `ZoneService`, `ZONE_READ_PATH`, `mapZone` / `mapZoneList` |
+| Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
+| Shipment method | `ShipmentMethodService` (`readPage` / `readAll` / `readById`), `SHIPMENT_METHOD_READ_PATH`, mappers |
+| Warehouse | `WarehouseService` (`readPage` / `readAll` / `readById`), `WAREHOUSE_READ_PATH`, mappers |
+| Zone | `ZoneService` (`readPage` / `readAll` / `readById`), `ZONE_READ_PATH`, mappers |
+| Product | `ProductService` (`readPage` / `readAll` / `readById`), `PRODUCT_READ_PATH`, mappers |
 | User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
+| File | `FileService`, `FILE_READ_PATH`, `mapFileRead` (`data` is a single object) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Browser | `copyToClipboard` |
+
+List-style GETs follow `ResourceId`: `null` (paginated), `'all'` (full dump), `number` (single).
 
 `MODAL_SERVICE` / `DRAWER_SERVICE` are tokens only — implementations ship in
 `@aies/aies-ui` to avoid circular dependencies.

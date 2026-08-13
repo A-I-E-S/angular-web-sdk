@@ -6,9 +6,11 @@ import {
   MODELS_API_RESPONSE,
   MODELS_ASYNC_STATE,
   MODELS_COUNTRY,
+  MODELS_FILE,
   MODELS_IMPORT,
   MODELS_MODE_CONFIG,
   MODELS_PAGINATION,
+  MODELS_PRODUCT,
   MODELS_SHIPMENT_METHOD,
   MODELS_SHIPPING_MODE,
   MODELS_USER,
@@ -44,7 +46,7 @@ interface ModelGroup {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="TypeScript contracts shared across the SDK — API envelopes, countries, warehouses, mode config, filters, and async UI state. Names end in *Model. Types only (no Angular providers). For live HTTP demos, open SDK API."
+        description="TypeScript contracts shared across the SDK — API envelopes, countries, warehouses, products, files, mode config, filters, and async UI state. Names end in *Model. Types only (no Angular providers). For service usage snippets, open SDK API."
       />
 
       <app-demo-section
@@ -55,8 +57,8 @@ interface ModelGroup {
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
           Shared across packages: ApiResponseModel for HTTP, CountryModel and
           ShipmentMethodModel for utility reads, mode/filter configs for product
-          rules, and AsyncQueryStateModel for aies-async-state. Live service demos
-          live under Foundation → SDK API.
+          rules, and AsyncQueryStateModel for aies-async-state. Service paths and
+          usage examples live under Foundation → SDK API.
         </p>
       </app-demo-section>
 
@@ -135,7 +137,7 @@ export class ModelsPage {
     {
       id: 'pagination',
       title: 'Pagination & resources',
-      hint: 'Page metadata on list responses, request query helpers, and resource id path segments.',
+      hint: 'ResourceId path segments for every list GET — null (page), all, or number — plus page query helpers.',
       code: MODELS_PAGINATION,
       models: [
         {
@@ -155,7 +157,7 @@ export class ModelsPage {
         {
           name: 'PaginationQueryParamsModel',
           packagePath: 'api',
-          description: 'Request-side page / size / order helpers for list fetches.',
+          description: 'Request-side page / size / order — only used when ResourceId is null.',
           structure: `interface PaginationQueryParamsModel {
   page?: number;
   size?: number;
@@ -165,8 +167,12 @@ export class ModelsPage {
         {
           name: 'ResourceId',
           packagePath: 'api',
-          description: "Path segment union: null (list) | 'all' | number (detail).",
-          structure: `type ResourceId = number | 'all' | null;`,
+          description:
+            "null → paginated list · 'all' → full dump · number → single record. Use getResourcePage / getResourceAll / getResourceById for custom routes.",
+          structure: `type ResourceId = number | 'all' | null;
+// null  → GET {base}           (+ page/size/order)
+// 'all' → GET {base}/all
+// 42    → GET {base}/42`,
         },
       ],
     },
@@ -327,6 +333,69 @@ export class ModelsPage {
   deleted_at: string | null;
   created_at: string | null;
   updated_at: string | null;
+}`,
+        },
+      ],
+    },
+    {
+      id: 'product',
+      title: 'Products',
+      hint: 'Catalog products from GET /product/read/{id|all} — HS codes, document/ETW labels.',
+      code: MODELS_PRODUCT,
+      models: [
+        {
+          name: 'ProductModel',
+          packagePath: 'product',
+          description:
+            'Product record (snake_case) with HS codes and document detail labels.',
+          structure: `interface ProductModel {
+  id: number;
+  account_id: number | null;
+  product_category_id: number | null;
+  hs_code: string;
+  hs_code_10: string | null;
+  hs_code_8: string | null;
+  hs_code_6: string | null;
+  name: string;
+  value: number;
+  usage: number;
+  document_ids: number[] | null;
+  etw_ids: number[] | null;
+  active: boolean;
+  is_external: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  document_details: string[];
+  etw_document_details: string[];
+  zone_product_required_documents: ApiJsonValue[];
+}`,
+        },
+      ],
+    },
+    {
+      id: 'file',
+      title: 'Files',
+      hint: 'Document payload from POST /file/read — single object in data (not a list).',
+      code: MODELS_FILE,
+      models: [
+        {
+          name: 'FileReadRequestModel',
+          packagePath: 'file',
+          description: 'Request body for FileService.read / readByBody.',
+          structure: `interface FileReadRequestModel {
+  ref: string;
+}`,
+        },
+        {
+          name: 'FileReadModel',
+          packagePath: 'file',
+          description:
+            'Envelope data object — prefer url for downloads; base_64 can be large.',
+          structure: `interface FileReadModel {
+  mime_type: string;
+  base_64: string;
+  url: string;
 }`,
         },
       ],

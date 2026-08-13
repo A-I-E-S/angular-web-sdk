@@ -4,92 +4,112 @@ import { map, Observable } from 'rxjs';
 
 import type {
   ApiResponseModel,
+  ResourceId,
   ShipmentMethodModel,
 } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
 import {
+  buildResourcePath,
+  buildResourceQueryParams,
+  mapResourcePayload,
+  resourceCacheTtlMs,
+  type ResourceQueryParams,
+} from '../http/resource-path';
+import {
+  mapShipmentMethod,
   mapShipmentMethodList,
   SHIPMENT_METHOD_READ_PATH,
 } from './shipment-method.mapper';
 
-/** Optional query string for shipment-method reads (null/undefined omitted). */
-export type ShipmentMethodReadParams = Record<
-  string,
-  string | number | boolean | null | undefined
->;
+/** Query bag for shipment-method reads (pagination only when `id` is `null`). */
+export type ShipmentMethodReadParams = ResourceQueryParams;
 
-/** In-memory GET cache TTL for shipment-method reference data (5 minutes). */
+/** In-memory GET cache TTL for method reference dumps / by-id (5 minutes). */
 const SHIPMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
 
 /**
- * Shipment method / carrier utility reads (`GET /shipment_method/read/{id|all}`).
+ * Shipment method / carrier utility reads (`GET /shipment_method/read/{id?}`).
  *
- * Default id is `'all'`. Response `data` is always mapped to
- * {@link ShipmentMethodModel}[] (snake_case wire fields become camelCase;
- * embedded `zone_values` become {@link ShipmentMethodModel.zone_values}).
+ * Uses the AIES {@link ResourceId} convention:
+ * - `null` (default) → paginated page
+ * - `'all'` → full list
+ * - `number` → single {@link ShipmentMethodModel}
  *
  * @example
  * ```ts
  * const methods = inject(ShipmentMethodService);
  *
- * methods.read().subscribe((res) => {
- *   if (res.success) console.log(res.data?.[0]?.name);
+ * methods.readPage({ page: 1 }).subscribe((res) => {
+ *   console.log(res.data, res.pagination);
  * });
+ * methods.readAll().subscribe((res) => console.log(res.data?.[0]?.name));
+ * methods.readById(12).subscribe((res) => console.log(res.data?.name));
  * ```
  */
 @Injectable({ providedIn: 'root' })
 export class ShipmentMethodService {
   private readonly api = inject(ApiClient);
 
-  /**
-   * Fetch shipment methods for `id` (defaults to `'all'`).
-   *
-   * @param id - Numeric method id or `'all'`.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link ShipmentMethodModel}[].
-   */
+  /** Paginated method page — {@link ResourceId} `null`. */
   read(
-    id: number | 'all' = 'all',
+    id?: null,
     params?: ShipmentMethodReadParams,
-  ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
-    const path = `${SHIPMENT_METHOD_READ_PATH}/${id}`;
+  ): Observable<ApiResponseModel<ShipmentMethodModel[]>>;
+
+  /** Full method list — {@link ResourceId} `'all'`. */
+  read(
+    id: 'all',
+    params?: ShipmentMethodReadParams,
+  ): Observable<ApiResponseModel<ShipmentMethodModel[]>>;
+
+  /** Single method — {@link ResourceId} number. */
+  read(
+    id: number,
+    params?: ShipmentMethodReadParams,
+  ): Observable<ApiResponseModel<ShipmentMethodModel>>;
+
+  read(
+    id: ResourceId = null,
+    params?: ShipmentMethodReadParams,
+  ): Observable<ApiResponseModel<ShipmentMethodModel | ShipmentMethodModel[]>> {
     return this.api
-      .get<unknown>(path, {
-        params,
-        cacheTtlMs: SHIPMENT_METHOD_CACHE_TTL_MS,
+      .get<unknown>(buildResourcePath(SHIPMENT_METHOD_READ_PATH, id), {
+        params: buildResourceQueryParams(id, params),
+        cacheTtlMs: resourceCacheTtlMs(id, SHIPMENT_METHOD_CACHE_TTL_MS),
       })
       .pipe(
         map((res) => ({
           ...res,
-          data: res.data == null ? null : mapShipmentMethodList(res.data),
+          data: mapResourcePayload(
+            id,
+            res.data,
+            mapShipmentMethod,
+            mapShipmentMethodList,
+          ),
         })),
       );
   }
 
-  /**
-   * Full method list — alias for {@link read}(`'all'`).
-   *
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link ShipmentMethodModel}[].
-   */
+  /** Paginated page — alias for {@link read}(`null`, params). */
+  readPage(
+    params?: ShipmentMethodReadParams,
+  ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
+    return this.read(null, params);
+  }
+
+  /** Full list — alias for {@link read}(`'all'`). */
   readAll(
     params?: ShipmentMethodReadParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
     return this.read('all', params);
   }
 
-  /**
-   * Single-method read by numeric id (still returns a one-element array).
-   *
-   * @param id - Shipment method id.
-   * @param params - Optional query string values.
-   * @returns Normalized envelope with mapped {@link ShipmentMethodModel}[].
-   */
+  /** Single record — alias for {@link read}(id). */
   readById(
     id: number,
     params?: ShipmentMethodReadParams,
-  ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
+  ): Observable<ApiResponseModel<ShipmentMethodModel>> {
     return this.read(id, params);
   }
 }

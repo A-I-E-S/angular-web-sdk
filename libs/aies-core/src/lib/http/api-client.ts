@@ -26,6 +26,7 @@ import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
 import { HttpResponseCache } from './http-cache';
 import { normalize } from './normalize';
+import { buildResourcePath } from './resource-path';
 
 /**
  * Shared request options for {@link ApiClient} verbs.
@@ -204,15 +205,20 @@ export class ApiClient {
   }
 
   /**
-   * Paginated list: `GET {basePath}` with optional page/size/order.
+   * List/detail GET using the AIES {@link ResourceId} convention.
+   *
+   * Prefer the named helpers when exploring the API in the IDE:
+   * - {@link getResourcePage} — `id: null` (paginated)
+   * - {@link getResourceAll} — `id: 'all'`
+   * - {@link getResourceById} — numeric id
+   *
    * Always attaches `mode` from {@link ShippingModeService} (in addition to
    * the `x-shipment-mode` header from {@link shipmentModeInterceptor}).
    *
-   * @typeParam T - Element type of the list.
+   * @typeParam T - Element type for lists, or record type for by-id.
    *
    * @example
    * ```ts
-   * // Paginated list — id null
    * api.getResource<Shipment>('shipments', null, { page: 1, size: 20 })
    *   .subscribe((res) => console.log(res.data, res.pagination));
    * ```
@@ -230,7 +236,6 @@ export class ApiClient {
    *
    * @example
    * ```ts
-   * // Full list — id 'all'
    * api.getResource<Port>('ports', 'all').subscribe((res) => {
    *   console.log(res.data); // Port[] | null
    * });
@@ -249,7 +254,6 @@ export class ApiClient {
    *
    * @example
    * ```ts
-   * // Single record — numeric id
    * api.getResource<Shipment>('shipments', 42).subscribe((res) => {
    *   console.log(res.data); // Shipment | null
    * });
@@ -266,8 +270,7 @@ export class ApiClient {
     id: ResourceId,
     query?: PaginationQueryParamsModel,
   ): Observable<ApiResponseModel<T | T[]>> {
-    const trimmed = basePath.replace(/\/+$/, '');
-    const path = id === null ? trimmed : `${trimmed}/${id}`;
+    const path = buildResourcePath(basePath, id);
 
     const params: Record<string, string | number | boolean | null | undefined> =
       {
@@ -290,6 +293,50 @@ export class ApiClient {
     }
 
     return this.get<T | T[]>(path, { params });
+  }
+
+  /**
+   * Paginated list — {@link ResourceId} `null`.
+   * IDE-friendly alias for `getResource(basePath, null, query)`.
+   *
+   * Page size defaults to the backend `api.paginate.*.pageSize` config unless
+   * `query.size` is set. Bind `res.pagination` to `aies-pagination`.
+   *
+   * @typeParam T - Element type of the list.
+   * @param basePath - Resource base path (no trailing id segment).
+   * @param query - Optional page/size/order.
+   */
+  getResourcePage<T>(
+    basePath: string,
+    query?: PaginationQueryParamsModel,
+  ): Observable<ApiResponseModel<T[]>> {
+    return this.getResource<T>(basePath, null, query);
+  }
+
+  /**
+   * Full unpaginated dump — {@link ResourceId} `'all'`.
+   * IDE-friendly alias for `getResource(basePath, 'all')`.
+   *
+   * @typeParam T - Element type of the list.
+   * @param basePath - Resource base path.
+   */
+  getResourceAll<T>(basePath: string): Observable<ApiResponseModel<T[]>> {
+    return this.getResource<T>(basePath, 'all');
+  }
+
+  /**
+   * Single record — {@link ResourceId} number.
+   * IDE-friendly alias for `getResource(basePath, id)`.
+   *
+   * @typeParam T - Record type.
+   * @param basePath - Resource base path.
+   * @param id - Numeric primary key.
+   */
+  getResourceById<T>(
+    basePath: string,
+    id: number,
+  ): Observable<ApiResponseModel<T>> {
+    return this.getResource<T>(basePath, id);
   }
 
   /**

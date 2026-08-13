@@ -1,16 +1,25 @@
 /**
- * Resource identifier convention used by many AIES list/detail endpoints
+ * Resource identifier convention for AIES list/detail GET endpoints
  * on paths shaped like `/{basePath}/{id?}`.
  *
- * - `null` — paginated list (page/size/order query params apply)
- * - `'all'` — full unpaginated list (pagination params ignored)
- * - `number` — single record by id (pagination params ignored)
+ * Applies to **all** list-style GETs (built-in SDK services and custom
+ * `ApiClient.getResource*` / `buildResourcePath` calls):
+ *
+ * | Value | Meaning | Path | Pagination |
+ * |-------|---------|------|------------|
+ * | `null` | Paginated page (size from `api.paginate.*.pageSize` unless overridden) | `{basePath}` | `page` / `size` / `order` apply |
+ * | `'all'` | Full dump, not paginated | `{basePath}/all` | ignored |
+ * | `number` | Single matching record | `{basePath}/{id}` | ignored |
+ *
+ * Prefer typed helpers when calling custom endpoints:
+ * `getResourcePage`, `getResourceAll`, `getResourceById`, or overloads on
+ * `getResource(basePath, id, query?)`.
  *
  * @example
  * ```ts
- * const listId: ResourceId = null;   // GET /widgets
- * const allId: ResourceId = 'all';   // GET /widgets/all
- * const oneId: ResourceId = 42;      // GET /widgets/42
+ * const pageId: ResourceId = null;  // GET /widgets?page=1
+ * const allId: ResourceId = 'all';  // GET /widgets/all
+ * const oneId: ResourceId = 42;     // GET /widgets/42
  * ```
  */
 export type ResourceId = number | 'all' | null;

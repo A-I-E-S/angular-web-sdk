@@ -51,11 +51,11 @@ describe('WarehouseService', () => {
     service = TestBed.inject(WarehouseService);
   });
 
-  it('defaults to /warehouse/read/all with cache TTL', (done) => {
+  it('defaults to paginated /warehouse/read without cache', (done) => {
     service.read().subscribe((res) => {
-      expect(getMock).toHaveBeenCalledWith(`${WAREHOUSE_READ_PATH}/all`, {
+      expect(getMock).toHaveBeenCalledWith(WAREHOUSE_READ_PATH, {
         params: undefined,
-        cacheTtlMs: 5 * 60_000,
+        cacheTtlMs: undefined,
       });
       expect(res.data?.[0]?.name).toBe('Test China Fushan');
       expect(res.data?.[0]?.api_enabled).toBe(false);
@@ -64,13 +64,13 @@ describe('WarehouseService', () => {
     });
   });
 
-  it('readById hits /warehouse/read/{id}', (done) => {
+  it('readById returns a single mapped warehouse', (done) => {
     service.readById(37).subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(`${WAREHOUSE_READ_PATH}/37`, {
         params: undefined,
         cacheTtlMs: 5 * 60_000,
       });
-      expect(res.data?.[0]?.id).toBe(37);
+      expect(res.data?.id).toBe(37);
       done();
     });
   });
