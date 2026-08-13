@@ -15,8 +15,8 @@ export {
 } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
 export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
-export { normalize } from './lib/http/normalize';
 export { mapApiJsonList, mapApiJsonValue } from './lib/http/map-api-json';
+export { normalize } from './lib/http/normalize';
 export {
   type AiesHttpClientOptions,
   provideAiesHttpClient,

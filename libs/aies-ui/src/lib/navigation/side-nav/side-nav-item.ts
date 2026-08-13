@@ -1,7 +1,7 @@
 import type { IconName } from '@aies/aies-icons';
 
 /**
- * Side-nav entry — top-level or nested under {@link children}.
+ * Side-nav entry - top-level or nested under {@link children}.
  *
  * Optional {@link routerLink} follows the same router-owned active pattern as
  * tabs / segment. Nested children may also be routed.
@@ -11,11 +11,11 @@ export interface AiesSideNavItem {
   id: string;
   /** Visible label (also used in the collapsed hover blade). */
   label: string;
-  /** Leading icon — recommended so the collapsed rail stays identifiable. */
+  /** Leading icon - recommended so the collapsed rail stays identifiable. */
   icon?: IconName;
   /**
    * Optional Angular router link. When set, navigation and active state are
-   * owned by the consumer’s router.
+   * owned by the consumer's router.
    */
   routerLink?: string | readonly unknown[];
   /** Optional query params for `RouterLink`. */
@@ -31,7 +31,8 @@ export interface AiesSideNavItem {
   badge?: boolean;
   /**
    * Nested entries (one level deep is typical; deeper trees are supported).
-   * Clicking a parent opens the branch and activates the first enabled child.
+   * Parent click toggles the branch when expanded; when the rail is collapsed,
+   * it expands and activates the first enabled child.
    */
   children?: AiesSideNavItem[];
 }

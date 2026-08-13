@@ -16,7 +16,6 @@ import {
   TabsComponent,
 } from '@aies/aies-ui';
 
-import { AppShellViewportPreviewComponent } from '../shared/app-shell-viewport-preview.component';
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import {
@@ -27,6 +26,7 @@ import {
   NAV_SEGMENT,
   NAV_SIDE,
 } from '../snippets';
+import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
 /**
  *

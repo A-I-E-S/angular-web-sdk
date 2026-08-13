@@ -1,4 +1,3 @@
-import { JsonPipe, UpperCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 
 import {
@@ -24,7 +23,7 @@ import type {
   WarehouseModel,
   ZoneModel,
 } from '@aies/aies-models';
-import { ButtonComponent } from '@aies/aies-ui';
+import { AiesActionsModule } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -44,13 +43,7 @@ import {
 @Component({
   selector: 'app-api-page',
   standalone: true,
-  imports: [
-    JsonPipe,
-    UpperCasePipe,
-    ButtonComponent,
-    PageHeaderComponent,
-    DemoSectionComponent,
-  ],
+  imports: [AiesActionsModule, PageHeaderComponent, DemoSectionComponent],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
       <app-page-header
@@ -169,7 +162,7 @@ import {
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ first | json }}</pre>
+            >{{ formatJson(first) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No countries returned.
@@ -219,13 +212,13 @@ import {
               <span class="font-medium text-ink dark:text-white">{{
                 first.name
               }}</span>
-              ({{ first.mode | uppercase }}) ·
+              ({{ first.mode.toUpperCase() }}) ·
               {{ first.minDeliveryBusinessDay }}–{{ first.maxDeliveryBusinessDay }}
               days · {{ first.zoneValues.total }} zone links
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ first | json }}</pre>
+            >{{ formatJson(first) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No shipment methods returned.
@@ -285,7 +278,7 @@ import {
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ first | json }}</pre>
+            >{{ formatJson(first) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No warehouses returned.
@@ -340,7 +333,7 @@ import {
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ first | json }}</pre>
+            >{{ formatJson(first) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No zones returned.
@@ -386,7 +379,7 @@ import {
             </p>
             <pre
               class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ profile | json }}</pre>
+            >{{ formatJson(profile) }}</pre>
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No user loaded yet — provide AUTH_TOKEN_PROVIDER and call me().
@@ -445,7 +438,7 @@ import {
             </div>
             <pre
               class="m-0 max-h-48 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-            >{{ modeConfig() | json }}</pre>
+            >{{ formatJson(modeConfig()) }}</pre>
           }
         </div>
       </app-demo-section>
@@ -635,6 +628,10 @@ export class ApiPage implements OnInit {
 
   protected regionFor(code: string): ModeRegionConfigModel | null {
     return this.modeConfigApi.getRegionConfig(code);
+  }
+
+  protected formatJson(value: unknown): string {
+    return JSON.stringify(value, null, 2);
   }
 
   private syncModeFromService(): void {

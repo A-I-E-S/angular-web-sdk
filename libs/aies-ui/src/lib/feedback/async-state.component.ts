@@ -10,7 +10,6 @@ import {
 import type { AsyncQueryStateModel } from '@aies/aies-models';
 import { ModeColorService } from '@aies/aies-theme';
 
-import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from './empty-state.component';
 import { ErrorIndicatorComponent } from './error-indicator.component';
 import { ErrorStateComponent } from './error-state.component';
