@@ -42,14 +42,15 @@ interface CatalogCard {
         <div class="relative grid gap-8 px-6 py-10 sm:px-10 sm:py-14 lg:grid-cols-[1.4fr_1fr] lg:items-end">
           <div class="flex flex-col gap-5">
             <p class="m-0 text-caption font-medium uppercase tracking-[0.16em] text-white/70">
-              AIES Web SDK
+              African Import Export Solutions
             </p>
             <h1 class="m-0 max-w-xl text-heading-1 text-white">
-              Ship STN &amp; SFN UI from one toolkit.
+              The shared UI toolkit for Import &amp; Export apps.
             </h1>
             <p class="m-0 max-w-lg text-body-lg text-white/75">
-              Browse live components, icons, and tokens with the same theme and
-              shipment-mode wiring your apps will use in production.
+              Owned by AIES for every product surface we ship. One Angular SDK —
+              components, icons, tokens, and API wiring — with Import (STN) and
+              Export (SFN) modes built in so accents and behavior match production.
             </p>
             <div class="flex flex-wrap gap-3">
               <a aies-button routerLink="/components/button" class="!no-underline">
@@ -75,7 +76,7 @@ interface CatalogCard {
               <dd class="m-0 mt-1 text-heading-3 text-white">638</dd>
             </div>
             <div>
-              <dt class="text-caption text-white/60">Modes</dt>
+              <dt class="text-caption text-white/60">API services</dt>
               <dd class="m-0 mt-1 text-heading-3 text-white">2</dd>
             </div>
           </dl>

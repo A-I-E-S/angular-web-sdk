@@ -24,7 +24,9 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('AIES');
-    expect(compiled.textContent).toContain('Web SDK playground');
+    expect(compiled.querySelector('aies-app-shell')).toBeTruthy();
+    expect(compiled.textContent).toContain('Playground');
+    expect(compiled.textContent).toContain('STN');
+    expect(compiled.textContent).toContain('SFN');
   });
 });
