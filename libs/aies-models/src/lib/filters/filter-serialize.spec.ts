@@ -1,8 +1,8 @@
-import { FilterParams, FilterState, ModuleFilterConfig } from './filter-config.model';
+import { FilterParamsModel, FilterStateModel, ModuleFilterConfigModel } from './filter-config.model';
 import { cloneFilterState, emptyFilterState, fromFilterParams, toFilterParams } from './filter-serialize';
 
 describe('filter-serialize', () => {
-  const config: ModuleFilterConfig = {
+  const config: ModuleFilterConfigModel = {
     id: 'track-shipments',
     transport: 'legacy-parallel',
     search: { param: 'search', label: 'Shipment ID' },
@@ -38,7 +38,7 @@ describe('filter-serialize', () => {
   };
 
   it('serializes legacy-parallel columns and values in field order', () => {
-    const state: FilterState = {
+    const state: FilterStateModel = {
       search: 'SFN-1',
       from: '2026-01-01',
       to: '2026-01-31',
@@ -67,7 +67,7 @@ describe('filter-serialize', () => {
   });
 
   it('omits empty field values from legacy CSV', () => {
-    const state: FilterState = {
+    const state: FilterStateModel = {
       values: { payment_status: 'paid', shipment_status: undefined },
     };
     const params = toFilterParams(state, config);
@@ -76,7 +76,7 @@ describe('filter-serialize', () => {
   });
 
   it('hydrates legacy CSV back into a values map', () => {
-    const params: FilterParams = {
+    const params: FilterParamsModel = {
       search: 'SFN-1',
       filterColumn: 'payment_status,shipment_status',
       filterValue: 'paid,pending',
@@ -92,7 +92,7 @@ describe('filter-serialize', () => {
   });
 
   it('round-trips named transport', () => {
-    const named: ModuleFilterConfig = {
+    const named: ModuleFilterConfigModel = {
       ...config,
       id: 'named-demo',
       transport: 'named',
@@ -105,7 +105,7 @@ describe('filter-serialize', () => {
         },
       ],
     };
-    const state: FilterState = {
+    const state: FilterStateModel = {
       values: { claim_status: 'open' },
       search: 'x',
     };

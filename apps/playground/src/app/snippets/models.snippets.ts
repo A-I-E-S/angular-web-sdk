@@ -6,13 +6,14 @@ export /**
 const MODELS_IMPORT = `// Shared API/UI shapes — type-only, no providers. Import from here instead of reinventing.
 
 import type {
-  AsyncQueryState,
+  AsyncQueryStateModel,
   ApiResponseModel,
-  PaginationMeta,
-  PaginationQueryParams,
+  CountryModel,
+  PaginationMetaModel,
+  PaginationQueryParamsModel,
   ResourceId,
   ShippingMode,
-  ModeConfigData,
+  ModeConfigDataModel,
 } from '@aies/aies-models';
 `;
 
@@ -24,7 +25,7 @@ const MODELS_API_RESPONSE = `// Canonical ApiClient envelope. Fields are T | nul
 
 import { inject } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
-import type { ApiErrorDetail, ApiResponseModel } from '@aies/aies-models';
+import type { ApiErrorDetailModel, ApiResponseModel } from '@aies/aies-models';
 import { firstValueFrom } from 'rxjs';
 
 interface Shipment {
@@ -48,7 +49,7 @@ export class ShipmentApi {
     return res.data;
   }
 
-  private applyFieldErrors(errors: ApiErrorDetail[] | null): void {
+  private applyFieldErrors(errors: ApiErrorDetailModel[] | null): void {
     if (!errors?.length) {
       return;
     }
@@ -69,8 +70,8 @@ import { Component, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
 import type {
   ApiResponseModel,
-  PaginationMeta,
-  PaginationQueryParams,
+  PaginationMetaModel,
+  PaginationQueryParamsModel,
   ResourceId,
 } from '@aies/aies-models';
 import { PaginationComponent } from '@aies/aies-ui';
@@ -93,14 +94,14 @@ interface Shipment {
 export class ShipmentListComponent {
   private readonly api = inject(ApiClient);
 
-  protected readonly meta = signal<PaginationMeta | null>(null);
+  protected readonly meta = signal<PaginationMetaModel | null>(null);
   protected readonly rows = signal<Shipment[]>([]);
 
   protected readonly page = signal(1);
 
   async loadPage(): Promise<void> {
     const listId: ResourceId = null;
-    const query: PaginationQueryParams = {
+    const query: PaginationQueryParamsModel = {
       page: this.page(),
       size: 20,
       order: '-createdAt',
@@ -131,12 +132,12 @@ export class ShipmentListComponent {
 export /**
  *
  */
-const MODELS_ASYNC_STATE = `// Map fetch signals into AsyncQueryState for aies-async-state.
+const MODELS_ASYNC_STATE = `// Map fetch signals into AsyncQueryStateModel for aies-async-state.
 // isLoading = first paint; isFetching = background refresh. Keep data undefined until first success.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
-import type { AsyncQueryState } from '@aies/aies-models';
+import type { AsyncQueryStateModel } from '@aies/aies-models';
 import { AsyncStateComponent } from '@aies/aies-ui';
 import { firstValueFrom } from 'rxjs';
 
@@ -166,7 +167,7 @@ export class ShipmentAsyncListComponent {
   private readonly error = signal<string | null>(null);
 
   protected readonly listState = computed(
-    (): AsyncQueryState<Shipment[]> => ({
+    (): AsyncQueryStateModel<Shipment[]> => ({
       data: this.rows(),
       isLoading: this.isLoading(),
       isFetching: this.isFetching(),
@@ -276,4 +277,42 @@ export class ShipmentSummaryComponent {
 //   baseUrl: 'https://test-api-export.africaniestest.com/api',
 //   // loadModeConfig: true by default — GET /public/mode/config on startup
 // }),
+`;
+
+export /**
+ *
+ */
+const MODELS_COUNTRY = `// Public country utility — GET /public/country/read/{id|all}. Default id is 'all'.
+// CountryService maps state_code → stateCode; data is always CountryModel[].
+
+import { Component, inject, signal } from '@angular/core';
+import { CountryService } from '@aies/aies-core';
+import type { CountryModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-country-picker-setup',
+  standalone: true,
+  template: \`
+    <p>{{ countries().length }} countries loaded</p>
+    @if (countries()[0]; as first) {
+      <p>{{ first.name }} ({{ first.iso2 }}) — {{ first.states.length }} states</p>
+    }
+  \`,
+})
+export class CountryPickerSetupComponent {
+  private readonly countriesApi = inject(CountryService);
+
+  protected readonly countries = signal<CountryModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.countriesApi.read());
+    if (res.success && res.data) {
+      this.countries.set(res.data);
+    }
+
+    // Or a single country (still an array):
+    // const one = await firstValueFrom(this.countriesApi.readById(1));
+  }
+}
 `;

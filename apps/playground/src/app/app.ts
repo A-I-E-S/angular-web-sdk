@@ -1,36 +1,37 @@
-import { UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
-import {
-  type IsActiveMatchOptions,
-  RouterLink,
-  RouterLinkActive,
-  RouterOutlet,
-} from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { type IsActiveMatchOptions, RouterOutlet } from '@angular/router';
 
 import { ShippingModeService } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { ShippingMode } from '@aies/aies-models';
-import { ModeColorService, ThemeService } from '@aies/aies-theme';
-import { ButtonComponent } from '@aies/aies-ui';
-
-interface NavLink {
-  path: string;
-  label: string;
-  group: 'Overview' | 'Components' | 'Foundation' | 'Learn';
-}
+import { ThemeService } from '@aies/aies-theme';
+import {
+  type AiesMenuItem,
+  type AiesNavItem,
+  type AiesNotification,
+  type AiesSideNavItem,
+  AppShellComponent,
+  AppShellHeaderComponent,
+  AppShellHeaderEndDirective,
+  AppShellHeaderSlotDirective,
+  ButtonComponent,
+  SideNavComponent,
+} from '@aies/aies-ui';
 
 /**
- *
+ * Playground root — product {@link AppShellComponent} + catalog side nav.
  */
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
+    AppShellComponent,
+    AppShellHeaderComponent,
+    AppShellHeaderSlotDirective,
+    AppShellHeaderEndDirective,
+    SideNavComponent,
     ButtonComponent,
     AiesIconComponent,
-    UpperCasePipe,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -38,74 +39,106 @@ interface NavLink {
 export class App {
   private readonly theme = inject(ThemeService);
   private readonly shipping = inject(ShippingModeService);
-  protected readonly modeColor = inject(ModeColorService);
 
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
-  protected readonly mobileNavOpen = signal(false);
-
-  /** Active nav — soft mode accent + semibold label (not solid fill). */
-  protected readonly activeNavClass = computed(() =>
-    this.shippingMode() === 'sfn'
-      ? 'bg-export-subtle text-export font-semibold dark:bg-export/15 dark:text-export-light'
-      : 'bg-import-subtle text-import font-semibold dark:bg-import/15 dark:text-import-light',
-  );
-
-  protected readonly navLinks: NavLink[] = [
-    { path: '/', label: 'Overview', group: 'Overview' },
-    { path: '/components/button', label: 'Button', group: 'Components' },
-    { path: '/components/alert', label: 'Alert', group: 'Components' },
-    { path: '/components/chip', label: 'Chip', group: 'Components' },
-    { path: '/components/action-menu', label: 'Action menu', group: 'Components' },
-    { path: '/components/feedback', label: 'Feedback', group: 'Components' },
-    { path: '/components/overlays', label: 'Overlays', group: 'Components' },
-    { path: '/components/forms', label: 'Forms', group: 'Components' },
-    { path: '/components/filters', label: 'Filters', group: 'Components' },
-    { path: '/components/tooltip', label: 'Tooltip', group: 'Components' },
-    { path: '/components/toast', label: 'Toast', group: 'Components' },
-    { path: '/components/navigation/overview', label: 'Navigation', group: 'Components' },
-    { path: '/components/table', label: 'Table', group: 'Components' },
-    { path: '/components/stepper', label: 'Stepper', group: 'Components' },
-    { path: '/icons', label: 'Icons', group: 'Foundation' },
-    { path: '/tokens', label: 'Tokens', group: 'Foundation' },
-    { path: '/models', label: 'Models', group: 'Foundation' },
-    { path: '/lecture', label: 'Lecture', group: 'Learn' },
-  ];
-
-  protected readonly groups: Array<NavLink['group']> = [
-    'Overview',
-    'Components',
-    'Foundation',
-    'Learn',
-  ];
-
-  protected linksFor(group: NavLink['group']): NavLink[] {
-    return this.navLinks.filter((l) => l.group === group);
-  }
+  protected readonly navCollapsed = signal(false);
 
   /**
-   * Exact path match for catalog entries — subset matching caused stale active
-   * styling when {@link activeNavClass} changed (e.g. overlays kept SFN green
-   * while table showed STN orange). Navigation uses subset for child routes.
-   * @param link - Sidebar nav entry.
-   * @returns RouterLinkActive match options for this link.
+   * Exact path match keeps `/` from lighting up every route (SideNav default
+   * is subset). Navigation uses its overview path; child nav demos stay nested
+   * under that page’s own chrome.
    */
-  protected navActiveOptions(link: NavLink): IsActiveMatchOptions {
-    if (link.path.startsWith('/components/navigation')) {
-      return {
-        paths: 'subset',
-        queryParams: 'subset',
-        fragment: 'ignored',
-        matrixParams: 'ignored',
-      };
-    }
-    return {
-      paths: 'exact',
-      queryParams: 'exact',
-      fragment: 'ignored',
-      matrixParams: 'ignored',
-    };
-  }
+  protected readonly linkActiveOptions: IsActiveMatchOptions = {
+    paths: 'exact',
+    queryParams: 'exact',
+    fragment: 'ignored',
+    matrixParams: 'ignored',
+  };
+
+  protected readonly crumbs: AiesNavItem[] = [
+    { id: 'home', label: 'Home', icon: 'home', routerLink: '/' },
+    { id: 'playground', label: 'Playground' },
+  ];
+
+  protected readonly accountMenu: AiesMenuItem[] = [
+    {
+      label: 'Profile',
+      icon: 'user',
+      onClick: () => undefined,
+    },
+    {
+      label: 'Settings',
+      icon: 'cog',
+      onClick: () => undefined,
+    },
+  ];
+
+  protected readonly notifications: AiesNotification[] = [
+    {
+      id: 'n1',
+      title: 'Welcome to the Web SDK playground',
+      body: 'Browse components, foundation pages, and shipping-mode accents.',
+      timestamp: new Date().toISOString(),
+    },
+  ];
+
+  protected readonly navItems: AiesSideNavItem[] = [
+    { id: 'overview', label: 'Overview', icon: 'home', routerLink: '/' },
+    {
+      id: 'components',
+      label: 'Components',
+      icon: 'grid',
+      children: [
+        { id: 'button', label: 'Button', routerLink: '/components/button' },
+        { id: 'alert', label: 'Alert', routerLink: '/components/alert' },
+        { id: 'chip', label: 'Chip', routerLink: '/components/chip' },
+        {
+          id: 'action-menu',
+          label: 'Action menu',
+          routerLink: '/components/action-menu',
+        },
+        {
+          id: 'feedback',
+          label: 'Feedback',
+          routerLink: '/components/feedback',
+        },
+        {
+          id: 'overlays',
+          label: 'Overlays',
+          routerLink: '/components/overlays',
+        },
+        { id: 'forms', label: 'Forms', routerLink: '/components/forms' },
+        { id: 'filters', label: 'Filters', routerLink: '/components/filters' },
+        { id: 'tooltip', label: 'Tooltip', routerLink: '/components/tooltip' },
+        { id: 'toast', label: 'Toast', routerLink: '/components/toast' },
+        {
+          id: 'navigation',
+          label: 'Navigation',
+          routerLink: '/components/navigation/overview',
+        },
+        { id: 'table', label: 'Table', routerLink: '/components/table' },
+        { id: 'stepper', label: 'Stepper', routerLink: '/components/stepper' },
+      ],
+    },
+    {
+      id: 'foundation',
+      label: 'Foundation',
+      icon: 'cube',
+      children: [
+        { id: 'icons', label: 'Icons', routerLink: '/icons' },
+        { id: 'tokens', label: 'Tokens', routerLink: '/tokens' },
+        { id: 'models', label: 'Models', routerLink: '/models' },
+        { id: 'api', label: 'SDK API', routerLink: '/api' },
+      ],
+    },
+    {
+      id: 'learn',
+      label: 'Learn',
+      icon: 'book',
+      children: [{ id: 'lecture', label: 'Lecture', routerLink: '/lecture' }],
+    },
+  ];
 
   protected toggleTheme(): void {
     this.theme.toggle();
@@ -113,13 +146,5 @@ export class App {
 
   protected setShippingMode(mode: ShippingMode): void {
     this.shipping.setMode(mode);
-  }
-
-  protected toggleMobileNav(): void {
-    this.mobileNavOpen.update((v) => !v);
-  }
-
-  protected closeMobileNav(): void {
-    this.mobileNavOpen.set(false);
   }
 }

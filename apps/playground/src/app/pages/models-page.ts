@@ -5,6 +5,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 import {
   MODELS_API_RESPONSE,
   MODELS_ASYNC_STATE,
+  MODELS_COUNTRY,
   MODELS_IMPORT,
   MODELS_MODE_CONFIG,
   MODELS_PAGINATION,
@@ -39,18 +40,19 @@ interface ModelGroup {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="TypeScript exports from @aies/aies-models — shared shapes with no Angular runtime. Each card shows the type structure; open Show code for wiring patterns."
+        description="Domain contracts for the AIES Web SDK — API envelopes, public utilities (countries), shipping/mode config, filters, and async UI snapshots. Interfaces use a *Model suffix. For live HTTP calls, see SDK API."
       />
 
       <app-demo-section
         title="Import"
-        hint="Types only — no Angular providers needed."
+        hint="Types only — no Angular providers needed. Prefer *Model names for domain shapes."
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Use these shapes in feature state, API clients, and UI bindings (e.g.
-          AsyncQueryState for aies-async-state, PaginationMeta for aies-pagination /
-          aies-table [meta]).
+          Shared across packages: ApiResponseModel for HTTP, CountryModel for
+          utility reads, mode/filter configs for product rules, and
+          AsyncQueryStateModel for aies-async-state. Live CountryService /
+          ModeConfigService demos live under Foundation → SDK API.
         </p>
       </app-demo-section>
 
@@ -109,16 +111,16 @@ export class ModelsPage {
   success: boolean;
   message: string | null;
   data: T | null;
-  errors: ApiErrorDetail[] | null;
-  pagination: PaginationMeta | null;
+  errors: ApiErrorDetailModel[] | null;
+  pagination: PaginationMetaModel | null;
   statusCode: number | null;
 }`,
         },
         {
-          name: 'ApiErrorDetail',
+          name: 'ApiErrorDetailModel',
           packagePath: 'api',
           description: 'Field-level or global error detail on failed responses.',
-          structure: `interface ApiErrorDetail {
+          structure: `interface ApiErrorDetailModel {
   field: string | null;
   message: string;
   code: string | null;
@@ -133,11 +135,11 @@ export class ModelsPage {
       code: MODELS_PAGINATION,
       models: [
         {
-          name: 'PaginationMeta',
+          name: 'PaginationMetaModel',
           packagePath: 'api',
           description:
             'Response-side slice: currentPage, perPage, totals, hasNext/PreviousPage.',
-          structure: `interface PaginationMeta {
+          structure: `interface PaginationMetaModel {
   currentPage: number;
   perPage: number;
   totalItems: number;
@@ -147,10 +149,10 @@ export class ModelsPage {
 }`,
         },
         {
-          name: 'PaginationQueryParams',
+          name: 'PaginationQueryParamsModel',
           packagePath: 'api',
           description: 'Request-side page / size / order helpers for list fetches.',
-          structure: `interface PaginationQueryParams {
+          structure: `interface PaginationQueryParamsModel {
   page?: number;
   size?: number;
   order?: string;
@@ -171,11 +173,11 @@ export class ModelsPage {
       code: MODELS_ASYNC_STATE,
       models: [
         {
-          name: 'AsyncQueryState<T>',
+          name: 'AsyncQueryStateModel<T>',
           packagePath: 'async',
           description:
             'data, isLoading, isFetching, isError, error — map from injectQuery() or manual fetches.',
-          structure: `interface AsyncQueryState<T> {
+          structure: `interface AsyncQueryStateModel<T> {
   data: T | undefined;
   isLoading: boolean;
   isFetching: boolean;
@@ -200,25 +202,56 @@ export class ModelsPage {
       ],
     },
     {
+      id: 'country',
+      title: 'Country utility',
+      hint: 'CountryService fetches /public/country/read/{id|all} — data is always CountryModel[].',
+      code: MODELS_COUNTRY,
+      models: [
+        {
+          name: 'CountryModel',
+          packagePath: 'country',
+          description:
+            'Country record with ISO codes and nested states from the public utility API.',
+          structure: `interface CountryModel {
+  id: number;
+  name: string;
+  iso3: string;
+  iso2: string;
+  states: CountryStateModel[];
+}`,
+        },
+        {
+          name: 'CountryStateModel',
+          packagePath: 'country',
+          description:
+            'Subdivision under a country — wire state_code maps to stateCode.',
+          structure: `interface CountryStateModel {
+  name: string;
+  stateCode: string;
+}`,
+        },
+      ],
+    },
+    {
       id: 'mode-config',
       title: 'Mode config',
       hint: 'ModeConfigService fetches /public/mode/config, persists the record, resolves by country + STN/SFN.',
       code: MODELS_MODE_CONFIG,
       models: [
         {
-          name: 'ModeConfigData',
+          name: 'ModeConfigDataModel',
           packagePath: 'mode',
           description: 'Top-level STN/SFN region, currency, and unit configuration.',
-          structure: `interface ModeConfigData {
-  sfn: ModeSfnConfig;
-  stn: ModeStnConfig;
+          structure: `interface ModeConfigDataModel {
+  sfn: ModeSfnConfigModel;
+  stn: ModeStnConfigModel;
 }`,
         },
         {
-          name: 'ModeRegionConfig',
+          name: 'ModeRegionConfigModel',
           packagePath: 'mode',
           description: 'Per-region currency symbol and measurement units.',
-          structure: `interface ModeRegionConfig {
+          structure: `interface ModeRegionConfigModel {
   dimensionUnit: 'cm' | 'inches';
   massUnit: 'KG' | 'LBS';
   currency: 'NGN' | 'USD';
@@ -226,23 +259,23 @@ export class ModelsPage {
 }`,
         },
         {
-          name: 'ModeSfnConfig',
+          name: 'ModeSfnConfigModel',
           packagePath: 'mode',
           description: 'SFN region map — default + Nigeria (ng) only.',
-          structure: `interface ModeSfnConfig {
-  default: ModeRegionConfig;
-  ng: ModeRegionConfig;
+          structure: `interface ModeSfnConfigModel {
+  default: ModeRegionConfigModel;
+  ng: ModeRegionConfigModel;
 }`,
         },
         {
-          name: 'ModeStnConfig',
+          name: 'ModeStnConfigModel',
           packagePath: 'mode',
           description: 'STN region map — default + us / cn / gb.',
-          structure: `interface ModeStnConfig {
-  default: ModeRegionConfig;
-  us: ModeRegionConfig;
-  cn: ModeRegionConfig;
-  gb: ModeRegionConfig;
+          structure: `interface ModeStnConfigModel {
+  default: ModeRegionConfigModel;
+  us: ModeRegionConfigModel;
+  cn: ModeRegionConfigModel;
+  gb: ModeRegionConfigModel;
 }`,
         },
       ],

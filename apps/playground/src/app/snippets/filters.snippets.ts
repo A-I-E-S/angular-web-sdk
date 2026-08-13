@@ -7,7 +7,7 @@ export /**
  */
 const FILTERS_OPEN_APPLY = `
 // Open the drawer, await the list refetch, then commit state on success.
-// Host owns FilterState; drawer edits a clone. Needs provideAiesUiOverlays().
+// Host owns FilterStateModel; drawer edits a clone. Needs provideAiesUiOverlays().
 
 import { Component, inject, signal } from '@angular/core';
 import {
@@ -16,7 +16,7 @@ import {
   emptyFilterState,
   toFilterParams,
   trackShipmentsFilterConfig,
-  type FilterState,
+  type FilterStateModel,
 } from '@aies/aies-ui';
 
 @Component({
@@ -33,7 +33,7 @@ export class ShipmentListFiltersComponent {
   private readonly filterDrawer = inject(FilterDrawerService);
   private readonly http = inject(/* your HttpClient or list service */);
 
-  protected readonly state = signal<FilterState>(emptyFilterState());
+  protected readonly state = signal<FilterStateModel>(emptyFilterState());
 
   protected openFilters(): void {
     this.filterDrawer
@@ -61,12 +61,12 @@ export /**
  *
  */
 const FILTERS_AUTHOR_CONFIG = `
-// Full ModuleFilterConfig — field \`type\` picks the control, \`transport\` how params flatten.
+// Full ModuleFilterConfigModel — field \`type\` picks the control, \`transport\` how params flatten.
 // Shared blocks (search / date / sort / pagination) sit above “Filter by” when present.
 
-import type { ModuleFilterConfig } from '@aies/aies-models';
+import type { ModuleFilterConfigModel } from '@aies/aies-models';
 
-export const updateShipmentsFilterConfig: ModuleFilterConfig = {
+export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
   id: 'update-shipments',
   route: ['portal', 'shipment', 'update-shipments'],
   transport: 'legacy-parallel',
@@ -241,10 +241,10 @@ import {
   fromFilterParams,
   toFilterParams,
   trackShipmentsFilterConfig,
-  type FilterState,
+  type FilterStateModel,
 } from '@aies/aies-models';
 
-const state: FilterState = {
+const state: FilterStateModel = {
   search: 'SFN-1042',
   date: 'created_at',
   from: '2026-01-01',
@@ -282,15 +282,15 @@ export /**
  */
 const FILTERS_NAMED = `
 // Newer endpoints: each filter is its own query key (no filterColumn CSVs).
-// Same drawer + FilterState; different serialize.
+// Same drawer + FilterStateModel; different serialize.
 
 import {
   shipmentTrackingItemFilterConfig,
   toFilterParams,
-  type FilterState,
+  type FilterStateModel,
 } from '@aies/aies-models';
 
-const state: FilterState = {
+const state: FilterStateModel = {
   search: 'AWB',
   values: { claim_status: 'open' },
 };
@@ -334,20 +334,20 @@ export /**
  *
  */
 const FILTERS_HYDRATE = `
-// First paint: rebuild FilterState from queryParams so shared links restore filters.
+// First paint: rebuild FilterStateModel from queryParams so shared links restore filters.
 
 import { inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   fromFilterParams,
   trackShipmentsFilterConfig,
-  type FilterState,
+  type FilterStateModel,
 } from '@aies/aies-models';
 import { signal } from '@angular/core';
 
 export class ListPage {
   private readonly route = inject(ActivatedRoute);
-  protected readonly state = signal<FilterState>(
+  protected readonly state = signal<FilterStateModel>(
     fromFilterParams(
       this.route.snapshot.queryParams,
       trackShipmentsFilterConfig,

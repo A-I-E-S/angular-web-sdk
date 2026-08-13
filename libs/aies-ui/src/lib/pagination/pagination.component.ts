@@ -5,14 +5,14 @@ import {
   output,
 } from '@angular/core';
 
-import type { PaginationMeta } from '@aies/aies-models';
+import type { PaginationMetaModel } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
 
 /**
- * Prev / next pager driven by {@link PaginationMeta} from the API envelope.
+ * Prev / next pager driven by {@link PaginationMetaModel} from the API envelope.
  *
- * WHY reuse `PaginationMeta` instead of a UI-specific type: list endpoints
+ * WHY reuse `PaginationMetaModel` instead of a UI-specific type: list endpoints
  * already return this shape on {@link ApiResponseModel.pagination}, so the
  * component wires straight to `response().pagination` with no mapping layer.
  *
@@ -46,7 +46,7 @@ import { ButtonComponent } from '../button/button.component';
  * }
  * ```
  *
- * Page controls for server-style lists (bind to {@link PaginationMeta}).
+ * Page controls for server-style lists (bind to {@link PaginationMetaModel}).
  */
 @Component({
   selector: 'aies-pagination',
@@ -95,7 +95,7 @@ export class PaginationComponent {
    *
    * Prefer binding `response().pagination` directly when non-null.
    */
-  readonly meta = input.required<PaginationMeta>();
+  readonly meta = input.required<PaginationMetaModel>();
 
   /**
    * Target 1-based page number after a prev/next activation.

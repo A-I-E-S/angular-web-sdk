@@ -167,8 +167,8 @@ protected load(): void {
     category: 'Angular signals',
     summary: 'Derived signal — recalculates when its dependencies change.',
     detail:
-      '`computed(() => …)` reads other signals inside the factory and caches the result until a dependency changes.\n\nUse for view-model shaping: map query signals into `AsyncQueryState`, build breadcrumb arrays from a URL signal, or derive stepper progress — without storing duplicate state.',
-    example: `protected readonly listState = computed((): AsyncQueryState<Shipment[]> => ({
+      '`computed(() => …)` reads other signals inside the factory and caches the result until a dependency changes.\n\nUse for view-model shaping: map query signals into `AsyncQueryStateModel`, build breadcrumb arrays from a URL signal, or derive stepper progress — without storing duplicate state.',
+    example: `protected readonly listState = computed((): AsyncQueryStateModel<Shipment[]> => ({
   status: this.isLoading() ? 'loading' : 'success',
   data: this.rows(),
   isFetching: this.isFetching(),

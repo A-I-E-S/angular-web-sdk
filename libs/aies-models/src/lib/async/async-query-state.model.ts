@@ -9,8 +9,8 @@
  *
  * @example
  * ```ts
- * // Map injectQuery() signals into AsyncQueryState for <aies-async-state>
- * const state: AsyncQueryState<Widget[]> = {
+ * // Map injectQuery() signals into AsyncQueryStateModel for <aies-async-state>
+ * const state: AsyncQueryStateModel<Widget[]> = {
  *   data: query.data(),
  *   isLoading: query.isLoading(),
  *   isFetching: query.isFetching(),
@@ -19,7 +19,7 @@
  * };
  * ```
  */
-export interface AsyncQueryState<T> {
+export interface AsyncQueryStateModel<T> {
   /**
    * Latest successful data, if any.
    * `undefined` before the first successful fetch (and often while `isLoading`).

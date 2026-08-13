@@ -29,7 +29,7 @@ export type ModeAppType = ShippingMode;
  * Field names are camelCase in the SDK even though the wire format is
  * snake_case — mapping happens once at the API client / service boundary.
  */
-export interface ModeRegionConfig {
+export interface ModeRegionConfigModel {
   /** Unit for package length/width/height in this region. */
   dimensionUnit: ModeDimensionUnit;
 
@@ -51,14 +51,14 @@ export interface ModeRegionConfig {
  *
  * Intentionally only keys `default` and `ng` — SFN serves Nigerian outbound
  * flows, not the STN country set. Do not force a shared key union with
- * {@link ModeStnConfig}; the asymmetry mirrors real business regions.
+ * {@link ModeStnConfigModel}; the asymmetry mirrors real business regions.
  */
-export interface ModeSfnConfig {
+export interface ModeSfnConfigModel {
   /** Fallback region config when a country code is missing or unrecognized. */
-  default: ModeRegionConfig;
+  default: ModeRegionConfigModel;
 
   /** Nigeria-specific region config. */
-  ng: ModeRegionConfig;
+  ng: ModeRegionConfigModel;
 }
 
 /**
@@ -66,20 +66,20 @@ export interface ModeSfnConfig {
  *
  * Intentionally keys `default`, `us`, `cn`, and `gb` — STN covers major
  * origin markets for inbound-to-Nigeria shipping. Different from
- * {@link ModeSfnConfig}'s `ng`-only country key by design.
+ * {@link ModeSfnConfigModel}'s `ng`-only country key by design.
  */
-export interface ModeStnConfig {
+export interface ModeStnConfigModel {
   /** Fallback region config when a country code is missing or unrecognized. */
-  default: ModeRegionConfig;
+  default: ModeRegionConfigModel;
 
   /** United States region config. */
-  us: ModeRegionConfig;
+  us: ModeRegionConfigModel;
 
   /** China region config. */
-  cn: ModeRegionConfig;
+  cn: ModeRegionConfigModel;
 
   /** Great Britain region config. */
-  gb: ModeRegionConfig;
+  gb: ModeRegionConfigModel;
 }
 
 /**
@@ -88,10 +88,10 @@ export interface ModeStnConfig {
  * Fetched from `/public/mode/config` (wrapped envelope with success/data/
  * statusCode; typically no errors/pagination).
  */
-export interface ModeConfigData {
+export interface ModeConfigDataModel {
   /** Region configs for Ship-From-Nigeria. */
-  sfn: ModeSfnConfig;
+  sfn: ModeSfnConfigModel;
 
   /** Region configs for Ship-To-Nigeria. */
-  stn: ModeStnConfig;
+  stn: ModeStnConfigModel;
 }

@@ -48,6 +48,7 @@ export const appConfig: ApplicationConfig = {
 | HTTP | `provideAiesHttpClient`, `ApiClient`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
+| Country | `CountryService`, `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Browser | `copyToClipboard` |
 

@@ -73,7 +73,7 @@ export {
  * Re-export for consumers wiring `<aies-async-state>` without a separate
  * `@aies/aies-models` import for this one type.
  */
-export type { AsyncQueryState } from '@aies/aies-models';
+export type { AsyncQueryStateModel } from '@aies/aies-models';
 
 /**
  * Filter schema / serialize helpers — re-exported so UI consumers can wire
@@ -85,14 +85,14 @@ export {
   emptyFilterState,
   FILTER_CONFIGS,
   type FilterConfigId,
-  type FilterField,
+  type FilterFieldModel,
   type FilterFieldType,
-  type FilterOption,
+  type FilterOptionModel,
   type FilterOptionsSource,
-  type FilterParams,
-  type FilterState,
+  type FilterParamsModel,
+  type FilterStateModel,
   fromFilterParams,
-  type ModuleFilterConfig,
+  type ModuleFilterConfigModel,
   resetFilterState,
   shipmentTrackingItemFilterConfig,
   toFilterParams,
@@ -210,7 +210,7 @@ export { PaginationComponent } from './lib/pagination';
  * Re-export so pagination consumers can type `meta` without a separate
  * `@aies/aies-models` import for this one type.
  */
-export type { PaginationMeta } from '@aies/aies-models';
+export type { PaginationMetaModel } from '@aies/aies-models';
 
 // Stepper
 export {

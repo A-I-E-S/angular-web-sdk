@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
-import type { AsyncQueryState, FilterState, PaginationMeta } from '@aies/aies-models';
+import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
   type AiesMenuItem,
@@ -179,7 +179,7 @@ export class TablePage {
   protected readonly listDemo = signal<'ready' | 'loading' | 'empty' | 'error'>('ready');
   protected readonly lastRowAction = signal<string | null>(null);
   protected readonly lastExport = signal<string | null>(null);
-  protected readonly filterState = signal<FilterState>(emptyFilterState());
+  protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
 
@@ -257,7 +257,7 @@ export class TablePage {
     return this.sortedRows().slice(start, start + PAGE_SIZE);
   });
 
-  protected readonly meta = computed((): PaginationMeta => {
+  protected readonly meta = computed((): PaginationMetaModel => {
     const totalItems = this.sortedRows().length;
     const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
     const currentPage = Math.min(this.page(), totalPages);
@@ -271,7 +271,7 @@ export class TablePage {
     };
   });
 
-  protected readonly listState = computed((): AsyncQueryState<DemoShipment[]> => {
+  protected readonly listState = computed((): AsyncQueryStateModel<DemoShipment[]> => {
     switch (this.listDemo()) {
       case 'loading':
         return {

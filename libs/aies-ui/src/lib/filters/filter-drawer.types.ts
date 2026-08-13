@@ -1,9 +1,9 @@
 import type { Observable } from 'rxjs';
 
 import type {
-  FilterParams,
-  FilterState,
-  ModuleFilterConfig,
+  FilterParamsModel,
+  FilterStateModel,
+  ModuleFilterConfigModel,
 } from '@aies/aies-models';
 
 /**
@@ -11,11 +11,11 @@ import type {
  */
 export interface FilterDrawerData {
   /** Module schema that drives the drawer UI. */
-  config: ModuleFilterConfig;
+  config: ModuleFilterConfigModel;
   /** Current filter state (cloned inside the panel for editing). */
-  state?: FilterState | null;
+  state?: FilterStateModel | null;
   /**
-   * Host-resolved option lists keyed by {@link FilterField.key}
+   * Host-resolved option lists keyed by {@link FilterFieldModel.key}
    * (for `optionsSource` selects such as warehouses).
    */
   optionLists?: Record<string, { value: string; label: string }[]>;
@@ -32,7 +32,7 @@ export interface FilterDrawerData {
    * @param draft - Pending state + serialized params (not yet committed by the host).
    */
   onApply?: (
-    draft: { state: FilterState; params: FilterParams },
+    draft: { state: FilterStateModel; params: FilterParamsModel },
   ) => Observable<unknown> | Promise<unknown> | void;
 }
 
@@ -43,7 +43,7 @@ export interface FilterDrawerData {
 export interface FilterDrawerResult {
   applied: true;
   /** Edited map state after Apply. */
-  state: FilterState;
+  state: FilterStateModel;
   /** Serialized query / API bag for the active transport. */
-  params: FilterParams;
+  params: FilterParamsModel;
 }

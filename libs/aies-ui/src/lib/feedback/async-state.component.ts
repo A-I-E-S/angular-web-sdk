@@ -7,7 +7,7 @@ import {
   output,
 } from '@angular/core';
 
-import type { AsyncQueryState } from '@aies/aies-models';
+import type { AsyncQueryStateModel } from '@aies/aies-models';
 import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
@@ -19,7 +19,7 @@ import { LoadingStateComponent } from './loading-state.component';
 /**
  * View-model branch for {@link AsyncStateComponent} render order.
  *
- * Kept internal — consumers only pass {@link AsyncQueryState}.
+ * Kept internal — consumers only pass {@link AsyncQueryStateModel}.
  */
 type AsyncView =
   | { kind: 'loading' }
@@ -28,7 +28,7 @@ type AsyncView =
   | { kind: 'content'; staleError: boolean; fetching: boolean };
 
 /**
- * Async query wrapper that maps {@link AsyncQueryState} into loading / error /
+ * Async query wrapper that maps {@link AsyncQueryStateModel} into loading / error /
  * empty / success with non-blocking badges for background activity.
  *
  * Render order (blocking first):
@@ -45,10 +45,10 @@ type AsyncView =
  *
  * @example
  * ```ts
- * // Map TanStack Query injectQuery() signals into AsyncQueryState
+ * // Map TanStack Query injectQuery() signals into AsyncQueryStateModel
  * readonly query = injectQuery(() => ({ … }));
  *
- * readonly state = computed<AsyncQueryState<Shipment[]>>(() => ({
+ * readonly state = computed<AsyncQueryStateModel<Shipment[]>>(() => ({
  *   data: this.query.data(),
  *   isLoading: this.query.isLoading(),
  *   isFetching: this.query.isFetching(),
@@ -67,7 +67,6 @@ type AsyncView =
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ButtonComponent,
     EmptyStateComponent,
     ErrorIndicatorComponent,
     ErrorStateComponent,
@@ -123,7 +122,7 @@ export class AsyncStateComponent<T = unknown> {
   /**
    * Snapshot from the app's query layer (e.g. mapped `injectQuery()` signals).
    */
-  readonly state = input.required<AsyncQueryState<T>>();
+  readonly state = input.required<AsyncQueryStateModel<T>>();
 
   /**
    * Optional override for the blocking empty copy.

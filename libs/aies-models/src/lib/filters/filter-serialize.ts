@@ -1,7 +1,7 @@
 import type {
-  FilterParams,
-  FilterState,
-  ModuleFilterConfig,
+  FilterParamsModel,
+  FilterStateModel,
+  ModuleFilterConfigModel,
 } from './filter-config.model';
 
 /**
@@ -12,7 +12,7 @@ import type {
  *
  * @returns A state with an empty `values` map and `order: 'desc'`.
  */
-export function emptyFilterState(): FilterState {
+export function emptyFilterState(): FilterStateModel {
   return { values: {}, order: 'desc' };
 }
 
@@ -22,7 +22,7 @@ export function emptyFilterState(): FilterState {
  * @param state - Current filter state (or undefined).
  * @returns A shallow copy safe to mutate in the drawer.
  */
-export function cloneFilterState(state?: FilterState | null): FilterState {
+export function cloneFilterState(state?: FilterStateModel | null): FilterStateModel {
   if (state == null) {
     return emptyFilterState();
   }
@@ -39,7 +39,7 @@ export function cloneFilterState(state?: FilterState | null): FilterState {
 }
 
 /**
- * Serialize {@link FilterState} for URL query strings and list API calls.
+ * Serialize {@link FilterStateModel} for URL query strings and list API calls.
  *
  * - `legacy-parallel`: emits `filterColumn` / `filterValue` as aligned CSV.
  * - `named`: each selected field key is its own query param.
@@ -51,10 +51,10 @@ export function cloneFilterState(state?: FilterState | null): FilterState {
  * @returns Flat query / API bag ready for HttpParams or the router.
  */
 export function toFilterParams(
-  state: FilterState,
-  config: ModuleFilterConfig,
-): FilterParams {
-  const params: FilterParams = {};
+  state: FilterStateModel,
+  config: ModuleFilterConfigModel,
+): FilterParamsModel {
+  const params: FilterParamsModel = {};
 
   if (state.search != null && state.search !== '') {
     params[config.search?.param ?? 'search'] = state.search;
@@ -108,7 +108,7 @@ export function toFilterParams(
 }
 
 /**
- * Hydrate {@link FilterState} from a flat query / API bag.
+ * Hydrate {@link FilterStateModel} from a flat query / API bag.
  *
  * For `legacy-parallel`, zips `filterColumn` + `filterValue` CSV pairs.
  * Unknown column keys are still restored into `values` so round-trips survive
@@ -116,12 +116,12 @@ export function toFilterParams(
  *
  * @param params - Router query params or API query object (stringish values).
  * @param config - Module schema.
- * @returns Hydrated {@link FilterState}.
+ * @returns Hydrated {@link FilterStateModel}.
  */
 export function fromFilterParams(
   params: Record<string, string | number | null | undefined | readonly string[]>,
-  config: ModuleFilterConfig,
-): FilterState {
+  config: ModuleFilterConfigModel,
+): FilterStateModel {
   const state = emptyFilterState();
 
   const read = (key: string): string | undefined => {
@@ -189,13 +189,13 @@ export function fromFilterParams(
  * Drop one field value (column deselected / section clear).
  *
  * @param state - Mutable or immutable state to copy.
- * @param key - {@link FilterField.key} to clear.
+ * @param key - {@link FilterFieldModel.key} to clear.
  * @returns Cloned state without that field value.
  */
 export function clearFilterField(
-  state: FilterState,
+  state: FilterStateModel,
   key: string,
-): FilterState {
+): FilterStateModel {
   const next = cloneFilterState(state);
   delete next.values[key];
   return next;
@@ -210,8 +210,8 @@ export function clearFilterField(
  */
 export function resetFilterState(
   keepPagination = false,
-  state?: FilterState | null,
-): FilterState {
+  state?: FilterStateModel | null,
+): FilterStateModel {
   const next = emptyFilterState();
   if (keepPagination && state) {
     next.page = state.page;

@@ -1,8 +1,8 @@
 /**
  * Schema-driven list filter contracts for AIES modules.
  *
- * Modules declare a {@link ModuleFilterConfig}; the UI drawer renders from it
- * and {@link toFilterParams} / {@link fromFilterParams} speak to the API.
+ * Modules declare a {@link ModuleFilterConfigModel}; the UI drawer renders from
+ * it and {@link toFilterParams} / {@link fromFilterParams} speak to the API.
  */
 
 /** How a filter field is rendered and validated in the drawer. */
@@ -21,7 +21,7 @@ export type FilterFieldType =
  *
  * `color` is a UI hint only (chip styling) — never sent to the API.
  */
-export interface FilterOption {
+export interface FilterOptionModel {
   /** Canonical value written into filter state / query params. */
   value: string;
   /** Visible label. */
@@ -41,9 +41,9 @@ export type FilterOptionsSource =
   | 'static';
 
 /**
- * One filterable API field inside a {@link ModuleFilterConfig}.
+ * One filterable API field inside a {@link ModuleFilterConfigModel}.
  */
-export interface FilterField {
+export interface FilterFieldModel {
   /** API `filterColumn` name (e.g. `payment_status`). */
   key: string;
   /** Drawer section label. */
@@ -51,7 +51,7 @@ export interface FilterField {
   /** Control kind. */
   type: FilterFieldType;
   /** Static options (enum / boolean / static select). */
-  options?: FilterOption[];
+  options?: FilterOptionModel[];
   /**
    * When true (default for `enum`), selecting a value replaces any prior value
    * for this key — chip groups are mutually exclusive per field.
@@ -68,7 +68,7 @@ export interface FilterField {
  *
  * @example
  * ```ts
- * const trackShipmentsFilterConfig: ModuleFilterConfig = {
+ * const trackShipmentsFilterConfig: ModuleFilterConfigModel = {
  *   id: 'track-shipments',
  *   transport: 'legacy-parallel',
  *   fields: [
@@ -77,7 +77,7 @@ export interface FilterField {
  * };
  * ```
  */
-export interface ModuleFilterConfig {
+export interface ModuleFilterConfigModel {
   /** Stable module id (`track-shipments`, `users`, …). */
   id: string;
   /**
@@ -95,12 +95,12 @@ export interface ModuleFilterConfig {
   date?: {
     rangeParams: { from: 'from'; to: 'to' };
     fieldParam: 'date';
-    fields: FilterOption[];
+    fields: FilterOptionModel[];
   };
   /** Sort direction control. */
   sort?: {
     param: 'order';
-    options: FilterOption[];
+    options: FilterOptionModel[];
   };
   /** Pagination query param names (defaults when omitted at serialize time). */
   pagination?: {
@@ -108,7 +108,7 @@ export interface ModuleFilterConfig {
     sizeParam: 'size';
   };
   /** Filterable fields rendered in the drawer. */
-  fields: FilterField[];
+  fields: FilterFieldModel[];
   /**
    * Backend wire format:
    * - `legacy-parallel` — `filterColumn` + `filterValue` comma strings (Laravel lists)
@@ -120,10 +120,10 @@ export interface ModuleFilterConfig {
 /**
  * Preferred UI / feature state for filters.
  *
- * Keep values as a map keyed by {@link FilterField.key}; only flatten to
+ * Keep values as a map keyed by {@link FilterFieldModel.key}; only flatten to
  * parallel comma strings at the API / URL boundary.
  */
-export interface FilterState {
+export interface FilterStateModel {
   search?: string;
   /** Inclusive range start (`YYYY-MM-DD`). */
   from?: string;
@@ -135,7 +135,7 @@ export interface FilterState {
   page?: number;
   size?: number;
   /**
-   * Field values keyed by {@link FilterField.key}.
+   * Field values keyed by {@link FilterFieldModel.key}.
    * Omit or set `undefined` / `''` to exclude from serialization.
    */
   values: Record<string, string | undefined>;
@@ -145,4 +145,4 @@ export interface FilterState {
  * Flat query / API bag produced by {@link toFilterParams}.
  * Values are strings (or numbers for page/size) ready for HttpParams / router.
  */
-export type FilterParams = Record<string, string | number | undefined>;
+export type FilterParamsModel = Record<string, string | number | undefined>;

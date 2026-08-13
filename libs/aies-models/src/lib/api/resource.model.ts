@@ -21,7 +21,7 @@ export type ResourceId = number | 'all' | null;
  * Fields are optional (not `| null`) because omitted query params mean
  * "use the backend default" — distinct from sending an explicit null body field.
  */
-export interface PaginationQueryParams {
+export interface PaginationQueryParamsModel {
   /**
    * 1-based page index to request.
    * Omitted when the caller accepts the backend's default page.

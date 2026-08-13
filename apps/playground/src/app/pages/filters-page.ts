@@ -4,9 +4,9 @@ import { Component, inject, signal } from '@angular/core';
 import { delay, type Observable,of, switchMap, throwError } from 'rxjs';
 
 import type {
-  FilterParams,
-  FilterState,
-  ModuleFilterConfig,
+  FilterParamsModel,
+  FilterStateModel,
+  ModuleFilterConfigModel,
 } from '@aies/aies-models';
 import {
   emptyFilterState,
@@ -37,7 +37,7 @@ import {
 interface DemoModule {
   id: string;
   label: string;
-  config: ModuleFilterConfig;
+  config: ModuleFilterConfigModel;
   optionLists?: Record<string, { value: string; label: string }[]>;
 }
 
@@ -58,7 +58,7 @@ interface DemoModule {
       <app-page-header
         eyebrow="Components"
         title="Filters"
-        description="One ModuleFilterConfig per list module drives a shared drawer. Keep FilterState as a values map; flatten with toFilterParams only at the URL / HTTP edge."
+        description="One ModuleFilterConfigModel per list module drives a shared drawer. Keep FilterStateModel as a values map; flatten with toFilterParams only at the URL / HTTP edge."
       />
 
       <app-demo-section
@@ -137,7 +137,7 @@ interface DemoModule {
       </app-demo-section>
 
       <app-demo-section
-        title="Author a ModuleFilterConfig"
+        title="Author a ModuleFilterConfigModel"
         hint="One seed config with most field types — search, dates, enums, selects, booleans."
         subtext="Field type chooses the control; transport chooses the query shape. Seeds are in FILTER_CONFIGS."
         [code]="authorConfigCode"
@@ -339,12 +339,12 @@ export class FiltersPage {
   protected readonly activeId = signal(
     this.modules[0]?.id ?? 'track-shipments',
   );
-  protected readonly state = signal<FilterState>(emptyFilterState());
-  protected readonly lastParams = signal<FilterParams>(
+  protected readonly state = signal<FilterStateModel>(emptyFilterState());
+  protected readonly lastParams = signal<FilterParamsModel>(
     toFilterParams(emptyFilterState(), trackShipmentsFilterConfig),
   );
 
-  protected activeConfig(): ModuleFilterConfig {
+  protected activeConfig(): ModuleFilterConfigModel {
     return (
       this.modules.find((m) => m.id === this.activeId())?.config ??
       FILTER_CONFIGS['track-shipments']
@@ -393,7 +393,7 @@ export class FiltersPage {
   }
 
   protected runLegacyDemo(): void {
-    const state: FilterState = {
+    const state: FilterStateModel = {
       search: 'SFN-1042',
       date: 'created_at',
       from: '2026-01-01',
@@ -436,8 +436,8 @@ export class FiltersPage {
 
   private openWithApply(
     onApply: (draft: {
-      state: FilterState;
-      params: FilterParams;
+      state: FilterStateModel;
+      params: FilterParamsModel;
     }) => Observable<unknown>,
   ): void {
     const mod =

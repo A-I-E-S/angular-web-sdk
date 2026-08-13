@@ -9,7 +9,7 @@ const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep 
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
-import type { AsyncQueryState, PaginationMeta } from '@aies/aies-models';
+import type { AsyncQueryStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
   AsyncStateComponent,
@@ -94,7 +94,7 @@ export class ShipmentListPageComponent {
   protected readonly page = signal(1);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly rows = signal<Shipment[]>([]);
-  protected readonly meta = signal<PaginationMeta | null>(null);
+  protected readonly meta = signal<PaginationMetaModel | null>(null);
   protected readonly fetchError = signal<string | null>(null);
   protected readonly isLoading = signal(false);
 
@@ -134,7 +134,7 @@ export class ShipmentListPageComponent {
     ];
   }
 
-  protected readonly listState = computed((): AsyncQueryState<Shipment[]> => ({
+  protected readonly listState = computed((): AsyncQueryStateModel<Shipment[]> => ({
     data: this.isLoading() ? undefined : this.rows(),
     isLoading: this.isLoading(),
     isFetching: this.isLoading(),
@@ -214,7 +214,7 @@ export class ShipmentListPageComponent {
 //   return sortedRows().slice(start, start + PAGE_SIZE);
 // });
 //
-// meta = computed((): PaginationMeta => ({ /* derived from ALL_ROWS.length */ }));
+// meta = computed((): PaginationMetaModel => ({ /* derived from ALL_ROWS.length */ }));
 `;
 
 export /**

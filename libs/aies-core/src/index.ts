@@ -44,6 +44,16 @@ export {
 export { ModeConfigService } from './lib/mode/mode-config.service';
 export { provideModeConfig } from './lib/mode/provide-mode-config';
 
+// Country utility
+export {
+  COUNTRY_READ_PATH,
+  type CountryReadParams,
+  CountryService,
+  mapCountry,
+  mapCountryList,
+  mapCountryState,
+} from './lib/country';
+
 // Route-driven overlays (openers provided by aies-ui)
 export type {
   OverlayRouteConfig,

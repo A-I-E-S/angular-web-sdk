@@ -1,10 +1,10 @@
-import type { ModuleFilterConfig } from '../filter-config.model';
+import type { ModuleFilterConfigModel } from '../filter-config.model';
 
 /**
  * Track shipments — payment / shipment status chips + tracking number.
  * Transport: legacy `filterColumn` / `filterValue`.
  */
-export const trackShipmentsFilterConfig: ModuleFilterConfig = {
+export const trackShipmentsFilterConfig: ModuleFilterConfigModel = {
   id: 'track-shipments',
   route: ['portal', 'shipment', 'track-shipments'],
   transport: 'legacy-parallel',
@@ -60,7 +60,7 @@ export const trackShipmentsFilterConfig: ModuleFilterConfig = {
 /**
  * Update shipments — richest legacy filter set (enums + entity selects + booleans).
  */
-export const updateShipmentsFilterConfig: ModuleFilterConfig = {
+export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
   id: 'update-shipments',
   route: ['portal', 'shipment', 'update-shipments'],
   transport: 'legacy-parallel',
@@ -175,7 +175,7 @@ export const updateShipmentsFilterConfig: ModuleFilterConfig = {
 /**
  * Users (customer list) — performed_action chips + user type select.
  */
-export const usersFilterConfig: ModuleFilterConfig = {
+export const usersFilterConfig: ModuleFilterConfigModel = {
   id: 'users',
   route: ['portal', 'customer', 'all'],
   transport: 'legacy-parallel',
@@ -226,7 +226,7 @@ export const usersFilterConfig: ModuleFilterConfig = {
 /**
  * Named-transport example — newer endpoints with direct query keys.
  */
-export const shipmentTrackingItemFilterConfig: ModuleFilterConfig = {
+export const shipmentTrackingItemFilterConfig: ModuleFilterConfigModel = {
   id: 'shipment-tracking-item-list',
   transport: 'named',
   pagination: { pageParam: 'page', sizeParam: 'size' },

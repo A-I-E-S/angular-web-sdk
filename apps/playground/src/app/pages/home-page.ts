@@ -22,6 +22,7 @@ interface CatalogCard {
     | 'abacus'
     | 'palette'
     | 'code'
+    | 'globe'
     | 'filter'
     | 'tags'
     | 'book';
@@ -224,8 +225,15 @@ export class HomePage {
     {
       path: '/models',
       title: 'Shared models',
-      blurb: 'Domain types shared across AIES packages.',
+      blurb: 'API, country, mode, and filter *Model contracts.',
       icon: 'code',
+      group: 'Foundation',
+    },
+    {
+      path: '/api',
+      title: 'SDK API',
+      blurb: 'Live CountryService and ModeConfigService calls.',
+      icon: 'globe',
       group: 'Foundation',
     },
     {

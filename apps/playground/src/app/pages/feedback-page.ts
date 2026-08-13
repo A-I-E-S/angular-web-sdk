@@ -1,7 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 
 import { AiesIconComponent } from '@aies/aies-icons';
-import type { AsyncQueryState } from '@aies/aies-models';
+import type { AsyncQueryStateModel } from '@aies/aies-models';
 import {
   AsyncStateComponent,
   EmptyStateComponent,
@@ -316,7 +316,7 @@ export class FeedbackPage {
   protected readonly lastRetry = signal<string | null>(null);
   protected readonly reconnecting = signal(false);
   protected readonly refreshingStale = signal(false);
-  protected readonly asyncState = signal<AsyncQueryState<DemoShipment[]>>(
+  protected readonly asyncState = signal<AsyncQueryStateModel<DemoShipment[]>>(
     this.buildState('content'),
   );
 
@@ -382,7 +382,7 @@ export class FeedbackPage {
     }
   }
 
-  private buildState(kind: DemoKind): AsyncQueryState<DemoShipment[]> {
+  private buildState(kind: DemoKind): AsyncQueryStateModel<DemoShipment[]> {
     switch (kind) {
       case 'loading':
         return {

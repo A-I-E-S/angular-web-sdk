@@ -1,4 +1,4 @@
-import type { ModeConfigData } from '@aies/aies-models';
+import type { ModeConfigDataModel } from '@aies/aies-models';
 
 import {
   mapModeConfigData,
@@ -50,13 +50,13 @@ const WIRE_SAMPLE = {
 } as const;
 
 describe('mode-config.mapper', () => {
-  let config: ModeConfigData;
+  let config: ModeConfigDataModel;
 
   beforeEach(() => {
     config = mapModeConfigData(WIRE_SAMPLE);
   });
 
-  it('maps snake_case wire fields to camelCase ModeConfigData', () => {
+  it('maps snake_case wire fields to camelCase ModeConfigDataModel', () => {
     expect(config.stn.cn).toEqual({
       dimensionUnit: 'cm',
       massUnit: 'KG',

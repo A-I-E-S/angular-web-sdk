@@ -7,13 +7,13 @@ export {
   usersFilterConfig,
 } from './configs/seed-configs';
 export type {
-  FilterField,
+  FilterFieldModel,
   FilterFieldType,
-  FilterOption,
+  FilterOptionModel,
   FilterOptionsSource,
-  FilterParams,
-  FilterState,
-  ModuleFilterConfig,
+  FilterParamsModel,
+  FilterStateModel,
+  ModuleFilterConfigModel,
 } from './filter-config.model';
 export {
   clearFilterField,

@@ -112,4 +112,9 @@ const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/models-page').then((m) => m.ModelsPage),
   },
+  {
+    path: 'api',
+    loadComponent: () =>
+      import('./pages/api-page').then((m) => m.ApiPage),
+  },
 ];

@@ -25,7 +25,7 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 import { AIES_BRAND_LOGO_MINI_URL, AIES_BRAND_LOGO_URL } from '../../brand';
-import { isNavItemActive } from '../nav-router.util';
+import { isNavItemActive, navItemUrlTree } from '../nav-router.util';
 import type { AiesSideNavItem } from './side-nav-item';
 
 const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
@@ -41,6 +41,11 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * **Design — ink spine:** a continuous mode-accent edge with soft active
  * highlights. Collapsed mode keeps icons; hover opens a floating label blade
  * (name + children) instead of a plain tooltip.
+ *
+ * ## Parent items with children
+ * Clicking a branch parent expands a collapsed rail, opens the branch, and
+ * activates the first enabled child (router navigation or `activeId`). Clicking
+ * again while the branch is already open collapses it without navigating.
  *
  * ## Router mode
  * Set `routerLink` on items. Active state follows the consumer’s Router
@@ -620,26 +625,88 @@ export class SideNavComponent {
       return;
     }
 
-    const hasChildren = !!item.children?.length;
-    if (hasChildren && this.expandParents() && !this.collapsed()) {
-      this.openBranches.update((set) => {
-        const next = new Set(set);
-        if (next.has(item.id)) {
-          next.delete(item.id);
-        } else {
-          next.add(item.id);
-        }
-        return next;
-      });
+    const children = item.children ?? [];
+    const hasChildren = children.length > 0;
+
+    if (hasChildren) {
+      this.onParentActivate(item, children, event);
+      return;
     }
 
-    if (item.routerLink == null && (!hasChildren || this.collapsed())) {
+    if (item.routerLink == null) {
       this.activeId.set(item.id);
     }
 
     if (this.collapsed()) {
       this.hoverId.set(null);
     }
+  }
+
+  /**
+   * Expand the rail if needed, open or close the branch, and select the index child.
+   * @param item - Parent entry with children.
+   * @param children - Non-empty child list.
+   * @param event - Click event.
+   */
+  private onParentActivate(
+    item: AiesSideNavItem,
+    children: AiesSideNavItem[],
+    event: Event,
+  ): void {
+    const wasCollapsed = this.collapsed();
+    const wasOpen = this.isBranchOpen(item.id);
+
+    if (wasCollapsed) {
+      this.collapsed.set(false);
+      this.hoverId.set(null);
+    }
+
+    // Already open on an expanded rail → collapse only (no re-navigation).
+    if (!wasCollapsed && wasOpen && this.expandParents()) {
+      this.openBranches.update((set) => {
+        const next = new Set(set);
+        next.delete(item.id);
+        return next;
+      });
+      if (item.routerLink != null) {
+        event.preventDefault();
+      }
+      return;
+    }
+
+    if (this.expandParents()) {
+      this.openBranches.update((set) => {
+        const next = new Set(set);
+        next.add(item.id);
+        return next;
+      });
+    }
+
+    const indexChild = children.find((child) => !child.disabled);
+    if (!indexChild) {
+      return;
+    }
+
+    // Prefer the section index over a parent `routerLink`, if any.
+    if (item.routerLink != null) {
+      event.preventDefault();
+    }
+    this.activateLeaf(indexChild);
+  }
+
+  /**
+   * Selects a leaf via router or local `activeId`.
+   * @param item - Enabled leaf to activate.
+   */
+  private activateLeaf(item: AiesSideNavItem): void {
+    if (item.routerLink != null) {
+      const tree = navItemUrlTree(this.router, item);
+      if (tree) {
+        void this.router.navigateByUrl(tree);
+      }
+      return;
+    }
+    this.activeId.set(item.id);
   }
 
   private flatten(items: AiesSideNavItem[]): AiesSideNavItem[] {

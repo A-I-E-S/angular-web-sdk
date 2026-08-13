@@ -18,7 +18,7 @@ import {
 
 import type {
   ApiResponseModel,
-  PaginationQueryParams,
+  PaginationQueryParamsModel,
   ResourceId,
 } from '@aies/aies-models';
 
@@ -220,7 +220,7 @@ export class ApiClient {
   getResource<T>(
     basePath: string,
     id: null,
-    query?: PaginationQueryParams,
+    query?: PaginationQueryParamsModel,
   ): Observable<ApiResponseModel<T[]>>;
 
   /**
@@ -239,7 +239,7 @@ export class ApiClient {
   getResource<T>(
     basePath: string,
     id: 'all',
-    query?: PaginationQueryParams,
+    query?: PaginationQueryParamsModel,
   ): Observable<ApiResponseModel<T[]>>;
 
   /**
@@ -258,13 +258,13 @@ export class ApiClient {
   getResource<T>(
     basePath: string,
     id: number,
-    query?: PaginationQueryParams,
+    query?: PaginationQueryParamsModel,
   ): Observable<ApiResponseModel<T>>;
 
   getResource<T>(
     basePath: string,
     id: ResourceId,
-    query?: PaginationQueryParams,
+    query?: PaginationQueryParamsModel,
   ): Observable<ApiResponseModel<T | T[]>> {
     const trimmed = basePath.replace(/\/+$/, '');
     const path = id === null ? trimmed : `${trimmed}/${id}`;

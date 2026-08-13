@@ -12,9 +12,9 @@ import { isObservable, type Observable,take } from 'rxjs';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import type {
-  FilterField,
-  FilterOption,
-  FilterState,
+  FilterFieldModel,
+  FilterOptionModel,
+  FilterStateModel,
 } from '@aies/aies-models';
 import {
   cloneFilterState,
@@ -42,7 +42,7 @@ import type {
  * Schema-driven filter drawer body.
  *
  * Opened via {@link FilterDrawerService} (or {@link DrawerService} with this
- * component). Edits a cloned {@link FilterState}; Apply serializes with
+ * component). Edits a cloned {@link FilterStateModel}; Apply serializes with
  * {@link toFilterParams}. When {@link FilterDrawerData.onApply} is set, the
  * drawer stays open until that call succeeds, then closes with
  * {@link FilterDrawerResult}.
@@ -294,7 +294,7 @@ export class FilterDrawerPanel {
   protected readonly applyError = signal<string | null>(null);
 
   /** Local edit buffer — host state only updates on Apply. */
-  protected readonly draft = signal<FilterState>(
+  protected readonly draft = signal<FilterStateModel>(
     cloneFilterState(this.data.state),
   );
 
@@ -462,15 +462,15 @@ export class FilterDrawerPanel {
     this.setFieldValue(key, String(opt.value));
   }
 
-  protected selectOptionsFor(field: FilterField): SelectOption<string>[] {
+  protected selectOptionsFor(field: FilterFieldModel): SelectOption<string>[] {
     const fromHost = this.data.optionLists?.[field.key];
-    const source: FilterOption[] =
+    const source: FilterOptionModel[] =
       fromHost ?? field.options ?? [];
     return source.map((o) => ({ label: o.label, value: o.value }));
   }
 
   protected selectedForField(
-    field: FilterField,
+    field: FilterFieldModel,
   ): SelectOption<string> | null {
     const value = this.draft().values[field.key];
     if (value == null || value === '') {
@@ -485,7 +485,7 @@ export class FilterDrawerPanel {
   }
 
   protected toRadioOptions(
-    options: FilterOption[] | undefined,
+    options: FilterOptionModel[] | undefined,
   ): RadioOption<string>[] {
     return (options ?? []).map((o) => ({
       label: o.label,

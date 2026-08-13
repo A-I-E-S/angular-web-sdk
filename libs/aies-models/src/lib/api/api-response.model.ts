@@ -4,7 +4,7 @@
  * Used when `ApiResponseModel.errors` is populated so callers can map messages
  * back to form fields without parsing free-form `message` text.
  */
-export interface ApiErrorDetail {
+export interface ApiErrorDetailModel {
   /**
    * Form or payload field this error applies to.
    * `null` when the error is request-wide rather than tied to a single field.
@@ -30,7 +30,7 @@ export interface ApiErrorDetail {
  * Present on paginated list endpoints; absent (null on the envelope) for
  * single-resource fetches, unpaginated `'all'` lists, and non-list payloads.
  */
-export interface PaginationMeta {
+export interface PaginationMetaModel {
   /** 1-based index of the page currently represented by `data`. */
   currentPage: number;
 
@@ -93,13 +93,13 @@ export interface ApiResponseModel<T> {
    * Structured field/business errors.
    * `null` when the response has no error list (typical for success and some error shapes).
    */
-  errors: ApiErrorDetail[] | null;
+  errors: ApiErrorDetailModel[] | null;
 
   /**
    * List pagination metadata.
    * `null` for non-paginated responses (single resource, `'all'` list, or no list).
    */
-  pagination: PaginationMeta | null;
+  pagination: PaginationMetaModel | null;
 
   /**
    * Application-level status code when the backend embeds one in the body

@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 import { AiesIconComponent } from '@aies/aies-icons';
-import type { PaginationMeta } from '@aies/aies-models';
+import type { PaginationMetaModel } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -257,7 +257,7 @@ export class TableComponent<T = unknown> {
    * When set, embeds {@link PaginationComponent} under the grid. Host still
    * owns refetch via {@link pageChange} — rows are never sliced here.
    */
-  readonly meta = input<PaginationMeta | null>(null);
+  readonly meta = input<PaginationMetaModel | null>(null);
 
   /**
    * Emitted when a sortable header is activated. Consumers must refetch;

@@ -1,10 +1,10 @@
 export type {
   ModeAppType,
-  ModeConfigData,
+  ModeConfigDataModel,
   ModeCurrencyCode,
   ModeDimensionUnit,
   ModeMassUnit,
-  ModeRegionConfig,
-  ModeSfnConfig,
-  ModeStnConfig,
+  ModeRegionConfigModel,
+  ModeSfnConfigModel,
+  ModeStnConfigModel,
 } from './mode-config.model';

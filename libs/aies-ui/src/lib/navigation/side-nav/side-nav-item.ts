@@ -29,6 +29,9 @@ export interface AiesSideNavItem {
    * unread counts, websocket events, etc.). The host app toggles this flag.
    */
   badge?: boolean;
-  /** Nested entries (one level deep is typical; deeper trees are supported). */
+  /**
+   * Nested entries (one level deep is typical; deeper trees are supported).
+   * Clicking a parent opens the branch and activates the first enabled child.
+   */
   children?: AiesSideNavItem[];
 }

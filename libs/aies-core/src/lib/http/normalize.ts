@@ -1,7 +1,7 @@
 import type {
-  ApiErrorDetail,
+  ApiErrorDetailModel,
   ApiResponseModel,
-  PaginationMeta,
+  PaginationMetaModel,
 } from '@aies/aies-models';
 
 /**
@@ -32,11 +32,11 @@ function isWrappedEnvelope(value: unknown): boolean {
 
 /**
  * Coalesce a single error entry so missing field/code become `null`.
- * `message` falls back to empty string because {@link ApiErrorDetail} requires it.
+ * `message` falls back to empty string because {@link ApiErrorDetailModel} requires it.
  * @param value - Raw error entry from the wire.
- * @returns A null-safe {@link ApiErrorDetail}.
+ * @returns A null-safe {@link ApiErrorDetailModel}.
  */
-function normalizeErrorDetail(value: unknown): ApiErrorDetail {
+function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
   const record = asRecord(value) ?? {};
   return {
     field: (record['field'] as string | null | undefined) ?? null,
@@ -51,7 +51,7 @@ function normalizeErrorDetail(value: unknown): ApiErrorDetail {
  * @param value - Raw pagination object (camelCase or snake_case).
  * @returns Normalized meta, or `null` when `value` is not an object.
  */
-function normalizePagination(value: unknown): PaginationMeta | null {
+function normalizePagination(value: unknown): PaginationMetaModel | null {
   const record = asRecord(value);
   if (record === null) {
     return null;

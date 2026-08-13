@@ -1,22 +1,33 @@
 # @aies/aies-models
 
-Shared TypeScript models for the AIES Web SDK. Types only — no Angular
-runtime — so you can import them from apps or plain TypeScript tooling.
+Shared TypeScript **domain models** for the AIES Web SDK — API envelopes,
+utility payloads (countries), shipping/mode config, filters, and async UI
+snapshots. Types only: no Angular runtime, so apps and tooling can import them
+safely.
+
+## Naming
+
+Domain interfaces use a `*Model` suffix (`CountryModel`, `ApiResponseModel`,
+`ModeConfigDataModel`, `FilterStateModel`, …). Literal unions and small helper
+types (e.g. `ShippingMode`, `ResourceId`, `FilterFieldType`) stay without the
+suffix.
 
 ## Domains
 
-- **api** — `ApiResponseModel`, pagination, resource id conventions
-- **filters** — `ModuleFilterConfig`, `FilterState`, `toFilterParams` / `fromFilterParams`
-- **mode** — region/currency/unit config for STN and SFN
+- **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`
+- **country** — `CountryModel`, `CountryStateModel` for public country utility reads
+- **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `toFilterParams` / `fromFilterParams`
+- **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
-- **async** — `AsyncQueryState` for UI async wrappers
+- **async** — `AsyncQueryStateModel` for UI async wrappers
 
 ## Usage
 
 ```ts
 import type {
   ApiResponseModel,
-  ModeConfigData,
+  CountryModel,
+  ModeConfigDataModel,
   ShippingMode,
 } from '@aies/aies-models';
 ```

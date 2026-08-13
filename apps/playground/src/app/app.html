@@ -1,176 +1,62 @@
-<div class="flex min-h-full">
-  <!-- Desktop sidebar -->
-  <aside
-    class="pg-chrome sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border dark:border-white/10 lg:flex"
-  >
-    <div class="flex flex-col gap-1 border-b border-border px-5 py-5 dark:border-white/10">
-      <a routerLink="/" class="text-heading-3 text-ink no-underline dark:text-white">
-        AIES
-      </a>
-      <span class="text-caption text-neutral-600">Web SDK playground</span>
-      <div
-        class="mt-3 h-1 w-12 rounded-full transition-colors duration-300"
-        [class]="modeColor.classes().bg"
-      ></div>
-    </div>
-
-    <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Catalog">
-      @for (group of groups; track group) {
-        <div class="mb-5">
-          <p class="mb-2 px-2 text-caption font-medium uppercase tracking-[0.12em] text-neutral-400">
-            {{ group }}
-          </p>
-          <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-            @for (link of linksFor(group); track link.path) {
-              <li>
-                <a
-                  [routerLink]="link.path"
-                  routerLinkActive
-                  #rla="routerLinkActive"
-                  [routerLinkActiveOptions]="navActiveOptions(link)"
-                  class="flex items-center rounded-lg px-3 py-2 text-body-sm no-underline transition duration-150"
-                  [class]="
-                    rla.isActive
-                      ? activeNavClass()
-                      : 'text-neutral-600 hover:bg-background-welcome hover:text-ink dark:text-neutral-400 dark:hover:bg-ink-950 dark:hover:text-white'
-                  "
-                >
-                  {{ link.label }}
-                </a>
-              </li>
-            }
-          </ul>
-        </div>
-      }
-    </nav>
-
-    <div class="border-t border-border px-4 py-4 dark:border-white/10">
-      <p class="m-0 text-caption text-neutral-400">
-        Accents follow
-        <span class="font-medium" [class]="modeColor.classes().text">
-          {{ shippingMode() | uppercase }}
-        </span>
-      </p>
-    </div>
-  </aside>
-
-  <div class="flex min-w-0 flex-1 flex-col">
-    <header
-      class="pg-chrome-blur sticky top-0 z-30 border-b border-border backdrop-blur-md dark:border-white/10"
+<aies-app-shell contentWidth="5xl">
+  <div aiesAppShellHeader>
+    <aies-app-shell-header
+      title="Playground"
+      [breadcrumbs]="crumbs"
+      userName="Playground"
+      [userMenuItems]="accountMenu"
+      [notifications]="notifications"
     >
-      <div class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <div class="flex items-center gap-3 lg:hidden">
-          <button
-            type="button"
-            class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-ink dark:border-white/15 dark:text-white"
-            aria-label="Open navigation"
-            (click)="toggleMobileNav()"
-          >
-            <aies-icon name="align-justify" [size]="18" />
-          </button>
-          <a routerLink="/" class="text-body font-medium text-ink no-underline dark:text-white">
-            AIES SDK
-          </a>
-        </div>
-
-        <p class="m-0 hidden text-body-sm text-neutral-600 lg:block">
-          Live catalog · theme &amp; shipment mode sync with the SDK
-        </p>
-
-        <div class="flex flex-wrap items-center justify-end gap-2">
-          <div
-            class="inline-flex rounded-lg border border-border p-0.5 dark:border-white/15"
-            role="group"
-            aria-label="Shipment mode"
-          >
-            <button
-              aies-button
-              type="button"
-              size="sm"
-              [variant]="shippingMode() === 'stn' ? 'primary' : 'ghost'"
-              (click)="setShippingMode('stn')"
-            >
-              STN
-            </button>
-            <button
-              aies-button
-              type="button"
-              size="sm"
-              [variant]="shippingMode() === 'sfn' ? 'primary' : 'ghost'"
-              (click)="setShippingMode('sfn')"
-            >
-              SFN
-            </button>
-          </div>
-
+      <div aiesAppShellHeaderEnd class="flex flex-wrap items-center justify-end gap-2">
+        <div
+          class="inline-flex rounded-lg border border-border p-0.5 dark:border-white/15"
+          role="group"
+          aria-label="Shipment mode"
+        >
           <button
             aies-button
             type="button"
-            variant="secondary"
             size="sm"
-            (click)="toggleTheme()"
-            [attr.aria-label]="
-              'Switch to ' + (themeMode() === 'light' ? 'dark' : 'light') + ' theme'
-            "
+            [variant]="shippingMode() === 'stn' ? 'primary' : 'ghost'"
+            (click)="setShippingMode('stn')"
           >
-            <aies-icon [name]="themeMode() === 'light' ? 'adjust' : 'alarm'" [size]="14" />
-            {{ themeMode() === 'light' ? 'Dark' : 'Light' }}
+            STN
+          </button>
+          <button
+            aies-button
+            type="button"
+            size="sm"
+            [variant]="shippingMode() === 'sfn' ? 'primary' : 'ghost'"
+            (click)="setShippingMode('sfn')"
+          >
+            SFN
           </button>
         </div>
-      </div>
 
-      <div class="h-0.5 w-full transition-colors duration-300" [class]="modeColor.classes().bg"></div>
-    </header>
-
-    @if (mobileNavOpen()) {
-      <div class="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true">
         <button
+          aies-button
           type="button"
-          class="absolute inset-0 border-0 bg-ink/40"
-          aria-label="Close navigation"
-          (click)="closeMobileNav()"
-        ></button>
-        <div class="pg-chrome absolute inset-y-0 left-0 flex w-72 flex-col shadow-lg dark:bg-ink">
-          <div
-            class="flex items-center justify-between border-b border-border px-4 py-4 dark:border-white/10"
-          >
-            <span class="text-body font-medium text-ink dark:text-white">Navigate</span>
-            <button aies-button type="button" variant="ghost" size="sm" (click)="closeMobileNav()">
-              Close
-            </button>
-          </div>
-          <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile catalog">
-            @for (group of groups; track group) {
-              <div class="mb-4">
-                <p class="mb-2 px-2 text-caption uppercase tracking-[0.12em] text-neutral-400">
-                  {{ group }}
-                </p>
-                @for (link of linksFor(group); track link.path) {
-                  <a
-                    [routerLink]="link.path"
-                    routerLinkActive
-                    #rla="routerLinkActive"
-                    [routerLinkActiveOptions]="navActiveOptions(link)"
-                    class="mb-0.5 block rounded-lg px-3 py-2 text-body-sm no-underline"
-                    [class]="
-                      rla.isActive
-                        ? activeNavClass()
-                        : 'text-neutral-600 dark:text-neutral-400'
-                    "
-                    (click)="closeMobileNav()"
-                  >
-                    {{ link.label }}
-                  </a>
-                }
-              </div>
-            }
-          </nav>
-        </div>
+          variant="secondary"
+          size="sm"
+          (click)="toggleTheme()"
+          [attr.aria-label]="
+            'Switch to ' + (themeMode() === 'light' ? 'dark' : 'light') + ' theme'
+          "
+        >
+          <aies-icon [name]="themeMode() === 'light' ? 'adjust' : 'alarm'" [size]="14" />
+          {{ themeMode() === 'light' ? 'Dark' : 'Light' }}
+        </button>
       </div>
-    }
-
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
-      <router-outlet />
-    </main>
+    </aies-app-shell-header>
   </div>
-</div>
+
+  <aies-side-nav
+    sidenav
+    ariaLabel="Catalog"
+    [items]="navItems"
+    [(collapsed)]="navCollapsed"
+    [linkActiveOptions]="linkActiveOptions"
+  />
+
+  <router-outlet />
+</aies-app-shell>

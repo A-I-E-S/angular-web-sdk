@@ -5,8 +5,8 @@ import { finalize, Observable, tap } from 'rxjs';
 import type {
   ApiResponseModel,
   ModeAppType,
-  ModeConfigData,
-  ModeRegionConfig,
+  ModeConfigDataModel,
+  ModeRegionConfigModel,
 } from '@aies/aies-models';
 import { AIES_MODE_CONFIG_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
 
@@ -50,11 +50,11 @@ export class ModeConfigService {
   private readonly storage = inject(STORAGE_TOKEN);
   private readonly shippingMode = inject(ShippingModeService);
 
-  private readonly _config = signal<ModeConfigData | null>(null);
+  private readonly _config = signal<ModeConfigDataModel | null>(null);
   private readonly _loading = signal(false);
 
   /** Latest mode-config record (storage hydrate or last successful fetch). */
-  readonly config: Signal<ModeConfigData | null> = this._config.asReadonly();
+  readonly config: Signal<ModeConfigDataModel | null> = this._config.asReadonly();
 
   /** `true` while {@link loadConfig} is in flight. */
   readonly loading: Signal<boolean> = this._loading.asReadonly();
@@ -68,9 +68,9 @@ export class ModeConfigService {
    *
    * @returns Normalized API envelope; errors propagate to subscribers.
    */
-  loadConfig(): Observable<ApiResponseModel<ModeConfigData>> {
+  loadConfig(): Observable<ApiResponseModel<ModeConfigDataModel>> {
     this._loading.set(true);
-    return this.api.get<ModeConfigData>(MODE_CONFIG_PATH).pipe(
+    return this.api.get<ModeConfigDataModel>(MODE_CONFIG_PATH).pipe(
       tap((res) => {
         if (res.success && res.data !== null) {
           this.saveRecord(mapModeConfigData(res.data));
@@ -92,7 +92,7 @@ export class ModeConfigService {
   getRegionConfig(
     countryCode: string | null | undefined,
     appType?: ModeAppType,
-  ): ModeRegionConfig | null {
+  ): ModeRegionConfigModel | null {
     const config = this._config();
     if (config === null) {
       return null;
@@ -106,14 +106,14 @@ export class ModeConfigService {
    * Replace the in-memory record and persist — used after {@link loadConfig}.
    * @param config
    */
-  private saveRecord(config: ModeConfigData): void {
+  private saveRecord(config: ModeConfigDataModel): void {
     this._config.set(config);
     this.storage.set(AIES_MODE_CONFIG_KEY, config);
   }
 
   /** Restore the last saved server record so region lookups work offline. */
   private hydrateFromStorage(): void {
-    const stored = this.storage.get<ModeConfigData>(AIES_MODE_CONFIG_KEY);
+    const stored = this.storage.get<ModeConfigDataModel>(AIES_MODE_CONFIG_KEY);
     if (isModeConfigData(stored)) {
       this._config.set(stored);
     }

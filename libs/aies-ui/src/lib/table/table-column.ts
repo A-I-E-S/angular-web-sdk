@@ -35,7 +35,7 @@ export interface TableColumn<T = unknown> {
 /**
  * Payload emitted by {@link TableComponent.sortChange}.
  *
- * Maps to the API `order` query param (see {@link PaginationQueryParams}) —
+ * Maps to the API `order` query param (see {@link PaginationQueryParamsModel}) —
  * the table never reorders its `rows` input.
  */
 export interface TableSortChange {

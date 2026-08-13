@@ -59,8 +59,8 @@ export interface AiesQueryClientDefaults {
  *
  * @example
  * ```ts
- * // Map injectQuery() signals → AsyncQueryState for <aies-async-state>
- * import type { AsyncQueryState } from '@aies/aies-models';
+ * // Map injectQuery() signals → AsyncQueryStateModel for <aies-async-state>
+ * import type { AsyncQueryStateModel } from '@aies/aies-models';
  * import { injectQuery } from '@tanstack/angular-query-experimental';
  *
  * const query = injectQuery(() => ({
@@ -68,7 +68,7 @@ export interface AiesQueryClientDefaults {
  *   queryFn: () => firstValueFrom(api.getResource<Shipment>('shipments', null)),
  * }));
  *
- * const state: AsyncQueryState<Shipment[] | null> = {
+ * const state: AsyncQueryStateModel<Shipment[] | null> = {
  *   data: query.data()?.data ?? undefined,
  *   isLoading: query.isLoading(),
  *   isFetching: query.isFetching(),

@@ -1,6 +1,9 @@
 export type {
-  ApiErrorDetail,
+  ApiErrorDetailModel,
   ApiResponseModel,
-  PaginationMeta,
+  PaginationMetaModel,
 } from './api-response.model';
-export type { PaginationQueryParams, ResourceId } from './resource.model';
+export type {
+  PaginationQueryParamsModel,
+  ResourceId,
+} from './resource.model';

@@ -160,7 +160,7 @@ const FEEDBACK_ASYNC = `
 // Background refetch shows an “Updating…” badge instead of blocking. One (retry) → refetch.
 
 import { Component, computed, inject, signal } from '@angular/core';
-import type { AsyncQueryState } from '@aies/aies-models';
+import type { AsyncQueryStateModel } from '@aies/aies-models';
 import {
   AsyncStateComponent,
   TableComponent,
@@ -190,7 +190,7 @@ export class ShipmentListComponent {
   private readonly queryFetching = signal(false);
   private readonly queryError = signal<string | null>(null);
 
-  protected readonly state = computed((): AsyncQueryState<Shipment[]> => ({
+  protected readonly state = computed((): AsyncQueryStateModel<Shipment[]> => ({
     data: this.queryData(),
     isLoading: this.queryLoading(),
     isFetching: this.queryFetching(),
@@ -220,7 +220,7 @@ export class ShipmentListComponent {
 //   queryFn: () => this.api.getShipments(this.filters()),
 // }));
 //
-// readonly state = computed<AsyncQueryState<Shipment[]>>(() => ({
+// readonly state = computed<AsyncQueryStateModel<Shipment[]>>(() => ({
 //   data: this.query.data(),
 //   isLoading: this.query.isLoading(),
 //   isFetching: this.query.isFetching(),

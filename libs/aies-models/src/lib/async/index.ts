@@ -1,1 +1,1 @@
-export type { AsyncQueryState } from './async-query-state.model';
+export type { AsyncQueryStateModel } from './async-query-state.model';
