@@ -32,12 +32,12 @@ interface TokenSwatch {
       <app-page-header
         eyebrow="Foundation"
         title="Design tokens"
-        description="Colors and type from @aies/aies-theme/tailwind-preset. Toggle STN/SFN in the header to feel mode accents. Open Show code on each section for full implementation notes."
+        description="Color and type from the Tailwind preset (@aies/aies-theme). Use these classes so product UIs match. Flip STN/SFN in the sidebar to see Import/Export accents. Open Show code for setup notes."
       />
 
       <app-demo-section
         title="Tailwind setup"
-        hint="Do this once in the consuming app — without content paths, UI classes get purged."
+        hint="One-time consumer setup: extend the AIES preset and scan @aies/aies-ui so JIT does not purge library classes."
         [code]="setupCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -81,7 +81,7 @@ interface TokenSwatch {
 
       <app-demo-section
         title="Typography scale"
-        hint="Type scale is provisional — still waiting on design sign-off."
+        hint="Shared type sizes for headings, body, and captions across product UIs. Scale is provisional pending design sign-off."
         [code]="typeCode"
       >
         <ul class="m-0 flex list-none flex-col gap-5 p-0">
@@ -122,7 +122,7 @@ interface TokenSwatch {
 
       <app-demo-section
         title="Mode accents in context"
-        hint="Accents on real surfaces. Flip STN/SFN in the header to see primary buttons follow."
+        hint="How Export (SFN green) and Import (STN orange) show up on real surfaces. Flip mode in the sidebar and compare with primary buttons."
         muted
         [code]="modeAccentsCode"
       >

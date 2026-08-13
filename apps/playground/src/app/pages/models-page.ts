@@ -44,12 +44,12 @@ interface ModelGroup {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="Domain contracts for the AIES Web SDK — API envelopes, utilities (countries, shipment methods), shipping/mode config, filters, and async UI snapshots. Interfaces use a *Model suffix. For live HTTP calls, see SDK API."
+        description="TypeScript contracts shared across the SDK — API envelopes, countries, warehouses, mode config, filters, and async UI state. Names end in *Model. Types only (no Angular providers). For live HTTP demos, open SDK API."
       />
 
       <app-demo-section
         title="Import"
-        hint="Types only — no Angular providers needed. Prefer *Model names for domain shapes."
+        hint="Pull shapes from @aies/aies-models in any app or library. No providers required — these are interfaces and helpers only."
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -103,7 +103,7 @@ export class ModelsPage {
     {
       id: 'api',
       title: 'API envelope',
-      hint: 'Wrapped responses from ApiClient — every field is explicitly null when absent.',
+      hint: 'How every SDK HTTP call is wrapped — success, data, message, errors, pagination.',
       code: MODELS_API_RESPONSE,
       models: [
         {
@@ -135,7 +135,7 @@ export class ModelsPage {
     {
       id: 'pagination',
       title: 'Pagination & resources',
-      hint: 'ResourceId conventions for getResource — list, all, or single record.',
+      hint: 'Page metadata on list responses, request query helpers, and resource id path segments.',
       code: MODELS_PAGINATION,
       models: [
         {
@@ -173,7 +173,7 @@ export class ModelsPage {
     {
       id: 'async',
       title: 'Async query state',
-      hint: 'UI snapshot for aies-async-state — mirrors TanStack Query signals.',
+      hint: 'Snapshot you pass to aies-async-state — loading, fetching, error, and data in one object.',
       code: MODELS_ASYNC_STATE,
       models: [
         {
@@ -194,7 +194,7 @@ export class ModelsPage {
     {
       id: 'shipping',
       title: 'Shipping mode',
-      hint: 'STN / SFN literal — theme accents and x-shipment-mode header.',
+      hint: 'Import (STN) vs Export (SFN) — drives theme accents and the x-shipment-mode header.',
       code: MODELS_SHIPPING_MODE,
       models: [
         {
@@ -208,7 +208,7 @@ export class ModelsPage {
     {
       id: 'country',
       title: 'Country utility',
-      hint: 'CountryService fetches /public/country/read/{id|all} — data is always CountryModel[].',
+      hint: 'Country list and detail from the public utility API — ISO codes and nested states.',
       code: MODELS_COUNTRY,
       models: [
         {
@@ -239,7 +239,7 @@ export class ModelsPage {
     {
       id: 'shipment-method',
       title: 'Shipment methods / carriers',
-      hint: 'ShipmentMethodService fetches /shipment_method/read/{id|all} — data is always ShipmentMethodModel[].',
+      hint: 'Carrier / method records with delivery windows, limits, and zone pricing pages.',
       code: MODELS_SHIPMENT_METHOD,
       models: [
         {
@@ -275,7 +275,7 @@ export class ModelsPage {
     {
       id: 'warehouse',
       title: 'Warehouses',
-      hint: 'WarehouseService fetches /warehouse/read/{id|all} — data is always WarehouseModel[].',
+      hint: 'Warehouse locations with address, charges, and nested country/state.',
       code: MODELS_WAREHOUSE,
       models: [
         {
@@ -312,7 +312,7 @@ export class ModelsPage {
     {
       id: 'zone',
       title: 'Zones',
-      hint: 'ZoneService fetches /zone/read/records/{id|all} — data is always ZoneModel[].',
+      hint: 'Shipping zones used for routing and pricing.',
       code: MODELS_ZONE,
       models: [
         {
@@ -334,7 +334,7 @@ export class ModelsPage {
     {
       id: 'user',
       title: 'Current user',
-      hint: 'UserService.me() fetches bare GET /user — ApiClient wraps it; data is UserModel.',
+      hint: 'Authenticated profile from GET /user — after login, call AuthTokenService.set then UserService.me().',
       code: MODELS_USER,
       models: [
         {
@@ -387,7 +387,7 @@ export class ModelsPage {
     {
       id: 'mode-config',
       title: 'Mode config',
-      hint: 'ModeConfigService fetches /public/mode/config, persists the record, resolves by country + STN/SFN.',
+      hint: 'Per-mode region currency and units (loaded at startup or on demand).',
       code: MODELS_MODE_CONFIG,
       models: [
         {

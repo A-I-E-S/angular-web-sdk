@@ -49,12 +49,12 @@ import {
       <app-page-header
         eyebrow="Foundation"
         title="SDK API"
-        description="HTTP endpoints the SDK calls for you — Country, ModeConfig, ShipmentMethod, Warehouse, Zone, User, and more. Paths and snake→camel mapping live in @aies/aies-core; shapes come from @aies/aies-models. GET /user returns a bare object — ApiClient still normalizes it."
+        description="Ready-made HTTP services for countries, warehouses, zones, shipment methods, mode config, and the current user. Paths and mapping live in @aies/aies-core; response shapes come from @aies/aies-models. Try the buttons below against the configured API."
       />
 
       <app-demo-section
         title="Bootstrap"
-        hint="provideAiesSdk + provideAiesHttpClient — ApiClient resolves relative paths against baseUrl."
+        hint="What every consuming app needs: provideAiesSdk (base URL) and provideAiesHttpClient (interceptors). Relative paths resolve against baseUrl."
         [code]="overviewCode"
       >
         <dl class="m-0 grid gap-3 text-body-sm sm:grid-cols-2 lg:grid-cols-3">
@@ -117,7 +117,7 @@ import {
 
       <app-demo-section
         title="CountryService"
-        hint="Public utility — returns ApiResponseModel&lt;CountryModel[]&gt;."
+        hint="Public country list — pick a destination or fill address forms. Returns ApiResponseModel&lt;CountryModel[]&gt;."
         [code]="countryCode"
       >
         <div class="flex flex-col gap-4">
@@ -173,7 +173,7 @@ import {
 
       <app-demo-section
         title="ShipmentMethodService"
-        hint="Carriers — returns ApiResponseModel&lt;ShipmentMethodModel[]&gt; with mapped zoneValues."
+        hint="Carrier / shipment methods with delivery windows and zone values — for rate UIs and method pickers."
         [code]="shipmentMethodCode"
       >
         <div class="flex flex-col gap-4">
@@ -229,7 +229,7 @@ import {
 
       <app-demo-section
         title="WarehouseService"
-        hint="Warehouses — returns ApiResponseModel&lt;WarehouseModel[]&gt; with nested CountryModel."
+        hint="Warehouse locations (address, charges, country) — for pickup hubs and inventory UIs."
         [code]="warehouseCode"
       >
         <div class="flex flex-col gap-4">
@@ -289,7 +289,7 @@ import {
 
       <app-demo-section
         title="ZoneService"
-        hint="Zones — returns ApiResponseModel&lt;ZoneModel[]&gt; from /zone/read/records."
+        hint="Shipping zones for routing and pricing rules."
         [code]="zoneCode"
       >
         <div class="flex flex-col gap-4">
@@ -344,7 +344,7 @@ import {
 
       <app-demo-section
         title="UserService"
-        hint="Current user — bare GET /user body; ApiClient wraps it, then mapUser → UserModel. Auth required."
+        hint="Current authenticated user. Requires AuthTokenService.set(access_token) after login. GET /user returns a bare object; ApiClient still normalizes it."
         [code]="userCode"
       >
         <div class="flex flex-col gap-4">
@@ -390,7 +390,7 @@ import {
 
       <app-demo-section
         title="ModeConfigService"
-        hint="Region currency and units — hydrate from startup fetch or reload."
+        hint="Region currency and measurement units for STN/SFN — hydrate at startup or reload when the user switches country/mode."
         [code]="modeConfigCode"
       >
         <div class="flex flex-col gap-4">

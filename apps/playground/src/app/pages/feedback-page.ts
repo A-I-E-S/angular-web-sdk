@@ -77,12 +77,12 @@ const SUCCESS_ROWS: DemoShipment[] = [
       <app-page-header
         eyebrow="Components"
         title="Feedback states"
-        description="Page and section-level async states — distinct from field validation errors on form controls."
+        description="What to show while a page or section is loading, failed, or empty. Use these for data fetches — not for field validation errors on form controls. Prefer AsyncState when one query owns the whole region."
       />
 
       <app-demo-section
         title="LoadingState"
-        hint="block for a full page; inline for a toolbar refresh."
+        hint="Spinner while data is in flight. Use block to fill a whole region; use inline next to a toolbar label or refresh control."
         [code]="loadingCode"
       >
         <div class="grid gap-6 md:grid-cols-2">
@@ -111,7 +111,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="ErrorState"
-        hint="Retry is always shown — wire (retry) to refetch."
+        hint="Replace the content when the request failed and there is nothing useful to show. Retry is always present — wire (retry) to refetch."
         [code]="errorCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
@@ -136,7 +136,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="ErrorIndicator"
-        hint="Compact top-right pill for stale-data failures — content stays visible."
+        hint="Keep showing the last good data and put a small retry pill in the corner when a background refresh fails."
         [code]="errorIndicatorCode"
       >
         <div class="flex flex-col gap-6">
@@ -190,8 +190,8 @@ const SUCCESS_ROWS: DemoShipment[] = [
       </app-demo-section>
 
       <app-demo-section
-       title="EmptyState"
-        hint="Same idea as error — empty often clears after a filter reset."
+        title="EmptyState"
+        hint="The request succeeded, but there is nothing to show (no rows, no drafts). Wire Retry to clear filters or start a create flow."
         [code]="emptyCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
@@ -208,7 +208,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="AsyncState playground"
-        hint="Flip the scenarios to see blocking states vs the quiet badges."
+        hint="One wrapper around a query result: first load and hard errors block the content; empty shows EmptyState; success renders your template; Updating… and Stale error keep the list visible with a quiet badge. Switch scenarios to see each mapping."
         badge="6 scenarios"
         [code]="asyncCode"
       >

@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import {
   ButtonComponent,
@@ -29,18 +30,31 @@ import {
     TooltipTriggerDirective,
     PageHeaderComponent,
     DemoSectionComponent,
+    RouterLink,
   ],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
-      <app-page-header
-        eyebrow="Components"
-        title="Tooltip"
-        description="Contextual help tip. Default info icon or a custom aiesTooltipTrigger target. Opens on hover, focus, and click/tap."
-      />
+      <app-page-header eyebrow="Components" title="Tooltip">
+        <p
+          description
+          class="m-0 text-body text-neutral-600 dark:text-neutral-400"
+        >
+          Short help next to a label or control when the UI is dense. Uses a
+          <a
+            routerLink="/lecture"
+            fragment="CDK"
+            class="pg-glossary-link"
+            >CDK</a
+          >
+          connected overlay (same pattern as select / action menu). Default info
+          icon, or mark your own element with aiesTooltipTrigger. Opens on hover,
+          focus, and click/tap.
+        </p>
+      </app-page-header>
 
       <app-demo-section
         title="Default icon"
-        hint="Default info icon — drop it next to a label."
+        hint="Drop the default info icon beside a field or label when a one-line explanation is enough."
         subtext="Opens on hover, focus, or tap. Escape or an outside click closes a sticky tip."
         [code]="defaultCode"
       >
@@ -64,7 +78,7 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="Put aiesTooltipTrigger on your own button — the default icon goes away."
+        hint="When you need a text link or button instead of the info icon, put aiesTooltipTrigger on that control."
         subtext="Use a focusable trigger (button or link) so keyboard users can open it."
         [code]="customTriggerCode"
       >
@@ -83,7 +97,7 @@ import {
 
       <app-demo-section
         title="Placement"
-        hint="Pick a preferred side — it flips if there is no room."
+        hint="Prefer a side that fits the layout; the tip flips automatically if there is no room."
         subtext="top (default), bottom, left, or right."
         [code]="placementCode"
       >
@@ -97,7 +111,7 @@ import {
 
       <app-demo-section
         title="Next to a form label"
-        hint="Usual pattern: label + tip on one row, input underneath."
+        hint="Common pattern: label + tip on one row, input underneath — keeps long help out of the hint line."
         subtext="Add ariaLabel on the icon when the visible label is not enough for screen readers."
         [code]="formLabelCode"
       >

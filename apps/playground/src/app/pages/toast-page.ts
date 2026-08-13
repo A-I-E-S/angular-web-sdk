@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ButtonComponent, ToastService } from '@aies/aies-ui';
 
@@ -12,18 +13,35 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 @Component({
   selector: 'app-toast-page',
   standalone: true,
-  imports: [ButtonComponent, PageHeaderComponent, DemoSectionComponent],
+  imports: [
+    ButtonComponent,
+    PageHeaderComponent,
+    DemoSectionComponent,
+    RouterLink,
+  ],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
-      <app-page-header
-        eyebrow="Components"
-        title="Toast"
-        description="Corner stack for transient feedback. Errors stay until you close them; warnings linger longer; identical messages collapse with a count."
-      />
+      <app-page-header eyebrow="Components" title="Toast">
+        <p
+          description
+          class="m-0 text-body text-neutral-600 dark:text-neutral-400"
+        >
+          Short messages in the corner after an action (saved, failed, reminder).
+          Mounted with
+          <a
+            routerLink="/lecture"
+            fragment="CDK"
+            class="pg-glossary-link"
+            >CDK</a
+          >
+          Overlay. Errors stay until dismissed; warnings linger longer; identical
+          messages collapse into one with a count. Enable with provideAiesToasts().
+        </p>
+      </app-page-header>
 
       <app-demo-section
         title="Variants"
-        hint="Errors stay until you close them. Warnings linger ~8s; info/success ~4.5s. Hover pauses the timer."
+        hint="info / success auto-dismiss ~4.5s; warning ~8s; error stays until closed. Hover pauses the timer."
         [code]="variantsCode"
       >
         <div class="flex flex-wrap gap-2">
@@ -45,7 +63,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Collapse"
-        hint="Spam the same error to stack it. X peels one; Expand shows them; Close all clears the group."
+        hint="When the same error fires repeatedly, toasts stack into one group with a count instead of flooding the corner."
         [code]="stackCode"
       >
         <button aies-button type="button" variant="danger" (click)="spamError()">
@@ -55,7 +73,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="HTTP tagging"
-        hint="In real apps, tag requests with withToast(). These buttons fake what that looks like."
+        hint="Tag real requests with withToast() so success/error toasts fire automatically. These buttons only simulate that bridge."
         [code]="httpCode"
       >
         <div class="flex flex-wrap gap-2">

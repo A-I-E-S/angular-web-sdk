@@ -4,6 +4,7 @@ export /**
  *
  */
 const OVERLAY_MODAL = `// Centered modal via ModalService. Needs provideAiesUiOverlays() in app.config.
+// Built on Angular CDK Overlay (panels attach to body — not clipped by overflow).
 // Inject OVERLAY_DATA in the panel, close with AiesOverlayRef.close(result).
 // dismissible defaults to false — backdrop/Escape only work when you opt in.
 

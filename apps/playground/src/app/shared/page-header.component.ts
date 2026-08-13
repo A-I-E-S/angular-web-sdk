@@ -12,13 +12,14 @@ import { Component, input } from '@angular/core';
         <p class="pg-kicker m-0">{{ eyebrow() }}</p>
       }
       <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div class="flex max-w-2xl flex-col gap-2">
+        <div class="flex max-w-3xl flex-col gap-2">
           <h1 class="m-0 text-heading-2 text-ink dark:text-white">{{ title() }}</h1>
           @if (description()) {
             <p class="m-0 text-body text-neutral-600 dark:text-neutral-400">
               {{ description() }}
             </p>
           }
+          <ng-content select="[description]" />
         </div>
         <ng-content select="[actions]" />
       </div>
@@ -30,6 +31,6 @@ export class PageHeaderComponent {
   readonly eyebrow = input<string | null>(null);
   /** Page title. */
   readonly title = input.required<string>();
-  /** One-line supporting copy. */
+  /** Supporting explanation of what this page is for. */
   readonly description = input<string | null>(null);
 }

@@ -8,6 +8,7 @@ export type GlossaryCategory =
   | 'Angular forms'
   | 'Angular DI'
   | 'Angular routing'
+  | 'Angular CDK'
   | 'AIES SDK';
 
 /**
@@ -55,6 +56,12 @@ const GLOSSARY_CATEGORY_META: Record<
     label: 'Angular routing',
     description: 'In-app navigation, route params, and URL-driven UI state.',
   },
+  'Angular CDK': {
+    label: 'Angular CDK',
+    expansion: 'Component Dev Kit',
+    description:
+      'Low-level Angular utilities (overlays, portals, a11y) that UI libraries build on — not AWS CDK.',
+  },
   'AIES SDK': {
     label: 'AIES SDK',
     expansion: 'Software Development Kit',
@@ -79,11 +86,21 @@ export interface GlossaryEntry {
   example?: string;
   /** Other glossary ids. */
   seeAlso?: string[];
+  /** Official docs or related external pages. */
+  links?: readonly GlossaryExternalLink[];
   /**
    * Token to link in highlighted snippets (word boundary match).
    * Defaults to `id` when omitted.
    */
   match?: string;
+}
+
+/**
+ * External documentation link shown on a lecture entry.
+ */
+export interface GlossaryExternalLink {
+  label: string;
+  href: string;
 }
 
 export /**
@@ -366,7 +383,7 @@ protected save(): void {
     provideAiesToasts(),
   ],
 };`,
-    seeAlso: ['inject', 'afterClosed'],
+    seeAlso: ['CDK', 'inject', 'afterClosed'],
   },
   {
     id: 'provideAiesToasts',
@@ -410,6 +427,37 @@ protected readonly filters = toSignal(
 );`,
     seeAlso: ['Router', 'toSignal', 'RouterLink'],
   },
+  {
+    id: 'CDK',
+    title: 'CDK',
+    category: 'Angular CDK',
+    match: 'CDK',
+    summary:
+      'Angular Component Dev Kit — building blocks for overlays, portals, and accessibility (package @angular/cdk).',
+    detail:
+      'Not related to AWS CDK. Google’s Angular CDK is a set of unstyled primitives that Material and other UI libraries use.\n\nIn this SDK, the important piece is **overlay**: menus, selects, toasts, tooltips, modals, and drawers attach panels to `document.body` so they are not clipped by parents with `overflow: hidden` (for example a table). You will see imports from `@angular/cdk/overlay` and `@angular/cdk/portal`, plus directives like `cdkConnectedOverlay`.\n\nConsuming apps should import CDK overlay styles once (`@import \'@angular/cdk/overlay-prebuilt.css\';`) — see the `@aies/aies-ui` README.',
+    example: `import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+
+// Toasts and service-driven overlays attach a portal to the overlay stack.
+const overlayRef = this.overlay.create({ … });
+overlayRef.attach(new ComponentPortal(ToastHostComponent));`,
+    seeAlso: ['provideAiesUiOverlays', 'afterClosed', 'inject'],
+    links: [
+      {
+        label: 'Angular CDK overview',
+        href: 'https://material.angular.dev/cdk/categories',
+      },
+      {
+        label: 'Overlay API',
+        href: 'https://material.angular.dev/cdk/overlay/overview',
+      },
+      {
+        label: 'Portal API',
+        href: 'https://material.angular.dev/cdk/portal/overview',
+      },
+    ],
+  },
 ];
 
 /** Longest match first so `toSignal` is not partially matched as `signal`. */
@@ -436,6 +484,7 @@ const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   'Angular forms',
   'Angular DI',
   'Angular routing',
+  'Angular CDK',
   'AIES SDK',
 ];
 

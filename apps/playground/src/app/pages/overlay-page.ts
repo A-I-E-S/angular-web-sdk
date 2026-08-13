@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import {
   ButtonComponent,
@@ -26,18 +27,35 @@ import {
 @Component({
   selector: 'app-overlay-page',
   standalone: true,
-  imports: [ButtonComponent, PageHeaderComponent, DemoSectionComponent],
+  imports: [
+    ButtonComponent,
+    PageHeaderComponent,
+    DemoSectionComponent,
+    RouterLink,
+  ],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
-      <app-page-header
-        eyebrow="Components"
-        title="Overlays"
-        description="Modal, drawer, and confirm — not dismissible by default. Pass dismissible: true for backdrop / Escape close."
-      />
+      <app-page-header eyebrow="Components" title="Overlays">
+        <p
+          description
+          class="m-0 text-body text-neutral-600 dark:text-neutral-400"
+        >
+          Service-driven dialogs for focused tasks: modal (forms), drawer
+          (filters/side panels), and confirm (yes/no). Built on
+          <a
+            routerLink="/lecture"
+            fragment="CDK"
+            class="pg-glossary-link"
+            >CDK</a
+          >
+          Overlay. Closed only by their actions unless you pass dismissible: true
+          for backdrop / Escape.
+        </p>
+      </app-page-header>
 
       <app-demo-section
         title="Modal"
-        hint="Stays open until Cancel or Save — set dismissible: true to allow backdrop/Escape."
+        hint="Centered dialog for create/edit flows. Locked by default so users finish or cancel explicitly."
         badge="ModalService"
         [code]="modalCode"
       >
@@ -59,7 +77,7 @@ import {
 
       <app-demo-section
         title="Drawer"
-        hint="Same dismissible rules as modals."
+        hint="Slide-over panel for filters, details, or secondary forms. Same dismissible rules as modal."
         badge="DrawerService"
         [code]="drawerCode"
       >
@@ -81,7 +99,7 @@ import {
 
       <app-demo-section
         title="Confirm"
-        hint="Needs Confirm or Cancel unless you set dismissible."
+        hint="Yes/no prompt before destructive or irreversible actions. Prefer this over a custom modal for simple decisions."
         badge="ConfirmService"
         [code]="confirmCode"
       >

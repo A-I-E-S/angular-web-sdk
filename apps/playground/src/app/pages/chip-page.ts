@@ -22,12 +22,12 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
       <app-page-header
         eyebrow="Components"
         title="Chip"
-        description="Compact status and category labels. Soft fills stay readable in dark mode."
+        description="Small labels for status, category, or tags in tables, filters, and toolbars. Soft fills stay readable in light and dark mode."
       />
 
       <app-demo-section
         title="Variants"
-        hint="neutral · success · warning · danger · export · import. success and export share the SFN green family."
+        hint="neutral, success, warning, danger, plus export/import for shipping mode. success and export both use the SFN green family."
         badge="6"
         [code]="variantsCode"
       >
@@ -40,7 +40,7 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Size, icon, removable"
-        hint="sm is the default for dense tables; md for filters and toolbars. Removable chips emit (removed) — parent owns state."
+        hint="sm for dense table cells; md for filter bars. Add an icon for meaning, or removable when the user can clear a tag — parent owns the list."
         [code]="iconRemoveCode"
       >
         <div class="flex flex-col gap-4">
@@ -77,7 +77,7 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="In a table cell"
-        hint="Map domain status → ChipVariant in the host; keep the chip presentational."
+        hint="Map your domain status to a ChipVariant in the host component; keep the chip itself presentational."
         [code]="tableCode"
       >
         <div class="flex flex-wrap items-center gap-2">

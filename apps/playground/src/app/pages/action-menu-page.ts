@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import {
   ActionMenuComponent,
@@ -28,18 +29,31 @@ import {
     ButtonComponent,
     PageHeaderComponent,
     DemoSectionComponent,
+    RouterLink,
   ],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
-      <app-page-header
-        eyebrow="Components"
-        title="Action menu"
-        description="Overflow menu for row and toolbar actions. CDK overlay (not clipped by table overflow). Default ellipsis trigger or a custom aiesActionMenuTrigger."
-      />
+      <app-page-header eyebrow="Components" title="Action menu">
+        <p
+          description
+          class="m-0 text-body text-neutral-600 dark:text-neutral-400"
+        >
+          Overflow (…) menu for row and toolbar actions that do not deserve a full
+          button. Uses a
+          <a
+            routerLink="/lecture"
+            fragment="CDK"
+            class="pg-glossary-link"
+            >CDK</a
+          >
+          overlay so it is not clipped by table overflow. Default ellipsis
+          trigger, or point aiesActionMenuTrigger at your own control.
+        </p>
+      </app-page-header>
 
       <app-demo-section
         title="Default trigger"
-        hint="Default ellipsis — the usual table row actions trigger."
+        hint="Built-in ellipsis — the usual pattern for table row actions."
         [code]="defaultCode"
       >
         <div class="flex flex-wrap items-center gap-4">
@@ -55,7 +69,7 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="Point aiesActionMenuTrigger at your own button."
+        hint="When ellipsis is not enough — attach aiesActionMenuTrigger to your own labeled button."
         [code]="customCode"
       >
         <aies-action-menu [items]="demoItems" ariaLabel="Shipment actions">
@@ -73,7 +87,7 @@ import {
 
       <app-demo-section
         title="Danger, disabled, divider"
-        hint="dividerBefore adds a rule; danger styles destructive actions."
+        hint="Mark destructive items with danger, disable unavailable ones, and use dividerBefore to separate groups."
         [code]="variantsCode"
       >
         <aies-action-menu [items]="variantItems" />
@@ -81,7 +95,7 @@ import {
 
       <app-demo-section
         title="Disabled menu"
-        hint="Disabled host means the menu will not open."
+        hint="Disable the whole menu when no actions apply (e.g. row locked or permissions missing)."
         [code]="disabledCode"
       >
         <aies-action-menu [items]="demoItems" [disabled]="true" />

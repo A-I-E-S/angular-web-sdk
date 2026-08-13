@@ -64,12 +64,12 @@ import {
       <app-page-header
         eyebrow="Components"
         title="Form controls"
-        description="Shared pattern: label, hint, field error, prefix/suffix slots, and ControlValueAccessor."
+        description="Shared inputs for product forms: label, hint, field error, prefix/suffix slots, and Angular forms via ControlValueAccessor. Use these instead of one-off HTML fields so spacing and errors stay consistent."
       />
 
       <app-demo-section
         title="Text input"
-        hint="Plain field, with an icon, with an error, and disabled."
+        hint="Single-line text — plain, with a prefix icon, with a validation error, or disabled."
         [code]="textCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
@@ -91,7 +91,11 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Textarea" [code]="textareaCode">
+      <app-demo-section
+        title="Textarea"
+        hint="Multi-line notes and instructions — same label / hint / error pattern as text input."
+        [code]="textareaCode"
+      >
         <div class="grid gap-5 md:grid-cols-2">
           <aies-textarea
             label="Special instructions"
@@ -109,7 +113,7 @@ import {
 
       <app-demo-section
         title="Number input"
-        hint="Commas are display-only; the bound value stays a number."
+        hint="Numeric values (weight, declared value). Commas are display-only; the bound value stays a number."
         [code]="numberCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
@@ -128,7 +132,7 @@ import {
 
       <app-demo-section
         title="Select"
-        hint="Search, creatable, and multi-select."
+        hint="Choose from a list — searchable, creatable free text, and multi-select for tags and filters."
         badge="3 modes"
         [code]="selectCode"
       >
@@ -169,7 +173,7 @@ import {
 
       <app-demo-section
         title="Address input"
-        hint="Google Places suggestions. Set localStorage key aies.googlePlacesApiKey then reload for live results."
+        hint="Pickup/delivery address with Google Places suggestions. Set localStorage key aies.googlePlacesApiKey then reload for live results."
         [code]="addressCode"
       >
         <div class="flex flex-col gap-4">
@@ -195,7 +199,11 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Choice controls" [code]="choiceCode">
+      <app-demo-section
+        title="Choice controls"
+        hint="Booleans and single-choice groups — checkbox, toggle, and radio with the same label / hint / error chrome."
+        [code]="choiceCode"
+      >
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col gap-4">
             <aies-checkbox label="Require signature on delivery" [(value)]="signature" />
@@ -222,7 +230,7 @@ import {
 
       <app-demo-section
         title="OTP input"
-        hint="One digit per cell. Paste works. completed fires when the code is full."
+        hint="One-time codes and short PINs — one digit per cell. Paste fills all cells; completed fires when the code is full."
         subtext="value is one string (digits only). Resend runs a cooldown — listen to (resend) for your API, or hide it with showResend=false."
         [code]="otpCode"
       >
@@ -261,7 +269,11 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Date" [code]="dateFileCode">
+      <app-demo-section
+        title="Date"
+        hint="Single calendar day for ready dates, cutoffs, and similar fields."
+        [code]="dateFileCode"
+      >
         <div class="grid gap-5 md:grid-cols-2">
           <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
           <aies-date-picker
@@ -274,6 +286,7 @@ import {
 
       <app-demo-section
         title="File upload"
+        hint="Attach documents and images — dropzone for multi-file, button for a single pick, compact for dense forms."
         [code]="fileUploadCode"
         subtext="dropzone, button, or compact. Drag files onto any of them. accept filters types and labels the chips. Images preview; other files get an icon + extension."
       >
@@ -308,7 +321,12 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Live values" muted [code]="liveValuesCode">
+      <app-demo-section
+        title="Live values"
+        hint="Debug strip for this page — shows the bound model values as you interact with the controls above."
+        muted
+        [code]="liveValuesCode"
+      >
         <dl class="m-0 grid gap-2 text-body-sm sm:grid-cols-2">
           <div>
             <dt class="text-neutral-600">Tracking</dt>

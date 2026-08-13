@@ -41,12 +41,12 @@ import {
       <app-page-header
         eyebrow="Components"
         title="Button"
-        description="Attribute selector on native button / anchor. Primary follows shipping mode — SFN green, STN orange."
+        description="Primary CTAs, secondary actions, and ghost/danger controls. Use the aies-button attribute on a native button or anchor. Primary color follows shipping mode — Export (SFN) green or Import (STN) orange."
       />
 
       <app-demo-section
         title="Variants"
-        hint="Primary follows SFN/STN — flip the mode in the sidebar to see it."
+        hint="Pick the visual weight for the action. Primary is mode-colored — flip STN/SFN in the sidebar to see it change."
         badge="4"
         [code]="variantsCode"
       >
@@ -61,7 +61,7 @@ import {
 
       <app-demo-section
         title="Sizes"
-        hint="sm for dense toolbars; lg when you need a bigger CTA."
+        hint="sm for dense toolbars and table actions; md for forms; lg when the button is the main call to action."
         [code]="sizesCode"
       >
         <div class="flex flex-wrap items-end gap-6">
@@ -73,7 +73,7 @@ import {
         </div>
       </app-demo-section>
 
-      <app-demo-section title="Variant × size matrix" muted [code]="matrixCode">
+      <app-demo-section title="Variant × size matrix" hint="Every variant at every size — useful when checking density in a toolbar vs a dialog footer." muted [code]="matrixCode">
         <div class="overflow-x-auto">
           <table class="w-full border-collapse text-left">
             <thead>
@@ -104,7 +104,7 @@ import {
 
       <app-demo-section
         title="With icons"
-        hint="Drop an aies-icon inside the button."
+        hint="Place an aies-icon inside the button for create, filter, and similar actions."
         [code]="iconsCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -129,7 +129,7 @@ import {
 
       <app-demo-section
         title="As links"
-        hint="Same attribute works on anchors."
+        hint="Same styles on <a> when the control should navigate instead of run an action."
         [code]="linksCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -141,7 +141,7 @@ import {
 
       <app-demo-section
         title="Disabled"
-        hint="Buttons use disabled; anchors get aria-disabled."
+        hint="Unavailable actions. Native buttons use disabled; anchors use aria-disabled so they stay in the tab order safely."
         [code]="disabledCode"
       >
         <div class="flex flex-wrap gap-3">
@@ -154,7 +154,7 @@ import {
 
       <app-demo-section
         title="Copy to clipboard"
-        hint="aies-copy wraps copyToClipboard — icon-only or labeled; flips to check on success."
+        hint="aies-copy for IDs, tracking numbers, and snippets. Icon-only or labeled; shows a check briefly after a successful copy."
         [code]="copyCode"
       >
         <div class="flex flex-wrap items-center gap-4">
@@ -174,7 +174,7 @@ import {
 
       <app-demo-section
         title="In context"
-        hint="A typical toolbar strip."
+        hint="Typical page toolbar: primary create on the left, secondary utilities on the right."
         [code]="contextCode"
       >
         <div

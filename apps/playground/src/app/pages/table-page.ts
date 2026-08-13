@@ -78,12 +78,12 @@ const PAGE_SIZE = 6;
       <app-page-header
         eyebrow="Components"
         title="Table & pagination"
-        description="Presentational table with template cells. Wrap in AsyncState for loading — the table never branches on fetch state itself."
+        description="Presentational data grid with sortable columns, template cells, and optional pager. It does not load data itself — wrap it in AsyncState (or your own loading UI) for fetch states."
       />
 
       <app-demo-section
         title="Shipments list"
-        hint="Refresh on the left; Filters and Export on the right. Pass [meta] for the built-in pager."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, row action menu, and [meta] for server-style pagination. Use the scenario buttons to preview loading and empty."
         badge="template cells"
         [code]="tableCode"
       >
@@ -165,7 +165,12 @@ const PAGE_SIZE = 6;
         }
       </app-demo-section>
 
-      <app-demo-section title="Compact / text-only columns" muted [code]="compactCode">
+      <app-demo-section
+        title="Compact / text-only columns"
+        hint="Minimal columns with no toolbar chrome — good for nested summaries or dense side panels."
+        muted
+        [code]="compactCode"
+      >
         <aies-table [columns]="compactColumns" [rows]="pageRows().slice(0, 3)" />
       </app-demo-section>
     </div>

@@ -58,12 +58,12 @@ interface DemoModule {
       <app-page-header
         eyebrow="Components"
         title="Filters"
-        description="One ModuleFilterConfigModel per list module drives a shared drawer. Keep FilterStateModel as a values map; flatten with toFilterParams only at the URL / HTTP edge."
+        description="Schema-driven filter drawer for list pages. Author one ModuleFilterConfigModel per module; keep FilterStateModel as a values map in the UI; flatten with toFilterParams only when writing the URL or HTTP query."
       />
 
       <app-demo-section
         title="Open drawer + onApply"
-        hint="Pick a config, open the drawer, hit Apply — it waits for the fake request before closing."
+        hint="End-to-end flow: pick a module config, open the shared drawer, Apply runs your async work, then the drawer closes."
         subtext="Wire onApply to your list fetch. If the call fails, the drawer stays open with an error. Skip onApply for local-only demos."
         [code]="openApplyCode"
       >
@@ -138,7 +138,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Author a ModuleFilterConfigModel"
-        hint="One seed config with most field types — search, dates, enums, selects, booleans."
+        hint="Define the fields your list supports once — search, dates, enums, selects, booleans — then every host reuses the same drawer."
         subtext="Field type chooses the control; transport chooses the query shape. Seeds are in FILTER_CONFIGS."
         [code]="authorConfigCode"
       >
@@ -151,7 +151,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Enum chips + colors"
-        hint="Optional color only shows when the chip is selected."
+        hint="Status-style options as chips. Optional color highlights only the selected chip — never the wire payload."
         subtext="color stays in the UI — it never goes out in toFilterParams."
         [code]="enumColorsCode"
       >
@@ -184,7 +184,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Filter by (multi-select)"
-        hint="Pick fields under Filter by to show their controls; remove a chip to hide that section."
+        hint="Let users choose which fields appear in the drawer. Add a chip to show a control; remove it to hide that section."
         subtext="Keep field.key stable — it becomes the API column (legacy) or query key (named)."
         [code]="filterByCode"
       >
@@ -197,7 +197,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Date range"
-        hint="Pick a date column, then From / To. Clear only resets this block. From and To keep each other honest."
+        hint="Filter by a date column with From / To. Clear resets only this block; the range fields constrain each other."
         subtext="Goes out as from, to, and date — not as filterColumn pairs."
         [code]="dateRangeCode"
       >
@@ -210,7 +210,7 @@ interface DemoModule {
 
       <app-demo-section
         title="legacy-parallel transport"
-        hint="Legacy wire format: filterColumn / filterValue CSV pairs, aligned by index."
+        hint="Older APIs that expect filterColumn / filterValue CSV pairs aligned by index. Use this when the backend still speaks that format."
         subtext="Empty values are skipped. Keep a values map inside the app; flatten when you hit the API."
         [code]="legacyCode"
       >
@@ -232,7 +232,7 @@ interface DemoModule {
 
       <app-demo-section
         title="named transport"
-        hint="Named transport: each field key is its own query param."
+        hint="Newer APIs where each field key is its own query param (e.g. status=pending). Same drawer UI — only the wire format changes."
         subtext="Same drawer and state — only transport flips the wire format."
         [code]="namedCode"
       >
@@ -248,7 +248,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Async option lists"
-        hint="Load async options yourself, then pass them in optionLists keyed by field.key."
+        hint="When select options come from the API (warehouses, carriers), load them yourself and pass optionLists keyed by field.key."
         subtext="Key by field.key (warehouse_id), not optionsSource. Static selects just use inline options."
         [code]="asyncOptionsCode"
       >
@@ -261,7 +261,7 @@ interface DemoModule {
 
       <app-demo-section
         title="Cold load from URL"
-        hint="Hydrate from query params on first paint so shared links bring filters back."
+        hint="Restore filters from the query string on first paint so shared list links reopen with the same criteria."
         subtext="fromFilterParams rebuilds values[key] from the CSV pairs. Unknown columns still round-trip."
         [code]="hydrateCode"
       >

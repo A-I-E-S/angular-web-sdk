@@ -38,7 +38,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       <app-page-header
         eyebrow="Learn"
         title="Lecture"
-        description="Plain-language notes on Angular and RxJS patterns you will see in the SDK snippets. Terms highlighted in Show code panels link here."
+        description="Plain-language notes on Angular and RxJS patterns used in the SDK. When a Show code panel highlights a term, it links here so you can look up what it means without leaving the playground."
       />
 
       <section
@@ -151,6 +151,26 @@ import { PageHeaderComponent } from '../shared/page-header.component';
                   <pre
                     class="pg-lecture-example mt-4 overflow-x-auto rounded-lg bg-[#1e1e1e] p-4 font-mono text-caption leading-relaxed text-[#d4d4d4]"
                   ><code>{{ entry.example }}</code></pre>
+                }
+
+                @if (entry.links?.length) {
+                  <div class="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span
+                      class="text-caption font-medium uppercase tracking-wide text-neutral-500"
+                    >
+                      Docs
+                    </span>
+                    @for (link of entry.links!; track link.href) {
+                      <a
+                        [href]="link.href"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="pg-glossary-link text-body-sm text-neutral-700 dark:text-neutral-300"
+                      >
+                        {{ link.label }}
+                      </a>
+                    }
+                  </div>
                 }
 
                 @if (entry.seeAlso?.length) {

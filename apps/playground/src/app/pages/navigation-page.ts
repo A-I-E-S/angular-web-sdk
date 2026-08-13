@@ -50,12 +50,12 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
       <app-page-header
         eyebrow="Components"
         title="Navigation"
-        description="Tabs, segment, and side nav follow the browser URL when items set routerLink — cold loads stay in sync."
+        description="App chrome and in-page navigation: shell + side nav, breadcrumbs, tabs, and segments. When items set routerLink, the active state follows the URL so refresh and deep links stay in sync."
       />
 
       <app-demo-section
         title="App shell — mobile"
-        hint="375px — menu button opens the side nav drawer; compact header without the clock."
+        hint="Phone layout (375px): hamburger opens the side nav as a drawer; header stays compact without the clock."
         badge="new"
       >
         <app-shell-viewport-preview
@@ -70,7 +70,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="App shell — tablet"
-        hint="768px — same drawer nav as mobile, with more room and date/time in the header."
+        hint="Tablet layout (768px): same drawer nav as mobile, with more room and date/time in the header."
         badge="new"
       >
         <app-shell-viewport-preview
@@ -85,7 +85,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="App shell — desktop"
-        hint="1024px+ — persistent side rail and full header chrome. Sample data only."
+        hint="Desktop layout (1024px+): persistent side rail, full header chrome, centered content. Sample data only — wire your routes in the product app."
         badge="new"
         [code]="appShellCode"
       >
@@ -101,7 +101,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Side nav"
-        hint="Ink spine + soft active highlight. Collapse to icons; hover reveals a label blade with nested links. badge: true shows a live-update dot."
+        hint="Primary product navigation. Collapse to icons; hover reveals labels and nested links. Set badge: true for a live-update dot."
         badge="new"
         [code]="sideNavCode"
       >
@@ -137,7 +137,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Breadcrumb"
-        hint="Crumbs follow the active child route."
+        hint="Show where you are in the hierarchy and link back to parent pages. Crumbs follow the active child route here."
         [code]="breadcrumbCode"
       >
         <aies-breadcrumb [items]="crumbs()" />
@@ -145,7 +145,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Tabs (routed)"
-        hint="Child routes under /components/navigation/*. Active tab survives refresh."
+        hint="Section tabs that change the URL (child routes). Active tab survives refresh and can be shared as a link."
         [code]="routedTabsCode"
       >
         <aies-tabs
@@ -160,7 +160,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Segment (routed via query)"
-        hint="Same path, different ?density= — the pill matches the query on load."
+        hint="Compact pill switcher for view modes (density, status). Here it syncs to ?density= so the choice survives reload."
         [code]="segmentCode"
       >
         <aies-segment
@@ -178,7 +178,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Tabs (local)"
-        hint="No router — just [(activeId)] and aiesTabDef panels."
+        hint="In-page panels with no router — bind [(activeId)] and render bodies with aiesTabDef."
         [code]="localTabsCode"
       >
         <aies-tabs

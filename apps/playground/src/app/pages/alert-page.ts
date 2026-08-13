@@ -27,12 +27,12 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
       <app-page-header
         eyebrow="Components"
         title="Alert"
-        description="Inline dismissible banners (info / success / warning / danger). Parent owns visibility — distinct from ErrorState (async failure + Retry)."
+        description="Inline banners for page-level notices the user should see (outages, rate warnings, success tips). The parent owns show/hide. Do not use this for failed data fetches — use ErrorState / AsyncState instead."
       />
 
       <app-demo-section
         title="Variants"
-        hint="info / success / warning / danger. Warning and danger announce as alerts."
+        hint="info, success, warning, and danger. Use warning/danger for issues that need attention; they announce as alerts to assistive tech."
         badge="4"
         [code]="variantsCode"
       >
@@ -50,7 +50,7 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Dismissible"
-        hint="Dismissible by default — hide it with @if when (dismissed) fires."
+        hint="Dismissible by default. Listen to (dismissed) and hide the alert with @if so it stays gone until you bring it back."
         [code]="dismissibleCode"
       >
         <div class="flex flex-col gap-4">

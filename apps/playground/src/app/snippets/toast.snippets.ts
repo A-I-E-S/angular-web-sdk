@@ -7,6 +7,7 @@ export /**
  */
 const TOAST_VARIANTS = `
 // Inject ToastService and fire away.
+// Toasts mount via CDK Overlay in the corner (provideAiesToasts() once).
 // Error stays until closed; warning ~8s; info/success ~4.5s. Hover pauses.
 
 import { Component, inject } from '@angular/core';

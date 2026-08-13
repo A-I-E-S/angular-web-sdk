@@ -31,12 +31,12 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
       <app-page-header
         eyebrow="Components"
         title="Stepper"
-        description="Wizard navigation for multi-step flows — not a shipment status timeline."
+        description="Step-by-step wizard for multi-page forms (create shipment, onboarding). Not a shipment status timeline — use chips or a custom track for that."
       />
 
       <app-demo-section
         title="Linear wizard"
-        hint="Next stays blocked while the active step says isValid is false."
+        hint="Users move forward in order. Next stays disabled while the active step reports isValid false."
         badge="linear"
         [code]="linearCode"
       >
@@ -114,7 +114,7 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
 
       <app-demo-section
         title="Non-linear"
-        hint="Click a step header to jump around — handy for review flows."
+        hint="Allow jumping to any step via the header — useful when reviewing or editing an already-filled flow."
         badge="free nav"
         [code]="freeCode"
       >

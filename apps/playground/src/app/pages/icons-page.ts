@@ -20,7 +20,7 @@ import { ICONS_USAGE } from '../snippets';
       <app-page-header
         eyebrow="Foundation"
         title="Icons"
-        description="SVG sprite registry — click any icon to copy its usage snippet to the clipboard."
+        description="Browse every icon in the shared SVG sprite. Click a tile to copy an aies-icon usage snippet. Serve the sprite once in your app, then use typed IconName everywhere."
       >
         <div actions class="flex flex-col items-stretch gap-2 sm:items-end">
           <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
@@ -31,7 +31,7 @@ import { ICONS_USAGE } from '../snippets';
 
       <app-demo-section
         title="Usage"
-        hint="Register the sprite once, then drop aies-icon wherever you need it. Click a sample to copy its snippet."
+        hint="Register the sprite in your app assets, then place aies-icon wherever you need a glyph. Prefer typed IconName — never free-string ids."
         [code]="usageCode"
       >
         <div class="flex flex-wrap items-center gap-3 text-ink dark:text-white">
