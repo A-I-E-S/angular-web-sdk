@@ -33,6 +33,17 @@ npm install @aies/aies-core @aies/aies-models @aies/aies-storage \
 
 ## Quickstart
 
+Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
+
+| Provider / setup | What it does |
+| --- | --- |
+| `provideAiesSdk({ baseUrl })` | **Required.** Sets the API base URL (and optional timeout/headers) used by all SDK HTTP services. |
+| `provideAiesHttpClient()` | **Required for API calls.** Registers Angular `HttpClient` plus SDK interceptors: shipping mode header, bearer token from `AuthTokenService`, and optional HTTP toasts. |
+| `provideAiesUiOverlays()` | Enables modal / drawer / confirm overlay services used by UI components (filters, dialogs, etc.). |
+| `provideAiesToasts()` | **Optional.** Mounts the toast UI and connects it to HTTP. Then mark individual requests with `withToast()` to show success/error toasts. Without this, `withToast()` is a no-op. |
+| `inject(ThemeService)` in an app initializer | Applies light/dark theme class early so the first paint matches the stored preference. |
+| `AuthTokenService.set(access_token)` | **After login** (in your app code, not usually in `app.config`). Saves the token so SDK requests send `Authorization: Bearer …`. Call `.clear()` on logout. |
+
 ```ts
 // app.config.ts
 import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
@@ -45,15 +56,29 @@ import { ThemeService } from '@aies/aies-theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // 1) Where API calls go
     provideAiesSdk({ baseUrl: 'https://api.example.com' }),
+
+    // 2) HttpClient + SDK interceptors (mode, auth token, toast hook)
     provideAiesHttpClient(),
+
+    // 3) Modal / drawer / confirm overlays
     provideAiesUiOverlays(),
-    // provideAiesToasts(), // enables ToastService + withToast() HTTP bridge
+
+    // 4) Toast stack + HTTP → toast bridge (use withToast() per request)
+    provideAiesToasts(),
+
+    // 5) Apply saved light/dark theme before first render
     provideAppInitializer(() => {
-      inject(ThemeService); // applies light/dark class early
+      inject(ThemeService);
     }),
   ],
 };
+
+// After your app's login/register succeeds:
+// inject(AuthTokenService).set(access_token);
+//
+// Then SDK calls like UserService.me() are authenticated automatically.
 ```
 
 ```js
@@ -75,20 +100,21 @@ Serve the icon sprite from `node_modules/@aies/aies-icons/assets/icons.sprite.sv
 Local catalog of the components and tokens:
 
 ```bash
-npx nx serve playground
+pnpm dev
+# or: pnpm exec nx serve playground
 ```
 
 ## Docs
 
 - [Contributing & release](./CONTRIBUTING.md)
-- Per-library READMEs under `libs/aies-*` (playground at `npx nx serve playground` for live examples)
+- Per-library READMEs under `libs/aies-*` (playground at `pnpm dev` for live examples)
 
 ## Workspace scripts
 
 ```bash
-npm run build          # build the six libraries
-npm run test
-npm run lint
-npm run icons:build    # regenerate sprite + ICON_NAMES
-npm run docs:coverage
+pnpm build             # build the six libraries
+pnpm test
+pnpm lint
+pnpm icons:build       # regenerate sprite + ICON_NAMES
+pnpm docs:coverage
 ```
