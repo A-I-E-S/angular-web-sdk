@@ -77,7 +77,7 @@ interface CatalogCard {
             </div>
             <div>
               <dt class="text-caption text-white/60">API services</dt>
-              <dd class="m-0 mt-1 text-heading-3 text-white">2</dd>
+              <dd class="m-0 mt-1 text-heading-3 text-white">6</dd>
             </div>
           </dl>
         </div>
@@ -233,7 +233,7 @@ export class HomePage {
     {
       path: '/api',
       title: 'SDK API',
-      blurb: 'Live CountryService and ModeConfigService calls.',
+      blurb: 'Live Country, ModeConfig, ShipmentMethod, Warehouse, Zone, and User calls.',
       icon: 'globe',
       group: 'Foundation',
     },

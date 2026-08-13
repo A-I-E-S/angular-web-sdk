@@ -1,5 +1,8 @@
 import type {
   ModeConfigDataModel,
+  ModeCurrencyCode,
+  ModeDimensionUnit,
+  ModeMassUnit,
   ModeRegionConfigModel,
   ModeSfnConfigModel,
   ModeStnConfigModel,
@@ -9,20 +12,56 @@ import type {
 /** Public mode-config endpoint path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const MODE_CONFIG_PATH = '/public/mode/config';
 
+/** Fallback region when the wire omits a required branch/key. */
+const DEFAULT_REGION: ModeRegionConfigModel = {
+  dimensionUnit: 'cm',
+  massUnit: 'KG',
+  currency: 'NGN',
+  currencySymbol: '',
+};
+
+/**
+ * @param value - Raw dimension unit.
+ * @returns Valid {@link ModeDimensionUnit} (defaults to `'cm'`).
+ */
+function asDimensionUnit(value: unknown): ModeDimensionUnit {
+  return value === 'inches' ? 'inches' : 'cm';
+}
+
+/**
+ * @param value - Raw mass unit.
+ * @returns Valid {@link ModeMassUnit} (defaults to `'KG'`).
+ */
+function asMassUnit(value: unknown): ModeMassUnit {
+  return value === 'LBS' ? 'LBS' : 'KG';
+}
+
+/**
+ * @param value - Raw currency code.
+ * @returns Valid {@link ModeCurrencyCode} (defaults to `'NGN'`).
+ */
+function asCurrency(value: unknown): ModeCurrencyCode {
+  return value === 'USD' ? 'USD' : 'NGN';
+}
+
 /**
  * Map a possibly snake_case region object into {@link ModeRegionConfigModel}.
  * Accepts already-camelCased payloads so double-mapping is harmless.
+ * Missing/invalid union fields fall back to safe defaults (never `undefined`).
  * @param raw - Region object from the wire (camel or snake case).
  * @returns Normalized {@link ModeRegionConfigModel}.
  */
 export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
-  const record = (raw ?? {}) as Record<string, unknown>;
+  const record =
+    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
   return {
-    dimensionUnit: (record['dimensionUnit'] ??
-      record['dimension_unit']) as ModeRegionConfigModel['dimensionUnit'],
-    massUnit: (record['massUnit'] ??
-      record['mass_unit']) as ModeRegionConfigModel['massUnit'],
-    currency: (record['currency'] ?? 'NGN') as ModeRegionConfigModel['currency'],
+    dimensionUnit: asDimensionUnit(
+      record['dimensionUnit'] ?? record['dimension_unit'],
+    ),
+    massUnit: asMassUnit(record['massUnit'] ?? record['mass_unit']),
+    currency: asCurrency(record['currency']),
     currencySymbol: String(
       record['currencySymbol'] ?? record['currency_symbol'] ?? '',
     ),
@@ -34,8 +73,13 @@ export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
  * @param modeRaw - SFN or STN branch object keyed by region code.
  * @returns Map of region code → {@link ModeRegionConfigModel}.
  */
-export function mapModeRegions(modeRaw: unknown): Record<string, ModeRegionConfigModel> {
-  const mode = (modeRaw ?? {}) as Record<string, unknown>;
+export function mapModeRegions(
+  modeRaw: unknown,
+): Record<string, ModeRegionConfigModel> {
+  const mode =
+    modeRaw !== null && typeof modeRaw === 'object' && !Array.isArray(modeRaw)
+      ? (modeRaw as Record<string, unknown>)
+      : {};
   const out: Record<string, ModeRegionConfigModel> = {};
   for (const [key, value] of Object.entries(mode)) {
     out[key] = mapRegionConfig(value);
@@ -44,7 +88,22 @@ export function mapModeRegions(modeRaw: unknown): Record<string, ModeRegionConfi
 }
 
 /**
+ * Pick a region key or fall back through `default` then {@link DEFAULT_REGION}.
+ * @param regions - Mapped region map.
+ * @param key - Preferred key.
+ * @returns Always a concrete {@link ModeRegionConfigModel}.
+ */
+function regionOrDefault(
+  regions: Record<string, ModeRegionConfigModel>,
+  key: string,
+): ModeRegionConfigModel {
+  return regions[key] ?? regions['default'] ?? { ...DEFAULT_REGION };
+}
+
+/**
  * Deep-map mode config so SDK consumers never see wire snake_case.
+ * Always returns full {@link ModeSfnConfigModel} / {@link ModeStnConfigModel}
+ * trees with every required key present.
  *
  * @param raw - `data` payload from `/public/mode/config` (before or after mapping).
  * @returns Fully camelCased {@link ModeConfigDataModel}.
@@ -52,11 +111,26 @@ export function mapModeRegions(modeRaw: unknown): Record<string, ModeRegionConfi
 export function mapModeConfigData(
   raw: ModeConfigDataModel | Record<string, unknown>,
 ): ModeConfigDataModel {
-  const record = raw as Record<string, unknown>;
-  return {
-    sfn: mapModeRegions(record['sfn']) as unknown as ModeSfnConfigModel,
-    stn: mapModeRegions(record['stn']) as unknown as ModeStnConfigModel,
+  const record =
+    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
+  const sfnRegions = mapModeRegions(record['sfn']);
+  const stnRegions = mapModeRegions(record['stn']);
+
+  const sfn: ModeSfnConfigModel = {
+    default: regionOrDefault(sfnRegions, 'default'),
+    ng: regionOrDefault(sfnRegions, 'ng'),
   };
+
+  const stn: ModeStnConfigModel = {
+    default: regionOrDefault(stnRegions, 'default'),
+    us: regionOrDefault(stnRegions, 'us'),
+    cn: regionOrDefault(stnRegions, 'cn'),
+    gb: regionOrDefault(stnRegions, 'gb'),
+  };
+
+  return { sfn, stn };
 }
 
 /**
@@ -69,13 +143,21 @@ export function isModeConfigData(value: unknown): value is ModeConfigDataModel {
     return false;
   }
   const record = value as Record<string, unknown>;
-  const sfn = record['sfn'] as Record<string, unknown> | undefined;
-  const stn = record['stn'] as Record<string, unknown> | undefined;
+  const sfn = record['sfn'];
+  const stn = record['stn'];
+  if (sfn === null || typeof sfn !== 'object' || Array.isArray(sfn)) {
+    return false;
+  }
+  if (stn === null || typeof stn !== 'object' || Array.isArray(stn)) {
+    return false;
+  }
+  const sfnRecord = sfn as Record<string, unknown>;
+  const stnRecord = stn as Record<string, unknown>;
   return (
-    sfn != null &&
-    typeof sfn['default'] === 'object' &&
-    stn != null &&
-    typeof stn['default'] === 'object'
+    sfnRecord['default'] != null &&
+    typeof sfnRecord['default'] === 'object' &&
+    stnRecord['default'] != null &&
+    typeof stnRecord['default'] === 'object'
   );
 }
 
@@ -100,10 +182,15 @@ export function resolveModeRegionConfig(
 
   if (countryCode != null && countryCode !== '') {
     const key = countryCode.toLowerCase();
-    const keyed = regions as unknown as Record<string, ModeRegionConfigModel | undefined>;
-    const region = key !== 'default' ? keyed[key] : undefined;
-    if (region != null) {
-      return region;
+    if (key !== 'default') {
+      const keyed = regions as unknown as Record<
+        string,
+        ModeRegionConfigModel | undefined
+      >;
+      const region = keyed[key];
+      if (region != null) {
+        return region;
+      }
     }
   }
 

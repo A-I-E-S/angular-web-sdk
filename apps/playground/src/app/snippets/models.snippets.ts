@@ -316,3 +316,135 @@ export class CountryPickerSetupComponent {
   }
 }
 `;
+
+export /**
+ *
+ */
+const MODELS_SHIPMENT_METHOD = `// Carriers — GET /shipment_method/read/{id|all}. Default id is 'all'.
+// ShipmentMethodService maps snake_case + string numbers; zone_values → zoneValues.
+
+import { Component, inject, signal } from '@angular/core';
+import { ShipmentMethodService } from '@aies/aies-core';
+import type { ShipmentMethodModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-carrier-setup',
+  standalone: true,
+  template: \`
+    <p>{{ methods().length }} methods</p>
+    @if (methods()[0]; as first) {
+      <p>{{ first.name }} ({{ first.mode }}) — {{ first.zoneValues.total }} zones</p>
+    }
+  \`,
+})
+export class CarrierSetupComponent {
+  private readonly methodsApi = inject(ShipmentMethodService);
+  protected readonly methods = signal<ShipmentMethodModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.methodsApi.read());
+    if (res.success && res.data) {
+      this.methods.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_WAREHOUSE = `// Warehouses — GET /warehouse/read/{id|all}. Nested country reuses CountryModel.
+
+import { Component, inject, signal } from '@angular/core';
+import { WarehouseService } from '@aies/aies-core';
+import type { WarehouseModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-warehouse-setup',
+  standalone: true,
+  template: \`
+    <p>{{ warehouses().length }} warehouses</p>
+    @if (warehouses()[0]; as first) {
+      <p>{{ first.name }} — {{ first.city }}, {{ first.country?.iso2 }}</p>
+    }
+  \`,
+})
+export class WarehouseSetupComponent {
+  private readonly warehousesApi = inject(WarehouseService);
+  protected readonly warehouses = signal<WarehouseModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.warehousesApi.read());
+    if (res.success && res.data) {
+      this.warehouses.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_ZONE = `// Zones — GET /zone/read/records/{id|all}.
+
+import { Component, inject, signal } from '@angular/core';
+import { ZoneService } from '@aies/aies-core';
+import type { ZoneModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-zone-setup',
+  standalone: true,
+  template: \`
+    <p>{{ zones().length }} zones</p>
+    @if (zones()[0]; as first) {
+      <p>{{ first.name }} ({{ first.type }})</p>
+    }
+  \`,
+})
+export class ZoneSetupComponent {
+  private readonly zonesApi = inject(ZoneService);
+  protected readonly zones = signal<ZoneModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.zonesApi.read());
+    if (res.success && res.data) {
+      this.zones.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_USER = `// Current user — bare GET /user (no envelope). UserService.me() maps to UserModel.
+
+import { Component, inject, signal } from '@angular/core';
+import { UserService } from '@aies/aies-core';
+import type { UserModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-user-setup',
+  standalone: true,
+  template: \`
+    @if (user(); as u) {
+      <p>{{ u.firstName }} {{ u.lastName }} · {{ u.email }}</p>
+    }
+  \`,
+})
+export class UserSetupComponent {
+  private readonly users = inject(UserService);
+  protected readonly user = signal<UserModel | null>(null);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.users.me());
+    if (res.success && res.data) {
+      this.user.set(res.data);
+    }
+  }
+}
+`;

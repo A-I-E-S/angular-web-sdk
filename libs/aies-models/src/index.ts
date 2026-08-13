@@ -3,4 +3,8 @@ export * from './lib/async';
 export * from './lib/country';
 export * from './lib/filters';
 export * from './lib/mode';
+export * from './lib/shipment-method';
 export * from './lib/shipping';
+export * from './lib/user';
+export * from './lib/warehouse';
+export * from './lib/zone';

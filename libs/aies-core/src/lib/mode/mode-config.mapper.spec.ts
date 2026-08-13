@@ -2,6 +2,7 @@ import type { ModeConfigDataModel } from '@aies/aies-models';
 
 import {
   mapModeConfigData,
+  mapRegionConfig,
   resolveModeRegionConfig,
 } from './mode-config.mapper';
 
@@ -79,5 +80,30 @@ describe('mode-config.mapper', () => {
 
   it('uses default when country code is empty', () => {
     expect(resolveModeRegionConfig(config, 'stn', null).currencySymbol).toBe('$');
+  });
+
+  it('fills missing mode branches with safe defaults (never undefined)', () => {
+    const empty = mapModeConfigData({});
+    expect(empty.sfn.default).toEqual({
+      dimensionUnit: 'cm',
+      massUnit: 'KG',
+      currency: 'NGN',
+      currencySymbol: '',
+    });
+    expect(empty.sfn.ng).toEqual(empty.sfn.default);
+    expect(empty.stn.us.currency).toBe('NGN');
+    expect(empty.stn.cn.dimensionUnit).toBe('cm');
+    expect(empty.stn.gb.massUnit).toBe('KG');
+  });
+
+  it('coerces invalid region unions to defaults', () => {
+    const mapped = mapRegionConfig({
+      dimension_unit: 'yards',
+      mass_unit: 'stones',
+      currency: 'EUR',
+    });
+    expect(mapped.dimensionUnit).toBe('cm');
+    expect(mapped.massUnit).toBe('KG');
+    expect(mapped.currency).toBe('NGN');
   });
 });

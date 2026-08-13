@@ -1,9 +1,9 @@
 # @aies/aies-models
 
 Shared TypeScript **domain models** for the AIES Web SDK — API envelopes,
-utility payloads (countries), shipping/mode config, filters, and async UI
-snapshots. Types only: no Angular runtime, so apps and tooling can import them
-safely.
+utility payloads (countries, shipment methods), shipping/mode config, filters,
+and async UI snapshots. Types only: no Angular runtime, so apps and tooling can
+import them safely.
 
 ## Naming
 
@@ -14,8 +14,12 @@ suffix.
 
 ## Domains
 
-- **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`
+- **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`, `ApiJsonValue`
 - **country** — `CountryModel`, `CountryStateModel` for public country utility reads
+- **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
+- **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
+- **zone** — `ZoneModel` for `/zone/read/records` utility reads
+- **user** — `UserModel`, `UserStateModel` for bare `GET /user` (auth)
 - **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `toFilterParams` / `fromFilterParams`
 - **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
@@ -28,7 +32,11 @@ import type {
   ApiResponseModel,
   CountryModel,
   ModeConfigDataModel,
+  ShipmentMethodModel,
   ShippingMode,
+  WarehouseModel,
+  ZoneModel,
+  UserModel,
 } from '@aies/aies-models';
 ```
 

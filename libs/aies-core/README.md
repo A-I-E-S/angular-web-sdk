@@ -49,6 +49,10 @@ export const appConfig: ApplicationConfig = {
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService`, `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
+| Shipment method | `ShipmentMethodService`, `SHIPMENT_METHOD_READ_PATH`, `mapShipmentMethod` / `mapShipmentMethodList` |
+| Warehouse | `WarehouseService`, `WAREHOUSE_READ_PATH`, `mapWarehouse` / `mapWarehouseList` |
+| Zone | `ZoneService`, `ZONE_READ_PATH`, `mapZone` / `mapZoneList` |
+| User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Browser | `copyToClipboard` |
 

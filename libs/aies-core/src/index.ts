@@ -16,6 +16,7 @@ export {
 export { HttpResponseCache } from './lib/http/http-cache';
 export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
 export { normalize } from './lib/http/normalize';
+export { mapApiJsonList, mapApiJsonValue } from './lib/http/map-api-json';
 export {
   type AiesHttpClientOptions,
   provideAiesHttpClient,
@@ -53,6 +54,47 @@ export {
   mapCountryList,
   mapCountryState,
 } from './lib/country';
+
+// Shipment methods / carriers
+export {
+  mapShipmentMethod,
+  mapShipmentMethodList,
+  mapShipmentMethodZoneLink,
+  mapShipmentMethodZonePage,
+  mapShipmentZone,
+  SHIPMENT_METHOD_READ_PATH,
+  type ShipmentMethodReadParams,
+  ShipmentMethodService,
+} from './lib/shipment-method';
+
+// Warehouses
+export {
+  mapWarehouse,
+  mapWarehouseCountry,
+  mapWarehouseList,
+  mapWarehouseState,
+  WAREHOUSE_READ_PATH,
+  type WarehouseReadParams,
+  WarehouseService,
+} from './lib/warehouse';
+
+// Zones
+export {
+  mapZone,
+  mapZoneList,
+  ZONE_READ_PATH,
+  type ZoneReadParams,
+  ZoneService,
+} from './lib/zone';
+
+// Current user (bare /user payload — auth required)
+export {
+  mapUser,
+  mapUserCountry,
+  mapUserState,
+  USER_PATH,
+  UserService,
+} from './lib/user';
 
 // Route-driven overlays (openers provided by aies-ui)
 export type {

@@ -24,14 +24,18 @@ export function mapCountryState(raw: unknown): CountryStateModel {
  * @returns Normalized {@link CountryModel}.
  */
 export function mapCountry(raw: unknown): CountryModel {
-  const record = (raw ?? {}) as Record<string, unknown>;
+  const record =
+    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
   const statesRaw = record['states'];
   const states = Array.isArray(statesRaw)
     ? statesRaw.map((entry) => mapCountryState(entry))
     : [];
 
+  const id = Number(record['id'] ?? 0);
   return {
-    id: Number(record['id'] ?? 0),
+    id: Number.isFinite(id) ? id : 0,
     name: String(record['name'] ?? ''),
     iso3: String(record['iso3'] ?? ''),
     iso2: String(record['iso2'] ?? ''),

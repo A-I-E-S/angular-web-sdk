@@ -9,7 +9,11 @@ import {
   MODELS_IMPORT,
   MODELS_MODE_CONFIG,
   MODELS_PAGINATION,
+  MODELS_SHIPMENT_METHOD,
   MODELS_SHIPPING_MODE,
+  MODELS_USER,
+  MODELS_WAREHOUSE,
+  MODELS_ZONE,
 } from '../snippets';
 
 interface ModelEntry {
@@ -40,7 +44,7 @@ interface ModelGroup {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="Domain contracts for the AIES Web SDK — API envelopes, public utilities (countries), shipping/mode config, filters, and async UI snapshots. Interfaces use a *Model suffix. For live HTTP calls, see SDK API."
+        description="Domain contracts for the AIES Web SDK — API envelopes, utilities (countries, shipment methods), shipping/mode config, filters, and async UI snapshots. Interfaces use a *Model suffix. For live HTTP calls, see SDK API."
       />
 
       <app-demo-section
@@ -49,10 +53,10 @@ interface ModelGroup {
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Shared across packages: ApiResponseModel for HTTP, CountryModel for
-          utility reads, mode/filter configs for product rules, and
-          AsyncQueryStateModel for aies-async-state. Live CountryService /
-          ModeConfigService demos live under Foundation → SDK API.
+          Shared across packages: ApiResponseModel for HTTP, CountryModel and
+          ShipmentMethodModel for utility reads, mode/filter configs for product
+          rules, and AsyncQueryStateModel for aies-async-state. Live service demos
+          live under Foundation → SDK API.
         </p>
       </app-demo-section>
 
@@ -228,6 +232,139 @@ export class ModelsPage {
           structure: `interface CountryStateModel {
   name: string;
   stateCode: string;
+}`,
+        },
+      ],
+    },
+    {
+      id: 'shipment-method',
+      title: 'Shipment methods / carriers',
+      hint: 'ShipmentMethodService fetches /shipment_method/read/{id|all} — data is always ShipmentMethodModel[].',
+      code: MODELS_SHIPMENT_METHOD,
+      models: [
+        {
+          name: 'ShipmentMethodModel',
+          packagePath: 'shipment-method',
+          description:
+            'Carrier record with delivery windows, weight/dim limits, discounts, and zoneValues page.',
+          structure: `interface ShipmentMethodModel {
+  id: number;
+  name: string;
+  slug: string;
+  mode: ShippingMode;
+  seaOnly: boolean;
+  // …commercial + dimension fields
+  zoneValues: ShipmentMethodZonePageModel;
+}`,
+        },
+        {
+          name: 'ShipmentMethodZonePageModel',
+          packagePath: 'shipment-method',
+          description:
+            'First Laravel page of zone links embedded on a method (items + total/lastPage).',
+          structure: `interface ShipmentMethodZonePageModel {
+  items: ShipmentMethodZoneLinkModel[];
+  currentPage: number;
+  perPage: number;
+  total: number;
+  lastPage: number;
+}`,
+        },
+      ],
+    },
+    {
+      id: 'warehouse',
+      title: 'Warehouses',
+      hint: 'WarehouseService fetches /warehouse/read/{id|all} — data is always WarehouseModel[].',
+      code: MODELS_WAREHOUSE,
+      models: [
+        {
+          name: 'WarehouseModel',
+          packagePath: 'warehouse',
+          description:
+            'Warehouse with address, geo, storage/delivery charges, and nested CountryModel.',
+          structure: `interface WarehouseModel {
+  id: number;
+  name: string;
+  city: string;
+  zipCode: string;
+  country: CountryModel | null;
+  state: WarehouseStateModel | null;
+  apiEnabled: boolean;
+  // …charges, geo, flags
+}`,
+        },
+        {
+          name: 'WarehouseStateModel',
+          packagePath: 'warehouse',
+          description:
+            'Selected subdivision on the warehouse — wire state_code / country_code.',
+          structure: `interface WarehouseStateModel {
+  id: number;
+  name: string;
+  stateCode: string;
+  country: string;
+  countryCode: string;
+}`,
+        },
+      ],
+    },
+    {
+      id: 'zone',
+      title: 'Zones',
+      hint: 'ZoneService fetches /zone/read/records/{id|all} — data is always ZoneModel[].',
+      code: MODELS_ZONE,
+      models: [
+        {
+          name: 'ZoneModel',
+          packagePath: 'zone',
+          description: 'Shipping zone record (name, type, active, timestamps).',
+          structure: `interface ZoneModel {
+  id: number;
+  name: string;
+  type: string;
+  active: boolean;
+  deletedAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+}`,
+        },
+      ],
+    },
+    {
+      id: 'user',
+      title: 'Current user',
+      hint: 'UserService.me() fetches bare GET /user — ApiClient wraps it; data is UserModel.',
+      code: MODELS_USER,
+      models: [
+        {
+          name: 'UserModel',
+          packagePath: 'user',
+          description:
+            'Authenticated profile with nested CountryModel, verification timestamps, and region prefs.',
+          structure: `interface UserModel {
+  id: number;
+  centralId: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  country: CountryModel | null;
+  mainRegion: string;
+  shippingType: string;
+  // …verification, flags, accounts
+}`,
+        },
+        {
+          name: 'UserStateModel',
+          packagePath: 'user',
+          description: 'Optional subdivision on the profile — wire state_code / country_code.',
+          structure: `interface UserStateModel {
+  id: number;
+  name: string;
+  stateCode: string;
+  country: string;
+  countryCode: string;
 }`,
         },
       ],

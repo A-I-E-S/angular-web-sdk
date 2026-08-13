@@ -1,4 +1,4 @@
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, UpperCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 
 import {
@@ -6,8 +6,24 @@ import {
   CountryService,
   MODE_CONFIG_PATH,
   ModeConfigService,
+  SHIPMENT_METHOD_READ_PATH,
+  ShipmentMethodService,
+  USER_PATH,
+  UserService,
+  WAREHOUSE_READ_PATH,
+  WarehouseService,
+  ZONE_READ_PATH,
+  ZoneService,
 } from '@aies/aies-core';
-import type { CountryModel, ModeConfigDataModel, ModeRegionConfigModel } from '@aies/aies-models';
+import type {
+  CountryModel,
+  ModeConfigDataModel,
+  ModeRegionConfigModel,
+  ShipmentMethodModel,
+  UserModel,
+  WarehouseModel,
+  ZoneModel,
+} from '@aies/aies-models';
 import { ButtonComponent } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
@@ -16,6 +32,10 @@ import {
   API_COUNTRY,
   API_MODE_CONFIG,
   API_OVERVIEW,
+  API_SHIPMENT_METHOD,
+  API_USER,
+  API_WAREHOUSE,
+  API_ZONE,
 } from '../snippets';
 
 /**
@@ -26,6 +46,7 @@ import {
   standalone: true,
   imports: [
     JsonPipe,
+    UpperCasePipe,
     ButtonComponent,
     PageHeaderComponent,
     DemoSectionComponent,
@@ -35,7 +56,7 @@ import {
       <app-page-header
         eyebrow="Foundation"
         title="SDK API"
-        description="HTTP endpoints the SDK calls for you — CountryService, ModeConfigService, and more as utilities land. Paths and snake→camel mapping live in @aies/aies-core; shapes come from @aies/aies-models."
+        description="HTTP endpoints the SDK calls for you — Country, ModeConfig, ShipmentMethod, Warehouse, Zone, User, and more. Paths and snake→camel mapping live in @aies/aies-core; shapes come from @aies/aies-models. GET /user returns a bare object — ApiClient still normalizes it."
       />
 
       <app-demo-section
@@ -43,7 +64,7 @@ import {
         hint="provideAiesSdk + provideAiesHttpClient — ApiClient resolves relative paths against baseUrl."
         [code]="overviewCode"
       >
-        <dl class="m-0 grid gap-3 text-body-sm sm:grid-cols-2">
+        <dl class="m-0 grid gap-3 text-body-sm sm:grid-cols-2 lg:grid-cols-3">
           <div class="rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink">
             <dt class="m-0 font-mono text-caption text-neutral-500">Mode config</dt>
             <dd class="m-0 mt-1 font-mono text-ink dark:text-white">
@@ -60,6 +81,42 @@ import {
             </dd>
             <p class="m-0 mt-2 text-caption text-neutral-600 dark:text-neutral-400">
               On demand via CountryService.read() — default id is all.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink">
+            <dt class="m-0 font-mono text-caption text-neutral-500">Carriers</dt>
+            <dd class="m-0 mt-1 font-mono text-ink dark:text-white">
+              GET {{ SHIPMENT_METHOD_READ_PATH }}/&#123;id|all&#125;
+            </dd>
+            <p class="m-0 mt-2 text-caption text-neutral-600 dark:text-neutral-400">
+              On demand via ShipmentMethodService.read() — default id is all.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink">
+            <dt class="m-0 font-mono text-caption text-neutral-500">Warehouses</dt>
+            <dd class="m-0 mt-1 font-mono text-ink dark:text-white">
+              GET {{ WAREHOUSE_READ_PATH }}/&#123;id|all&#125;
+            </dd>
+            <p class="m-0 mt-2 text-caption text-neutral-600 dark:text-neutral-400">
+              On demand via WarehouseService.read() — default id is all.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink">
+            <dt class="m-0 font-mono text-caption text-neutral-500">Zones</dt>
+            <dd class="m-0 mt-1 font-mono text-ink dark:text-white">
+              GET {{ ZONE_READ_PATH }}/&#123;id|all&#125;
+            </dd>
+            <p class="m-0 mt-2 text-caption text-neutral-600 dark:text-neutral-400">
+              On demand via ZoneService.read() — default id is all.
+            </p>
+          </div>
+          <div class="rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink">
+            <dt class="m-0 font-mono text-caption text-neutral-500">Current user</dt>
+            <dd class="m-0 mt-1 font-mono text-ink dark:text-white">
+              GET {{ USER_PATH }}
+            </dd>
+            <p class="m-0 mt-2 text-caption text-neutral-600 dark:text-neutral-400">
+              Bare JSON body — auth required. UserService.me() maps to UserModel.
             </p>
           </div>
         </dl>
@@ -116,6 +173,223 @@ import {
           } @else {
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               No countries returned.
+            </p>
+          }
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="ShipmentMethodService"
+        hint="Carriers — returns ApiResponseModel&lt;ShipmentMethodModel[]&gt; with mapped zoneValues."
+        [code]="shipmentMethodCode"
+      >
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-wrap gap-2">
+            <button
+              aies-button
+              type="button"
+              size="sm"
+              [disabled]="methodsLoading()"
+              (click)="loadMethods('all')"
+            >
+              read('all')
+            </button>
+            <button
+              aies-button
+              type="button"
+              variant="secondary"
+              size="sm"
+              [disabled]="methodsLoading()"
+              (click)="loadMethods(12)"
+            >
+              readById(12)
+            </button>
+          </div>
+
+          @if (methodsError(); as err) {
+            <p class="m-0 text-body-sm text-danger" role="alert">{{ err }}</p>
+          } @else if (methodsLoading()) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              Loading…
+            </p>
+          } @else if (methods()[0]; as first) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              {{ methods().length }} method{{ methods().length === 1 ? '' : 's' }}
+              · first:
+              <span class="font-medium text-ink dark:text-white">{{
+                first.name
+              }}</span>
+              ({{ first.mode | uppercase }}) ·
+              {{ first.minDeliveryBusinessDay }}–{{ first.maxDeliveryBusinessDay }}
+              days · {{ first.zoneValues.total }} zone links
+            </p>
+            <pre
+              class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
+            >{{ first | json }}</pre>
+          } @else {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              No shipment methods returned.
+            </p>
+          }
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="WarehouseService"
+        hint="Warehouses — returns ApiResponseModel&lt;WarehouseModel[]&gt; with nested CountryModel."
+        [code]="warehouseCode"
+      >
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-wrap gap-2">
+            <button
+              aies-button
+              type="button"
+              size="sm"
+              [disabled]="warehousesLoading()"
+              (click)="loadWarehouses('all')"
+            >
+              read('all')
+            </button>
+            <button
+              aies-button
+              type="button"
+              variant="secondary"
+              size="sm"
+              [disabled]="warehousesLoading()"
+              (click)="loadWarehouses(37)"
+            >
+              readById(37)
+            </button>
+          </div>
+
+          @if (warehousesError(); as err) {
+            <p class="m-0 text-body-sm text-danger" role="alert">{{ err }}</p>
+          } @else if (warehousesLoading()) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              Loading…
+            </p>
+          } @else if (warehouses()[0]; as first) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              {{ warehouses().length }} warehouse{{
+                warehouses().length === 1 ? '' : 's'
+              }}
+              · first:
+              <span class="font-medium text-ink dark:text-white">{{
+                first.name
+              }}</span>
+              · {{ first.city }}
+              @if (first.country; as country) {
+                ({{ country.iso2 }})
+              }
+              · {{ first.currency }} {{ first.storageCharge }}
+            </p>
+            <pre
+              class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
+            >{{ first | json }}</pre>
+          } @else {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              No warehouses returned.
+            </p>
+          }
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="ZoneService"
+        hint="Zones — returns ApiResponseModel&lt;ZoneModel[]&gt; from /zone/read/records."
+        [code]="zoneCode"
+      >
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-wrap gap-2">
+            <button
+              aies-button
+              type="button"
+              size="sm"
+              [disabled]="zonesLoading()"
+              (click)="loadZones('all')"
+            >
+              read('all')
+            </button>
+            <button
+              aies-button
+              type="button"
+              variant="secondary"
+              size="sm"
+              [disabled]="zonesLoading()"
+              (click)="loadZones(1)"
+            >
+              readById(1)
+            </button>
+          </div>
+
+          @if (zonesError(); as err) {
+            <p class="m-0 text-body-sm text-danger" role="alert">{{ err }}</p>
+          } @else if (zonesLoading()) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              Loading…
+            </p>
+          } @else if (zones()[0]; as first) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              {{ zones().length }} zone{{ zones().length === 1 ? '' : 's' }}
+              · first:
+              <span class="font-medium text-ink dark:text-white">{{
+                first.name
+              }}</span>
+              ({{ first.type }}) ·
+              {{ first.active ? 'active' : 'inactive' }}
+            </p>
+            <pre
+              class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
+            >{{ first | json }}</pre>
+          } @else {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              No zones returned.
+            </p>
+          }
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="UserService"
+        hint="Current user — bare GET /user body; ApiClient wraps it, then mapUser → UserModel. Auth required."
+        [code]="userCode"
+      >
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-wrap gap-2">
+            <button
+              aies-button
+              type="button"
+              size="sm"
+              [disabled]="userLoading()"
+              (click)="loadUser()"
+            >
+              me()
+            </button>
+          </div>
+
+          @if (userError(); as err) {
+            <p class="m-0 text-body-sm text-danger" role="alert">{{ err }}</p>
+          } @else if (userLoading()) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              Loading…
+            </p>
+          } @else if (user(); as profile) {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              <span class="font-medium text-ink dark:text-white">{{
+                profile.name
+              }}</span>
+              · {{ profile.email }}
+              @if (profile.country; as country) {
+                · {{ country.iso2 }}
+              }
+              · {{ profile.mainRegion }} · {{ profile.shippingType }}
+            </p>
+            <pre
+              class="m-0 max-h-56 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
+            >{{ profile | json }}</pre>
+          } @else {
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              No user loaded yet — provide AUTH_TOKEN_PROVIDER and call me().
             </p>
           }
         </div>
@@ -180,18 +454,46 @@ import {
 })
 export class ApiPage implements OnInit {
   private readonly countriesApi = inject(CountryService);
+  private readonly methodsApi = inject(ShipmentMethodService);
+  private readonly warehousesApi = inject(WarehouseService);
+  private readonly zonesApi = inject(ZoneService);
+  private readonly usersApi = inject(UserService);
   private readonly modeConfigApi = inject(ModeConfigService);
 
   protected readonly MODE_CONFIG_PATH = MODE_CONFIG_PATH;
   protected readonly COUNTRY_READ_PATH = COUNTRY_READ_PATH;
+  protected readonly SHIPMENT_METHOD_READ_PATH = SHIPMENT_METHOD_READ_PATH;
+  protected readonly WAREHOUSE_READ_PATH = WAREHOUSE_READ_PATH;
+  protected readonly ZONE_READ_PATH = ZONE_READ_PATH;
+  protected readonly USER_PATH = USER_PATH;
 
   protected readonly overviewCode = API_OVERVIEW;
   protected readonly countryCode = API_COUNTRY;
+  protected readonly shipmentMethodCode = API_SHIPMENT_METHOD;
+  protected readonly warehouseCode = API_WAREHOUSE;
+  protected readonly zoneCode = API_ZONE;
+  protected readonly userCode = API_USER;
   protected readonly modeConfigCode = API_MODE_CONFIG;
 
   protected readonly countries = signal<CountryModel[]>([]);
   protected readonly countriesLoading = signal(false);
   protected readonly countriesError = signal<string | null>(null);
+
+  protected readonly methods = signal<ShipmentMethodModel[]>([]);
+  protected readonly methodsLoading = signal(false);
+  protected readonly methodsError = signal<string | null>(null);
+
+  protected readonly warehouses = signal<WarehouseModel[]>([]);
+  protected readonly warehousesLoading = signal(false);
+  protected readonly warehousesError = signal<string | null>(null);
+
+  protected readonly zones = signal<ZoneModel[]>([]);
+  protected readonly zonesLoading = signal(false);
+  protected readonly zonesError = signal<string | null>(null);
+
+  protected readonly user = signal<UserModel | null>(null);
+  protected readonly userLoading = signal(false);
+  protected readonly userError = signal<string | null>(null);
 
   protected readonly modeConfig = signal<ModeConfigDataModel | null>(null);
   protected readonly modeLoading = signal(false);
@@ -205,6 +507,9 @@ export class ApiPage implements OnInit {
 
   ngOnInit(): void {
     this.loadCountries('all');
+    this.loadMethods('all');
+    this.loadWarehouses('all');
+    this.loadZones('all');
     this.syncModeFromService();
   }
 
@@ -223,6 +528,88 @@ export class ApiPage implements OnInit {
       error: () => {
         this.countriesLoading.set(false);
         this.countriesError.set('Could not load countries.');
+      },
+    });
+  }
+
+  protected loadMethods(id: number | 'all'): void {
+    this.methodsLoading.set(true);
+    this.methodsError.set(null);
+    this.methodsApi.read(id).subscribe({
+      next: (res) => {
+        this.methodsLoading.set(false);
+        if (!res.success || res.data === null) {
+          this.methodsError.set(
+            res.message ?? 'Could not load shipment methods.',
+          );
+          return;
+        }
+        this.methods.set(res.data);
+      },
+      error: () => {
+        this.methodsLoading.set(false);
+        this.methodsError.set('Could not load shipment methods.');
+      },
+    });
+  }
+
+  protected loadWarehouses(id: number | 'all'): void {
+    this.warehousesLoading.set(true);
+    this.warehousesError.set(null);
+    this.warehousesApi.read(id).subscribe({
+      next: (res) => {
+        this.warehousesLoading.set(false);
+        if (!res.success || res.data === null) {
+          this.warehousesError.set(
+            res.message ?? 'Could not load warehouses.',
+          );
+          return;
+        }
+        this.warehouses.set(res.data);
+      },
+      error: () => {
+        this.warehousesLoading.set(false);
+        this.warehousesError.set('Could not load warehouses.');
+      },
+    });
+  }
+
+  protected loadZones(id: number | 'all'): void {
+    this.zonesLoading.set(true);
+    this.zonesError.set(null);
+    this.zonesApi.read(id).subscribe({
+      next: (res) => {
+        this.zonesLoading.set(false);
+        if (!res.success || res.data === null) {
+          this.zonesError.set(res.message ?? 'Could not load zones.');
+          return;
+        }
+        this.zones.set(res.data);
+      },
+      error: () => {
+        this.zonesLoading.set(false);
+        this.zonesError.set('Could not load zones.');
+      },
+    });
+  }
+
+  protected loadUser(): void {
+    this.userLoading.set(true);
+    this.userError.set(null);
+    this.usersApi.me().subscribe({
+      next: (res) => {
+        this.userLoading.set(false);
+        if (!res.success || res.data === null) {
+          this.userError.set(res.message ?? 'Could not load user.');
+          return;
+        }
+        this.user.set(res.data);
+      },
+      error: () => {
+        this.userLoading.set(false);
+        this.userError.set(
+          'Could not load user — ensure AUTH_TOKEN_PROVIDER is configured.',
+        );
       },
     });
   }
