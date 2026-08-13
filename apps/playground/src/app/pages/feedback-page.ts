@@ -5,6 +5,7 @@ import type { AsyncQueryState } from '@aies/aies-models';
 import {
   AsyncStateComponent,
   EmptyStateComponent,
+  ErrorIndicatorComponent,
   ErrorStateComponent,
   LoadingStateComponent,
 } from '@aies/aies-ui';
@@ -15,6 +16,7 @@ import {
   FEEDBACK_ASYNC,
   FEEDBACK_EMPTY,
   FEEDBACK_ERROR,
+  FEEDBACK_ERROR_INDICATOR,
   FEEDBACK_LOADING,
 } from '../snippets';
 
@@ -63,6 +65,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
   imports: [
     LoadingStateComponent,
     ErrorStateComponent,
+    ErrorIndicatorComponent,
     EmptyStateComponent,
     AsyncStateComponent,
     AiesIconComponent,
@@ -132,7 +135,62 @@ const SUCCESS_ROWS: DemoShipment[] = [
       </app-demo-section>
 
       <app-demo-section
-        title="EmptyState"
+        title="ErrorIndicator"
+        hint="Compact top-right pill for stale-data failures — content stays visible."
+        [code]="errorIndicatorCode"
+      >
+        <div class="flex flex-col gap-6">
+          <div
+            class="relative min-h-[8rem] overflow-hidden rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
+          >
+            <aies-error-indicator
+              class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+              error="Connection lost — showing cached data"
+              retryText="Reconnect"
+              [refreshing]="reconnecting()"
+              refreshingText="Connecting..."
+              [disabled]="reconnecting()"
+              (retry)="simulateReconnect()"
+            />
+            <p class="m-0 max-w-[70%] text-body-sm text-neutral-600 dark:text-neutral-400">
+              Socket feed panel — list remains interactive while the indicator
+              prompts reconnect.
+            </p>
+          </div>
+
+          <div
+            class="relative min-h-[8rem] overflow-hidden rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
+          >
+            <aies-error-indicator
+              class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+              error="Error fetching currencies"
+              (retry)="onRetry('error-indicator-currencies')"
+            />
+            <p class="m-0 max-w-[70%] text-body-sm text-neutral-600 dark:text-neutral-400">
+              Toolbar rates — default Retry label, no background refresh.
+            </p>
+          </div>
+
+          <div
+            class="relative min-h-[8rem] overflow-hidden rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
+          >
+            <aies-error-indicator
+              class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+              error="Failed to fetch the most recent data."
+              retryText="Refresh"
+              [refreshing]="refreshingStale()"
+              refreshingText="Refreshing..."
+              (retry)="simulateStaleRefresh()"
+            />
+            <p class="m-0 max-w-[70%] text-body-sm text-neutral-600 dark:text-neutral-400">
+              Same pattern AsyncState uses for stale errors.
+            </p>
+          </div>
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+       title="EmptyState"
         hint="Same idea as error — empty often clears after a filter reset."
         [code]="emptyCode"
       >
@@ -256,6 +314,8 @@ const SUCCESS_ROWS: DemoShipment[] = [
 export class FeedbackPage {
   protected readonly demo = signal<DemoKind>('content');
   protected readonly lastRetry = signal<string | null>(null);
+  protected readonly reconnecting = signal(false);
+  protected readonly refreshingStale = signal(false);
   protected readonly asyncState = signal<AsyncQueryState<DemoShipment[]>>(
     this.buildState('content'),
   );
@@ -284,8 +344,21 @@ export class FeedbackPage {
 
   protected readonly loadingCode = FEEDBACK_LOADING;
   protected readonly errorCode = FEEDBACK_ERROR;
+  protected readonly errorIndicatorCode = FEEDBACK_ERROR_INDICATOR;
   protected readonly emptyCode = FEEDBACK_EMPTY;
   protected readonly asyncCode = FEEDBACK_ASYNC;
+
+  protected simulateReconnect(): void {
+    this.reconnecting.set(true);
+    this.onRetry('error-indicator-reconnect');
+    globalThis.setTimeout(() => this.reconnecting.set(false), 1800);
+  }
+
+  protected simulateStaleRefresh(): void {
+    this.refreshingStale.set(true);
+    this.onRetry('error-indicator-stale');
+    globalThis.setTimeout(() => this.refreshingStale.set(false), 1800);
+  }
 
   protected setDemo(kind: DemoKind): void {
     this.demo.set(kind);

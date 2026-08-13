@@ -26,6 +26,7 @@ export {
 export {
   AsyncStateComponent,
   EmptyStateComponent,
+  ErrorIndicatorComponent,
   ErrorStateComponent,
   LoadingStateComponent,
   type LoadingStateMode,
@@ -116,6 +117,10 @@ export {
 // Form controls
 export {
   acceptLabels,
+  type AddressComponent,
+  AddressInputComponent,
+  type AddressPlace,
+  type AddressPrediction,
   CheckboxComponent,
   DatePickerComponent,
   fileExtensionLabel,
@@ -123,8 +128,12 @@ export {
   FileUploadComponent,
   type FileUploadResult,
   type FileUploadVariant,
+  GOOGLE_PLACES_CONFIG,
+  type GooglePlacesConfig,
+  GooglePlacesService,
   NumberInputComponent,
   OtpInputComponent,
+  provideGooglePlaces,
   RadioComponent,
   type RadioOption,
   SelectComponent,

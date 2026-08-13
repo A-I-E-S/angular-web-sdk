@@ -5,6 +5,7 @@ import { ChipComponent } from '../chip';
 import {
   AsyncStateComponent,
   EmptyStateComponent,
+  ErrorIndicatorComponent,
   ErrorStateComponent,
   LoadingStateComponent,
 } from '../feedback';
@@ -12,6 +13,7 @@ import {
 const FEEDBACK = [
   LoadingStateComponent,
   ErrorStateComponent,
+  ErrorIndicatorComponent,
   EmptyStateComponent,
   AsyncStateComponent,
   AlertComponent,

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "dev": "nx serve playground",
     "icons:build": "node tools/build-icon-sprite.mjs",
     "lint": "nx run-many -t lint",
     "test": "nx run-many -t test",

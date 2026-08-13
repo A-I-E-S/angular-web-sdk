@@ -45,10 +45,10 @@ export const appConfig: ApplicationConfig = {
 | Copy | `aies-copy` — clipboard icon button (`copyToClipboard`) |
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
 | Avatar | `Avatar`, `AvatarMenu` — initials/image + account dropdown |
-| Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
+| Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `ErrorIndicator`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfig`) |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
-| Forms | Text, select, number, file upload, checkbox, radio, toggle, textarea, date, OTP |
+| Forms | Text, select, address (Google Places), number, file upload, checkbox, radio, toggle, textarea, date, OTP — address needs `provideGooglePlaces({ apiKey })` |
 | Navigation | `AppShell` (clock, notifications, avatar menu), `SideNav` (SDK logo, logout), `Breadcrumb`, `Tabs`, `Segment` |
 | Notifications | `NotificationDrawerService` — inbox drawer (via `DrawerService`) |
 | Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |

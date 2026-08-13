@@ -4,6 +4,16 @@
  * Shared AIES form field pattern (label, hint, error, ControlValueAccessor).
  */
 
+export {
+  type AddressComponent,
+  AddressInputComponent,
+  type AddressPlace,
+  type AddressPrediction,
+  GOOGLE_PLACES_CONFIG,
+  type GooglePlacesConfig,
+  GooglePlacesService,
+  provideGooglePlaces,
+} from './address-input';
 export { CheckboxComponent } from './checkbox';
 export { DatePickerComponent } from './date-picker';
 export {

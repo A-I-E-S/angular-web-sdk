@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { AddressInputComponent } from '../forms/address-input';
 import { CheckboxComponent } from '../forms/checkbox';
 import { DatePickerComponent } from '../forms/date-picker';
 import { FileUploadComponent } from '../forms/file-upload';
@@ -16,6 +17,7 @@ const FORM_CONTROLS = [
   TextareaComponent,
   NumberInputComponent,
   SelectComponent,
+  AddressInputComponent,
   CheckboxComponent,
   RadioComponent,
   ToggleComponent,

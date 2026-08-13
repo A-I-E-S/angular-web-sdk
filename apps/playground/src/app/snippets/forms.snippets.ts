@@ -338,6 +338,56 @@ export class ShipmentScheduleFormComponent {
 export /**
  *
  */
+const FORMS_ADDRESS = `
+// Google Places address field. Bootstrap with provideGooglePlaces({ apiKey }).
+// [(value)] is AddressPlace | null; (placeSelected) fires when a suggestion is chosen.
+
+import { Component, signal } from '@angular/core';
+import { AiesIconComponent } from '@aies/aies-icons';
+import {
+  AddressInputComponent,
+  type AddressPlace,
+  provideGooglePlaces,
+} from '@aies/aies-ui';
+
+// app.config.ts
+export const appConfig = {
+  providers: [
+    provideGooglePlaces({ apiKey: import.meta.env['NG_APP_GOOGLE_MAPS_KEY'] }),
+  ],
+};
+
+@Component({
+  selector: 'app-pickup-address-form',
+  standalone: true,
+  imports: [AddressInputComponent, AiesIconComponent],
+  template: \`
+    <aies-address-input
+      label="Pickup address"
+      hint="Start typing — pick a Google suggestion"
+      placeholder="Street, city, or landmark"
+      [countries]="['ng', 'gh', 'za']"
+      [(value)]="pickup"
+      (placeSelected)="onPlace($event)"
+    >
+      <aies-icon prefix name="map-marker" [size]="16" />
+    </aies-address-input>
+
+    <pre>{{ pickup() | json }}</pre>
+  \`,
+})
+export class PickupAddressFormComponent {
+  protected readonly pickup = signal<AddressPlace | null>(null);
+
+  protected onPlace(place: AddressPlace): void {
+    console.log('selected', place);
+  }
+}
+`;
+
+export /**
+ *
+ */
 const FORMS_FILE_UPLOAD = `
 // Browse, drag-drop, or camera. You get FileUploadResult[] on (filesSelected) —
 // upload them yourself. accept filters client-side; mismatches are skipped.

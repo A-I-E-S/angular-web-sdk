@@ -111,6 +111,50 @@ export class EmptyDemoComponent {
 export /**
  *
  */
+const FEEDBACK_ERROR_INDICATOR = `
+// Non-blocking top-right pill — stale data stays visible underneath.
+// AsyncState uses this automatically when data exists but refresh failed.
+
+import { Component, signal } from '@angular/core';
+import { ErrorIndicatorComponent } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-stale-data-panel',
+  standalone: true,
+  imports: [ErrorIndicatorComponent],
+  template: \`
+    <div class="relative min-h-[12rem] rounded-xl border border-border p-4 dark:border-white/10">
+      <aies-error-indicator
+        class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+        error="Failed to fetch the most recent data."
+        retryText="Refresh"
+        [refreshing]="isRefreshing()"
+        [refreshingText]="isRefreshing() ? 'Refreshing...' : 'Refresh'"
+        (retry)="refetch()"
+      />
+
+      <!-- Existing table / cards stay mounted -->
+      <ng-content />
+    </div>
+  \`,
+})
+export class StaleDataPanelComponent {
+  protected readonly isRefreshing = signal(false);
+
+  protected refetch(): void {
+    this.isRefreshing.set(true);
+    // query.refetch().finally(() => this.isRefreshing.set(false));
+  }
+}
+
+// Standalone call sites:
+// Socket: error="Connection lost" retryText="Reconnect" refreshingText="Connecting..."
+// Currencies: error="Error fetching currencies" (retryText defaults to "Retry")
+`;
+
+export /**
+ *
+ */
 const FEEDBACK_ASYNC = `
 // Wrap the list (table + pagination). Maps loading / error / empty / success for you.
 // Background refetch shows an “Updating…” badge instead of blocking. One (retry) → refetch.

@@ -12,6 +12,7 @@ import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from './empty-state.component';
+import { ErrorIndicatorComponent } from './error-indicator.component';
 import { ErrorStateComponent } from './error-state.component';
 import { LoadingStateComponent } from './loading-state.component';
 
@@ -68,6 +69,7 @@ type AsyncView =
   imports: [
     ButtonComponent,
     EmptyStateComponent,
+    ErrorIndicatorComponent,
     ErrorStateComponent,
     LoadingStateComponent,
   ],
@@ -86,23 +88,14 @@ type AsyncView =
         <div class="relative">
           @if (contentBadges(); as badges) {
             @if (badges.staleError) {
-              <div
-                class="absolute top-3 right-3 z-10 inline-flex max-w-[min(100%-1.5rem,20rem)] items-center gap-2 rounded-md border border-warning/40 bg-warning-subtle px-2.5 py-1.5 text-caption text-ink shadow-sm dark:border-warning/50 dark:bg-ink dark:text-white"
-                role="status"
-              >
-                <span class="min-w-0 leading-snug"
-                  >Showing saved data — last refresh failed</span
-                >
-                <button
-                  aies-button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  (click)="retry.emit()"
-                >
-                  Retry
-                </button>
-              </div>
+              <aies-error-indicator
+                class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+                [error]="staleErrorCopy()"
+                retryText="Refresh"
+                [refreshingText]="staleRefreshingText()"
+                [refreshing]="badges.fetching"
+                (retry)="retry.emit()"
+              />
             } @else if (badges.fetching) {
               <div
                 class="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1.5 text-caption text-neutral-600 shadow-sm dark:border-white/15 dark:bg-ink dark:text-neutral-300"
@@ -138,6 +131,18 @@ export class AsyncStateComponent<T = unknown> {
   readonly emptyMessage = input('No results found.');
 
   /**
+   * Copy for the non-blocking stale-data error pill (data present, refresh failed).
+   */
+  readonly staleErrorMessage = input(
+    'Failed to fetch the most recent data.',
+  );
+
+  /**
+   * Retry label on the stale pill while a background refetch is in flight.
+   */
+  readonly staleRefreshingText = input('Refreshing...');
+
+  /**
    * Single retry channel for error, empty, and stale-data badge actions.
    *
    * Always wire a handler — omitting `(retry)` is a misuse of the nested
@@ -149,6 +154,17 @@ export class AsyncStateComponent<T = unknown> {
   protected readonly errorMessage = computed(
     () => this.state().error ?? 'Something went wrong.',
   );
+
+  /**
+   * Stale pill copy — prefers the query error string, then {@link staleErrorMessage}.
+   */
+  protected readonly staleErrorCopy = computed(() => {
+    const fromState = this.state().error?.trim();
+    if (fromState) {
+      return fromState;
+    }
+    return this.staleErrorMessage();
+  });
 
   /**
    * Derived branch — computed so OnPush templates only re-evaluate when

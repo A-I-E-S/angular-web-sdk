@@ -1,8 +1,10 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
+  AddressInputComponent,
+  type AddressPlace,
   CheckboxComponent,
   DatePickerComponent,
   FileUploadComponent,
@@ -21,6 +23,7 @@ import {
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import {
+  FORMS_ADDRESS,
   FORMS_CHOICE,
   FORMS_DATE_FILE,
   FORMS_FILE_UPLOAD,
@@ -40,9 +43,11 @@ import {
   standalone: true,
   imports: [
     DecimalPipe,
+    JsonPipe,
     TextInputComponent,
     TextareaComponent,
     SelectComponent,
+    AddressInputComponent,
     NumberInputComponent,
     OtpInputComponent,
     FileUploadComponent,
@@ -159,6 +164,34 @@ import {
           >
             <aies-icon prefix name="airplane" [size]="16" />
           </aies-select>
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="Address input"
+        hint="Google Places suggestions. Set localStorage key aies.googlePlacesApiKey then reload for live results."
+        [code]="addressCode"
+      >
+        <div class="flex flex-col gap-4">
+          <aies-address-input
+            label="Pickup address"
+            hint="Start typing — pick a suggestion to fill structured place details"
+            placeholder="Street, city, or landmark"
+            [countries]="['ng', 'gh', 'za', 'ke']"
+            [(value)]="pickupAddress"
+            (placeSelected)="onPlaceSelected($event)"
+          >
+            <aies-icon prefix name="map-marker" [size]="16" />
+          </aies-address-input>
+          <pre
+            class="m-0 max-h-48 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
+          >{{ pickupAddress() | json }}</pre>
+          <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+            Last placeSelected:
+            <span class="font-mono text-ink dark:text-white">{{
+              lastPlaceSelected()?.formattedAddress || '—'
+            }}</span>
+          </p>
         </div>
       </app-demo-section>
 
@@ -361,6 +394,8 @@ export class FormsPage {
     { label: 'UPS', value: 'ups', prefix: 'airplane', suffix: 'globe' },
   ];
   protected readonly selectedCarrier = signal<SelectOption<string> | null>(null);
+  protected readonly pickupAddress = signal<AddressPlace | null>(null);
+  protected readonly lastPlaceSelected = signal<AddressPlace | null>(null);
   protected readonly signature = signal(true);
   protected readonly insured = signal(false);
   protected readonly terms = signal(false);
@@ -387,11 +422,16 @@ export class FormsPage {
   protected readonly textareaCode = FORMS_TEXTAREA;
   protected readonly numberCode = FORMS_NUMBER;
   protected readonly selectCode = FORMS_SELECT;
+  protected readonly addressCode = FORMS_ADDRESS;
   protected readonly choiceCode = FORMS_CHOICE;
   protected readonly otpCode = FORMS_OTP;
   protected readonly dateFileCode = FORMS_DATE_FILE;
   protected readonly fileUploadCode = FORMS_FILE_UPLOAD;
   protected readonly liveValuesCode = FORMS_LIVE_VALUES;
+
+  protected onPlaceSelected(place: AddressPlace): void {
+    this.lastPlaceSelected.set(place);
+  }
 
   protected onFiles(next: FileUploadResult[]): void {
     this.files.set(next);
