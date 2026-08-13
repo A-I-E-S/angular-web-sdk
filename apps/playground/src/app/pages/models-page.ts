@@ -1,22 +1,9 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
-import {
-  MODELS_API_RESPONSE,
-  MODELS_ASYNC_STATE,
-  MODELS_COUNTRY,
-  MODELS_FILE,
-  MODELS_IMPORT,
-  MODELS_MODE_CONFIG,
-  MODELS_PAGINATION,
-  MODELS_PRODUCT,
-  MODELS_SHIPMENT_METHOD,
-  MODELS_SHIPPING_MODE,
-  MODELS_USER,
-  MODELS_WAREHOUSE,
-  MODELS_ZONE,
-} from '../snippets';
+import { MODELS_IMPORT } from '../snippets';
 
 interface ModelEntry {
   name: string;
@@ -30,70 +17,115 @@ interface ModelGroup {
   id: string;
   title: string;
   hint: string;
-  code: string;
   models: ModelEntry[];
+  /** Optional link to the matching SDK API service/group. */
+  apiFragment?: string;
+  apiLabel?: string;
+}
+
+interface ModelCategory {
+  id: string;
+  title: string;
+  hint: string;
+  groups: ModelGroup[];
 }
 
 /**
- * Catalog of `@aies/aies-models` types with their field structures.
+ * Shape catalog for `@aies/aies-models`.
+ * How to call services lives on the SDK API page.
  */
 @Component({
   selector: 'app-models-page',
   standalone: true,
-  imports: [PageHeaderComponent, DemoSectionComponent],
+  imports: [PageHeaderComponent, DemoSectionComponent, RouterLink],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="TypeScript contracts shared across the SDK — API envelopes, countries, warehouses, products, files, mode config, filters, and async UI state. Names end in *Model. Types only (no Angular providers). For service usage snippets, open SDK API."
+        description="TypeScript contracts from @aies/aies-models — field shapes only. Names end in *Model. For paths, ResourceId, and Show code usage, open Foundation → SDK API."
       />
 
       <app-demo-section
         title="Import"
-        hint="Pull shapes from @aies/aies-models in any app or library. No providers required — these are interfaces and helpers only."
+        hint="Pull shapes from @aies/aies-models in any app or library. No providers required."
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Shared across packages: ApiResponseModel for HTTP, CountryModel and
-          ShipmentMethodModel for utility reads, mode/filter configs for product
-          rules, and AsyncQueryStateModel for aies-async-state. Service paths and
-          usage examples live under Foundation → SDK API.
+          Types only — no Angular providers. Service calls and snippets live on
+          <a
+            class="font-medium text-ink underline-offset-2 hover:underline dark:text-white"
+            routerLink="/api"
+            >SDK API</a
+          >.
         </p>
       </app-demo-section>
 
-      @for (group of groups; track group.id) {
-        <app-demo-section
-          [title]="group.title"
-          [hint]="group.hint"
-          [badge]="group.models.length + ''"
-          [code]="group.code"
-        >
-          <div class="grid gap-4">
-            @for (entry of group.models; track entry.name) {
-              <article
-                class="flex flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink sm:p-5"
-              >
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                  <h2 class="m-0 font-mono text-body font-medium text-ink dark:text-white">
-                    {{ entry.name }}
-                  </h2>
-                  <p
-                    class="m-0 text-caption font-medium uppercase tracking-[0.12em] text-neutral-400"
-                  >
-                    {{ entry.packagePath }}
-                  </p>
-                </div>
-                <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-                  {{ entry.description }}
-                </p>
-                <pre
-                  class="m-0 overflow-x-auto rounded-lg border border-border bg-[#1e1e1e] p-3 font-mono text-caption leading-relaxed text-[#d4d4d4] dark:border-white/10"
-                ><code>{{ entry.structure }}</code></pre>
-              </article>
-            }
+      @for (category of categories; track category.id) {
+        <section class="flex flex-col gap-6" [attr.id]="category.id">
+          <div
+            class="flex flex-col gap-1 border-b border-border pb-3 dark:border-white/10"
+          >
+            <h2 class="m-0 text-heading-3 text-ink dark:text-white">
+              {{ category.title }}
+            </h2>
+            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+              {{ category.hint }}
+            </p>
           </div>
-        </app-demo-section>
+
+          @for (group of category.groups; track group.id) {
+            <app-demo-section
+              [anchorId]="group.id"
+              [title]="group.title"
+              [hint]="group.hint"
+              [badge]="group.models.length + ''"
+            >
+              @if (group.apiFragment) {
+                <p class="mb-4 mt-0 text-caption text-neutral-500 dark:text-neutral-400">
+                  How to call:
+                  <a
+                    class="font-medium text-ink underline-offset-2 hover:underline dark:text-white"
+                    routerLink="/api"
+                    [fragment]="group.apiFragment"
+                    >{{ group.apiLabel ?? 'SDK API' }}</a
+                  >
+                </p>
+              }
+
+              <div class="grid gap-4">
+                @for (entry of group.models; track entry.name) {
+                  <article
+                    class="flex flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink sm:p-5"
+                  >
+                    <div
+                      class="flex flex-wrap items-baseline justify-between gap-2"
+                    >
+                      <h3
+                        class="m-0 font-mono text-body font-medium text-ink dark:text-white"
+                      >
+                        {{ entry.name }}
+                      </h3>
+                      <p
+                        class="m-0 text-caption font-medium uppercase tracking-[0.12em] text-neutral-400"
+                      >
+                        {{ entry.packagePath }}
+                      </p>
+                    </div>
+                    <p
+                      class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400"
+                    >
+                      {{ entry.description }}
+                    </p>
+                    <pre
+                      class="m-0 overflow-x-auto rounded-lg border border-border bg-[#1e1e1e] p-3 font-mono text-caption leading-relaxed text-[#d4d4d4] dark:border-white/10"
+                    ><code>{{ entry.structure }}</code></pre>
+                  </article>
+                }
+              </div>
+            </app-demo-section>
+          }
+        </section>
       }
     </div>
   `,
@@ -101,19 +133,23 @@ interface ModelGroup {
 export class ModelsPage {
   protected readonly importCode = MODELS_IMPORT;
 
-  protected readonly groups: ModelGroup[] = [
+  protected readonly categories: ModelCategory[] = [
     {
-      id: 'api',
-      title: 'API envelope',
-      hint: 'How every SDK HTTP call is wrapped — success, data, message, errors, pagination.',
-      code: MODELS_API_RESPONSE,
-      models: [
+      id: 'core',
+      title: 'Core contracts',
+      hint: 'Shared envelopes, pagination, async UI state, and shipping mode.',
+      groups: [
         {
-          name: 'ApiResponseModel<T>',
-          packagePath: 'api',
-          description:
-            'Canonical envelope: success, data, message, errors, pagination, status_code.',
-          structure: `interface ApiResponseModel<T> {
+          id: 'api',
+          title: 'API envelope',
+          hint: 'How every SDK HTTP call is wrapped — success, data, message, errors, pagination.',
+          models: [
+            {
+              name: 'ApiResponseModel<T>',
+              packagePath: 'api',
+              description:
+                'Canonical envelope: success, data, message, errors, pagination, status_code.',
+              structure: `interface ApiResponseModel<T> {
   success: boolean;
   message: string | null;
   data: T | null;
@@ -121,31 +157,32 @@ export class ModelsPage {
   pagination: PaginationMetaModel | null;
   status_code: number | null;
 }`,
-        },
-        {
-          name: 'ApiErrorDetailModel',
-          packagePath: 'api',
-          description: 'Field-level or global error detail on failed responses.',
-          structure: `interface ApiErrorDetailModel {
+            },
+            {
+              name: 'ApiErrorDetailModel',
+              packagePath: 'api',
+              description: 'Field-level or global error detail on failed responses.',
+              structure: `interface ApiErrorDetailModel {
   field: string | null;
   message: string;
   code: string | null;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'pagination',
-      title: 'Pagination & resources',
-      hint: 'ResourceId path segments for every list GET — null (page), all, or number — plus page query helpers.',
-      code: MODELS_PAGINATION,
-      models: [
         {
-          name: 'PaginationMetaModel',
-          packagePath: 'api',
-          description:
-            'Response-side slice: current_page, per_page, totals, has_next/previous_page.',
-          structure: `interface PaginationMetaModel {
+          id: 'pagination',
+          title: 'Pagination & ResourceId',
+          hint: 'List GET id segments and page metadata — usage on SDK API → ResourceId.',
+          apiFragment: 'resource-id',
+          apiLabel: 'ResourceId',
+          models: [
+            {
+              name: 'PaginationMetaModel',
+              packagePath: 'api',
+              description:
+                'Response-side slice: current_page, per_page, totals, has_next/previous_page.',
+              structure: `interface PaginationMetaModel {
   current_page: number;
   per_page: number;
   total_items: number;
@@ -153,107 +190,114 @@ export class ModelsPage {
   has_next_page: boolean;
   has_previous_page: boolean;
 }`,
-        },
-        {
-          name: 'PaginationQueryParamsModel',
-          packagePath: 'api',
-          description: 'Request-side page / size / order — only used when ResourceId is null.',
-          structure: `interface PaginationQueryParamsModel {
+            },
+            {
+              name: 'PaginationQueryParamsModel',
+              packagePath: 'api',
+              description:
+                'Request-side page / size / order — only when ResourceId is null.',
+              structure: `interface PaginationQueryParamsModel {
   page?: number;
   size?: number;
   order?: string;
 }`,
-        },
-        {
-          name: 'ResourceId',
-          packagePath: 'api',
-          description:
-            "null → paginated list · 'all' → full dump · number → single record. Use getResourcePage / getResourceAll / getResourceById for custom routes.",
-          structure: `type ResourceId = number | 'all' | null;
+            },
+            {
+              name: 'ResourceId',
+              packagePath: 'api',
+              description:
+                "null → paginated · 'all' → full dump · number → single record.",
+              structure: `type ResourceId = number | 'all' | null;
 // null  → GET {base}           (+ page/size/order)
 // 'all' → GET {base}/all
 // 42    → GET {base}/42`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'async',
-      title: 'Async query state',
-      hint: 'Snapshot you pass to aies-async-state — loading, fetching, error, and data in one object.',
-      code: MODELS_ASYNC_STATE,
-      models: [
         {
-          name: 'AsyncQueryStateModel<T>',
-          packagePath: 'async',
-          description:
-            'data, isLoading, isFetching, isError, error — map from injectQuery() or manual fetches.',
-          structure: `interface AsyncQueryStateModel<T> {
+          id: 'async',
+          title: 'Async query state',
+          hint: 'Snapshot for aies-async-state — loading, fetching, error, and data.',
+          models: [
+            {
+              name: 'AsyncQueryStateModel<T>',
+              packagePath: 'async',
+              description:
+                'data, isLoading, isFetching, isError, error — map from injectQuery() or fetches.',
+              structure: `interface AsyncQueryStateModel<T> {
   data: T | undefined;
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
   error: string | null;
 }`,
+            },
+          ],
+        },
+        {
+          id: 'shipping',
+          title: 'Shipping mode',
+          hint: 'Import (STN) vs Export (SFN) — theme accents and x-shipment-mode.',
+          models: [
+            {
+              name: 'ShippingMode',
+              packagePath: 'shipping',
+              description: "Product mode literal: 'stn' | 'sfn'.",
+              structure: `type ShippingMode = 'stn' | 'sfn';`,
+            },
+          ],
         },
       ],
     },
     {
-      id: 'shipping',
-      title: 'Shipping mode',
-      hint: 'Import (STN) vs Export (SFN) — drives theme accents and the x-shipment-mode header.',
-      code: MODELS_SHIPPING_MODE,
-      models: [
+      id: 'reference-data',
+      title: 'Reference data',
+      hint: 'Shapes returned by ResourceId catalog services.',
+      groups: [
         {
-          name: 'ShippingMode',
-          packagePath: 'shipping',
-          description: "Product mode literal: 'stn' | 'sfn'.",
-          structure: `type ShippingMode = 'stn' | 'sfn';`,
-        },
-      ],
-    },
-    {
-      id: 'country',
-      title: 'Country utility',
-      hint: 'Country list and detail from the public utility API — ISO codes and nested states.',
-      code: MODELS_COUNTRY,
-      models: [
-        {
-          name: 'CountryModel',
-          packagePath: 'country',
-          description:
-            'Country record with ISO codes and nested states from the public utility API.',
-          structure: `interface CountryModel {
+          id: 'country',
+          title: 'Countries',
+          hint: 'Country list/detail — ISO codes and nested states.',
+          apiFragment: 'country',
+          apiLabel: 'CountryService',
+          models: [
+            {
+              name: 'CountryModel',
+              packagePath: 'country',
+              description:
+                'Country record with ISO codes and nested states from the public utility API.',
+              structure: `interface CountryModel {
   id: number;
   name: string;
   iso3: string;
   iso2: string;
   states: CountryStateModel[];
 }`,
-        },
-        {
-          name: 'CountryStateModel',
-          packagePath: 'country',
-          description:
-            'Subdivision under a country — wire `state_code`.',
-          structure: `interface CountryStateModel {
+            },
+            {
+              name: 'CountryStateModel',
+              packagePath: 'country',
+              description: 'Subdivision under a country — wire `state_code`.',
+              structure: `interface CountryStateModel {
   name: string;
   state_code: string;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'shipment-method',
-      title: 'Shipment methods / carriers',
-      hint: 'Carrier / method records with delivery windows, limits, and zone pricing pages.',
-      code: MODELS_SHIPMENT_METHOD,
-      models: [
         {
-          name: 'ShipmentMethodModel',
-          packagePath: 'shipment-method',
-          description:
-            'Carrier record with delivery windows, weight/dim limits, discounts, and zone_values page.',
-          structure: `interface ShipmentMethodModel {
+          id: 'shipment-method',
+          title: 'Shipment methods / carriers',
+          hint: 'Carrier records with delivery windows, limits, and zone pages.',
+          apiFragment: 'shipment-method',
+          apiLabel: 'ShipmentMethodService',
+          models: [
+            {
+              name: 'ShipmentMethodModel',
+              packagePath: 'shipment-method',
+              description:
+                'Carrier with delivery windows, weight/dim limits, discounts, and zone_values.',
+              structure: `interface ShipmentMethodModel {
   id: number;
   name: string;
   slug: string;
@@ -262,34 +306,35 @@ export class ModelsPage {
   // …commercial + dimension fields
   zone_values: ShipmentMethodZonePageModel;
 }`,
-        },
-        {
-          name: 'ShipmentMethodZonePageModel',
-          packagePath: 'shipment-method',
-          description:
-            'First Laravel page of zone links embedded on a method (`data` + total/last_page).',
-          structure: `interface ShipmentMethodZonePageModel {
+            },
+            {
+              name: 'ShipmentMethodZonePageModel',
+              packagePath: 'shipment-method',
+              description:
+                'First Laravel page of zone links on a method (`data` + totals).',
+              structure: `interface ShipmentMethodZonePageModel {
   data: ShipmentMethodZoneLinkModel[];
   current_page: number;
   per_page: number;
   total: number;
   last_page: number;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'warehouse',
-      title: 'Warehouses',
-      hint: 'Warehouse locations with address, charges, and nested country/state.',
-      code: MODELS_WAREHOUSE,
-      models: [
         {
-          name: 'WarehouseModel',
-          packagePath: 'warehouse',
-          description:
-            'Warehouse with address, geo, storage/delivery charges, and nested CountryModel.',
-          structure: `interface WarehouseModel {
+          id: 'warehouse',
+          title: 'Warehouses',
+          hint: 'Locations with address, charges, and nested country/state.',
+          apiFragment: 'warehouse',
+          apiLabel: 'WarehouseService',
+          models: [
+            {
+              name: 'WarehouseModel',
+              packagePath: 'warehouse',
+              description:
+                'Warehouse with address, geo, charges, and nested CountryModel.',
+              structure: `interface WarehouseModel {
   id: number;
   name: string;
   city: string;
@@ -299,33 +344,34 @@ export class ModelsPage {
   api_enabled: boolean;
   // …charges, geo, flags
 }`,
-        },
-        {
-          name: 'WarehouseStateModel',
-          packagePath: 'warehouse',
-          description:
-            'Selected subdivision on the warehouse — wire state_code / country_code.',
-          structure: `interface WarehouseStateModel {
+            },
+            {
+              name: 'WarehouseStateModel',
+              packagePath: 'warehouse',
+              description:
+                'Selected subdivision — wire state_code / country_code.',
+              structure: `interface WarehouseStateModel {
   id: number;
   name: string;
   state_code: string;
   country: string;
   country_code: string;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'zone',
-      title: 'Zones',
-      hint: 'Shipping zones used for routing and pricing.',
-      code: MODELS_ZONE,
-      models: [
         {
-          name: 'ZoneModel',
-          packagePath: 'zone',
-          description: 'Shipping zone record (name, type, active, timestamps).',
-          structure: `interface ZoneModel {
+          id: 'zone',
+          title: 'Zones',
+          hint: 'Shipping zones for routing and pricing.',
+          apiFragment: 'zone',
+          apiLabel: 'ZoneService',
+          models: [
+            {
+              name: 'ZoneModel',
+              packagePath: 'zone',
+              description: 'Shipping zone record (name, type, active, timestamps).',
+              structure: `interface ZoneModel {
   id: number;
   name: string;
   type: string;
@@ -334,21 +380,22 @@ export class ModelsPage {
   created_at: string | null;
   updated_at: string | null;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'product',
-      title: 'Products',
-      hint: 'Catalog products from GET /product/read/{id|all} — HS codes, document/ETW labels.',
-      code: MODELS_PRODUCT,
-      models: [
         {
-          name: 'ProductModel',
-          packagePath: 'product',
-          description:
-            'Product record (snake_case) with HS codes and document detail labels.',
-          structure: `interface ProductModel {
+          id: 'product',
+          title: 'Products',
+          hint: 'Catalog products — HS codes and document / ETW labels.',
+          apiFragment: 'product',
+          apiLabel: 'ProductService',
+          models: [
+            {
+              name: 'ProductModel',
+              packagePath: 'product',
+              description:
+                'Product record (snake_case) with HS codes and document labels.',
+              structure: `interface ProductModel {
   id: number;
   account_id: number | null;
   product_category_id: number | null;
@@ -370,48 +417,29 @@ export class ModelsPage {
   etw_document_details: string[];
   zone_product_required_documents: ApiJsonValue[];
 }`,
+            },
+          ],
         },
       ],
     },
     {
-      id: 'file',
-      title: 'Files',
-      hint: 'Document payload from POST /file/read — single object in data (not a list).',
-      code: MODELS_FILE,
-      models: [
+      id: 'session-config',
+      title: 'Session & config',
+      hint: 'Authenticated user profile and STN/SFN region units.',
+      groups: [
         {
-          name: 'FileReadRequestModel',
-          packagePath: 'file',
-          description: 'Request body for FileService.read / readByBody.',
-          structure: `interface FileReadRequestModel {
-  ref: string;
-}`,
-        },
-        {
-          name: 'FileReadModel',
-          packagePath: 'file',
-          description:
-            'Envelope data object — prefer url for downloads; base_64 can be large.',
-          structure: `interface FileReadModel {
-  mime_type: string;
-  base_64: string;
-  url: string;
-}`,
-        },
-      ],
-    },
-    {
-      id: 'user',
-      title: 'Current user',
-      hint: 'Authenticated profile from GET /user — after login, call AuthTokenService.set then UserService.me().',
-      code: MODELS_USER,
-      models: [
-        {
-          name: 'UserModel',
-          packagePath: 'user',
-          description:
-            'Authenticated profile (snake_case wire keys) with nested country, business_account, and account_manager.',
-          structure: `interface UserModel {
+          id: 'user',
+          title: 'Current user',
+          hint: 'Profile from GET /user after AuthTokenService.set.',
+          apiFragment: 'user',
+          apiLabel: 'UserService',
+          models: [
+            {
+              name: 'UserModel',
+              packagePath: 'user',
+              description:
+                'Authenticated profile (snake_case) with nested country and accounts.',
+              structure: `interface UserModel {
   id?: number | null;
   central_id?: string | null;
   name?: string | null;
@@ -426,12 +454,12 @@ export class ModelsPage {
   account_manager?: UserAccountManagerModel | null;
   // …verification, flags, accounts
 }`,
-        },
-        {
-          name: 'UserBusinessAccountModel',
-          packagePath: 'user',
-          description: 'Optional business account with plan + subscription.',
-          structure: `interface UserBusinessAccountModel {
+            },
+            {
+              name: 'UserBusinessAccountModel',
+              packagePath: 'user',
+              description: 'Optional business account with plan + subscription.',
+              structure: `interface UserBusinessAccountModel {
   id?: number | null;
   name?: string | null;
   type?: AccountType | null;
@@ -439,65 +467,103 @@ export class ModelsPage {
   subscription?: UserSubscriptionModel | null;
   // …
 }`,
-        },
-        {
-          name: 'UserCountryModel',
-          packagePath: 'user',
-          description: 'Country nested on the profile — states use state_code.',
-          structure: `interface UserCountryModel {
+            },
+            {
+              name: 'UserCountryModel',
+              packagePath: 'user',
+              description: 'Country on the profile — states use state_code.',
+              structure: `interface UserCountryModel {
   id?: number | null;
   name?: string | null;
   iso2?: string | null;
   states?: UserStateModel[] | null;
 }`,
+            },
+          ],
         },
-      ],
-    },
-    {
-      id: 'mode-config',
-      title: 'Mode config',
-      hint: 'Per-mode region currency and units (loaded at startup or on demand).',
-      code: MODELS_MODE_CONFIG,
-      models: [
         {
-          name: 'ModeConfigDataModel',
-          packagePath: 'mode',
-          description: 'Top-level STN/SFN region, currency, and unit configuration.',
-          structure: `interface ModeConfigDataModel {
+          id: 'mode-config',
+          title: 'Mode config',
+          hint: 'Per-mode region currency and units.',
+          apiFragment: 'mode-config',
+          apiLabel: 'ModeConfigService',
+          models: [
+            {
+              name: 'ModeConfigDataModel',
+              packagePath: 'mode',
+              description: 'Top-level STN/SFN region, currency, and unit config.',
+              structure: `interface ModeConfigDataModel {
   sfn: ModeSfnConfigModel;
   stn: ModeStnConfigModel;
 }`,
-        },
-        {
-          name: 'ModeRegionConfigModel',
-          packagePath: 'mode',
-          description: 'Per-region currency symbol and measurement units.',
-          structure: `interface ModeRegionConfigModel {
+            },
+            {
+              name: 'ModeRegionConfigModel',
+              packagePath: 'mode',
+              description: 'Per-region currency symbol and measurement units.',
+              structure: `interface ModeRegionConfigModel {
   dimension_unit: 'cm' | 'inches';
   mass_unit: 'KG' | 'LBS';
   currency: 'NGN' | 'USD';
   currency_symbol: string;
 }`,
-        },
-        {
-          name: 'ModeSfnConfigModel',
-          packagePath: 'mode',
-          description: 'SFN region map — default + Nigeria (ng) only.',
-          structure: `interface ModeSfnConfigModel {
+            },
+            {
+              name: 'ModeSfnConfigModel',
+              packagePath: 'mode',
+              description: 'SFN region map — default + Nigeria (ng).',
+              structure: `interface ModeSfnConfigModel {
   default: ModeRegionConfigModel;
   ng: ModeRegionConfigModel;
 }`,
-        },
-        {
-          name: 'ModeStnConfigModel',
-          packagePath: 'mode',
-          description: 'STN region map — default + us / cn / gb.',
-          structure: `interface ModeStnConfigModel {
+            },
+            {
+              name: 'ModeStnConfigModel',
+              packagePath: 'mode',
+              description: 'STN region map — default + us / cn / gb.',
+              structure: `interface ModeStnConfigModel {
   default: ModeRegionConfigModel;
   us: ModeRegionConfigModel;
   cn: ModeRegionConfigModel;
   gb: ModeRegionConfigModel;
 }`,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'files',
+      title: 'Files',
+      hint: 'Single-object file payload — not a list.',
+      groups: [
+        {
+          id: 'file',
+          title: 'File read',
+          hint: 'POST /file/read — data is one FileReadModel.',
+          apiFragment: 'file',
+          apiLabel: 'FileService',
+          models: [
+            {
+              name: 'FileReadRequestModel',
+              packagePath: 'file',
+              description: 'Request body for FileService.read / readByBody.',
+              structure: `interface FileReadRequestModel {
+  ref: string;
+}`,
+            },
+            {
+              name: 'FileReadModel',
+              packagePath: 'file',
+              description:
+                'Envelope data object — prefer url for downloads; base_64 can be large.',
+              structure: `interface FileReadModel {
+  mime_type: string;
+  base_64: string;
+  url: string;
+}`,
+            },
+          ],
         },
       ],
     },

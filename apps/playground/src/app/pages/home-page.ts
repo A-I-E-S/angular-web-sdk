@@ -226,14 +226,14 @@ export class HomePage {
     {
       path: '/models',
       title: 'Shared models',
-      blurb: 'API, domain, and async *Model contracts — types only.',
+      blurb: 'Field shapes from @aies/aies-models — types only.',
       icon: 'code',
       group: 'Foundation',
     },
     {
       path: '/api',
       title: 'SDK API',
-      blurb: 'Built-in service paths and usage — Country, Product, Warehouse, and more.',
+      blurb: 'How to call services — ResourceId, paths, and usage snippets.',
       icon: 'globe',
       group: 'Foundation',
     },

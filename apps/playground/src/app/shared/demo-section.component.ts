@@ -25,7 +25,11 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
   standalone: true,
   imports: [ButtonComponent, AiesIconComponent, CopyButtonComponent],
   template: `
-    <section class="flex flex-col gap-4">
+    <section
+      class="flex flex-col gap-4"
+      [attr.id]="anchorId() || null"
+      [class.scroll-mt-24]="anchorId() != null"
+    >
       <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex min-w-0 flex-col gap-1">
           <div class="flex flex-wrap items-center gap-2">
@@ -102,6 +106,8 @@ export class DemoSectionComponent {
 
   /** Section heading. */
   readonly title = input.required<string>();
+  /** Optional id for deep links (`/models#country`). */
+  readonly anchorId = input<string | null>(null);
   /** Optional supporting sentence under the title. */
   readonly hint = input<string | null>(null);
   /**
