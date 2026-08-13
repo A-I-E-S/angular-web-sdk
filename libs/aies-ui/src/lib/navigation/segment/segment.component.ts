@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -12,7 +13,6 @@ import {
   type IsActiveMatchOptions,
   NavigationEnd,
   Router,
-  RouterLink,
 } from '@angular/router';
 
 import { filter, map, startWith } from 'rxjs';
@@ -21,6 +21,11 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
+import {
+  isModifiedClick,
+  navItemHref,
+  navigateNavItem,
+} from '../navigate-nav-item';
 import { isNavItemActive } from '../nav-router.util';
 
 const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
@@ -39,6 +44,10 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * follows `Router.isActive` — including **cold loads**. Defaults to exact
  * path + query matching (sibling routes / density query params).
  *
+ * Routed segments navigate with `{ scroll: 'manual' }` by default so the page
+ * does not jump to the top. Pass `[keepScroll]="false"` to use the app’s
+ * normal router scroll behaviour.
+ *
  * ## Local mode
  *
  * Omit `routerLink` and bind `[(activeId)]`.
@@ -55,7 +64,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   selector: 'aies-segment',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AiesIconComponent, RouterLink],
+  imports: [AiesIconComponent],
   template: `
     <div
       class="inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-background-welcome p-1 dark:bg-ink-950"
@@ -72,11 +81,10 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
             "
             [class.cursor-not-allowed]="item.disabled"
             [class.opacity-50]="item.disabled"
-            [routerLink]="item.disabled ? null : item.routerLink"
-            [queryParams]="item.queryParams"
-            [fragment]="item.fragment"
+            [attr.href]="item.disabled ? null : hrefFor(item)"
             [attr.aria-current]="isItemActive(item) ? 'true' : null"
             [attr.aria-disabled]="item.disabled ? true : null"
+            (click)="onRoutedClick($event, item)"
           >
             @if (item.icon; as icon) {
               <aies-icon [name]="icon" [size]="14" class="shrink-0" />
@@ -127,6 +135,13 @@ export class SegmentComponent {
   readonly linkActiveOptions =
     input<IsActiveMatchOptions>(DEFAULT_LINK_ACTIVE);
 
+  /**
+   * Keep the viewport where it is when a routed segment navigates (default).
+   * Uses Angular’s `{ scroll: 'manual' }` so app-wide scroll restoration does
+   * not jump to the top. Set false to use normal router scrolling.
+   */
+  readonly keepScroll = input(true, { transform: booleanAttribute });
+
   private readonly url = toSignal(
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
@@ -138,7 +153,7 @@ export class SegmentComponent {
 
   protected readonly segmentChrome = computed(
     () =>
-      'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-body-sm transition-colors duration-150',
+      'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-body-sm transition-colors duration-150 no-underline',
   );
 
   protected readonly selectedClass = computed(() => {
@@ -168,6 +183,10 @@ export class SegmentComponent {
     });
   }
 
+  protected hrefFor(item: AiesNavItem): string | null {
+    return navItemHref(this.router, item);
+  }
+
   protected isItemActive(item: AiesNavItem): boolean {
     if (item.routerLink != null) {
       this.url();
@@ -181,5 +200,23 @@ export class SegmentComponent {
       return;
     }
     this.activeId.set(item.id);
+  }
+
+  /**
+   * Primary click navigates in-app without scrolling to top. Modified clicks
+   * keep the native link behaviour for new tabs.
+   * @param event
+   * @param item
+   */
+  protected onRoutedClick(event: MouseEvent, item: AiesNavItem): void {
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (isModifiedClick(event)) {
+      return;
+    }
+    event.preventDefault();
+    void navigateNavItem(this.router, item, this.keepScroll());
   }
 }

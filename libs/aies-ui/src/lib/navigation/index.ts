@@ -8,6 +8,11 @@
  */
 
 export { BreadcrumbComponent } from './breadcrumb';
+export {
+  isModifiedClick,
+  navItemHref,
+  navigateNavItem,
+} from './navigate-nav-item';
 export type { AiesNavItem } from './nav-item';
 export { isNavItemActive, navItemUrlTree } from './nav-router.util';
 export { SegmentComponent } from './segment';

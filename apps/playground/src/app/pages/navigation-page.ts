@@ -146,6 +146,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
       <app-demo-section
         title="Tabs (routed)"
         hint="Section tabs that change the URL (child routes). Active tab survives refresh and can be shared as a link."
+        subtext="The page does not jump to the top when you switch tabs — navigation uses scroll: 'manual'. Pass [keepScroll]=&quot;false&quot; to use normal router scrolling."
         [code]="routedTabsCode"
       >
         <aies-tabs
@@ -161,6 +162,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
       <app-demo-section
         title="Segment (routed via query)"
         hint="Compact pill switcher for view modes (density, status). Here it syncs to ?density= so the choice survives reload."
+        subtext="Like routed tabs, switching keeps your scroll position instead of jumping to the top."
         [code]="segmentCode"
       >
         <aies-segment

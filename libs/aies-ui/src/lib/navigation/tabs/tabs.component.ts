@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -16,7 +17,6 @@ import {
   type IsActiveMatchOptions,
   NavigationEnd,
   Router,
-  RouterLink,
 } from '@angular/router';
 
 import { filter, map, startWith } from 'rxjs';
@@ -25,6 +25,11 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
+import {
+  isModifiedClick,
+  navItemHref,
+  navigateNavItem,
+} from '../navigate-nav-item';
 import { isNavItemActive } from '../nav-router.util';
 import { TabDefDirective } from './tab-def.directive';
 
@@ -43,6 +48,10 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * Set `routerLink` on items. Active styling and `activeId` follow the
  * consumer’s Router — including **cold loads** (`/shipments/docs` highlights
  * Docs). Pair with a `<router-outlet>` for panel content.
+ *
+ * Routed tabs navigate with `{ scroll: 'manual' }` by default so the page
+ * does not jump to the top when only a child panel changes. Pass
+ * `[keepScroll]="false"` to use the app’s normal router scroll behaviour.
  *
  * ## Local mode
  *
@@ -63,7 +72,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   selector: 'aies-tabs',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AiesIconComponent, NgTemplateOutlet, RouterLink],
+  imports: [AiesIconComponent, NgTemplateOutlet],
   template: `
     <div class="flex flex-col gap-4">
       <div
@@ -85,13 +94,12 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
               "
               [class.cursor-not-allowed]="item.disabled"
               [class.opacity-50]="item.disabled"
-              [routerLink]="item.disabled ? null : item.routerLink"
-              [queryParams]="item.queryParams"
-              [fragment]="item.fragment"
+              [attr.href]="item.disabled ? null : hrefFor(item)"
               [attr.aria-selected]="isItemActive(item)"
               [attr.tabindex]="isItemActive(item) ? 0 : -1"
               [attr.aria-disabled]="item.disabled ? true : null"
               [attr.id]="'aies-tab-' + item.id"
+              (click)="onRoutedClick($event, item)"
             >
               @if (item.icon; as icon) {
                 <aies-icon [name]="icon" [size]="16" class="shrink-0" />
@@ -170,6 +178,13 @@ export class TabsComponent {
   readonly linkActiveOptions =
     input<IsActiveMatchOptions>(DEFAULT_LINK_ACTIVE);
 
+  /**
+   * Keep the viewport where it is when a routed tab navigates (default).
+   * Uses Angular’s `{ scroll: 'manual' }` so app-wide scroll restoration does
+   * not jump to the top. Set false to use normal router scrolling.
+   */
+  readonly keepScroll = input(true, { transform: booleanAttribute });
+
   /** Re-evaluate active state on every successful navigation (and initial URL). */
   private readonly url = toSignal(
     this.router.events.pipe(
@@ -200,7 +215,7 @@ export class TabsComponent {
 
   protected readonly tabChrome = computed(
     () =>
-      'inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-body-sm transition-colors -mb-px',
+      'inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-body-sm transition-colors -mb-px no-underline',
   );
 
   protected readonly activeTabClass = computed(() => {
@@ -231,6 +246,10 @@ export class TabsComponent {
     });
   }
 
+  protected hrefFor(item: AiesNavItem): string | null {
+    return navItemHref(this.router, item);
+  }
+
   protected isItemActive(item: AiesNavItem): boolean {
     if (item.routerLink != null) {
       this.url();
@@ -244,6 +263,24 @@ export class TabsComponent {
       return;
     }
     this.activeId.set(item.id);
+  }
+
+  /**
+   * Primary click navigates in-app without scrolling to top. Modified clicks
+   * (cmd/ctrl/middle) keep the native link behaviour for new tabs.
+   * @param event
+   * @param item
+   */
+  protected onRoutedClick(event: MouseEvent, item: AiesNavItem): void {
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (isModifiedClick(event)) {
+      return;
+    }
+    event.preventDefault();
+    void navigateNavItem(this.router, item, this.keepScroll());
   }
 
   /**
