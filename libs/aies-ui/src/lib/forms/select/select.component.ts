@@ -87,7 +87,8 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
  * ## Prefix / suffix
  *
  * - **Control slots** — project into the shell with `[prefix]` / `[suffix]`
- *   (same pattern as TextInput). Used as the empty-state affixes.
+ *   (same pattern as TextInput). Used as the empty-state affixes. Set
+ *   `[showTriggerIcon]="false"` when the suffix replaces the built-in caret.
  * - **Option slots** — set `prefix` / `suffix` on each {@link SelectOption} to
  *   an `IconName`. In the list/chips always; in **single-select**, when an
  *   option is selected its icons replace the shell prefix/suffix slots.
@@ -212,7 +213,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
               [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
               aria-hidden="true"
             />
-          } @else {
+          } @else if (showTriggerIcon()) {
             <aies-icon
               name="angle-down"
               [size]="16"
@@ -504,6 +505,13 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     alias: 'disabled',
     transform: booleanAttribute,
   });
+
+  /**
+   * When false, hides the built-in `angle-down` on the trigger so callers can
+   * supply a chevron via the `[suffix]` slot (e.g. compact page-size selects).
+   * Loading still shows the spinner on the trigger.
+   */
+  readonly showTriggerIcon = input(true, { transform: booleanAttribute });
 
   protected readonly open = signal(false);
   protected readonly searchQuery = signal('');

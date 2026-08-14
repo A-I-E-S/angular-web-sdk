@@ -5,7 +5,7 @@ export /**
  */
 const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
-// Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
+// Refetch on sortChange / pageChange / sizeChange. Use aiesCellDef for badges, currency, row menus.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit for equal share; set width (e.g. '3.5rem') to pin actions.
 
@@ -18,6 +18,7 @@ import {
   CellDefDirective,
   ChipComponent,
   CopyButtonComponent,
+  DEFAULT_PAGE_SIZE,
   RowDetailDefDirective,
   TableComponent,
   type AiesMenuItem,
@@ -34,7 +35,7 @@ interface Shipment {
   valueUsd: number;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 @Component({
   selector: 'app-shipment-list-page',
@@ -64,6 +65,7 @@ const PAGE_SIZE = 20;
         (filterClick)="openFilters()"
         (exportClick)="exportCsv()"
         (pageChange)="onPageChange($event)"
+        (sizeChange)="onSizeChange($event)"
       >
         <ng-template aiesCellDef="reference" let-row>
           <div class="flex items-center gap-1">
@@ -109,6 +111,7 @@ export class ShipmentListPageComponent {
   private readonly api = inject(ApiClient);
 
   protected readonly page = signal(1);
+  protected readonly size = signal(PAGE_SIZE);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly rows = signal<Shipment[]>([]);
   protected readonly meta = signal<PaginationMetaModel | null>(null);
@@ -173,7 +176,7 @@ export class ShipmentListPageComponent {
       const res = await firstValueFrom(
         this.api.getResource<Shipment>('shipments', null, {
           page: this.page(),
-          size: PAGE_SIZE,
+          size: this.size(),
           // Map sort key/direction to your API query params when supported.
           orderBy: currentSort?.key,
           order: currentSort?.direction,
@@ -196,6 +199,12 @@ export class ShipmentListPageComponent {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
+    this.refetch();
+  }
+
+  protected onSizeChange(next: number): void {
+    this.size.set(next);
+    this.page.set(1);
     this.refetch();
   }
 

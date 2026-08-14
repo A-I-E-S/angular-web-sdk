@@ -8,6 +8,12 @@ export type {
   ApiResponseModel,
   PaginationMetaModel,
 } from './api-response.model';
+export {
+  DEFAULT_PAGE_SIZE,
+  NOTIFICATION_PAGE_SIZE,
+  PAGINATION_PAGE_SIZES,
+  type PaginationPageSize,
+} from './pagination';
 export type {
   PaginationQueryParamsModel,
   ResourceId,

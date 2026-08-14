@@ -195,7 +195,7 @@ export class ModelsPage {
               name: 'PaginationQueryParamsModel',
               packagePath: 'api',
               description:
-                'Request-side page / size / order — only when ResourceId is null.',
+                'Request-side page / size / order — only when ResourceId is null. SDK default size is 15 (UI: 5 / 15 / 30); notifications use 30.',
               structure: `interface PaginationQueryParamsModel {
   page?: number;
   size?: number;

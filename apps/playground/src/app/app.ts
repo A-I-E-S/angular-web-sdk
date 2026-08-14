@@ -17,7 +17,12 @@ import {
   UserService,
 } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
-import type { NotificationModel, ShippingMode, UserModel } from '@aies/aies-models';
+import {
+  NOTIFICATION_PAGE_SIZE,
+  type NotificationModel,
+  type ShippingMode,
+  type UserModel,
+} from '@aies/aies-models';
 import { ThemeService } from '@aies/aies-theme';
 import {
   type AiesMenuItem,
@@ -55,8 +60,6 @@ import { PlaygroundAccessTokenComponent } from './shared/playground-access-token
   styleUrl: './app.css',
 })
 export class App {
-  private static readonly NOTIFICATION_PAGE_SIZE = 100;
-
   private readonly theme = inject(ThemeService);
   private readonly shipping = inject(ShippingModeService);
   private readonly auth = inject(AuthTokenService);
@@ -88,7 +91,7 @@ export class App {
           return this.notificationsApi
             .readPage({
               page: 1,
-              size: App.NOTIFICATION_PAGE_SIZE,
+              size: NOTIFICATION_PAGE_SIZE,
               order: 'desc',
             })
             .pipe(
@@ -122,7 +125,7 @@ export class App {
 
   protected loadNotificationPage = (page: number) =>
     this.notificationsApi
-      .readPage({ page, size: App.NOTIFICATION_PAGE_SIZE, order: 'desc' })
+      .readPage({ page, size: NOTIFICATION_PAGE_SIZE, order: 'desc' })
       .pipe(
         map(
           (res): NotificationPageResult => ({

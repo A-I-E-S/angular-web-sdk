@@ -77,7 +77,10 @@ import type {
   PaginationQueryParamsModel,
   ResourceId,
 } from '@aies/aies-models';
-import { PaginationComponent } from '@aies/aies-ui';
+import {
+  DEFAULT_PAGE_SIZE,
+  PaginationComponent,
+} from '@aies/aies-ui';
 import { firstValueFrom } from 'rxjs';
 
 interface Shipment {
@@ -90,7 +93,11 @@ interface Shipment {
   imports: [PaginationComponent],
   template: \`
     @if (meta(); as pager) {
-      <aies-pagination [meta]="pager" (pageChange)="onPageChange($event)" />
+      <aies-pagination
+        [meta]="pager"
+        (pageChange)="onPageChange($event)"
+        (sizeChange)="onSizeChange($event)"
+      />
     }
   \`,
 })
@@ -101,12 +108,13 @@ export class ShipmentListComponent {
   protected readonly rows = signal<Shipment[]>([]);
 
   protected readonly page = signal(1);
+  protected readonly size = signal(DEFAULT_PAGE_SIZE);
 
   async loadPage(): Promise<void> {
     const listId: ResourceId = null;
     const query: PaginationQueryParamsModel = {
       page: this.page(),
-      size: 20,
+      size: this.size(),
       order: '-createdAt',
     };
 
@@ -125,6 +133,12 @@ export class ShipmentListComponent {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
+    void this.loadPage();
+  }
+
+  protected onSizeChange(next: number): void {
+    this.size.set(next);
+    this.page.set(1);
     void this.loadPage();
   }
 }
@@ -190,7 +204,7 @@ export class ShipmentAsyncListComponent {
 
     try {
       const res = await firstValueFrom(
-        this.api.getResource<Shipment[]>('shipments', null, { page: 1, size: 20 }),
+        this.api.getResource<Shipment[]>('shipments', null, { page: 1 }),
       );
       if (!res.success || res.data === null) {
         throw new Error(res.message ?? 'Fetch failed.');

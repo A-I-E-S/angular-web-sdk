@@ -7,7 +7,7 @@
  *
  * | Value | Meaning | Path | Pagination |
  * |-------|---------|------|------------|
- * | `null` | Paginated page (size from `api.paginate.*.pageSize` unless overridden) | `{basePath}` | `page` / `size` / `order` apply |
+ * | `null` | Paginated page (SDK default {@link DEFAULT_PAGE_SIZE} `15` unless overridden) | `{basePath}` | `page` / `size` / `order` apply |
  * | `'all'` | Full dump, not paginated | `{basePath}/all` | ignored |
  * | `number` | Single matching record | `{basePath}/{id}` | ignored |
  *
@@ -38,9 +38,9 @@ export interface PaginationQueryParamsModel {
   page?: number;
 
   /**
-   * Page size override.
-   * Omitted when the caller accepts the backend's configured default
-   * (e.g. `api.paginate.<resource>.pageSize`).
+   * Page size override. SDK paginated calls default to
+   * {@link DEFAULT_PAGE_SIZE} (`15`) when omitted. Allowed UI sizes:
+   * {@link PAGINATION_PAGE_SIZES} (`5`, `15`, `30`).
    */
   size?: number;
 

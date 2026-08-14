@@ -76,6 +76,9 @@ describe('NotificationService', () => {
     );
 
     service.readPage({ page: 1, size: 10 }).subscribe((res) => {
+      expect(getMock).toHaveBeenCalledWith(NOTIFICATION_READ_PATH, {
+        params: { page: 1, size: 10 },
+      });
       expect(res.data).toHaveLength(1);
       expect(res.data?.[0]?.id).toBe(wireRow.id);
       expect(res.pagination).toEqual({
@@ -85,6 +88,15 @@ describe('NotificationService', () => {
         total_pages: 59,
         has_next_page: true,
         has_previous_page: false,
+      });
+      done();
+    });
+  });
+
+  it('readPage defaults size to 30', (done) => {
+    service.readPage({ page: 1 }).subscribe(() => {
+      expect(getMock).toHaveBeenCalledWith(NOTIFICATION_READ_PATH, {
+        params: { page: 1, size: 30 },
       });
       done();
     });

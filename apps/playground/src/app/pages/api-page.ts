@@ -151,7 +151,11 @@ interface ApiServiceGroup {
             <code class="font-mono">page</code> /
             <code class="font-mono">size</code> /
             <code class="font-mono">order</code>. Page size defaults to
-            <code class="font-mono">api.paginate.*.pageSize</code> when omitted.
+            <code class="font-mono">15</code> when omitted (UI sizes:
+            <code class="font-mono">5</code> /
+            <code class="font-mono">15</code> /
+            <code class="font-mono">30</code>). Notifications default to
+            <code class="font-mono">30</code>.
             Bind <code class="font-mono">res.pagination</code> to
             <code class="font-mono">aies-pagination</code>. Shapes:
             <a

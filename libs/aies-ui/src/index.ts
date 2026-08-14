@@ -228,7 +228,13 @@ export {
 } from './lib/table';
 
 // Pagination
-export { PaginationComponent } from './lib/pagination';
+export {
+  DEFAULT_PAGE_SIZE,
+  NOTIFICATION_PAGE_SIZE,
+  PAGINATION_PAGE_SIZES,
+  PaginationComponent,
+  type PaginationPageSize,
+} from './lib/pagination';
 
 /**
  * Re-export so pagination consumers can type `meta` without a separate

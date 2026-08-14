@@ -425,7 +425,7 @@ export class FiltersPage {
       to: '2026-01-31',
       order: 'desc',
       page: 1,
-      size: 20,
+      size: 15,
       values: {
         payment_status: 'paid',
         shipment_status: 'pending',

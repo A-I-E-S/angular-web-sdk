@@ -53,7 +53,7 @@ describe('ProductService', () => {
   it('defaults to paginated /product/read without cache', (done) => {
     service.read().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(PRODUCT_READ_PATH, {
-        params: undefined,
+        params: { size: 15 },
         cacheTtlMs: undefined,
       });
       expect(Array.isArray(res.data)).toBe(true);

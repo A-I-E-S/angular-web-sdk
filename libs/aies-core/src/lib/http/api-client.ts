@@ -17,10 +17,11 @@ import {
   timer,
 } from 'rxjs';
 
-import type {
-  ApiResponseModel,
-  PaginationQueryParamsModel,
-  ResourceId,
+import {
+  DEFAULT_PAGE_SIZE,
+  type ApiResponseModel,
+  type PaginationQueryParamsModel,
+  type ResourceId,
 } from '@aies/aies-models';
 
 import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
@@ -264,7 +265,7 @@ export class ApiClient {
    *
    * @example
    * ```ts
-   * api.getResource<Shipment>('shipments', null, { page: 1, size: 20 })
+   * api.getResource<Shipment>('shipments', null, { page: 1, size: 15 })
    *   .subscribe((res) => console.log(res.data, res.pagination));
    * ```
    */
@@ -325,14 +326,13 @@ export class ApiClient {
       };
 
     // Pagination applies only to the paginated-list shape (id === null).
-    if (id === null && query) {
-      if (query.page !== undefined) {
+    // Size always ships — SDK default is 15 unless the caller overrides.
+    if (id === null) {
+      if (query?.page !== undefined) {
         params['page'] = query.page;
       }
-      if (query.size !== undefined) {
-        params['size'] = query.size;
-      }
-      if (query.order !== undefined) {
+      params['size'] = query?.size ?? DEFAULT_PAGE_SIZE;
+      if (query?.order !== undefined) {
         params['order'] = query.order;
       }
     }
@@ -344,7 +344,7 @@ export class ApiClient {
    * Paginated list — {@link ResourceId} `null`.
    * IDE-friendly alias for `getResource(basePath, null, query)`.
    *
-   * Page size defaults to the backend `api.paginate.*.pageSize` config unless
+   * Page size defaults to {@link DEFAULT_PAGE_SIZE} (`15`) unless
    * `query.size` is set. Bind `res.pagination` to `aies-pagination`.
    *
    * @typeParam T - Element type of the list.

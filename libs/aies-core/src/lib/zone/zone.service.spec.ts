@@ -47,7 +47,7 @@ describe('ZoneService', () => {
   it('defaults to paginated /zone/read/records without cache', (done) => {
     service.read().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(ZONE_READ_PATH, {
-        params: undefined,
+        params: { size: 15 },
         cacheTtlMs: undefined,
       });
       expect(res.data?.[0]?.name).toBe('R');

@@ -54,7 +54,7 @@ describe('WarehouseService', () => {
   it('defaults to paginated /warehouse/read without cache', (done) => {
     service.read().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(WAREHOUSE_READ_PATH, {
-        params: undefined,
+        params: { size: 15 },
         cacheTtlMs: undefined,
       });
       expect(res.data?.[0]?.name).toBe('Test China Fushan');

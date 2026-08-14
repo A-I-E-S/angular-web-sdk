@@ -33,8 +33,8 @@ import { TableColumn, TableSortChange } from './table-column';
  * does not own fetch, filter, or export logic — the host handles those events.
  *
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
- * the host still owns refetch via {@link pageChange}. Rows are never sliced
- * client-side.
+ * the host still owns refetch via {@link pageChange} / {@link sizeChange}. Rows
+ * are never sliced client-side.
  *
  * WHY no loading / error / empty UI: those branches belong on
  * {@link AsyncStateComponent}. This component only renders whatever `rows`
@@ -63,6 +63,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *   (filterClick)="openFilters()"
  *   (exportClick)="exportCsv()"
  *   (pageChange)="onPageChange($event)"
+ *   (sizeChange)="onSizeChange($event)"
  *   [sort]="sort()"
  *   (sortChange)="onSort($event)"
  * >
@@ -299,6 +300,7 @@ import { TableColumn, TableSortChange } from './table-column';
         <aies-pagination
           [meta]="pager"
           (pageChange)="pageChange.emit($event)"
+          (sizeChange)="sizeChange.emit($event)"
         />
       }
     </div>
@@ -370,7 +372,8 @@ export class TableComponent<T = unknown> {
 
   /**
    * When set, embeds {@link PaginationComponent} under the grid. Host still
-   * owns refetch via {@link pageChange} — rows are never sliced here.
+   * owns refetch via {@link pageChange} / {@link sizeChange} — rows are never
+   * sliced here.
    */
   readonly meta = input<PaginationMetaModel | null>(null);
 
@@ -394,6 +397,12 @@ export class TableComponent<T = unknown> {
    * does not change `rows`.
    */
   readonly pageChange = output<number>();
+
+  /**
+   * New page size from the size dropdown. Host should refetch at page 1;
+   * this component does not change `rows`.
+   */
+  readonly sizeChange = output<number>();
 
   /** Projected cell templates keyed by column. */
   private readonly cellDefs = contentChildren(CellDefDirective);

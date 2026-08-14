@@ -38,7 +38,7 @@ describe('resource-path helpers', () => {
       { include: 'states' },
     );
 
-    expect(buildResourceQueryParams(null)).toBeUndefined();
+    expect(buildResourceQueryParams(null)).toEqual({ size: 15 });
     expect(buildResourceQueryParams('all', {})).toBeUndefined();
   });
 

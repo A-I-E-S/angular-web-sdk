@@ -11,6 +11,7 @@ import {
   type ChipVariant,
   ContentStackComponent,
   CopyButtonComponent,
+  DEFAULT_PAGE_SIZE,
   emptyFilterState,
   FilterDrawerService,
   RowDetailDefDirective,
@@ -87,8 +88,6 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
   };
 });
 
-const PAGE_SIZE = 6;
-
 /**
  *
  */
@@ -152,6 +151,7 @@ const PAGE_SIZE = 6;
             (filterClick)="openFilters()"
             (exportClick)="onExport()"
             (pageChange)="onPageChange($event)"
+            (sizeChange)="onSizeChange($event)"
             (rowExpandChange)="onRowExpand($event)"
           >
             <ng-template aiesCellDef="reference" let-row>
@@ -259,6 +259,7 @@ export class TablePage {
   private readonly filterDrawer = inject(FilterDrawerService);
 
   protected readonly page = signal(1);
+  protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly listDemo = signal<'ready' | 'loading' | 'empty' | 'error'>('ready');
   protected readonly lastRowAction = signal<string | null>(null);
@@ -272,7 +273,11 @@ export class TablePage {
     const state = this.filterState();
     const params = toFilterParams(state, trackShipmentsFilterConfig);
     return Object.keys(params).filter(
-      (key) => key !== 'page' && key !== 'per_page' && key !== 'order',
+      (key) =>
+        key !== 'page' &&
+        key !== 'per_page' &&
+        key !== 'size' &&
+        key !== 'order',
     ).length;
   });
 
@@ -342,17 +347,19 @@ export class TablePage {
   });
 
   protected readonly pageRows = computed(() => {
-    const start = (this.page() - 1) * PAGE_SIZE;
-    return this.sortedRows().slice(start, start + PAGE_SIZE);
+    const size = this.pageSize();
+    const start = (this.page() - 1) * size;
+    return this.sortedRows().slice(start, start + size);
   });
 
   protected readonly meta = computed((): PaginationMetaModel => {
+    const per_page = this.pageSize();
     const total_items = this.sortedRows().length;
-    const total_pages = Math.max(1, Math.ceil(total_items / PAGE_SIZE));
+    const total_pages = Math.max(1, Math.ceil(total_items / per_page));
     const current_page = Math.min(this.page(), total_pages);
     return {
       current_page,
-      per_page: PAGE_SIZE,
+      per_page,
       total_items,
       total_pages,
       has_next_page: current_page < total_pages,
@@ -408,6 +415,11 @@ export class TablePage {
 
   protected onPageChange(next: number): void {
     this.page.set(next);
+  }
+
+  protected onSizeChange(next: number): void {
+    this.pageSize.set(next);
+    this.page.set(1);
   }
 
   protected openFilters(): void {

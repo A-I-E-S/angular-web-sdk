@@ -318,7 +318,7 @@ const state: FilterStateModel = {
   to: '2026-01-31',
   order: 'desc',
   page: 1,
-  size: 20,
+  size: 15,
   values: {
     payment_status: 'paid',
     shipment_status: 'pending',
@@ -334,7 +334,7 @@ const params = toFilterParams(state, trackShipmentsFilterConfig);
 //   to: '2026-01-31',
 //   order: 'desc',
 //   page: 1,
-//   size: 20,
+//   size: 15,
 //   filterColumn: 'payment_status,shipment_status,tracking_number',
 //   filterValue: 'paid,pending,TN-9',
 // }

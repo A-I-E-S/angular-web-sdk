@@ -54,7 +54,7 @@ describe('ShipmentMethodService', () => {
   it('defaults to paginated /shipment_method/read without cache', (done) => {
     service.read().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(SHIPMENT_METHOD_READ_PATH, {
-        params: undefined,
+        params: { size: 15 },
         cacheTtlMs: undefined,
       });
       expect(res.success).toBe(true);

@@ -266,6 +266,7 @@ import {
   NotificationService,
 } from '@aies/aies-core';
 import type { NotificationModel } from '@aies/aies-models';
+import { NOTIFICATION_PAGE_SIZE } from '@aies/aies-models';
 import type { AiesNotification, NotificationPageResult } from '@aies/aies-ui';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 
@@ -283,8 +284,6 @@ import { catchError, map, of, switchMap, tap } from 'rxjs';
   \`,
 })
 export class HeaderNotificationsComponent {
-  private static readonly PAGE_SIZE = 100;
-
   private readonly auth = inject(AuthTokenService);
   private readonly notificationsApi = inject(NotificationService);
 
@@ -292,7 +291,7 @@ export class HeaderNotificationsComponent {
 
   protected loadNotificationPage = (page: number) =>
     this.notificationsApi
-      .readPage({ page, size: HeaderNotificationsComponent.PAGE_SIZE, order: 'desc' })
+      .readPage({ page, size: NOTIFICATION_PAGE_SIZE, order: 'desc' })
       .pipe(
         map(
           (res): NotificationPageResult => ({
@@ -329,7 +328,7 @@ export class HeaderNotificationsComponent {
           return this.notificationsApi
             .readPage({
               page: 1,
-              size: HeaderNotificationsComponent.PAGE_SIZE,
+              size: NOTIFICATION_PAGE_SIZE,
               order: 'desc',
             })
             .pipe(

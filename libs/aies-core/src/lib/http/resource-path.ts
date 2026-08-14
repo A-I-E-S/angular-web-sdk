@@ -1,6 +1,7 @@
-import type {
-  PaginationQueryParamsModel,
-  ResourceId,
+import {
+  DEFAULT_PAGE_SIZE,
+  type PaginationQueryParamsModel,
+  type ResourceId,
 } from '@aies/aies-models';
 
 /**
@@ -46,6 +47,9 @@ export function buildResourcePath(
  * Pagination fields (`page`, `size`, `order`) are included only when
  * `id === null`. Other keys are always passed through.
  *
+ * Paginated lists (`id === null`) always send `size`, defaulting to
+ * {@link DEFAULT_PAGE_SIZE} (`15`) when omitted.
+ *
  * @param id - Active resource id mode.
  * @param params - Optional pagination + filter bag.
  * @returns Params object for {@link ApiClient}, or `undefined` when empty.
@@ -54,11 +58,7 @@ export function buildResourceQueryParams(
   id: ResourceId,
   params?: ResourceQueryParams,
 ): Record<string, string | number | boolean | null | undefined> | undefined {
-  if (params == null) {
-    return undefined;
-  }
-
-  const { page, size, order, ...rest } = params;
+  const { page, size, order, ...rest } = params ?? {};
   const out: Record<string, string | number | boolean | null | undefined> = {
     ...rest,
   };
@@ -67,9 +67,7 @@ export function buildResourceQueryParams(
     if (page !== undefined) {
       out['page'] = page;
     }
-    if (size !== undefined) {
-      out['size'] = size;
-    }
+    out['size'] = size ?? DEFAULT_PAGE_SIZE;
     if (order !== undefined) {
       out['order'] = order;
     }

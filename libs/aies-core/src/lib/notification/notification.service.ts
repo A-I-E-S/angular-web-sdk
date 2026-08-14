@@ -2,10 +2,11 @@ import { inject, Injectable } from '@angular/core';
 
 import { map, Observable } from 'rxjs';
 
-import type {
-  ApiResponseModel,
-  NotificationModel,
-  ResourceId,
+import {
+  NOTIFICATION_PAGE_SIZE,
+  type ApiResponseModel,
+  type NotificationModel,
+  type ResourceId,
 } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
@@ -63,9 +64,14 @@ export class NotificationService {
     id: ResourceId = null,
     params?: NotificationReadParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
+    const query: NotificationReadParams | undefined =
+      id === null
+        ? { ...params, size: params?.size ?? NOTIFICATION_PAGE_SIZE }
+        : params;
+
     return this.api
       .get<unknown>(buildResourcePath(NOTIFICATION_READ_PATH, id), {
-        params: buildResourceQueryParams(id, params),
+        params: buildResourceQueryParams(id, query),
       })
       .pipe(
         map((res) => ({
@@ -82,6 +88,7 @@ export class NotificationService {
 
   /**
    * Paginated page — alias for {@link read}(`null`, params).
+   * Size defaults to {@link NOTIFICATION_PAGE_SIZE} (`30`).
    * @param params
    */
   readPage(

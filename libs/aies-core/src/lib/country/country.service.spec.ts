@@ -52,7 +52,7 @@ describe('CountryService', () => {
   it('defaults to paginated /public/country/read without cache', (done) => {
     service.read().subscribe((res) => {
       expect(getMock).toHaveBeenCalledWith(COUNTRY_READ_PATH, {
-        params: undefined,
+        params: { size: 15 },
         cacheTtlMs: undefined,
       });
       expect(res.success).toBe(true);
