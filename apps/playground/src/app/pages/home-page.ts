@@ -93,11 +93,11 @@ interface CatalogCard {
           @for (card of cards; track card.path) {
             <a
               [routerLink]="card.path"
-              class="group flex flex-col gap-4 rounded-xl border border-border bg-white p-5 no-underline transition duration-200 hover:-translate-y-0.5 hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
+              class="flex flex-col gap-4 rounded-xl border border-border bg-white p-5 no-underline transition-colors hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
             >
               <div class="flex items-center justify-between">
                 <span
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-welcome text-ink transition group-hover:scale-105 dark:bg-ink-950 dark:text-white"
+                  class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-welcome text-ink dark:bg-ink-950 dark:text-white"
                   [class]="modeColor.classes().bgSubtle"
                 >
                   <aies-icon [name]="card.icon" [size]="20" />
@@ -212,8 +212,8 @@ export class HomePage {
     },
     {
       path: '/usecases/shipment',
-      title: 'Back button',
-      blurb: 'Ships with the app shell — no extra implementation. Appears on child routes only.',
+      title: 'Back button and Breadcrumbs',
+      blurb: 'Both ship with the app shell. Back appears on child routes; breadcrumbs follow the nav trail.',
       icon: 'truck',
       group: 'Use cases',
     },

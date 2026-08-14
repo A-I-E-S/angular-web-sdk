@@ -6,7 +6,8 @@
 >
   <div aiesAppShellHeader>
     <aies-app-shell-header
-      userName="Playground"
+      [userName]="displayName()"
+      [greetingName]="greetingName()"
       [userMenuItems]="accountMenu"
       [notifications]="notifications()"
       [onNotificationMarkRead]="markNotificationRead"

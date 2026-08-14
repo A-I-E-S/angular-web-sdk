@@ -14,3 +14,8 @@ export {
   AppShellHeaderStartDirective,
 } from './app-shell-header.component';
 export { AppShellHeaderSlotDirective } from './app-shell-header-slot.directive';
+export {
+  type HeaderGreeting,
+  headerGreetingFirstName,
+  pickHeaderGreeting,
+} from './header-greeting.util';

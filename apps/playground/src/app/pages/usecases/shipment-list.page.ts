@@ -34,13 +34,13 @@ import { USECASE_SHIPMENTS, type UsecaseShipment } from './shipment-data';
     <div class="pg-page-enter flex flex-col gap-10">
       <app-page-header
         eyebrow="Use cases"
-        title="Back button"
-        description="You do not implement this control. It ships with aies-app-shell, reads the Angular route tree, and appears only when the current page is a child of a parent route."
+        title="Back button and Breadcrumbs"
+        description="You do not implement these. They ship with aies-app-shell: breadcrumbs follow the nav trail, and Back appears only when the current page is a child of a parent route."
       />
 
       <app-demo-section
         title="Example: list to detail"
-        hint="Open ⋯ → View details. Back shows on the detail page automatically. Paste that URL in a new tab — it still appears and still returns here."
+        hint="Open ⋯ → View details. Back and breadcrumbs show on the detail page automatically. Paste that URL in a new tab — Back still appears and still returns here."
         badge="built-in"
         [code]="routeCode"
       >

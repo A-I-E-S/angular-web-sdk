@@ -132,6 +132,9 @@ export class AppShellComponent {
   /** Built-in header account name. */
   readonly userName = input<string | null>(null);
 
+  /** Given or full name for the built-in header greeting. */
+  readonly greetingName = input<string | null>(null);
+
   /** Built-in header avatar image. */
   readonly userAvatarSrc = input<string | null>(null);
 

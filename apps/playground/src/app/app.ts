@@ -14,10 +14,10 @@ import {
   mapNotificationInboxItem,
   NotificationService,
   ShippingModeService,
+  UserService,
 } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
-import type { ShippingMode } from '@aies/aies-models';
-import type { NotificationModel } from '@aies/aies-models';
+import type { NotificationModel, ShippingMode, UserModel } from '@aies/aies-models';
 import { ThemeService } from '@aies/aies-theme';
 import {
   type AiesMenuItem,
@@ -61,12 +61,22 @@ export class App {
   private readonly shipping = inject(ShippingModeService);
   private readonly auth = inject(AuthTokenService);
   private readonly notificationsApi = inject(NotificationService);
+  private readonly usersApi = inject(UserService);
   private readonly router = inject(Router);
 
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
   protected readonly navCollapsed = signal(false);
   protected readonly notifications = signal<AiesNotification[]>([]);
+  protected readonly profile = signal<UserModel | null>(null);
+
+  protected readonly greetingName = computed(
+    () => this.profile()?.first_name || this.profile()?.name || null,
+  );
+
+  protected readonly displayName = computed(
+    () => this.profile()?.name || this.greetingName() || 'Playground',
+  );
 
   constructor() {
     toObservable(this.auth.token)
@@ -93,6 +103,21 @@ export class App {
         takeUntilDestroyed(),
       )
       .subscribe((items) => this.notifications.set(items));
+
+    toObservable(this.auth.token)
+      .pipe(
+        switchMap((token) => {
+          if (!token) {
+            return of(null as UserModel | null);
+          }
+          return this.usersApi.me().pipe(
+            map((res) => (res.success && res.data ? res.data : null)),
+            catchError(() => of(null as UserModel | null)),
+          );
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe((user) => this.profile.set(user));
   }
 
   protected loadNotificationPage = (page: number) =>
@@ -230,8 +255,8 @@ export class App {
       icon: 'truck',
       children: [
         {
-          id: 'back-button',
-          label: 'Back button',
+          id: 'back-breadcrumbs',
+          label: 'Back button and Breadcrumbs',
           routerLink: '/usecases/shipment',
         },
       ],

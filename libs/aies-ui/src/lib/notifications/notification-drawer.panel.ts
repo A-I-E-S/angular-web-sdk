@@ -195,7 +195,7 @@ const SCROLL_PREFETCH_PX = 120;
                     }
 
                     @if (!item.read && canMarkRead()) {
-                      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <div class="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
                         @if (item.link) {
                           <a
                             [href]="viewHref(item)"
@@ -222,20 +222,22 @@ const SCROLL_PREFETCH_PX = 120;
                         </button>
                       </div>
                     } @else if (item.link) {
-                      <a
-                        [href]="viewHref(item)"
-                        [class]="viewLinkClass()"
-                        [class.pointer-events-none]="markingId() === item.id"
-                        [class.opacity-50]="markingId() === item.id"
-                        [attr.target]="item.externalLink ? '_blank' : null"
-                        [attr.rel]="item.externalLink ? 'noopener noreferrer' : null"
-                        (click)="onViewClick($event, item)"
-                      >
-                        {{ markingId() === item.id ? 'Opening…' : 'View' }}
-                        @if (item.externalLink) {
-                          <aies-icon name="external-link" [size]="12" />
-                        }
-                      </a>
+                      <div class="flex items-center justify-end">
+                        <a
+                          [href]="viewHref(item)"
+                          [class]="viewLinkClass()"
+                          [class.pointer-events-none]="markingId() === item.id"
+                          [class.opacity-50]="markingId() === item.id"
+                          [attr.target]="item.externalLink ? '_blank' : null"
+                          [attr.rel]="item.externalLink ? 'noopener noreferrer' : null"
+                          (click)="onViewClick($event, item)"
+                        >
+                          {{ markingId() === item.id ? 'Opening…' : 'View' }}
+                          @if (item.externalLink) {
+                            <aies-icon name="external-link" [size]="12" />
+                          }
+                        </a>
+                      </div>
                     }
                   </div>
                 </article>

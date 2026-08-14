@@ -23,8 +23,8 @@ import type { AiesNavItem } from '../navigation/nav-item';
 import type { AiesSideNavItem } from '../navigation/side-nav';
 
 /**
- * Content chrome above the app-shell body: compact Back on the left, breadcrumb
- * trail beside it, and the page title on the row below.
+ * Content chrome above the app-shell body: Back, breadcrumbs, then the page
+ * title when the shell provides one.
  */
 @Component({
   selector: 'aies-app-shell-content-header',
@@ -32,44 +32,46 @@ import type { AiesSideNavItem } from '../navigation/side-nav';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AiesIconComponent, BreadcrumbComponent, RouterLink],
   template: `
-    <div class="mb-6 flex flex-col gap-2">
-      @if (showBackButton() || breadcrumbs().length) {
-        <div class="flex min-w-0 items-center gap-2 sm:gap-3">
-          @if (showBackButton()) {
-            <a
-              class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-border text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-white/15 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-              [attr.aria-label]="backLabel()"
-              [routerLink]="backTarget()!.routerLink"
-              [queryParams]="backTarget()!.queryParams"
-              [fragment]="backTarget()!.fragment"
-            >
-              <aies-icon name="chevron-left" [size]="18" aria-hidden="true" />
-            </a>
-          }
+    @if (showBackButton() || breadcrumbs().length || title()) {
+      <div class="mb-6 flex flex-col gap-2">
+        @if (showBackButton() || breadcrumbs().length) {
+          <div class="flex min-w-0 items-center gap-2 sm:gap-3">
+            @if (showBackButton()) {
+              <a
+                class="inline-flex size-8 shrink-0 items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                [attr.aria-label]="backLabel()"
+                [routerLink]="backTarget()!.routerLink"
+                [queryParams]="backTarget()!.queryParams"
+                [fragment]="backTarget()!.fragment"
+              >
+                <aies-icon name="chevron-left" [size]="18" aria-hidden="true" />
+              </a>
+            }
 
-          @if (breadcrumbs().length) {
-            <div
-              class="min-w-0 flex-1"
-              [class.border-l]="showBackButton()"
-              [class.pl-2]="showBackButton()"
-              [class.sm:pl-3]="showBackButton()"
-              [class.border-border]="showBackButton()"
-              [class.dark:border-white/10]="showBackButton()"
-            >
-              <aies-breadcrumb [items]="breadcrumbs()" />
-            </div>
-          }
-        </div>
-      }
+            @if (breadcrumbs().length) {
+              <div
+                class="min-w-0 flex-1"
+                [class.border-l]="showBackButton()"
+                [class.pl-2]="showBackButton()"
+                [class.sm:pl-3]="showBackButton()"
+                [class.border-border]="showBackButton()"
+                [class.dark:border-white/10]="showBackButton()"
+              >
+                <aies-breadcrumb [items]="breadcrumbs()" />
+              </div>
+            }
+          </div>
+        }
 
-      @if (title()) {
-        <h1
-          class="m-0 text-heading-3 font-bold text-ink dark:text-white"
-        >
-          {{ title() }}
-        </h1>
-      }
-    </div>
+        @if (title() && breadcrumbs().length === 0 && !showBackButton()) {
+          <h1
+            class="m-0 text-heading-3 font-bold text-ink dark:text-white"
+          >
+            {{ title() }}
+          </h1>
+        }
+      </div>
+    }
   `,
 })
 export class AppShellContentHeaderComponent {

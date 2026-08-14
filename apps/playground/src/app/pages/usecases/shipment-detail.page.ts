@@ -59,8 +59,8 @@ import { findUsecaseShipment } from './shipment-data';
         </dl>
 
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          The chevron above is provided by the SDK — this page does not add a
-          Back button. Paste
+          The chevron and breadcrumbs above are provided by the SDK — this page
+          does not add them. Paste
           <code class="rounded bg-background-welcome px-1 py-0.5 dark:bg-ink-950">
             /usecases/shipment/{{ row.reference }}
           </code>

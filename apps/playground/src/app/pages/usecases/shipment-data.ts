@@ -1,5 +1,5 @@
 /**
- * Sample shipment row for the Back button use case.
+ * Sample shipment row for the Back button and Breadcrumbs use case.
  */
 export interface UsecaseShipment {
   reference: string;
@@ -10,7 +10,7 @@ export interface UsecaseShipment {
   updated: string;
 }
 
-/** Demo rows shown on the Back button list. */
+/** Demo rows shown on the Back button and Breadcrumbs list. */
 export const USECASE_SHIPMENTS: UsecaseShipment[] = [
   {
     reference: 'STN-1042',
