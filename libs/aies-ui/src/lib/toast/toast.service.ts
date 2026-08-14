@@ -13,8 +13,6 @@ import {
 } from './toast.types';
 import { ToastHostComponent } from './toast-host.component';
 
-const MAX_VISIBLE = 4;
-
 /**
  * Imperative toast stack for AIES apps.
  *
@@ -23,6 +21,7 @@ const MAX_VISIBLE = 4;
  * - **info / success** — shorter auto-dismiss (4.5s)
  * - Identical toasts collapse with a count; close removes the outermost copy,
  *   with Expand / Close all when stacked
+ * - The host caps to the viewport and scrolls when the list would overflow
  *
  * Also implements {@link AiesHttpToastHandler} for {@link withToast} HTTP tagging.
  *
@@ -46,6 +45,15 @@ export class ToastService implements AiesHttpToastHandler {
   readonly hasStacks = computed(() =>
     this.itemsSignal().some((t) => t.count > 1),
   );
+
+  /**
+   * Host toolbar (Close all, plus Expand/Collapse all when stacked).
+   * Shown for a stacked group or more than one toast in the list.
+   */
+  readonly showHostActions = computed(() => {
+    const items = this.itemsSignal();
+    return items.length > 1 || items.some((t) => t.count > 1);
+  });
 
   /**
    * True when every stacked group (count &gt; 1) is expanded.
@@ -78,6 +86,7 @@ export class ToastService implements AiesHttpToastHandler {
         'z-[1000]',
         '!w-[min(100vw-2rem,24rem)]',
         'max-w-[min(100vw-2rem,24rem)]',
+        '!max-h-[calc(100dvh-2rem)]',
       ],
     });
     ref.attach(new ComponentPortal(ToastHostComponent, null, this.injector));
@@ -137,15 +146,7 @@ export class ToastService implements AiesHttpToastHandler {
       createdAt: Date.now(),
     };
     this.fingerprints.set(fp, id);
-    let next = [item, ...this.itemsSignal()];
-    if (next.length > MAX_VISIBLE) {
-      const dropped = next.slice(MAX_VISIBLE);
-      next = next.slice(0, MAX_VISIBLE);
-      for (const d of dropped) {
-        this.teardown(d.id, false);
-      }
-    }
-    this.itemsSignal.set(next);
+    this.itemsSignal.set([item, ...this.itemsSignal()]);
     this.armTimer(item);
     return id;
   }
@@ -206,7 +207,7 @@ export class ToastService implements AiesHttpToastHandler {
       return;
     }
     if (item.count <= 1) {
-      this.teardown(id, true);
+      this.teardown(id);
       return;
     }
     const nextCount = item.count - 1;
@@ -228,7 +229,7 @@ export class ToastService implements AiesHttpToastHandler {
    * @param id - From {@link show}.
    */
   dismiss(id: string): void {
-    this.teardown(id, true);
+    this.teardown(id);
   }
 
   /**
@@ -312,7 +313,7 @@ export class ToastService implements AiesHttpToastHandler {
     );
   }
 
-  private teardown(id: string, updateList: boolean): void {
+  private teardown(id: string): void {
     this.clearTimer(id);
     for (const [fp, toastId] of this.fingerprints) {
       if (toastId === id) {
@@ -320,9 +321,7 @@ export class ToastService implements AiesHttpToastHandler {
         break;
       }
     }
-    if (updateList) {
-      this.itemsSignal.update((list) => list.filter((t) => t.id !== id));
-    }
+    this.itemsSignal.update((list) => list.filter((t) => t.id !== id));
   }
 
   private clearTimer(id: string): void {

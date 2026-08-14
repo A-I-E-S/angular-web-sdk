@@ -41,7 +41,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Variants"
-        hint="info / success auto-dismiss ~4.5s; warning ~8s; error stays until closed. Hover pauses the timer."
+        hint="info / success auto-dismiss ~4.5s; warning ~8s; error stays until closed. Hover pauses the timer. A long stack scrolls inside the corner instead of running off-screen."
         [code]="variantsCode"
       >
         <div class="flex flex-wrap gap-2">
@@ -54,6 +54,9 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
           </button>
           <button aies-button type="button" variant="danger" (click)="showError()">
             Error
+          </button>
+          <button aies-button type="button" variant="secondary" (click)="showManyErrors()">
+            Several errors
           </button>
           <button aies-button type="button" variant="ghost" (click)="clearAll()">
             Clear all
@@ -117,6 +120,21 @@ export class ToastPage {
 
   protected showError(): void {
     this.toast.error('Could not reach the carrier API.', 'Request failed');
+  }
+
+  protected showManyErrors(): void {
+    for (const name of [
+      'FedEx',
+      'UPS',
+      'DHL',
+      'USPS',
+      'OnTrac',
+      'LaserShip',
+      'Amazon',
+      'XPO',
+    ]) {
+      this.toast.error(`Could not reach ${name}.`, 'Request failed');
+    }
   }
 
   protected clearAll(): void {
