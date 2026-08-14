@@ -105,6 +105,21 @@ describe('filter-options', () => {
       });
     });
 
+    it('resolveField fetches one SDK catalog', (done) => {
+      resolver
+        .resolveField({
+          key: 'warehouse_id',
+          label: 'Warehouse',
+          type: 'select',
+          optionsSource: 'warehouses',
+        })
+        .subscribe((options) => {
+          expect(warehouseReadAll).toHaveBeenCalledTimes(1);
+          expect(options).toEqual([{ value: '1', label: 'Lagos Hub' }]);
+          done();
+        });
+    });
+
     it('returns empty object when no resolvable selects', (done) => {
       resolver
         .resolve({

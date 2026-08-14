@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { forkJoin, map, Observable, of } from 'rxjs';
 
 import type {
+  FilterFieldModel,
   FilterOptionsSource,
   ModuleFilterConfigModel,
 } from '@aies/aies-models';
@@ -12,6 +13,7 @@ import { WarehouseService } from '../warehouse/warehouse.service';
 import {
   collectResolvableSelectFields,
   type FilterOptionLists,
+  type FilterSelectOption,
   mapShipmentMethodFilterOptions,
   mapWarehouseFilterOptions,
 } from './filter-options.mapper';
@@ -30,21 +32,16 @@ const SDK_FILTER_OPTIONS_SOURCES = new Set<FilterOptionsSource>([
 /**
  * Resolves filter drawer select options from built-in SDK catalog services.
  *
- * Walks {@link ModuleFilterConfigModel.fields}, fetches each distinct
- * `optionsSource` once, and returns `optionLists` keyed by **field.key**
- * (what {@link FilterDrawerService} expects).
+ * Prefer opening {@link FilterDrawerService} immediately — the drawer lazy-loads
+ * per field via {@link resolveField}. {@link resolve} remains for bulk prefetch.
  *
  * @example
  * ```ts
  * const resolver = inject(FilterOptionsResolver);
  *
- * resolver.resolve(updateShipmentsFilterConfig).subscribe((lists) => {
- *   filterDrawer.open({
- *     config: updateShipmentsFilterConfig,
- *     optionLists: mergeFilterOptionLists(lists, {
- *       shipment_manifest_id: hostManifests,
- *     }),
- *   });
+ * filterDrawer.open({
+ *   config: updateShipmentsFilterConfig,
+ *   optionLists: { shipment_manifest_id: hostManifests },
  * });
  * ```
  */
@@ -54,11 +51,27 @@ export class FilterOptionsResolver {
   private readonly shipmentMethods = inject(ShipmentMethodService);
 
   /**
-   * Resolve all SDK-backed select options for a module config.
+   * Resolve SDK-backed options for one select field (lazy drawer load).
    *
-   * Uses {@link WarehouseService.readAll} for `warehouses` and
-   * {@link ShipmentMethodService.readAll} for `shipmentMethods`.
-   * Unknown or unmapped sources are omitted (host must supply via merge).
+   * @param field - Filter schema field with `optionsSource`.
+   * @returns Select rows or an error when the catalog HTTP call fails.
+   */
+  resolveField(field: FilterFieldModel): Observable<FilterSelectOption[]> {
+    if (
+      field.type !== 'select' ||
+      field.optionsSource == null ||
+      field.optionsSource === 'static'
+    ) {
+      return of(this.staticFieldOptions(field));
+    }
+    if (!SDK_FILTER_OPTIONS_SOURCES.has(field.optionsSource)) {
+      return of([]);
+    }
+    return this.fetchSource(field.optionsSource);
+  }
+
+  /**
+   * Resolve all SDK-backed select options for a module config (bulk prefetch).
    *
    * @param config - Module filter schema.
    * @returns `optionLists` keyed by field.key.
@@ -114,9 +127,16 @@ export class FilterOptionsResolver {
     );
   }
 
+  private staticFieldOptions(field: FilterFieldModel): FilterSelectOption[] {
+    return (field.options ?? []).map((o) => ({
+      value: o.value,
+      label: o.label,
+    }));
+  }
+
   private fetchSource(
     source: FilterOptionsSource,
-  ): Observable<ReturnType<typeof mapWarehouseFilterOptions>> {
+  ): Observable<FilterSelectOption[]> {
     switch (source) {
       case 'warehouses':
         return this.warehouses.readAll().pipe(

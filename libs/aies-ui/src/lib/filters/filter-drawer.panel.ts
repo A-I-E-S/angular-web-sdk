@@ -7,9 +7,11 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
-import { isObservable, type Observable,take } from 'rxjs';
+import { isObservable, type Observable, take } from 'rxjs';
 
+import { FilterOptionsResolver } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import type {
   FilterFieldModel,
@@ -122,6 +124,7 @@ import type {
             </div>
             <aies-select
               label=""
+              [searchable]="true"
               [options]="dateFieldOptions()"
               [selected]="selectedDateField()"
               (selectedChange)="onDateFieldChange($event)"
@@ -146,6 +149,7 @@ import type {
         @if (config.sort; as sortCfg) {
           <aies-select
             label="Sort"
+            [searchable]="sortOptions().length > 6"
             [options]="sortOptions()"
             [selected]="selectedSort()"
             (selectedChange)="onSortChange($event)"
@@ -157,7 +161,7 @@ import type {
             label="Filter by"
             placeholder="Select fields…"
             [multiple]="true"
-            [searchable]="config.fields.length > 6"
+            [searchable]="true"
             [options]="filterByOptions()"
             [selected]="selectedFilterBy()"
             (selectedChange)="onFilterByChange($event)"
@@ -226,9 +230,14 @@ import type {
                   <!-- Label already shown in the section header — avoid double label. -->
                   <aies-select
                     label=""
+                    [searchable]="true"
                     [placeholder]="field.placeholder ?? 'Select…'"
                     [options]="selectOptionsFor(field)"
                     [selected]="selectedForField(field)"
+                    [error]="optionErrorFor(field.key)"
+                    [loading]="optionLoadingFor(field.key)"
+                    [retrying]="optionLoadingFor(field.key)"
+                    (retry)="retryFieldOptions(field.key)"
                     (selectedChange)="onSelectChange(field.key, $event)"
                   />
                 }
@@ -282,6 +291,7 @@ export class FilterDrawerPanel {
   protected readonly data = inject<FilterDrawerData>(OVERLAY_DATA);
   protected readonly ref = inject(AiesOverlayRef<FilterDrawerResult>);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly filterOptions = inject(FilterOptionsResolver);
 
   protected readonly config = this.data.config;
   protected readonly title = computed(
@@ -307,6 +317,25 @@ export class FilterDrawerPanel {
       (k) => !!this.data.state?.values?.[k],
     ),
   );
+
+  /** Loaded async / host option rows keyed by field.key. */
+  protected readonly optionLists = signal<
+    Record<string, FilterOptionModel[]>
+  >(this.seedOptionLists());
+
+  /** Field-level catalog fetch errors (select error slot). */
+  protected readonly optionErrors = signal<Record<string, string | null>>({});
+
+  /** Fields currently loading SDK catalogs. */
+  protected readonly optionLoading = signal<Record<string, boolean>>({});
+
+  private readonly optionLoadsStarted = new Set<string>();
+
+  constructor() {
+    for (const key of this.selectedKeys()) {
+      this.ensureFieldOptionsByKey(key);
+    }
+  }
 
   protected readonly activeFields = computed(() => {
     const keys = new Set(this.selectedKeys());
@@ -379,6 +408,10 @@ export class FilterDrawerPanel {
     }
 
     this.selectedKeys.set(next);
+
+    for (const key of next) {
+      this.ensureFieldOptionsByKey(key);
+    }
   }
 
   protected clearField(key: string): void {
@@ -463,10 +496,132 @@ export class FilterDrawerPanel {
   }
 
   protected selectOptionsFor(field: FilterFieldModel): SelectOption<string>[] {
-    const fromHost = this.data.optionLists?.[field.key];
+    const fromLoaded = this.optionLists()[field.key];
     const source: FilterOptionModel[] =
-      fromHost ?? field.options ?? [];
+      fromLoaded ?? field.options ?? [];
     return source.map((o) => ({ label: o.label, value: o.value }));
+  }
+
+  protected optionErrorFor(key: string): string | null {
+    return this.optionErrors()[key] ?? null;
+  }
+
+  protected optionLoadingFor(key: string): boolean {
+    return this.optionLoading()[key] ?? false;
+  }
+
+  protected retryFieldOptions(key: string): void {
+    const field = this.config.fields.find((f) => f.key === key);
+    if (!field) {
+      return;
+    }
+    this.optionLoadsStarted.delete(key);
+    this.optionLists.update((lists) => {
+      const next = { ...lists };
+      delete next[key];
+      return next;
+    });
+    this.optionErrors.update((errors) => ({ ...errors, [key]: null }));
+    this.ensureFieldOptions(field);
+  }
+
+  private seedOptionLists(): Record<string, FilterOptionModel[]> {
+    const lists: Record<string, FilterOptionModel[]> = {};
+    for (const [key, rows] of Object.entries(this.data.optionLists ?? {})) {
+      lists[key] = rows.map((row) => ({
+        value: row.value,
+        label: row.label,
+      }));
+    }
+    return lists;
+  }
+
+  private ensureFieldOptionsByKey(key: string): void {
+    const field = this.config.fields.find((f) => f.key === key);
+    if (!field) {
+      return;
+    }
+    this.ensureFieldOptions(field);
+  }
+
+  private ensureFieldOptions(field: FilterFieldModel): void {
+    if (field.type !== 'select') {
+      return;
+    }
+    if (field.options?.length) {
+      return;
+    }
+    if (this.data.optionLists?.[field.key] !== undefined) {
+      return;
+    }
+    if (
+      field.optionsSource == null ||
+      field.optionsSource === 'static' ||
+      field.optionsSource === 'shipmentManifests'
+    ) {
+      return;
+    }
+
+    const key = field.key;
+    if (this.optionLoadsStarted.has(key)) {
+      return;
+    }
+    if (this.optionLists()[key] !== undefined && !this.optionErrors()[key]) {
+      return;
+    }
+
+    this.optionLoadsStarted.add(key);
+    this.optionLoading.update((m) => ({ ...m, [key]: true }));
+    this.optionErrors.update((m) => ({ ...m, [key]: null }));
+
+    this.filterOptions
+      .resolveField(field)
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (options) => {
+          this.optionLists.update((m) => ({
+            ...m,
+            [key]: options.map((o) => ({
+              value: o.value,
+              label: o.label,
+            })),
+          }));
+          this.optionLoading.update((m) => ({ ...m, [key]: false }));
+        },
+        error: (err) => {
+          this.optionLoadsStarted.delete(key);
+          this.optionErrors.update((m) => ({
+            ...m,
+            [key]: this.catalogErrorMessage(err),
+          }));
+          this.optionLoading.update((m) => ({ ...m, [key]: false }));
+        },
+      });
+  }
+
+  private catalogErrorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      const body = err.error as { message?: unknown } | string | null;
+      if (body && typeof body === 'object' && typeof body.message === 'string') {
+        return body.message;
+      }
+      if (typeof body === 'string' && body.trim()) {
+        return body.trim();
+      }
+      if (err.status === 401 || err.status === 403) {
+        return 'Authentication failed. Check your access token.';
+      }
+    }
+    if (typeof err === 'string' && err.trim()) {
+      return err.trim();
+    }
+    if (err && typeof err === 'object' && 'message' in err) {
+      const msg = (err as { message?: unknown }).message;
+      if (typeof msg === 'string' && msg.trim()) {
+        return msg.trim();
+      }
+    }
+    return 'Could not load options. Try again.';
   }
 
   protected selectedForField(

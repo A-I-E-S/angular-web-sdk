@@ -57,15 +57,15 @@ export const appConfig: ApplicationConfig = {
 | User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
 | File | `FileService`, `FILE_READ_PATH`, `mapFileRead` (`data` is a single object) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
-| Filters | `FilterOptionsResolver`, `mergeFilterOptionLists`, warehouse/method option mappers |
+| Filters | `FilterOptionsResolver` (`resolveField` lazy in drawer), `mergeFilterOptionLists`, warehouse/method mappers |
 | Browser | `copyToClipboard` |
 
 List-style GETs follow `ResourceId`: `null` (paginated), `'all'` (full dump), `number` (single).
 
 | Filter `optionsSource` | SDK resolver |
 |------------------------|--------------|
-| `warehouses` | `FilterOptionsResolver` → `WarehouseService.readAll()` |
-| `shipmentMethods` | `FilterOptionsResolver` → `ShipmentMethodService.readAll()` |
+| `warehouses` | Lazy `FilterOptionsResolver.resolveField` → `WarehouseService.readAll()` |
+| `shipmentMethods` | Lazy `FilterOptionsResolver.resolveField` → `ShipmentMethodService.readAll()` |
 | `shipmentManifests` | Host `optionLists` (no built-in service yet) |
 
 `MODAL_SERVICE` / `DRAWER_SERVICE` are tokens only — implementations ship in

@@ -1,12 +1,8 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 
-import { catchError, delay, EMPTY, map, type Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { delay, type Observable, of, switchMap, tap, throwError } from 'rxjs';
 
-import {
-  FilterOptionsResolver,
-  mergeFilterOptionLists,
-} from '@aies/aies-core';
 import type {
   FilterParamsModel,
   FilterStateModel,
@@ -254,18 +250,16 @@ interface DemoModule {
 
       <app-demo-section
         title="Async option lists"
-        hint="Select fields with optionsSource resolve via FilterOptionsResolver (warehouses, shipmentMethods). Set an API token in the header for live catalog calls."
-        subtext="Key by field.key (warehouse_id). Manifests stay host-supplied until a SDK service exists."
+        hint="Select fields with optionsSource load lazily when added via Filter by. SDK catalogs toast on HTTP failure; the select shows a field error."
+        subtext="Host optionLists cover sources without a built-in service (e.g. manifests)."
         [code]="asyncOptionsCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
           Open
           <span class="font-medium text-ink dark:text-white">Update shipments</span>
-          — warehouses and carriers load from
-          <span class="pg-code">WarehouseService</span> /
-          <span class="pg-code">ShipmentMethodService</span>
-          (paste a token via <span class="font-medium text-ink dark:text-white">API token</span>
-          in the header); manifests use playground mocks.
+          — add Warehouse or Carrier under Filter by; catalogs load then (paste a token
+          via <span class="font-medium text-ink dark:text-white">API token</span>
+          in the header). Manifests use playground mocks.
         </p>
       </app-demo-section>
 
@@ -293,7 +287,6 @@ interface DemoModule {
 })
 export class FiltersPage {
   private readonly filterDrawer = inject(FilterDrawerService);
-  private readonly filterOptions = inject(FilterOptionsResolver);
   private readonly toast = inject(ToastService);
 
   protected readonly openApplyCode = FILTERS_OPEN_APPLY;
@@ -464,39 +457,29 @@ export class FiltersPage {
       return;
     }
 
-    this.filterOptions
-      .resolve(mod.config)
-      .pipe(
-        map((resolved) =>
-          mergeFilterOptionLists(resolved, mod.optionListOverrides),
-        ),
-        switchMap((optionLists) =>
-          this.filterDrawer
-            .open({
-              config: mod.config,
-              state: this.state(),
-              optionLists,
-              title: mod.label,
-              onApply: (draft) =>
-                onApply(draft).pipe(
-                  tap({
-                    next: () =>
-                      this.toast.success(
-                        `${mod.label} filters applied.`,
-                        'Applied',
-                      ),
-                    error: (err) =>
-                      this.toast.error(
-                        playgroundErrorMessage(err),
-                        'Apply failed',
-                      ),
-                  }),
+    this.filterDrawer
+      .open({
+        config: mod.config,
+        state: this.state(),
+        optionLists: mod.optionListOverrides,
+        title: mod.label,
+        onApply: (draft) =>
+          onApply(draft).pipe(
+            tap({
+              next: () =>
+                this.toast.success(
+                  `${mod.label} filters applied.`,
+                  'Applied',
                 ),
-            })
-            .afterClosed(),
-        ),
-        catchError(() => EMPTY),
-      )
+              error: (err) =>
+                this.toast.error(
+                  playgroundErrorMessage(err),
+                  'Apply failed',
+                ),
+            }),
+          ),
+      })
+      .afterClosed()
       .subscribe((result) => {
         if (!result?.applied) {
           return;

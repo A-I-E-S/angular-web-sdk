@@ -303,21 +303,17 @@ toFilterParams(state, shipmentTrackingItemFilterConfig);
 export /**
  *
  */
-const FILTERS_ASYNC_OPTIONS = `// optionsSource → SDK catalog via FilterOptionsResolver (@aies/aies-core).
-// Resolves warehouses + shipmentMethods; merge host lists for manifests, etc.
+const FILTERS_ASYNC_OPTIONS = `// optionsSource catalogs load lazily inside the filter drawer when the user
+// adds the field via Filter by. HTTP errors toast via httpToasts; the select
+// shows a field error. Pass host optionLists for sources without an SDK service.
 
 import { Component, inject, signal } from '@angular/core';
-import {
-  FilterOptionsResolver,
-  mergeFilterOptionLists,
-} from '@aies/aies-core';
 import {
   emptyFilterState,
   updateShipmentsFilterConfig,
   type FilterStateModel,
 } from '@aies/aies-models';
 import { FilterDrawerService } from '@aies/aies-ui';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-update-shipment-filters',
@@ -326,28 +322,21 @@ import { switchMap } from 'rxjs';
 })
 export class UpdateShipmentFiltersComponent {
   private readonly filterDrawer = inject(FilterDrawerService);
-  private readonly filterOptions = inject(FilterOptionsResolver);
 
   protected readonly state = signal<FilterStateModel>(emptyFilterState());
 
   protected open(): void {
-    this.filterOptions
-      .resolve(updateShipmentsFilterConfig)
-      .pipe(
-        switchMap((resolved) =>
-          this.filterDrawer.open({
-            config: updateShipmentsFilterConfig,
-            state: this.state(),
-            optionLists: mergeFilterOptionLists(resolved, {
-              // No built-in SDK service yet — host supplies manifests
-              shipment_manifest_id: [
-                { value: '100', label: 'Manifest A' },
-              ],
-            }),
-            onApply: ({ params }) => this.listApi.fetch(params),
-          }).afterClosed(),
-        ),
-      )
+    this.filterDrawer
+      .open({
+        config: updateShipmentsFilterConfig,
+        state: this.state(),
+        optionLists: {
+          // No built-in SDK service yet — host supplies manifests
+          shipment_manifest_id: [{ value: '100', label: 'Manifest A' }],
+        },
+        onApply: ({ params }) => this.listApi.fetch(params),
+      })
+      .afterClosed()
       .subscribe((result) => {
         if (result?.applied) {
           this.state.set(result.state);

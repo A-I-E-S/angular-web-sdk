@@ -14,6 +14,7 @@ import {
   input,
   model,
   numberAttribute,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
@@ -100,6 +101,10 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
  *   [options]="warehouses()"
  *   [searchable]="true"
  *   [(selected)]="selectedWarehouse"
+ *   [error]="loadError()"
+ *   [loading]="loading()"
+ *   [retrying]="loading()"
+ *   (retry)="loadWarehouses()"
  * >
  *   <aies-icon prefix name="warehouse" [size]="16" />
  * </aies-select>
@@ -178,10 +183,11 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           [id]="controlId"
           type="button"
           class="flex flex-1 items-center justify-between gap-2 min-w-[6rem] text-left text-body bg-transparent border-0 outline-none disabled:cursor-not-allowed"
-          [disabled]="disabled()"
+          [disabled]="triggerDisabled()"
           [attr.aria-expanded]="open()"
           [attr.aria-haspopup]="'listbox'"
           [attr.aria-invalid]="error() ? true : null"
+          [attr.aria-busy]="loading() ? true : null"
           [attr.aria-describedby]="describedBy()"
           (click)="toggleOpen()"
           (keydown)="onTriggerKeydown($event)"
@@ -189,15 +195,30 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         >
           <span
             class="min-w-0 truncate"
-            [class.text-neutral-400]="!displayLabel() && !hasMultiSelection()"
+            [class.text-neutral-400]="
+              !loading() && !displayLabel() && !hasMultiSelection()
+            "
           >
-            {{ displayLabel() || triggerText() }}
+            @if (loading() && !displayLabel() && !hasMultiSelection()) {
+              {{ loadingLabel() }}
+            } @else {
+              {{ displayLabel() || triggerText() }}
+            }
           </span>
-          <aies-icon
-            name="angle-down"
-            [size]="16"
-            class="shrink-0 text-neutral-600 dark:text-neutral-400"
-          />
+          @if (loading()) {
+            <aies-icon
+              name="spinner"
+              [size]="16"
+              [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
+              aria-hidden="true"
+            />
+          } @else {
+            <aies-icon
+              name="angle-down"
+              [size]="16"
+              class="shrink-0 text-neutral-600 dark:text-neutral-400"
+            />
+          }
         </button>
       </div>
       @if (shellSuffix(); as suffixIcon) {
@@ -251,7 +272,20 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           </div>
         }
 
-        @if (showFreeTextRow()) {
+        @if (loading()) {
+          <div
+            class="flex items-center gap-2 px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400"
+            role="status"
+            aria-live="polite"
+          >
+            <aies-icon
+              name="spinner"
+              [size]="16"
+              [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
+            />
+            {{ loadingLabel() }}
+          </div>
+        } @else if (showFreeTextRow()) {
           <button
             type="button"
             [class]="freeTextClass()"
@@ -264,7 +298,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           </button>
         }
 
-        @if (filteredOptions().length === 0 && !showFreeTextRow()) {
+        @if (filteredOptions().length === 0 && !showFreeTextRow() && !loading()) {
           <div class="px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400">
             No matches
           </div>
@@ -320,7 +354,33 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
     </ng-template>
 
     @if (error(); as err) {
-      <p [id]="errorId" [class]="errorClass" role="alert">{{ err }}</p>
+      <p
+        [id]="errorId"
+        [class]="errorClass"
+        class="flex flex-wrap items-center gap-x-1"
+        role="alert"
+      >
+        <span>{{ err }}</span>
+        <button
+          type="button"
+          class="inline underline font-medium text-danger hover:text-danger/80 disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
+          [disabled]="disabled() || retrying()"
+          (click)="onRetry($event)"
+        >
+          {{ retrying() ? retryingLabel() : retryLabel() }}
+        </button>
+      </p>
+    } @else if (loading()) {
+      <p [id]="hintId" [class]="hintClass" role="status" aria-live="polite">
+        <span class="inline-flex items-center gap-1.5">
+          <aies-icon
+            name="spinner"
+            [size]="14"
+            [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
+          />
+          {{ loadingLabel() }}
+        </span>
+      </p>
     } @else if (hint(); as h) {
       <p [id]="hintId" [class]="hintClass">{{ h }}</p>
     }
@@ -328,7 +388,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
 })
 export class SelectComponent<T = string> implements ControlValueAccessor {
   private readonly modal = inject(ModalService, { optional: true });
-  private readonly modeColor = inject(ModeColorService);
+  protected readonly modeColor = inject(ModeColorService);
 
   protected readonly controlId = `aies-select-${++nextSelectId}`;
   protected readonly hintId = `${this.controlId}-hint`;
@@ -355,6 +415,31 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
 
   /** Field-level validation message. Distinct from `ErrorStateComponent`. */
   readonly error = input<string | null>(null);
+
+  /** Retry link label when {@link error} is set. */
+  readonly retryLabel = input('Retry');
+
+  /** Retry link copy while {@link retrying} is true. */
+  readonly retryingLabel = input('Retrying…');
+
+  /**
+   * When true, the inline retry control is disabled and shows {@link retryingLabel}.
+   */
+  readonly retrying = input(false, { transform: booleanAttribute });
+
+  /**
+   * Emitted when the user activates the inline retry control (shown with {@link error}).
+   */
+  readonly retry = output<void>();
+
+  /**
+   * When true, options are loading — spinner on the trigger, panel, and hint row.
+   * Blocks opening the panel until loading completes.
+   */
+  readonly loading = input(false, { transform: booleanAttribute });
+
+  /** Copy shown while {@link loading} is true. */
+  readonly loadingLabel = input('Loading…');
 
   /** Placeholder when nothing is selected. */
   readonly placeholder = input('');
@@ -433,6 +518,16 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     () => this.disabledInput() || this.cvaDisabled(),
   );
 
+  /** True while async options are loading or a retry is in flight. */
+  protected readonly isBusy = computed(
+    () => this.loading() || this.retrying(),
+  );
+
+  /** Trigger is not interactive while disabled or loading. */
+  protected readonly triggerDisabled = computed(
+    () => this.disabled() || this.isBusy(),
+  );
+
   protected readonly shellClass = computed(() => {
     let classes = FORM_FIELD_CLASS;
     if (this.error()) {
@@ -440,6 +535,8 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     }
     if (this.disabled()) {
       classes += ` ${FORM_DISABLED_CLASS}`;
+    } else if (this.loading()) {
+      classes += ' cursor-wait';
     }
     return classes;
   });
@@ -447,6 +544,9 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected readonly describedBy = computed(() => {
     if (this.error()) {
       return this.errorId;
+    }
+    if (this.loading()) {
+      return this.hintId;
     }
     if (this.hint()) {
       return this.hintId;
@@ -644,7 +744,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   }
 
   protected isOptionDisabled(opt: SelectOption<T>): boolean {
-    if (opt.disabled || this.disabled()) {
+    if (opt.disabled || this.disabled() || this.loading()) {
       return true;
     }
     if (!this.multiple()) {
@@ -661,7 +761,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   }
 
   protected toggleOpen(): void {
-    if (this.disabled()) {
+    if (this.triggerDisabled()) {
       return;
     }
     if (this.open()) {
@@ -893,5 +993,14 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
 
   protected onBlur(): void {
     this.onTouched();
+  }
+
+  protected onRetry(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (this.disabled() || this.retrying()) {
+      return;
+    }
+    this.retry.emit();
   }
 }

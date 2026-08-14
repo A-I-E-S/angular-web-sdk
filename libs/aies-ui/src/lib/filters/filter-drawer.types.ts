@@ -16,7 +16,10 @@ export interface FilterDrawerData {
   state?: FilterStateModel | null;
   /**
    * Host-resolved option lists keyed by {@link FilterFieldModel.key}
-   * (for `optionsSource` selects such as warehouses).
+   * (for `optionsSource` selects such as manifests without a built-in SDK service).
+   *
+   * SDK catalogs (`warehouses`, `shipmentMethods`) load lazily inside the drawer
+   * when the user adds the field via Filter by — no prefetch required.
    */
   optionLists?: Record<string, { value: string; label: string }[]>;
   /** Drawer title override (defaults to “Filters”). */
