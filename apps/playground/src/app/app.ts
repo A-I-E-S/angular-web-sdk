@@ -1,15 +1,23 @@
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { type IsActiveMatchOptions, RouterOutlet } from '@angular/router';
 
-import { ShippingModeService } from '@aies/aies-core';
+import {
+  AuthTokenService,
+  mapNotificationInboxItem,
+  NotificationService,
+  ShippingModeService,
+} from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { ShippingMode } from '@aies/aies-models';
 import { ThemeService } from '@aies/aies-theme';
+import type { NotificationModel } from '@aies/aies-models';
 import {
   type AiesMenuItem,
   type AiesNavItem,
   type AiesNotification,
   type AiesSideNavItem,
+  type NotificationPageResult,
   AppShellComponent,
   AppShellHeaderComponent,
   AppShellHeaderEndDirective,
@@ -17,6 +25,8 @@ import {
   ButtonComponent,
   SideNavComponent,
 } from '@aies/aies-ui';
+
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 
 import { PlaygroundAccessTokenComponent } from './shared/playground-access-token.component';
 
@@ -40,12 +50,93 @@ import { PlaygroundAccessTokenComponent } from './shared/playground-access-token
   styleUrl: './app.css',
 })
 export class App {
+  private static readonly NOTIFICATION_PAGE_SIZE = 100;
+
   private readonly theme = inject(ThemeService);
   private readonly shipping = inject(ShippingModeService);
+  private readonly auth = inject(AuthTokenService);
+  private readonly notificationsApi = inject(NotificationService);
 
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
   protected readonly navCollapsed = signal(false);
+  protected readonly notifications = signal<AiesNotification[]>([]);
+
+  constructor() {
+    toObservable(this.auth.token)
+      .pipe(
+        switchMap((token) => {
+          if (!token) {
+            return of([] as AiesNotification[]);
+          }
+          return this.notificationsApi
+            .readPage({
+              page: 1,
+              size: App.NOTIFICATION_PAGE_SIZE,
+              order: 'desc',
+            })
+            .pipe(
+            map((res) =>
+              res.success && res.data
+                ? this.mapNotificationRows(res.data)
+                : [],
+            ),
+            catchError(() => of([] as AiesNotification[])),
+          );
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe((items) => this.notifications.set(items));
+  }
+
+  protected loadNotificationPage = (page: number) =>
+    this.notificationsApi
+      .readPage({ page, size: App.NOTIFICATION_PAGE_SIZE, order: 'desc' })
+      .pipe(
+        map(
+          (res): NotificationPageResult => ({
+            items:
+              res.success && res.data ? this.mapNotificationRows(res.data) : [],
+            pagination: res.pagination ?? null,
+          }),
+        ),
+      );
+
+  protected markNotificationRead = (id: string) =>
+    this.notificationsApi.markRead(id).pipe(
+      tap(() => {
+        this.notifications.update((items) =>
+          items.map((item) =>
+            item.id === id ? { ...item, read: true } : item,
+          ),
+        );
+      }),
+    );
+
+  protected markAllNotificationsRead = () =>
+    this.notificationsApi.markRead().pipe(
+      tap(() => {
+        this.notifications.update((items) =>
+          items.map((item) => ({ ...item, read: true })),
+        );
+      }),
+    );
+
+  private mapNotificationRows(rows: NotificationModel[]): AiesNotification[] {
+    return rows.map((row) => {
+      const item = mapNotificationInboxItem(row);
+      return {
+        id: item.id,
+        title: item.title,
+        body: item.body,
+        timestamp: item.timestamp,
+        read: item.read,
+        link: item.link,
+        externalLink: item.external_link,
+        image: item.image,
+      } satisfies AiesNotification;
+    });
+  }
 
   /**
    * Exact path match keeps `/` from lighting up every route (SideNav default
@@ -74,15 +165,6 @@ export class App {
       label: 'Settings',
       icon: 'cog',
       onClick: () => undefined,
-    },
-  ];
-
-  protected readonly notifications: AiesNotification[] = [
-    {
-      id: 'n1',
-      title: 'Welcome to the Web SDK playground',
-      body: 'Browse components, foundation pages, and shipping-mode accents.',
-      timestamp: new Date().toISOString(),
     },
   ];
 

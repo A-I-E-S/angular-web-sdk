@@ -191,6 +191,38 @@ export class ApiClient {
   }
 
   /**
+   * PUT with wrapped envelope (default).
+   *
+   * @typeParam T - Payload type inside `data`.
+   * @typeParam TBody - JSON body type.
+   */
+  put<T, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options?: ApiRequestOptions & { responseMode?: 'wrapped' },
+  ): Observable<ApiResponseModel<T>>;
+
+  /**
+   * PUT returning bare payload `T`.
+   *
+   * @typeParam T - Unwrapped payload type.
+   * @typeParam TBody - JSON body type.
+   */
+  put<T, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options: ApiRequestOptions & { responseMode: 'raw' },
+  ): Observable<T>;
+
+  put<T, TBody = unknown>(
+    path: string,
+    body: TBody,
+    options: ApiRequestOptions = {},
+  ): Observable<ApiResponseModel<T> | T> {
+    return this.request<T>('PUT', path, body, options);
+  }
+
+  /**
    * DELETE with wrapped envelope (default).
    *
    * @typeParam T - Payload type inside `data`.
@@ -364,14 +396,14 @@ export class ApiClient {
   }
 
   private request<T>(
-    method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     path: string,
     body: unknown,
     options: ApiRequestOptions,
   ): Observable<ApiResponseModel<T> | T> {
     const responseMode: ResponseMode = options.responseMode ?? 'wrapped';
     const url = this.resolveUrl(path);
-    const hasBody = method === 'POST' || method === 'PATCH';
+    const hasBody = method === 'POST' || method === 'PUT' || method === 'PATCH';
     const headers = this.buildHeaders(options.headers, hasBody);
     const params = this.buildParams(options.params);
     const context = this.buildHttpContext(options);
@@ -395,6 +427,9 @@ export class ApiClient {
         break;
       case 'POST':
         req$ = this.http.post(url, body, httpOpts);
+        break;
+      case 'PUT':
+        req$ = this.http.put(url, body, httpOpts);
         break;
       case 'PATCH':
         req$ = this.http.patch(url, body, httpOpts);

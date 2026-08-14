@@ -4,6 +4,7 @@ export * from './lib/country';
 export * from './lib/file';
 export * from './lib/filters';
 export * from './lib/mode';
+export * from './lib/notification';
 export * from './lib/product';
 export * from './lib/shipment-method';
 export * from './lib/shipping';

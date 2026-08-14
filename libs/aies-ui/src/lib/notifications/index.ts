@@ -2,6 +2,7 @@ export type {
   AiesNotification,
   NotificationDrawerData,
   NotificationDrawerResult,
+  NotificationPageResult,
 } from './notification.types';
 export {
   NotificationDrawerPanel,

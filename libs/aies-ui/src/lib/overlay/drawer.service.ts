@@ -42,6 +42,13 @@ export class DrawerService implements OverlayOpener {
     component: Type<unknown>,
     config?: OverlayOpenConfig<TData>,
   ): OverlayHandle<TResult> {
+    const extraPanelClass =
+      config?.panelClass == null
+        ? []
+        : Array.isArray(config.panelClass)
+          ? [...config.panelClass]
+          : [config.panelClass];
+
     return attachOverlayContent<TData, TResult>(
       this.overlay,
       this.injector,
@@ -64,11 +71,15 @@ export class DrawerService implements OverlayOpener {
           'border-l',
           'border-border',
           'dark:border-white/15',
+          'flex',
+          'flex-col',
+          'items-stretch',
           'h-full',
           'w-[min(100vw,24rem)]',
           'overflow-auto',
           'p-6',
           'will-change-transform',
+          ...extraPanelClass,
         ],
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy: this.overlay

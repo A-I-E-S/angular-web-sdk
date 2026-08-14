@@ -194,6 +194,7 @@ export {
   type NotificationDrawerData,
   NotificationDrawerPanel,
   type NotificationDrawerResult,
+  type NotificationPageResult,
   NotificationDrawerService,
 } from './lib/notifications';
 

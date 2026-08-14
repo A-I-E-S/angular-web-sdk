@@ -12,13 +12,15 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import type { Observable } from 'rxjs';
+
 import { AiesIconComponent } from '@aies/aies-icons';
 
 import type { AiesMenuItem } from '../action-menu/menu-item';
 import { AvatarMenuComponent } from '../avatar';
 import { BreadcrumbComponent } from '../navigation/breadcrumb';
 import type { AiesNavItem } from '../navigation/nav-item';
-import type { AiesNotification } from '../notifications';
+import type { AiesNotification, NotificationPageResult } from '../notifications';
 import { NotificationDrawerService } from '../notifications';
 
 /** Header density — affects clock visibility in narrow layouts. */
@@ -108,10 +110,14 @@ export class AppShellHeaderEndDirective {}
             [attr.aria-label]="notificationAriaLabel()"
             (click)="openNotifications()"
           >
-            <aies-icon name="bell" [size]="18" />
+            <aies-icon
+              name="bell-o"
+              [size]="24"
+              class="block translate-x-[-1px] translate-y-0.5"
+            />
             @if (unreadCount() > 0) {
               <span
-                class="absolute right-1.5 top-1.5 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold leading-none text-white"
+                class="pointer-events-none absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold leading-none text-white ring-2 ring-white dark:ring-ink-950"
                 aria-hidden="true"
               >
                 {{ unreadBadge() }}
@@ -158,6 +164,24 @@ export class AppShellHeaderComponent {
 
   /** Drawer heading override. */
   readonly notificationsTitle = input('Notifications');
+
+  /** Marks one notification read when the user taps View. */
+  readonly onNotificationMarkRead = input<
+    ((id: string) => Observable<unknown> | Promise<unknown> | void) | undefined
+  >(undefined);
+
+  /** Marks every notification read from the drawer header. */
+  readonly onNotificationMarkAllRead = input<
+    (() => Observable<unknown> | Promise<unknown> | void) | undefined
+  >(undefined);
+
+  /** Paginated inbox fetch for infinite scroll inside the drawer. */
+  readonly onNotificationLoadPage = input<
+    | ((
+        page: number,
+      ) => Observable<NotificationPageResult> | Promise<NotificationPageResult>)
+    | undefined
+  >(undefined);
 
   /** When false, hides the live clock. */
   readonly showClock = input(true, { transform: booleanAttribute });
@@ -217,10 +241,17 @@ export class AppShellHeaderComponent {
   }
 
   protected openNotifications(): void {
+    const onMarkRead = this.onNotificationMarkRead();
+    const onMarkAllRead = this.onNotificationMarkAllRead();
+    const onLoadPage = this.onNotificationLoadPage();
+
     this.notificationsDrawer
       .open({
         title: this.notificationsTitle(),
-        notifications: this.notifications(),
+        notifications: onLoadPage ? undefined : this.notifications(),
+        onLoadPage,
+        onMarkRead,
+        onMarkAllRead,
       })
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))

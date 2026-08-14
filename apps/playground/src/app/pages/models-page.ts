@@ -482,6 +482,61 @@ export class ModelsPage {
           ],
         },
         {
+          id: 'notification',
+          title: 'Notifications',
+          hint: 'Authenticated inbox rows from GET /user/notifications/read/all.',
+          apiFragment: 'notification',
+          apiLabel: 'NotificationService',
+          models: [
+            {
+              name: 'NotificationModel',
+              packagePath: 'notification',
+              description:
+                'Laravel database notification with parsed data payload.',
+              structure: `interface NotificationModel {
+  id: string;
+  type: string;
+  notifiable_type: string;
+  notifiable_id: number;
+  data: NotificationPayloadModel;
+  read_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}`,
+            },
+            {
+              name: 'NotificationPayloadModel',
+              packagePath: 'notification',
+              description:
+                'Parsed JSON from the data column — title, body, link, image.',
+              structure: `interface NotificationPayloadModel {
+  user_id?: number | null;
+  title: string;
+  body?: string | null;
+  link?: string | null;
+  image?: string | null;
+  external_link?: boolean | null;
+}`,
+            },
+            {
+              name: 'NotificationInboxItemModel',
+              packagePath: 'notification',
+              description:
+                'Compact header/drawer item from mapNotificationInboxItem().',
+              structure: `interface NotificationInboxItemModel {
+  id: string;
+  title: string;
+  body?: string;
+  timestamp?: string;
+  read?: boolean;
+  link?: string;
+  external_link?: boolean;
+  image?: string | null;
+}`,
+            },
+          ],
+        },
+        {
           id: 'mode-config',
           title: 'Mode config',
           hint: 'Per-mode region currency and units.',

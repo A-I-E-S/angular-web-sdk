@@ -19,7 +19,7 @@ export { authInterceptor } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
 export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
 export { mapApiJsonList, mapApiJsonValue } from './lib/http/map-api-json';
-export { normalize } from './lib/http/normalize';
+export { normalize, normalizePagination, unwrapLaravelPaginator } from './lib/http/normalize';
 export {
   type AiesHttpClientOptions,
   provideAiesHttpClient,
@@ -113,6 +113,19 @@ export {
   USER_PATH,
   UserService,
 } from './lib/user';
+
+// User notifications (auth required)
+export {
+  mapNotification,
+  mapNotificationInboxItem,
+  mapNotificationList,
+  mapNotificationPayload,
+  NOTIFICATION_READ_PATH,
+  NOTIFICATION_UPDATE_PATH,
+  resolveNotificationLinkForMode,
+  NotificationService,
+  type NotificationReadParams,
+} from './lib/notification';
 
 // File reads (POST /file/read — may require auth)
 export {

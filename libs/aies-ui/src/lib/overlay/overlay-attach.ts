@@ -29,6 +29,8 @@ export interface OverlayOpenConfig<TData = unknown> {
    * Defaults to `false` — dialogs require an explicit close action.
    */
   dismissible?: boolean;
+  /** Extra CDK overlay panel classes appended after surface defaults. */
+  panelClass?: string | readonly string[];
 }
 
 /**

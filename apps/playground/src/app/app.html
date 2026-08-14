@@ -5,7 +5,10 @@
       [breadcrumbs]="crumbs"
       userName="Playground"
       [userMenuItems]="accountMenu"
-      [notifications]="notifications"
+      [notifications]="notifications()"
+      [onNotificationMarkRead]="markNotificationRead"
+      [onNotificationMarkAllRead]="markAllNotificationsRead"
+      [onNotificationLoadPage]="loadNotificationPage"
     >
       <div aiesAppShellHeaderEnd class="flex flex-wrap items-center justify-end gap-2">
         <app-playground-access-token />

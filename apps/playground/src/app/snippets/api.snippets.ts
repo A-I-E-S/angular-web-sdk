@@ -253,6 +253,123 @@ export class ProfileComponent {
 export /**
  *
  */
+const API_NOTIFICATION = `// GET /user/notifications/read/{id?} — auth required (ResourceId + UUID by id).
+// PUT  /user/notifications/update — markRead(id) or markRead() for all
+//
+// Header badge: first page via readPage(). Drawer: infinite scroll via onNotificationLoadPage.
+
+import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import {
+  AuthTokenService,
+  mapNotificationInboxItem,
+  NotificationService,
+} from '@aies/aies-core';
+import type { NotificationModel } from '@aies/aies-models';
+import type { AiesNotification, NotificationPageResult } from '@aies/aies-ui';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
+
+@Component({
+  selector: 'app-header-notifications',
+  standalone: true,
+  template: \`
+    <aies-app-shell-header
+      title="Dashboard"
+      [notifications]="notifications()"
+      [onNotificationLoadPage]="loadNotificationPage"
+      [onNotificationMarkRead]="markNotificationRead"
+      [onNotificationMarkAllRead]="markAllNotificationsRead"
+    />
+  \`,
+})
+export class HeaderNotificationsComponent {
+  private static readonly PAGE_SIZE = 100;
+
+  private readonly auth = inject(AuthTokenService);
+  private readonly notificationsApi = inject(NotificationService);
+
+  protected readonly notifications = signal<AiesNotification[]>([]);
+
+  protected loadNotificationPage = (page: number) =>
+    this.notificationsApi
+      .readPage({ page, size: HeaderNotificationsComponent.PAGE_SIZE, order: 'desc' })
+      .pipe(
+        map(
+          (res): NotificationPageResult => ({
+            items:
+              res.success && res.data
+                ? res.data.map((row) => this.toHeaderItem(row))
+                : [],
+            pagination: res.pagination ?? null,
+          }),
+        ),
+      );
+
+  protected markNotificationRead = (id: string) =>
+    this.notificationsApi.markRead(id).pipe(
+      tap(() => this.patchRead(id)),
+    );
+
+  protected markAllNotificationsRead = () =>
+    this.notificationsApi.markRead().pipe(
+      tap(() =>
+        this.notifications.update((items) =>
+          items.map((item) => ({ ...item, read: true })),
+        ),
+      ),
+    );
+
+  constructor() {
+    toObservable(this.auth.token)
+      .pipe(
+        switchMap((token) => {
+          if (!token) {
+            return of([] as AiesNotification[]);
+          }
+          return this.notificationsApi
+            .readPage({
+              page: 1,
+              size: HeaderNotificationsComponent.PAGE_SIZE,
+              order: 'desc',
+            })
+            .pipe(
+            map((res) =>
+              res.success && res.data
+                ? res.data.map((row) => this.toHeaderItem(row))
+                : [],
+            ),
+            catchError(() => of([] as AiesNotification[])),
+          );
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe((items) => this.notifications.set(items));
+  }
+
+  private patchRead(id: string): void {
+    this.notifications.update((items) =>
+      items.map((item) => (item.id === id ? { ...item, read: true } : item)),
+    );
+  }
+
+  private toHeaderItem(row: NotificationModel): AiesNotification {
+    const item = mapNotificationInboxItem(row);
+    return {
+      id: item.id,
+      title: item.title,
+      body: item.body,
+      timestamp: item.timestamp,
+      read: item.read,
+      link: item.link,
+      externalLink: item.external_link,
+    };
+  }
+}
+`;
+
+export /**
+ *
+ */
 const API_PRODUCT = `// GET /product/read/{id?} — ResourceId: null | 'all' | number.
 // readPage() → paginated · readAll() → full · readById(n) → single ProductModel
 

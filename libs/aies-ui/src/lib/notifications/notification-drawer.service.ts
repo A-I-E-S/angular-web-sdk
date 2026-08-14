@@ -27,7 +27,16 @@ export class NotificationDrawerService {
   ): OverlayHandle<NotificationDrawerResult> {
     return this.drawer.open<NotificationDrawerData, NotificationDrawerResult>(
       NotificationDrawerPanel,
-      { data, dismissible: true },
+      {
+        data,
+        dismissible: true,
+        panelClass: [
+          '!w-[min(100vw,28rem)]',
+          '!p-4',
+          '!overflow-hidden',
+          'sm:!p-5',
+        ],
+      },
     );
   }
 }
