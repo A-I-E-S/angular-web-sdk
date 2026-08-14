@@ -43,8 +43,6 @@
             <ng-content select="[aiesAppShellHeader]" />
           } @else if (showHeaderChrome()) {
             <aies-app-shell-header
-              [title]="headerTitle()"
-              [breadcrumbs]="breadcrumbs()"
               [userName]="userName()"
               [userAvatarSrc]="userAvatarSrc()"
               [userMenuItems]="userMenuItems()"
@@ -67,6 +65,17 @@
         </div>
 
         <main [class]="mainClass()">
+          @if (showContentChrome()) {
+            <aies-app-shell-content-header
+              [breadcrumbs]="breadcrumbs()"
+              [title]="headerTitle()"
+              [url]="currentUrl()"
+              [catalogNav]="catalogNav()"
+              [showBack]="showContentBack()"
+              [backLink]="contentBackLink()"
+              [backLabel]="contentBackLabel()"
+            />
+          }
           <ng-content />
         </main>
       </div>

@@ -21,12 +21,12 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 import type { AiesNavItem } from '../nav-item';
+import { isNavItemActive } from '../nav-router.util';
 import {
   isModifiedClick,
-  navItemHref,
   navigateNavItem,
+  navItemHref,
 } from '../navigate-nav-item';
-import { isNavItemActive } from '../nav-router.util';
 
 const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   paths: 'exact',

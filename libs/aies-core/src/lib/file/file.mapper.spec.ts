@@ -1,4 +1,4 @@
-import { mapFileRead, FILE_READ_PATH } from './file.mapper';
+import { FILE_READ_PATH,mapFileRead } from './file.mapper';
 
 const WIRE_PDF = {
   mime_type: 'application/pdf',

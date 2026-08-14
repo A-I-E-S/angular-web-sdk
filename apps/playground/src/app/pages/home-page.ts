@@ -25,7 +25,8 @@ interface CatalogCard {
     | 'globe'
     | 'filter'
     | 'tags'
-    | 'book';
+    | 'book'
+    | 'truck';
   group: string;
 }
 
@@ -208,6 +209,13 @@ export class HomePage {
       blurb: 'Multi-step wizards — linear or free navigation.',
       icon: 'warehouse',
       group: 'Components',
+    },
+    {
+      path: '/usecases/shipment',
+      title: 'Back button',
+      blurb: 'Ships with the app shell — no extra implementation. Appears on child routes only.',
+      icon: 'truck',
+      group: 'Use cases',
     },
     {
       path: '/icons',

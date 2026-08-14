@@ -395,7 +395,12 @@ export class SideNavComponent {
     return out;
   }
 
-  /** Ids of every node that has nested children (any depth). */
+  /**
+   * Ids of every node that has nested children (any depth).
+   *
+   * @param items - Side-nav nodes to walk.
+   * @returns Parent item ids, including nested groups.
+   */
   private collectParentIds(items: AiesSideNavItem[]): string[] {
     const ids: string[] = [];
     for (const item of items) {

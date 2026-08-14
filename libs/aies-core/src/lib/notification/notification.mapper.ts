@@ -54,6 +54,7 @@ function asNullableBoolean(value: unknown): boolean | null {
 /**
  * Parse the Laravel `data` column (JSON string or object) into
  * {@link NotificationPayloadModel}.
+ * @param raw
  */
 export function mapNotificationPayload(raw: unknown): NotificationPayloadModel {
   let record = asRecord(raw);
@@ -84,6 +85,7 @@ export function mapNotificationPayload(raw: unknown): NotificationPayloadModel {
 
 /**
  * Map a wire notification row into {@link NotificationModel}.
+ * @param raw
  */
 export function mapNotification(raw: unknown): NotificationModel {
   const record = asRecord(raw) ?? {};
@@ -104,6 +106,7 @@ export function mapNotification(raw: unknown): NotificationModel {
 
 /**
  * Map wire list payloads into {@link NotificationModel}[].
+ * @param raw
  */
 export function mapNotificationList(raw: unknown): NotificationModel[] {
   if (Array.isArray(raw)) {
@@ -116,6 +119,7 @@ export function mapNotificationList(raw: unknown): NotificationModel[] {
 
 /**
  * Derive a header/drawer inbox item from a mapped notification.
+ * @param notification
  */
 export function mapNotificationInboxItem(
   notification: NotificationModel,

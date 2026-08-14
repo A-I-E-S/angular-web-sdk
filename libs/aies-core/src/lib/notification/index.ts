@@ -6,8 +6,8 @@ export {
   NOTIFICATION_READ_PATH,
   NOTIFICATION_UPDATE_PATH,
 } from './notification.mapper';
-export { resolveNotificationLinkForMode } from './notification-link';
 export {
-  NotificationService,
   type NotificationReadParams,
+  NotificationService,
 } from './notification.service';
+export { resolveNotificationLinkForMode } from './notification-link';

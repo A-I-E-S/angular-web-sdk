@@ -5,6 +5,8 @@ import { HttpErrorResponse } from '@angular/common/http';
  *
  * @param err - Thrown value or HttpClient error.
  * @param options - Optional context for auth-related hints.
+ * @param options.suggestApiToken - When true, hint at setting an API token.
+ * @returns Short message suitable for a toast or inline error.
  */
 export function playgroundErrorMessage(
   err: unknown,

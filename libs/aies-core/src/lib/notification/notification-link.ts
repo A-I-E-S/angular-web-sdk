@@ -10,6 +10,8 @@ const SHIPMENT_APP_BY_MODE: Record<ShippingMode, string> = {
  *
  * Swaps `-export` / `-import` host segments and sets `shipment_app` to
  * `shipfromnaija` (SFN) or `shiptonaija` (STN).
+ * @param link
+ * @param mode
  */
 export function resolveNotificationLinkForMode(
   link: string,

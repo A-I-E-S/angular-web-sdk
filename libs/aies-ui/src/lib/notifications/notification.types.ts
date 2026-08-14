@@ -1,5 +1,6 @@
-import type { PaginationMetaModel } from '@aies/aies-models';
 import type { Observable } from 'rxjs';
+
+import type { PaginationMetaModel } from '@aies/aies-models';
 
 /** Single in-app notification shown in {@link NotificationDrawerPanel}. */
 export interface AiesNotification {

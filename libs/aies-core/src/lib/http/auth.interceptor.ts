@@ -9,6 +9,8 @@ import { AuthTokenService } from '../auth/auth-token.service';
  *
  * Compose via {@link provideAiesHttpClient} (preferred) or pass explicitly to
  * `provideHttpClient(withInterceptors([...]))`.
+ * @param req
+ * @param next
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = inject(AuthTokenService).get();

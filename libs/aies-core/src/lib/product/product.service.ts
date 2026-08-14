@@ -82,21 +82,31 @@ export class ProductService {
       );
   }
 
-  /** Paginated page — alias for {@link read}(`null`, params). */
+  /**
+   * Paginated page — alias for {@link read}(`null`, params).
+   * @param params
+   */
   readPage(
     params?: ProductReadParams,
   ): Observable<ApiResponseModel<ProductModel[]>> {
     return this.read(null, params);
   }
 
-  /** Full list — alias for {@link read}(`'all'`). */
+  /**
+   * Full list — alias for {@link read}(`'all'`).
+   * @param params
+   */
   readAll(
     params?: ProductReadParams,
   ): Observable<ApiResponseModel<ProductModel[]>> {
     return this.read('all', params);
   }
 
-  /** Single record — alias for {@link read}(id). */
+  /**
+   * Single record — alias for {@link read}(id).
+   * @param id
+   * @param params
+   */
   readById(
     id: number,
     params?: ProductReadParams,

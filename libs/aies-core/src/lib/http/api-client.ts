@@ -28,8 +28,8 @@ import { ShippingModeService } from '../shipping/shipping-mode.service';
 import { HttpResponseCache } from './http-cache';
 import { isRetryableGetError } from './is-retryable-get-error';
 import { normalize } from './normalize';
-import { buildResourcePath } from './resource-path';
 import { resolveHttpToastContext } from './resolve-http-toast-context';
+import { buildResourcePath } from './resource-path';
 import type { ToastHttpOptions } from './toast-http.context';
 
 /**

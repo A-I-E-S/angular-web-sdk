@@ -6,6 +6,7 @@ export {
   type AppShellContentWidth,
   type AppShellLayoutPreview,
 } from './app-shell.component';
+export { AppShellContentHeaderComponent } from './app-shell-content-header.component';
 export {
   AppShellHeaderComponent,
   type AppShellHeaderDensity,

@@ -18,8 +18,6 @@ import { AiesIconComponent } from '@aies/aies-icons';
 
 import type { AiesMenuItem } from '../action-menu/menu-item';
 import { AvatarMenuComponent } from '../avatar';
-import { BreadcrumbComponent } from '../navigation/breadcrumb';
-import type { AiesNavItem } from '../navigation/nav-item';
 import type { AiesNotification, NotificationPageResult } from '../notifications';
 import { NotificationDrawerService } from '../notifications';
 
@@ -45,14 +43,13 @@ export class AppShellHeaderStartDirective {}
 export class AppShellHeaderEndDirective {}
 
 /**
- * Product header bar for {@link AppShellComponent}: breadcrumbs, title, live
- * clock, notification inbox drawer, and avatar account menu.
+ * Product header bar for {@link AppShellComponent}: live clock, notification
+ * inbox drawer, and avatar account menu. Breadcrumbs and Back belong in the
+ * content column via {@link AppShellContentHeaderComponent}.
  *
  * @example
  * ```html
  * <aies-app-shell-header
- *   title="Shipments"
- *   [breadcrumbs]="crumbs"
  *   userName="Jane Doe"
  *   [userMenuItems]="accountMenu"
  *   [notifications]="notifications"
@@ -63,23 +60,13 @@ export class AppShellHeaderEndDirective {}
   selector: 'aies-app-shell-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AiesIconComponent, AvatarMenuComponent, BreadcrumbComponent, DatePipe],
+  imports: [AiesIconComponent, AvatarMenuComponent, DatePipe],
   template: `
     <div
       class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
     >
-      <div class="flex min-w-0 flex-1 flex-col gap-1">
+      <div class="flex min-w-0 flex-1 items-center">
         <ng-content select="[aiesAppShellHeaderStart]" />
-        @if (breadcrumbs().length) {
-          <aies-breadcrumb [items]="breadcrumbs()" />
-        }
-        @if (title()) {
-          <h1
-            class="m-0 truncate text-body font-semibold text-ink dark:text-white"
-          >
-            {{ title() }}
-          </h1>
-        }
       </div>
 
       <div class="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -143,12 +130,6 @@ export class AppShellHeaderEndDirective {}
 export class AppShellHeaderComponent {
   private readonly notificationsDrawer = inject(NotificationDrawerService);
   private readonly destroyRef = inject(DestroyRef);
-
-  /** Page title shown on the leading edge. */
-  readonly title = input('');
-
-  /** Breadcrumb trail — last item is the current page (see {@link BreadcrumbComponent}). */
-  readonly breadcrumbs = input<AiesNavItem[]>([]);
 
   /** Account display name for the avatar menu. */
   readonly userName = input<string | null>(null);

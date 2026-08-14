@@ -7,6 +7,10 @@ const appRoutes: Route[] = [
   {
     path: '',
     pathMatch: 'full',
+    redirectTo: 'overview',
+  },
+  {
+    path: 'overview',
     loadComponent: () => import('./pages/home-page').then((m) => m.HomePage),
   },
   {
@@ -89,6 +93,29 @@ const appRoutes: Route[] = [
         path: 'events',
         loadComponent: () =>
           import('./pages/nav-route-panels').then((m) => m.NavEventsPanel),
+      },
+    ],
+  },
+  {
+    path: 'usecases/shipment',
+    loadComponent: () =>
+      import('./pages/usecases/shipment-usecase.page').then(
+        (m) => m.ShipmentUsecasePage,
+      ),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/usecases/shipment-list.page').then(
+            (m) => m.ShipmentListPage,
+          ),
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('./pages/usecases/shipment-detail.page').then(
+            (m) => m.ShipmentDetailPage,
+          ),
       },
     ],
   },

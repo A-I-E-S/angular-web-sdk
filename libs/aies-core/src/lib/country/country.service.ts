@@ -104,6 +104,7 @@ export class CountryService {
 
   /**
    * Paginated page — alias for {@link read}(`null`, params).
+   * @param params
    */
   readPage(
     params?: CountryReadParams,
@@ -113,6 +114,7 @@ export class CountryService {
 
   /**
    * Full list — alias for {@link read}(`'all'`).
+   * @param params
    */
   readAll(
     params?: CountryReadParams,
@@ -122,6 +124,8 @@ export class CountryService {
 
   /**
    * Single record — alias for {@link read}(id).
+   * @param id
+   * @param params
    */
   readById(
     id: number,

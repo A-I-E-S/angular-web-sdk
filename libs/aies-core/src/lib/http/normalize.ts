@@ -26,6 +26,7 @@ function isWrappedEnvelope(value: unknown): boolean {
 
 /**
  * Laravel LengthAwarePaginator nested inside the envelope `data` field.
+ * @param value
  */
 export function isLaravelPaginator(value: unknown): boolean {
   const record = asRecord(value);
@@ -89,6 +90,7 @@ export function normalizePagination(value: unknown): PaginationMetaModel | null 
 
 /**
  * Flatten a Laravel paginator in `data` into list payload + {@link PaginationMetaModel}.
+ * @param raw
  */
 export function unwrapLaravelPaginator<T>(raw: unknown): {
   data: T[] | null;

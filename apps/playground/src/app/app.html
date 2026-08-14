@@ -1,8 +1,11 @@
-<aies-app-shell contentWidth="5xl">
+<aies-app-shell
+  contentWidth="5xl"
+  [headerTitle]="pageTitle()"
+  [breadcrumbs]="crumbs()"
+  [catalogNav]="navItems"
+>
   <div aiesAppShellHeader>
     <aies-app-shell-header
-      title="Playground"
-      [breadcrumbs]="crumbs"
       userName="Playground"
       [userMenuItems]="accountMenu"
       [notifications]="notifications()"

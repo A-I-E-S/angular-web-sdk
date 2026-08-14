@@ -1,5 +1,5 @@
-import { TOAST_HTTP_OPTIONS } from './toast-http.context';
 import { resolveHttpToastContext } from './resolve-http-toast-context';
+import { TOAST_HTTP_OPTIONS } from './toast-http.context';
 
 describe('resolveHttpToastContext', () => {
   it('returns undefined when config and request are off', () => {

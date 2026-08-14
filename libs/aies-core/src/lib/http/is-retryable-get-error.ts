@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
  * Retries transient failures only (network blips, timeouts, 408/429, 5xx).
  * Auth and other 4xx errors fail fast — retrying 401 does not help and causes
  * duplicate requests + toasts.
+ * @param err
  */
 export function isRetryableGetError(err: unknown): boolean {
   if (err instanceof HttpErrorResponse) {

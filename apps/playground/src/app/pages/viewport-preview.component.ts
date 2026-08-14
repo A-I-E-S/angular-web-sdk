@@ -85,11 +85,11 @@ export class AppShellViewportPreviewComponent {
   protected readonly contentHint = computed(() => {
     switch (this.layout()) {
       case 'mobile':
-        return 'Tap the menu icon to open the side nav drawer. Clock hidden; crumbs and actions stay in the header.';
+        return 'Tap the menu icon to open the side nav drawer. Clock stays in the header; breadcrumbs and Back sit above the content.';
       case 'tablet':
         return 'Same drawer pattern as phone, with more horizontal room and date/time in the header.';
       default:
-        return 'Persistent side rail, full header chrome, and centered content column.';
+        return 'Persistent side rail, header utilities, and centered content with breadcrumbs above the page body.';
     }
   });
 

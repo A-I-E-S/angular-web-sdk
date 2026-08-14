@@ -82,6 +82,7 @@ export type { AsyncQueryStateModel } from '@aies/aies-models';
 export {
   clearFilterField,
   cloneFilterState,
+  DEFAULT_FILTER_TRANSPORT,
   emptyFilterState,
   FILTER_CONFIGS,
   type FilterConfigId,
@@ -92,7 +93,6 @@ export {
   type FilterParamsModel,
   type FilterStateModel,
   FilterTransport,
-  DEFAULT_FILTER_TRANSPORT,
   fromFilterParams,
   type ModuleFilterConfigModel,
   resetFilterState,
@@ -152,8 +152,18 @@ export {
   type AiesNavItem,
   type AiesSideNavItem,
   BreadcrumbComponent,
+  buildBreadcrumbsFromSideNav,
+  type ContentBackTarget,
+  type HeaderBackTarget,
+  isCatalogRootRoute,
   isNavItemActive,
+  isNestedChildRoute,
   navItemUrlTree,
+  normalizeNavPath,
+  resolveCatalogRootLink,
+  resolveContentBackTarget,
+  resolveHeaderBackTarget,
+  resolveParentPathFromRootSnapshot,
   SegmentComponent,
   SideNavComponent,
   type TabDefContext,
@@ -164,6 +174,7 @@ export {
 // Layout (app shell scaffold)
 export {
   AppShellComponent,
+  AppShellContentHeaderComponent,
   type AppShellContentWidth,
   AppShellHeaderComponent,
   type AppShellHeaderDensity,
@@ -194,8 +205,8 @@ export {
   type NotificationDrawerData,
   NotificationDrawerPanel,
   type NotificationDrawerResult,
-  type NotificationPageResult,
   NotificationDrawerService,
+  type NotificationPageResult,
 } from './lib/notifications';
 
 // Table

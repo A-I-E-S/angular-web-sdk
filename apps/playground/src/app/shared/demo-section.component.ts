@@ -28,7 +28,7 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
     <section
       class="flex flex-col gap-4"
       [attr.id]="anchorId() || null"
-      [class.scroll-mt-24]="anchorId() != null"
+      [class.scroll-mt-24]="anchorId() !== null"
     >
       <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex min-w-0 flex-col gap-1">

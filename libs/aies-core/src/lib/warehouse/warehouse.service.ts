@@ -91,21 +91,31 @@ export class WarehouseService {
       );
   }
 
-  /** Paginated page — alias for {@link read}(`null`, params). */
+  /**
+   * Paginated page — alias for {@link read}(`null`, params).
+   * @param params
+   */
   readPage(
     params?: WarehouseReadParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>> {
     return this.read(null, params);
   }
 
-  /** Full list — alias for {@link read}(`'all'`). */
+  /**
+   * Full list — alias for {@link read}(`'all'`).
+   * @param params
+   */
   readAll(
     params?: WarehouseReadParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>> {
     return this.read('all', params);
   }
 
-  /** Single record — alias for {@link read}(id). */
+  /**
+   * Single record — alias for {@link read}(id).
+   * @param id
+   * @param params
+   */
   readById(
     id: number,
     params?: WarehouseReadParams,

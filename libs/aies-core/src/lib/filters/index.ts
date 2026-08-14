@@ -3,9 +3,9 @@ export {
   collectResolvableSelectFields,
   type FilterOptionLists,
   type FilterSelectOption,
-  type ResolvableSelectField,
   mapShipmentMethodFilterOptions,
   mapWarehouseFilterOptions,
   mergeFilterOptionLists,
+  type ResolvableSelectField,
 } from './filter-options.mapper';
 export { FilterOptionsResolver } from './filter-options.resolver';

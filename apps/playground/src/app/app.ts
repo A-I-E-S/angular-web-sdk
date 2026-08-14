@@ -1,6 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { type IsActiveMatchOptions, RouterOutlet } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import {
+  type IsActiveMatchOptions,
+  NavigationEnd,
+  Router,
+  RouterOutlet,
+} from '@angular/router';
+
+import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
 
 import {
   AuthTokenService,
@@ -10,23 +17,21 @@ import {
 } from '@aies/aies-core';
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { ShippingMode } from '@aies/aies-models';
-import { ThemeService } from '@aies/aies-theme';
 import type { NotificationModel } from '@aies/aies-models';
+import { ThemeService } from '@aies/aies-theme';
 import {
   type AiesMenuItem,
-  type AiesNavItem,
   type AiesNotification,
   type AiesSideNavItem,
-  type NotificationPageResult,
   AppShellComponent,
   AppShellHeaderComponent,
   AppShellHeaderEndDirective,
   AppShellHeaderSlotDirective,
+  buildBreadcrumbsFromSideNav,
   ButtonComponent,
+  type NotificationPageResult,
   SideNavComponent,
 } from '@aies/aies-ui';
-
-import { catchError, map, of, switchMap, tap } from 'rxjs';
 
 import { PlaygroundAccessTokenComponent } from './shared/playground-access-token.component';
 
@@ -56,6 +61,7 @@ export class App {
   private readonly shipping = inject(ShippingModeService);
   private readonly auth = inject(AuthTokenService);
   private readonly notificationsApi = inject(NotificationService);
+  private readonly router = inject(Router);
 
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
@@ -150,10 +156,22 @@ export class App {
     matrixParams: 'ignored',
   };
 
-  protected readonly crumbs: AiesNavItem[] = [
-    { id: 'home', label: 'Home', icon: 'home', routerLink: '/' },
-    { id: 'playground', label: 'Playground' },
-  ];
+  private readonly url = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  protected readonly crumbs = computed(() =>
+    buildBreadcrumbsFromSideNav(this.url(), this.navItems),
+  );
+
+  protected readonly pageTitle = computed(() => {
+    const trail = this.crumbs();
+    return trail[trail.length - 1]?.label ?? 'Playground';
+  });
 
   protected readonly accountMenu: AiesMenuItem[] = [
     {
@@ -169,7 +187,7 @@ export class App {
   ];
 
   protected readonly navItems: AiesSideNavItem[] = [
-    { id: 'overview', label: 'Overview', icon: 'home', routerLink: '/' },
+    { id: 'overview', label: 'Overview', icon: 'home', routerLink: '/overview' },
     {
       id: 'components',
       label: 'Components',
@@ -204,6 +222,18 @@ export class App {
         },
         { id: 'table', label: 'Table', routerLink: '/components/table' },
         { id: 'stepper', label: 'Stepper', routerLink: '/components/stepper' },
+      ],
+    },
+    {
+      id: 'usecases',
+      label: 'Use cases',
+      icon: 'truck',
+      children: [
+        {
+          id: 'back-button',
+          label: 'Back button',
+          routerLink: '/usecases/shipment',
+        },
       ],
     },
     {

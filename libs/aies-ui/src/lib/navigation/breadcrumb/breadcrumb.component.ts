@@ -23,7 +23,7 @@ import type { AiesNavItem } from '../nav-item';
  * ```html
  * <!-- Router-aware -->
  * <aies-breadcrumb [items]="[
- *   { id: 'home', label: 'Home', routerLink: '/' },
+ *   { id: 'home', label: 'Home', routerLink: '/overview' },
  *   { id: 'shipments', label: 'Shipments', routerLink: '/shipments' },
  *   { id: 'detail', label: 'SFN-1001' }
  * ]" />

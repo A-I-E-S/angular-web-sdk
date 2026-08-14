@@ -22,8 +22,8 @@ import {
 import { ButtonComponent, FilterDrawerService, ToastService } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
-import { playgroundErrorMessage } from '../shared/playground-notify';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { playgroundErrorMessage } from '../shared/playground-notify';
 import {
   FILTERS_ASYNC_OPTIONS,
   FILTERS_AUTHOR_CONFIG,

@@ -80,14 +80,20 @@ export class NotificationService {
       );
   }
 
-  /** Paginated page — alias for {@link read}(`null`, params). */
+  /**
+   * Paginated page — alias for {@link read}(`null`, params).
+   * @param params
+   */
   readPage(
     params?: NotificationReadParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
     return this.read(null, params);
   }
 
-  /** Full list — alias for {@link read}(`'all'`). */
+  /**
+   * Full list — alias for {@link read}(`'all'`).
+   * @param params
+   */
   readAll(
     params?: NotificationReadParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
@@ -96,6 +102,7 @@ export class NotificationService {
 
   /**
    * Single notification by UUID (`GET /user/notifications/read/{uuid}`).
+   * @param id
    */
   readOne(id: string): Observable<ApiResponseModel<NotificationModel>> {
     const trimmed = id.trim();

@@ -334,7 +334,7 @@ export class NavigationPage {
           ? 'Events'
           : 'Overview';
     return [
-      { id: 'home', label: 'Home', routerLink: '/', icon: 'home' },
+      { id: 'home', label: 'Home', routerLink: '/overview', icon: 'home' },
       {
         id: 'nav',
         label: 'Navigation',

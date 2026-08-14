@@ -44,7 +44,7 @@ export class ShipmentDetailChromeComponent {
         : 'Overview';
 
     return [
-      { id: 'home', label: 'Home', routerLink: '/', icon: 'home' },
+      { id: 'home', label: 'Home', routerLink: '/overview', icon: 'home' },
       { id: 'shipments', label: 'Shipments', routerLink: '/shipments' },
       { id: 'detail', label: ref, routerLink: '/shipments/' + ref + '/overview' },
       { id: 'section', label: section }, // current page — no routerLink
@@ -280,9 +280,10 @@ export class ShellNavComponent {
 export /**
  *
  */
-const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs, logo, logout, clock, notifications, avatar.
+const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs + Back in the content column;
+// header holds clock, notifications, and avatar.
 // Needs provideAiesUiOverlays() for the notification drawer.
-// Playground data is static — your app owns crumbs, auth, and the inbox feed.
+// Back is built into aies-app-shell — nest child routes under a parent and it appears.
 
 import { Component, signal } from '@angular/core';
 import {
@@ -301,7 +302,9 @@ import {
   template: \`
     <aies-app-shell
       contentWidth="5xl"
+      [headerTitle]="pageTitle"
       [breadcrumbs]="crumbs"
+      [catalogNav]="nav"
       userName="Jane Doe"
       [userMenuItems]="accountMenu"
       [notifications]="notifications"
@@ -323,6 +326,7 @@ import {
 export class ProductShellComponent {
   protected readonly collapsed = signal(false);
   protected readonly activeId = signal('home');
+  protected readonly pageTitle = 'STN-1042';
 
   protected readonly crumbs: AiesNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },

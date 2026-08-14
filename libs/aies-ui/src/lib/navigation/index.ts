@@ -9,12 +9,24 @@
 
 export { BreadcrumbComponent } from './breadcrumb';
 export {
-  isModifiedClick,
-  navItemHref,
-  navigateNavItem,
-} from './navigate-nav-item';
+  buildBreadcrumbsFromSideNav,
+  type ContentBackTarget,
+  type HeaderBackTarget,
+  isCatalogRootRoute,
+  isNestedChildRoute,
+  normalizeNavPath,
+  resolveCatalogRootLink,
+  resolveContentBackTarget,
+  resolveHeaderBackTarget,
+  resolveParentPathFromRootSnapshot,
+} from './header-back.util';
 export type { AiesNavItem } from './nav-item';
 export { isNavItemActive, navItemUrlTree } from './nav-router.util';
+export {
+  isModifiedClick,
+  navigateNavItem,
+  navItemHref,
+} from './navigate-nav-item';
 export { SegmentComponent } from './segment';
 export {
   type AiesSideNavItem,

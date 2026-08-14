@@ -8,6 +8,10 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router } from '@angular/router';
+
+import { filter, map, startWith } from 'rxjs';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
@@ -15,7 +19,9 @@ import { ModeColorService } from '@aies/aies-theme';
 import type { AiesMenuItem } from '../action-menu/menu-item';
 import { AIES_BRAND_LOGO_MINI_URL } from '../brand';
 import type { AiesNavItem } from '../navigation/nav-item';
+import type { AiesSideNavItem } from '../navigation/side-nav';
 import type { AiesNotification } from '../notifications';
+import { AppShellContentHeaderComponent } from './app-shell-content-header.component';
 import { AppShellHeaderComponent } from './app-shell-header.component';
 import { AppShellHeaderSlotDirective } from './app-shell-header-slot.directive';
 
@@ -41,7 +47,8 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
  * - default — page body inside a centered max-width column (playground-style)
  *
  * When no `[aiesAppShellHeader]` is projected, a dedicated product header renders with
- * breadcrumbs, title, live clock, notification drawer, and avatar menu.
+ * live clock, notification drawer, and avatar menu. Breadcrumbs, title, and Back live
+ * in the content column (see {@link AppShellContentHeaderComponent}).
  *
  * Below `lg`, the rail hides and a host-owned mobile drawer opens from the
  * menu button (or set {@link layoutPreview} in demos).
@@ -63,7 +70,7 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
   selector: 'aies-app-shell',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AiesIconComponent, AppShellHeaderComponent],
+  imports: [AiesIconComponent, AppShellContentHeaderComponent, AppShellHeaderComponent],
   host: {
     '[class]': 'hostClass()',
   },
@@ -73,6 +80,7 @@ export class AppShellComponent {
   protected readonly modeColor = inject(ModeColorService);
   protected readonly logoMiniUrl = inject(AIES_BRAND_LOGO_MINI_URL);
 
+  private readonly router = inject(Router);
   private readonly customHeader = contentChild(AppShellHeaderSlotDirective);
 
   protected readonly mobileNavOpen = signal(false);
@@ -100,11 +108,26 @@ export class AppShellComponent {
    */
   readonly layoutPreview = input<AppShellLayoutPreview | null>(null);
 
-  /** Built-in header title. */
+  /** Page title rendered above the content column. */
   readonly headerTitle = input('');
 
-  /** Built-in header breadcrumb trail. */
+  /** Breadcrumb trail rendered above the content column. */
   readonly breadcrumbs = input<AiesNavItem[]>([]);
+
+  /**
+   * Side-nav catalog used to detect nested child routes for the content Back control.
+   * Pass the same items as `[sidenav]`.
+   */
+  readonly catalogNav = input<AiesSideNavItem[]>([]);
+
+  /** When true (default), show the content Back control when a target exists. */
+  readonly showContentBack = input(true, { transform: booleanAttribute });
+
+  /** Optional explicit Back destination in the content chrome. */
+  readonly contentBackLink = input<string | readonly unknown[] | null>(null);
+
+  /** Content Back label. */
+  readonly contentBackLabel = input('Back');
 
   /** Built-in header account name. */
   readonly userName = input<string | null>(null);
@@ -135,6 +158,22 @@ export class AppShellComponent {
 
   protected readonly hasCustomHeader = computed(
     () => this.customHeader() != null,
+  );
+
+  protected readonly currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  protected readonly showContentChrome = computed(
+    () =>
+      this.breadcrumbs().length > 0 ||
+      this.headerTitle().length > 0 ||
+      this.showContentBack(),
   );
 
   /** Full height in preview embeds so absolute drawers stay inside the frame. */
