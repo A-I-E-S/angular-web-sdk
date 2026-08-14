@@ -232,6 +232,7 @@ export /**
  */
 const NAV_SIDE = `// Ink-spine side nav — icons, nested children, collapse to icon rail.
 // Soft active highlight; collapsed: hover an icon for a label blade.
+// Collapse all sits above the list (top right) when any section is open.
 
 import { Component, signal } from '@angular/core';
 import {

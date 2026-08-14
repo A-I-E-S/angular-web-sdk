@@ -44,7 +44,8 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  *
  * ## Parent items with children
  * **Expanded rail:** branches start open by default (`expandBranchesByDefault`).
- * Clicking a parent only opens/closes the branch (no route change).
+ * Clicking a parent only opens/closes the branch (no route change). When any
+ * branch is open, a collapse-all control sits above the list (top right).
  * **Collapsed rail:** clicking a parent expands the rail, opens the
  * branch, and activates the first enabled child (router or `activeId`).
  *
@@ -146,6 +147,10 @@ export class SideNavComponent {
   private readonly openBranches = signal<ReadonlySet<string>>(new Set());
   protected readonly hoverId = signal<string | null>(null);
 
+  protected readonly hasOpenBranches = computed(
+    () => this.openBranches().size > 0,
+  );
+
   /** Ensures default-expanded seeding runs once per mount (after items arrive). */
   private branchesSeeded = false;
 
@@ -199,6 +204,11 @@ export class SideNavComponent {
   protected toggleCollapsed(): void {
     this.collapsed.update((v) => !v);
     this.hoverId.set(null);
+  }
+
+  /** Fold every parent branch on the expanded rail. */
+  protected collapseAllBranches(): void {
+    this.openBranches.set(new Set());
   }
 
   protected onItemEnter(id: string): void {

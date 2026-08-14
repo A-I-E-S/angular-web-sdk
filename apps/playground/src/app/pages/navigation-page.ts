@@ -101,7 +101,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Side nav"
-        hint="Primary product navigation. Collapse to icons; hover reveals labels and nested links. Set badge: true for a live-update dot."
+        hint="Primary product navigation. Collapse to icons; hover reveals labels and nested links. Collapse all appears above the list when a section is open. Set badge: true for a live-update dot."
         badge="new"
         [code]="sideNavCode"
       >
