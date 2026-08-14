@@ -12,6 +12,7 @@ import {
   CopyButtonComponent,
   emptyFilterState,
   FilterDrawerService,
+  RowDetailDefDirective,
   type TableColumn,
   TableComponent,
   type TableSortChange,
@@ -65,6 +66,7 @@ const PAGE_SIZE = 6;
   imports: [
     TableComponent,
     CellDefDirective,
+    RowDetailDefDirective,
     ActionMenuComponent,
     ChipComponent,
     CopyButtonComponent,
@@ -83,7 +85,7 @@ const PAGE_SIZE = 6;
 
       <app-demo-section
         title="Shipments list"
-        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, row action menu, and [meta] for server-style pagination. Use the scenario buttons to preview loading and empty."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Use the scenario buttons to preview loading and empty."
         badge="template cells"
         [code]="tableCode"
       >
@@ -107,6 +109,7 @@ const PAGE_SIZE = 6;
             [rows]="pageRows()"
             [meta]="meta()"
             [sort]="sort()"
+            [rowTrackBy]="rowTrackBy"
             [showRefresh]="true"
             [showFilter]="true"
             [showExport]="true"
@@ -116,6 +119,7 @@ const PAGE_SIZE = 6;
             (filterClick)="openFilters()"
             (exportClick)="onExport()"
             (pageChange)="onPageChange($event)"
+            (rowExpandChange)="onRowExpand($event)"
           >
             <ng-template aiesCellDef="reference" let-row>
               <div class="flex items-center gap-1">
@@ -151,11 +155,34 @@ const PAGE_SIZE = 6;
                 [ariaLabel]="'Actions for ' + row.reference"
               />
             </ng-template>
+            <ng-template aiesRowDetail="Destination" let-row>
+              <span class="font-medium">{{ row.destination }}</span>
+            </ng-template>
+            <ng-template aiesRowDetail="Declared value" let-row>
+              <span class="tabular-nums font-medium">{{
+                formatUsd(row.valueUsd)
+              }}</span>
+            </ng-template>
+            <ng-template aiesRowDetail="Mode" let-row>
+              <aies-chip [variant]="row.mode === 'sfn' ? 'export' : 'import'">
+                {{ row.mode === 'sfn' ? 'Export (SFN)' : 'Import (STN)' }}
+              </aies-chip>
+            </ng-template>
+            <ng-template aiesRowDetail="Status" let-row>
+              <aies-chip [variant]="statusVariant(row.status)">
+                {{ row.status }}
+              </aies-chip>
+            </ng-template>
           </aies-table>
         </aies-async-state>
         @if (lastRowAction()) {
           <p class="mt-3 m-0 text-caption text-neutral-600 dark:text-neutral-400">
             Last row action: {{ lastRowAction() }}
+          </p>
+        }
+        @if (lastExpandedRow()) {
+          <p class="mt-1 m-0 text-caption text-neutral-600 dark:text-neutral-400">
+            Expanded row: {{ lastExpandedRow() }}
           </p>
         }
         @if (lastExport()) {
@@ -183,6 +210,7 @@ export class TablePage {
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly listDemo = signal<'ready' | 'loading' | 'empty' | 'error'>('ready');
   protected readonly lastRowAction = signal<string | null>(null);
+  protected readonly lastExpandedRow = signal<string | null>(null);
   protected readonly lastExport = signal<string | null>(null);
   protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
 
@@ -220,6 +248,8 @@ export class TablePage {
       onClick: () => this.lastRowAction.set(`Delete · ${row.reference}`),
     },
   ];
+
+  protected readonly rowTrackBy = (row: DemoShipment) => row.reference;
 
   protected readonly columns: TableColumn<DemoShipment>[] = [
     { key: 'reference', header: 'Reference', sortable: true },
@@ -351,6 +381,12 @@ export class TablePage {
   protected onExport(): void {
     this.lastExport.set(
       `Export clicked · ${this.pageRows().length} rows on this page`,
+    );
+  }
+
+  protected onRowExpand(event: { row: DemoShipment; expanded: boolean }): void {
+    this.lastExpandedRow.set(
+      event.expanded ? event.row.reference : null,
     );
   }
 

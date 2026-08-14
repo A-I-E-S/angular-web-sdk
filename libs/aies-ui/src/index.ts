@@ -217,6 +217,8 @@ export {
 export {
   type CellDefContext,
   CellDefDirective,
+  type RowDetailDefContext,
+  RowDetailDefDirective,
   type TableColumn,
   TableComponent,
   type TableSortChange,

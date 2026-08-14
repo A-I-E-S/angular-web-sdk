@@ -8,6 +8,7 @@ import {
   input,
   numberAttribute,
   output,
+  signal,
   TemplateRef,
 } from '@angular/core';
 
@@ -17,6 +18,7 @@ import type { PaginationMetaModel } from '@aies/aies-models';
 import { ButtonComponent } from '../button/button.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
+import { RowDetailDefDirective } from './row-detail-def.directive';
 import { TableColumn, TableSortChange } from './table-column';
 
 /**
@@ -41,6 +43,10 @@ import { TableColumn, TableSortChange } from './table-column';
  * Sorting is server-driven — sortable headers emit {@link TableSortChange}
  * and never reorder local rows.
  *
+ * **Expandable rows:** project `<ng-template aiesRowDetail="Label" let-row>`
+ * templates. A leading chevron column appears; the expanded panel renders each
+ * label with its template value in a responsive grid.
+ *
  * @typeParam T - Row record shape.
  *
  * @example
@@ -61,6 +67,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *   (sortChange)="onSort($event)"
  * >
  *   <ng-template aiesCellDef="status" let-row>…</ng-template>
+ *   <ng-template aiesRowDetail="Carrier" let-row>…</ng-template>
  * </aies-table>
  * ```
  *
@@ -143,6 +150,30 @@ import { TableColumn, TableSortChange } from './table-column';
             class="border-b border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
           >
             <tr>
+              @if (isExpandable()) {
+                <th scope="col" class="w-10 px-2 py-2.5">
+                  @if (someRowsExpanded()) {
+                    <button
+                      type="button"
+                      class="inline-flex size-8 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      aria-label="Collapse all"
+                      (click)="collapseAllRows()"
+                    >
+                      <aies-icon name="minus" [size]="16" />
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="inline-flex size-8 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      aria-label="Expand all"
+                      [disabled]="rows().length === 0"
+                      (click)="expandAllRows()"
+                    >
+                      <aies-icon name="plus" [size]="16" />
+                    </button>
+                  }
+                </th>
+              }
               @for (col of columns(); track col.key) {
                 <th
                   scope="col"
@@ -171,10 +202,31 @@ import { TableColumn, TableSortChange } from './table-column';
             </tr>
           </thead>
           <tbody>
-            @for (row of rows(); track $index) {
+            @for (row of rows(); track rowId(row, $index); let i = $index) {
               <tr
                 class="border-b border-border last:border-b-0 hover:bg-background-welcome/60 dark:border-white/10 dark:hover:bg-white/5"
+                [class.border-b-0]="isExpandable() && isRowExpanded(row, i)"
               >
+                @if (isExpandable()) {
+                  <td class="w-10 px-2 py-2.5 align-middle">
+                    <button
+                      type="button"
+                      class="inline-flex size-8 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      [attr.aria-label]="
+                        isRowExpanded(row, i)
+                          ? 'Collapse row details'
+                          : 'Expand row details'
+                      "
+                      [attr.aria-expanded]="isRowExpanded(row, i)"
+                      (click)="toggleRowExpanded(row, i)"
+                    >
+                      <aies-icon
+                        [name]="isRowExpanded(row, i) ? 'minus' : 'plus'"
+                        [size]="16"
+                      />
+                    </button>
+                  </td>
+                }
                 @for (col of columns(); track col.key) {
                   <td
                     class="px-3 py-2.5 align-middle"
@@ -191,6 +243,53 @@ import { TableColumn, TableSortChange } from './table-column';
                   </td>
                 }
               </tr>
+              @if (isExpandable()) {
+                <tr
+                  class="last:border-b-0"
+                  [class.border-b]="isRowExpanded(row, i)"
+                  [class.border-border]="isRowExpanded(row, i)"
+                  [class.dark:border-white/10]="isRowExpanded(row, i)"
+                >
+                  <td class="p-0 align-top" [attr.colspan]="columns().length + 1">
+                    <div
+                      class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+                      [style.grid-template-rows]="
+                        isRowExpanded(row, i) ? '1fr' : '0fr'
+                      "
+                      [attr.aria-hidden]="!isRowExpanded(row, i)"
+                      [class.pointer-events-none]="!isRowExpanded(row, i)"
+                    >
+                      <div
+                        class="min-h-0 overflow-hidden bg-background-welcome/50 dark:bg-white/[0.03]"
+                      >
+                        <dl
+                          class="m-0 grid gap-x-6 gap-y-3 px-3 py-3 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
+                          [class.opacity-0]="!isRowExpanded(row, i)"
+                          [class.opacity-100]="isRowExpanded(row, i)"
+                        >
+                          @for (detail of rowDetailDefs(); track detail.label()) {
+                            <div class="min-w-0">
+                              <dt
+                                class="m-0 text-caption font-medium text-neutral-500 dark:text-neutral-400"
+                              >
+                                {{ detail.label() }}
+                              </dt>
+                              <dd
+                                class="m-0 mt-0.5 text-body-sm text-ink dark:text-white"
+                              >
+                                <ng-container
+                                  [ngTemplateOutlet]="detail.template"
+                                  [ngTemplateOutletContext]="cellContext(row)"
+                                />
+                              </dd>
+                            </div>
+                          }
+                        </dl>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
@@ -206,6 +305,22 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
+  /**
+   * When false, hides row expansion even if {@link RowDetailDefDirective}
+   * templates are projected. Defaults to true.
+   */
+  readonly expandable = input(true, { transform: booleanAttribute });
+
+  /**
+   * Stable row id for expansion state. Defaults to the row index in `rows`.
+   */
+  readonly rowTrackBy = input<(row: T, index: number) => string | number>(
+    (_row, index) => index,
+  );
+
+  /** Emitted when a row is expanded or collapsed. */
+  readonly rowExpandChange = output<{ row: T; expanded: boolean }>();
+
   /** Column definitions (header chrome + keys). */
   readonly columns = input.required<TableColumn<T>[]>();
 
@@ -283,6 +398,24 @@ export class TableComponent<T = unknown> {
   /** Projected cell templates keyed by column. */
   private readonly cellDefs = contentChildren(CellDefDirective);
 
+  /** Projected label / value templates for expanded rows. */
+  protected readonly rowDetailDefs = contentChildren(RowDetailDefDirective);
+
+  private readonly expandedRowIds = signal<ReadonlySet<string>>(new Set());
+
+  protected readonly isExpandable = computed(
+    () => this.expandable() && this.rowDetailDefs().length > 0,
+  );
+
+  protected readonly visibleRowIds = computed(() =>
+    this.rows().map((row, index) => this.rowId(row, index)),
+  );
+
+  protected readonly someRowsExpanded = computed(() => {
+    const open = this.expandedRowIds();
+    return this.visibleRowIds().some((id) => open.has(id));
+  });
+
   /** Lookup map rebuilt when projected cell defs change. */
   private readonly cellTemplateMap = computed(() => {
     const map = new Map<string, TemplateRef<unknown>>();
@@ -310,6 +443,47 @@ export class TableComponent<T = unknown> {
    */
   protected cellContext(row: T): { $implicit: T } {
     return { $implicit: row };
+  }
+
+  /**
+   * Stable id for a row — used for expand/collapse state.
+   *
+   * @param row - Current row.
+   * @param index - Index within {@link rows}.
+   */
+  protected rowId(row: T, index: number): string {
+    return String(this.rowTrackBy()(row, index));
+  }
+
+  /** Whether a row's detail panel is open. */
+  protected isRowExpanded(row: T, index: number): boolean {
+    return this.expandedRowIds().has(this.rowId(row, index));
+  }
+
+  /** Toggle expanded state for a row. */
+  protected toggleRowExpanded(row: T, index: number): void {
+    const id = this.rowId(row, index);
+    const expanded = this.expandedRowIds().has(id);
+    this.expandedRowIds.update((set) => {
+      const next = new Set(set);
+      if (expanded) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+    this.rowExpandChange.emit({ row, expanded: !expanded });
+  }
+
+  /** Expand every visible row. */
+  protected expandAllRows(): void {
+    this.expandedRowIds.set(new Set(this.visibleRowIds()));
+  }
+
+  /** Collapse every visible row. */
+  protected collapseAllRows(): void {
+    this.expandedRowIds.set(new Set());
   }
 
   /**

@@ -6,6 +6,7 @@ export /**
 const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
+// Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -16,6 +17,7 @@ import {
   CellDefDirective,
   ChipComponent,
   CopyButtonComponent,
+  RowDetailDefDirective,
   TableComponent,
   type AiesMenuItem,
   type TableColumn,
@@ -40,6 +42,7 @@ const PAGE_SIZE = 20;
     AsyncStateComponent,
     TableComponent,
     CellDefDirective,
+    RowDetailDefDirective,
     ActionMenuComponent,
     ChipComponent,
     CopyButtonComponent,
@@ -51,6 +54,7 @@ const PAGE_SIZE = 20;
         [rows]="rows()"
         [meta]="meta()"
         [sort]="sort()"
+        [rowTrackBy]="rowTrackBy"
         [showRefresh]="true"
         [showFilter]="true"
         [showExport]="true"
@@ -84,6 +88,18 @@ const PAGE_SIZE = 20;
             [ariaLabel]="'Actions for ' + row.reference"
           />
         </ng-template>
+
+        <ng-template aiesRowDetail="Destination" let-row>
+          <span class="font-medium">{{ row.destination }}</span>
+        </ng-template>
+
+        <ng-template aiesRowDetail="Declared value" let-row>
+          <span class="tabular-nums">{{ formatUsd(row.valueUsd) }}</span>
+        </ng-template>
+
+        <ng-template aiesRowDetail="Status" let-row>
+          <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
+        </ng-template>
       </aies-table>
     </aies-async-state>
   \`,
@@ -106,6 +122,8 @@ export class ShipmentListPageComponent {
     { key: 'valueUsd', header: 'Value', sortable: true, width: '7rem' },
     { key: 'actions', header: '', width: '3.5rem' },
   ];
+
+  protected readonly rowTrackBy = (row: Shipment) => row.reference;
 
   protected rowActions(row: Shipment): AiesMenuItem[] {
     return [

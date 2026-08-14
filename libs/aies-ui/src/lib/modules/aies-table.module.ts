@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 
 import { PaginationComponent } from '../pagination';
-import { CellDefDirective, TableComponent } from '../table';
+import { CellDefDirective, RowDetailDefDirective, TableComponent } from '../table';
 
-const DATA = [TableComponent, CellDefDirective, PaginationComponent] as const;
+const DATA = [
+  TableComponent,
+  CellDefDirective,
+  RowDetailDefDirective,
+  PaginationComponent,
+] as const;
 
 /**
  * Table (+ `aiesCellDef`) and pagination.
