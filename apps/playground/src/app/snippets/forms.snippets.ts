@@ -428,6 +428,7 @@ export /**
 const FORMS_OTP = `
 // OTP is one string, not an array. (resend) is your cue to call the API —
 // the control only runs the cooldown UI. (completed) fires when all digits are in.
+// variant="masked" hides each digit (PIN-style); the model is still the real code.
 
 import { Component, signal } from '@angular/core';
 import { OtpInputComponent } from '@aies/aies-ui';
@@ -445,14 +446,29 @@ import { OtpInputComponent } from '@aies/aies-ui';
       (completed)="verify($event)"
       (resend)="sendAgain()"
     />
+
+    <aies-otp-input
+      label="Transaction PIN"
+      variant="masked"
+      [length]="4"
+      [showResend]="false"
+      [(value)]="pin"
+      (completed)="confirmPin($event)"
+    />
   \`,
 })
 export class VerifyOtpFormComponent {
   protected readonly code = signal('');
+  protected readonly pin = signal('');
 
   protected verify(code: string): void {
     // POST /auth/verify { code }
     console.log('OTP complete', code);
+  }
+
+  protected confirmPin(pin: string): void {
+    // POST /wallet/confirm { pin }
+    console.log('PIN complete', pin);
   }
 
   protected sendAgain(): void {

@@ -30,6 +30,9 @@ import {
 
 let nextOtpId = 0;
 
+/** Visual treatment for OTP cells. */
+export type OtpInputVariant = 'default' | 'masked';
+
 /**
  * One-time-passcode field — discrete digit cells, single string model.
  *
@@ -38,6 +41,9 @@ let nextOtpId = 0;
  *
  * Digits only (`inputmode="numeric"`). Paste fills multiple cells. When the
  * value reaches {@link length}, {@link completed} emits so the host can submit.
+ *
+ * {@link variant} `masked` hides each digit (PIN-style). The model is still
+ * the real digit string.
  *
  * Built-in **resend** row with cooldown — host listens to {@link resend} to
  * call the API; the control only manages UI + timer.
@@ -70,6 +76,7 @@ let nextOtpId = 0;
   host: {
     class: 'block',
   },
+  styleUrl: './otp-input.component.css',
   template: `
     <div
       role="group"
@@ -88,7 +95,7 @@ let nextOtpId = 0;
         @for (digit of cells(); track $index; let i = $index) {
           <input
             #cellInput
-            type="text"
+            [type]="cellType()"
             inputmode="numeric"
             pattern="[0-9]*"
             maxlength="1"
@@ -159,11 +166,20 @@ export class OtpInputComponent implements ControlValueAccessor, OnDestroy {
       'size-10 shrink-0 rounded-md border border-neutral-300 bg-white text-center text-body font-medium text-ink outline-none transition-colors ' +
       'dark:border-white/20 dark:bg-ink-950 dark:text-white ' +
       'focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ink disabled:cursor-not-allowed';
+    if (this.masked()) {
+      classes += ' aies-otp-cell-masked text-body-lg';
+    }
     if (this.error()) {
       classes += ` ${FORM_FIELD_ERROR_CLASS}`;
     }
     return classes;
   });
+
+  protected readonly masked = computed(() => this.variant() === 'masked');
+
+  protected readonly cellType = computed(() =>
+    this.masked() ? 'password' : 'text',
+  );
 
   /** Visible group label. */
   readonly label = input('');
@@ -176,6 +192,12 @@ export class OtpInputComponent implements ControlValueAccessor, OnDestroy {
 
   /** Number of digit cells (default 6). */
   readonly length = input(6, { transform: numberAttribute });
+
+  /**
+   * `masked` hides each digit (PIN-style). The bound value is still the
+   * real digits.
+   */
+  readonly variant = input<OtpInputVariant>('default');
 
   /** Concatenated digit string (`[(value)]` + CVA). */
   readonly value = model('');

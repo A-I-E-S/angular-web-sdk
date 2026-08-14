@@ -230,7 +230,7 @@ import {
 
       <app-demo-section
         title="OTP input"
-        hint="One-time codes and short PINs — one digit per cell. Paste fills all cells; completed fires when the code is full."
+        hint="One-time codes and short PINs — one digit per cell. Paste fills all cells; completed fires when the code is full. variant=masked hides digits."
         subtext="value is one string (digits only). Resend runs a cooldown — listen to (resend) for your API, or hide it with showResend=false."
         [code]="otpCode"
       >
@@ -245,6 +245,7 @@ import {
           />
           <aies-otp-input
             label="4-digit PIN"
+            variant="masked"
             [length]="4"
             [showResend]="false"
             [(value)]="otpPin"

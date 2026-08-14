@@ -136,6 +136,7 @@ export {
   GooglePlacesService,
   NumberInputComponent,
   OtpInputComponent,
+  type OtpInputVariant,
   provideGooglePlaces,
   RadioComponent,
   type RadioOption,

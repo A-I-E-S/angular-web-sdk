@@ -1,1 +1,1 @@
-export { OtpInputComponent } from './otp-input.component';
+export { OtpInputComponent, type OtpInputVariant } from './otp-input.component';

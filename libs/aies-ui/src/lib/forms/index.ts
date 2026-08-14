@@ -25,7 +25,7 @@ export {
   type FileUploadVariant,
 } from './file-upload';
 export { NumberInputComponent } from './number-input';
-export { OtpInputComponent } from './otp-input';
+export { OtpInputComponent, type OtpInputVariant } from './otp-input';
 export { RadioComponent, type RadioOption } from './radio';
 export {
   SelectComponent,
