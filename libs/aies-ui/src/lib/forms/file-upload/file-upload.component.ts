@@ -30,6 +30,7 @@ import {
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
 import { CameraCaptureDialogComponent } from './camera-capture.dialog';
+import { FilePreviewDialogComponent } from './file-preview.dialog';
 import {
   acceptLabels,
   fileExtensionLabel,
@@ -69,7 +70,8 @@ let nextFileUploadId = 0;
  *
  * Allowed types come from the native `accept` attribute (e.g. `image/*,.pdf`).
  * Invalid picks are skipped and a short reject message is shown. Object URLs
- * are revoked in `ngOnDestroy` and when items are removed.
+ * are revoked in `ngOnDestroy` and when items are removed. Each added file
+ * has an underlined **View** action that opens a larger preview.
  *
  * **Camera** opens a live `getUserMedia` modal when overlays are registered;
  * otherwise falls back to `<input capture="environment">`.
@@ -336,6 +338,14 @@ let nextFileUploadId = 0;
                   @if (!item.isImage) {
                     <span> · {{ kindLabel(item.file) }}</span>
                   }
+                  <span> · </span>
+                  <button
+                    type="button"
+                    class="bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-white dark:hover:text-neutral-200"
+                    (click)="openPreview(item); $event.stopPropagation()"
+                  >
+                    View
+                  </button>
                 </p>
               </div>
               <button
@@ -660,6 +670,26 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
       return;
     }
     this.commitFiles(files);
+  }
+
+  protected openPreview(item: FileUploadResult): void {
+    if (this.modal) {
+      this.modal.open(FilePreviewDialogComponent, {
+        dismissible: true,
+        data: item,
+        panelClass: [
+          '!max-w-4xl',
+          '!w-[min(100vw-2rem,56rem)]',
+        ],
+      });
+      return;
+    }
+
+    const url = item.previewUrl ?? URL.createObjectURL(item.file);
+    window.open(url, '_blank', 'noopener');
+    if (!item.previewUrl) {
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    }
   }
 
   protected removeAt(index: number): void {

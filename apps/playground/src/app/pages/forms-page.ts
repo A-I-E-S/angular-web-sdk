@@ -289,7 +289,7 @@ import {
         title="File upload"
         hint="Attach documents and images — dropzone for multi-file, button for a single pick, compact for dense forms."
         [code]="fileUploadCode"
-        subtext="dropzone, button, or compact. Drag files onto any of them. accept filters types and labels the chips. Images preview; other files get an icon + extension."
+        subtext="dropzone, button, or compact. Drag files onto any of them. accept filters types and labels the chips. Images preview; other files get an icon + extension. View opens a larger look at the file."
       >
         <div class="flex flex-col gap-8">
           <aies-file-upload

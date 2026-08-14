@@ -101,6 +101,13 @@ export class ModalService implements OverlayOpener {
     component: Type<unknown>,
     config?: OverlayOpenConfig<TData>,
   ): OverlayHandle<TResult> {
+    const extraPanelClass =
+      config?.panelClass == null
+        ? []
+        : Array.isArray(config.panelClass)
+          ? [...config.panelClass]
+          : [config.panelClass];
+
     return attachOverlayContent<TData, TResult>(
       this.overlay,
       this.injector,
@@ -132,6 +139,7 @@ export class ModalService implements OverlayOpener {
           'max-h-[min(100vh-2rem,90vh)]',
           'overflow-auto',
           'will-change-transform',
+          ...extraPanelClass,
         ],
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy: this.overlay

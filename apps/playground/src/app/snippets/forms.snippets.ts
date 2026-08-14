@@ -391,6 +391,7 @@ export /**
 const FORMS_FILE_UPLOAD = `
 // Browse, drag-drop, or camera. You get FileUploadResult[] on (filesSelected) —
 // upload them yourself. accept filters client-side; mismatches are skipped.
+// Added files include an underlined View action for a larger preview.
 
 import { Component, signal } from '@angular/core';
 import {
