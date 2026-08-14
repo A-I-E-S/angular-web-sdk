@@ -13,7 +13,7 @@
         <div
           class="inline-flex rounded-lg border border-border p-0.5 dark:border-white/15"
           role="group"
-          aria-label="Shipment mode"
+          aria-label="Import or export mode"
         >
           <button
             aies-button
@@ -22,7 +22,7 @@
             [variant]="shippingMode() === 'stn' ? 'primary' : 'ghost'"
             (click)="setShippingMode('stn')"
           >
-            STN
+            Import
           </button>
           <button
             aies-button
@@ -31,7 +31,7 @@
             [variant]="shippingMode() === 'sfn' ? 'primary' : 'ghost'"
             (click)="setShippingMode('sfn')"
           >
-            SFN
+            Export
           </button>
         </div>
 

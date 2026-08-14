@@ -26,7 +26,7 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('aies-app-shell')).toBeTruthy();
     expect(compiled.textContent).toContain('Playground');
-    expect(compiled.textContent).toContain('STN');
-    expect(compiled.textContent).toContain('SFN');
+    expect(compiled.textContent).toContain('Import');
+    expect(compiled.textContent).toContain('Export');
   });
 });
