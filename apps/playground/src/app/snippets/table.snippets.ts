@@ -7,6 +7,7 @@ const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep 
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Refetch on sortChange / pageChange. Use aiesCellDef for badges, currency, row menus.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
+// Column width: omit for equal share; set width (e.g. '3.5rem') to pin actions.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';
@@ -119,7 +120,7 @@ export class ShipmentListPageComponent {
     { key: 'status', header: 'Status', sortable: true },
     { key: 'mode', header: 'Mode' },
     { key: 'destination', header: 'Destination', sortable: true },
-    { key: 'valueUsd', header: 'Value', sortable: true, width: '7rem' },
+    { key: 'valueUsd', header: 'Value', sortable: true },
     { key: 'actions', header: '', width: '3.5rem' },
   ];
 
@@ -271,4 +272,28 @@ export class ShipmentCompactPreviewComponent {
     { reference: 'SFN-1099', destination: 'Nairobi', status: 'Pending' },
   ];
 }
+`;
+
+export /**
+ *
+ */
+const TABLE_CONTENT_STACK = `// Stacked title / subtitle / extra line. Drop into a table cell (or a detail panel).
+// The table row grows to fit — no extra layout work.
+
+import { Component } from '@angular/core';
+import { ContentStackComponent } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-packaged-by',
+  standalone: true,
+  imports: [ContentStackComponent],
+  template: \`
+    <aies-content-stack
+      title="Oladotun Adedeji"
+      subtitle="oladotun.a@africanies.com"
+      extraLine="Aug 14, 2026, 2:04:22 PM"
+    />
+  \`,
+})
+export class PackagedByComponent {}
 `;

@@ -144,14 +144,14 @@ import { TableColumn, TableSortChange } from './table-column';
         class="w-full overflow-x-auto rounded-md border border-border dark:border-white/10"
       >
         <table
-          class="w-full border-collapse text-left text-body text-ink dark:text-white"
+          class="w-full table-fixed border-collapse text-left text-body text-ink dark:text-white"
         >
           <thead
             class="border-b border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
           >
             <tr>
               @if (isExpandable()) {
-                <th scope="col" class="w-10 px-2 py-2.5">
+                <th scope="col" class="w-10 px-2 py-3.5">
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
@@ -177,7 +177,7 @@ import { TableColumn, TableSortChange } from './table-column';
               @for (col of columns(); track col.key) {
                 <th
                   scope="col"
-                  class="whitespace-nowrap px-3 py-2.5 font-medium text-neutral-600 dark:text-neutral-400"
+                  class="whitespace-nowrap px-3 py-3.5 font-medium text-neutral-600 dark:text-neutral-400"
                   [style.width]="col.width ?? null"
                 >
                   @if (col.sortable) {
@@ -208,7 +208,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 [class.border-b-0]="isExpandable() && isRowExpanded(row, i)"
               >
                 @if (isExpandable()) {
-                  <td class="w-10 px-2 py-2.5 align-middle">
+                  <td class="w-10 px-2 py-3.5 align-middle">
                     <button
                       type="button"
                       class="inline-flex size-8 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
@@ -229,7 +229,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 }
                 @for (col of columns(); track col.key) {
                   <td
-                    class="px-3 py-2.5 align-middle"
+                    class="px-3 py-3.5 align-middle whitespace-normal break-words"
                     [style.width]="col.width ?? null"
                   >
                     @if (templateFor(col.key); as tpl) {

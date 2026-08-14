@@ -42,6 +42,9 @@ export {
   type ChipVariant,
 } from './lib/chip';
 
+// Content stack (title / subtitle / extra line)
+export { ContentStackComponent } from './lib/content-stack';
+
 // Toast (transient stack — timed / persistent / HTTP-tagged)
 export {
   provideAiesToasts,

@@ -28,9 +28,17 @@ import { AppShellHeaderSlotDirective } from './app-shell-header-slot.directive';
 /**
  * Content column max-width for {@link AppShellComponent}.
  *
- * Matches common product reading widths; `full` drops the centered constraint.
+ * Matches common product reading widths; `90` is 90% of the main column;
+ * `full` drops the centered constraint.
  */
-export type AppShellContentWidth = '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
+export type AppShellContentWidth =
+  | '3xl'
+  | '4xl'
+  | '5xl'
+  | '6xl'
+  | '7xl'
+  | '90'
+  | 'full';
 
 /**
  * Forces a layout breakpoint for embeds and playground previews (ignores viewport).
@@ -87,7 +95,7 @@ export class AppShellComponent {
 
   /**
    * Max width of the content column. Defaults to `5xl` (same as the playground).
-   * Use `full` for edge-to-edge dashboards.
+   * Use `90` for 90% of the main column, or `full` for edge-to-edge dashboards.
    */
   readonly contentWidth = input<AppShellContentWidth>('5xl');
 
@@ -243,7 +251,10 @@ export class AppShellComponent {
     if (width === 'full') {
       return `w-full ${pad}`;
     }
-    const max: Record<Exclude<AppShellContentWidth, 'full'>, string> = {
+    if (width === '90') {
+      return `mx-auto w-[90%] ${pad}`;
+    }
+    const max: Record<Exclude<AppShellContentWidth, 'full' | '90'>, string> = {
       '3xl': 'max-w-3xl',
       '4xl': 'max-w-4xl',
       '5xl': 'max-w-5xl',

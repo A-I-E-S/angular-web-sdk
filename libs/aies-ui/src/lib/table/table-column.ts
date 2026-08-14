@@ -25,9 +25,11 @@ export interface TableColumn<T = unknown> {
   sortable?: boolean;
 
   /**
-   * Optional CSS width for the column (e.g. `'8rem'`, `'20%'`). Applied as an
-   * inline style so consumers can pin action columns without fighting the
-   * theme stylesheet.
+   * Optional CSS width (e.g. `'3.5rem'`, `'20%'`, `'14rem'`).
+   *
+   * The table uses `table-layout: fixed`. Columns **without** `width` share
+   * the remaining space equally. Set this to pin a column (typical for
+   * `actions`).
    */
   width?: string;
 }
