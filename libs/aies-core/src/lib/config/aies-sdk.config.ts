@@ -1,5 +1,19 @@
 import { InjectionToken } from '@angular/core';
 
+import type { ToastHttpOptions } from '../http/toast-http.context';
+
+/**
+ * Default HTTP toast behaviour for {@link ApiClient} requests.
+ *
+ * - `'off'` (default) — no automatic tagging; use {@link withToast} on raw
+ *   HttpClient calls or {@link ApiRequestOptions.toast} per SDK call.
+ * - `'errors'` — tag every SDK request with error toasts only (good for shells
+ *   and playgrounds where background GET failures should surface).
+ * - `'all'` — success + error toasts on every SDK request.
+ * - Partial {@link ToastHttpOptions} — custom defaults merged per request.
+ */
+export type AiesSdkHttpToasts = 'off' | 'errors' | 'all' | Partial<ToastHttpOptions>;
+
 /**
  * Runtime configuration for the AIES SDK HTTP layer and related services.
  *
@@ -50,6 +64,15 @@ export interface AiesSdkConfig {
    * {@link provideModeConfig}. Set `false` for tests or offline-only shells.
    */
   loadModeConfig?: boolean;
+
+  /**
+   * Automatic {@link withToast} tagging for {@link ApiClient} HTTP calls.
+   *
+   * Defaults to `'off'` so production apps opt in explicitly. The playground
+   * uses `'errors'` so catalog/auth failures surface without spamming success
+   * toasts on every background GET.
+   */
+  httpToasts?: AiesSdkHttpToasts;
 }
 
 /**

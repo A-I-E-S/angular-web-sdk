@@ -43,10 +43,10 @@ export const appConfig: ApplicationConfig = {
 
 | Area | Exports |
 |------|---------|
-| Config | `provideAiesSdk`, `AIES_SDK_CONFIG` |
+| Config | `provideAiesSdk`, `AIES_SDK_CONFIG`, `httpToasts` (`'off'` \| `'errors'` \| `'all'`) |
 | Auth | `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
-| HTTP | `provideAiesHttpClient`, `ApiClient` (`getResource` / `getResourcePage` / `getResourceAll` / `getResourceById`), `buildResourcePath`, `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
+| HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`), `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
@@ -57,9 +57,16 @@ export const appConfig: ApplicationConfig = {
 | User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
 | File | `FileService`, `FILE_READ_PATH`, `mapFileRead` (`data` is a single object) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
+| Filters | `FilterOptionsResolver`, `mergeFilterOptionLists`, warehouse/method option mappers |
 | Browser | `copyToClipboard` |
 
 List-style GETs follow `ResourceId`: `null` (paginated), `'all'` (full dump), `number` (single).
+
+| Filter `optionsSource` | SDK resolver |
+|------------------------|--------------|
+| `warehouses` | `FilterOptionsResolver` → `WarehouseService.readAll()` |
+| `shipmentMethods` | `FilterOptionsResolver` → `ShipmentMethodService.readAll()` |
+| `shipmentManifests` | Host `optionLists` (no built-in service yet) |
 
 `MODAL_SERVICE` / `DRAWER_SERVICE` are tokens only — implementations ship in
 `@aies/aies-ui` to avoid circular dependencies.

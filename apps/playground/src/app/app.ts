@@ -18,6 +18,8 @@ import {
   SideNavComponent,
 } from '@aies/aies-ui';
 
+import { PlaygroundAccessTokenComponent } from './shared/playground-access-token.component';
+
 /**
  * Playground root — product {@link AppShellComponent} + catalog side nav.
  */
@@ -32,6 +34,7 @@ import {
     SideNavComponent,
     ButtonComponent,
     AiesIconComponent,
+    PlaygroundAccessTokenComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

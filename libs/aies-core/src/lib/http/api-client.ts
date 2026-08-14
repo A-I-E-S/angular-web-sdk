@@ -1,5 +1,6 @@
 import {
   HttpClient,
+  HttpContext,
   HttpHeaders,
   HttpParams,
 } from '@angular/common/http';
@@ -25,8 +26,11 @@ import type {
 import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
 import { HttpResponseCache } from './http-cache';
+import { isRetryableGetError } from './is-retryable-get-error';
 import { normalize } from './normalize';
 import { buildResourcePath } from './resource-path';
+import { resolveHttpToastContext } from './resolve-http-toast-context';
+import type { ToastHttpOptions } from './toast-http.context';
 
 /**
  * Shared request options for {@link ApiClient} verbs.
@@ -55,6 +59,15 @@ export interface ApiRequestOptions {
    * for this many milliseconds. Omit for uncached reads (the common case).
    */
   cacheTtlMs?: number;
+
+  /**
+   * HTTP toast tagging for this request (via {@link httpToastInterceptor}).
+   *
+   * - Omitted — use {@link AiesSdkConfig.httpToasts} when set.
+   * - `false` — never toast this call (overrides config).
+   * - Partial flags — merge with config defaults (same shape as {@link withToast}).
+   */
+  toast?: Partial<ToastHttpOptions> | false;
 }
 
 type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
@@ -346,6 +359,10 @@ export class ApiClient {
     this.cache.clear();
   }
 
+  private buildHttpContext(options: ApiRequestOptions): HttpContext | undefined {
+    return resolveHttpToastContext(this.config.httpToasts, options.toast);
+  }
+
   private request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     path: string,
@@ -357,6 +374,7 @@ export class ApiClient {
     const hasBody = method === 'POST' || method === 'PATCH';
     const headers = this.buildHeaders(options.headers, hasBody);
     const params = this.buildParams(options.params);
+    const context = this.buildHttpContext(options);
     const cacheKey =
       method === 'GET' && options.cacheTtlMs != null
         ? `${method} ${url}?${params.toString()}`
@@ -370,29 +388,33 @@ export class ApiClient {
     }
 
     let req$: Observable<unknown>;
+    const httpOpts = context ? { headers, params, context } : { headers, params };
     switch (method) {
       case 'GET':
-        req$ = this.http.get(url, { headers, params });
+        req$ = this.http.get(url, httpOpts);
         break;
       case 'POST':
-        req$ = this.http.post(url, body, { headers, params });
+        req$ = this.http.post(url, body, httpOpts);
         break;
       case 'PATCH':
-        req$ = this.http.patch(url, body, { headers, params });
+        req$ = this.http.patch(url, body, httpOpts);
         break;
       case 'DELETE':
-        req$ = this.http.delete(url, { headers, params });
+        req$ = this.http.delete(url, httpOpts);
         break;
     }
 
-    // Retry only idempotent GETs — mutating verbs must not replay on timeout.
+    // Retry only idempotent GETs on transient failures — never replay 401/404 etc.
     if (method === 'GET') {
       req$ = req$.pipe(
         retry({
           count: 3,
-          delay: (_error, retryCount) =>
-            // Exponential backoff: 1s, 2s, 4s between attempts.
-            timer(2 ** (retryCount - 1) * 1000),
+          delay: (err, retryCount) => {
+            if (!isRetryableGetError(err)) {
+              return throwError(() => err);
+            }
+            return timer(2 ** (retryCount - 1) * 1000);
+          },
         }),
       );
     }

@@ -46,7 +46,10 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
     ),
-    provideAiesSdk({ baseUrl: PLAYGROUND_API_BASE }),
+    provideAiesSdk({
+      baseUrl: PLAYGROUND_API_BASE,
+      httpToasts: 'errors',
+    }),
     provideAiesHttpClient(),
     provideAiesUiOverlays(),
     provideAiesToasts(),

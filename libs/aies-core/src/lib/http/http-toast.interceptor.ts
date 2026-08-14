@@ -63,7 +63,7 @@ function defaultHttpErrorMessage(err: unknown): string {
       return 'Network error. Check your connection.';
     }
     if (err.status === 401 || err.status === 403) {
-      return 'You do not have permission to do that.';
+      return 'Authentication failed. Check your access token.';
     }
     if (err.status >= 500) {
       return 'Server error. Try again in a moment.';

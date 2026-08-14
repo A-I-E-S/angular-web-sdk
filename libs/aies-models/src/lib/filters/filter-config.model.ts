@@ -31,8 +31,13 @@ export interface FilterOptionModel {
 }
 
 /**
- * Well-known async option catalogs resolved by the host app.
- * The SDK only names the source; the host passes resolved lists into the drawer.
+ * Well-known async option catalogs resolved by the SDK or host app.
+ *
+ * Built-in wiring ({@link FilterOptionsResolver} in `@aies/aies-core`):
+ * - `warehouses` → {@link WarehouseService.readAll} → field keys like `warehouse_id`
+ * - `shipmentMethods` → {@link ShipmentMethodService.readAll} → e.g. `shipment_method_id`
+ *
+ * Pass host `optionLists` for sources without a built-in service (e.g. `shipmentManifests`).
  */
 export type FilterOptionsSource =
   | 'shipmentMethods'

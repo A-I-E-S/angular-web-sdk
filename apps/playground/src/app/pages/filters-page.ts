@@ -1,8 +1,12 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 
-import { delay, type Observable,of, switchMap, throwError } from 'rxjs';
+import { catchError, delay, EMPTY, map, type Observable, of, switchMap, tap, throwError } from 'rxjs';
 
+import {
+  FilterOptionsResolver,
+  mergeFilterOptionLists,
+} from '@aies/aies-core';
 import type {
   FilterParamsModel,
   FilterStateModel,
@@ -18,9 +22,10 @@ import {
   updateShipmentsFilterConfig,
   usersFilterConfig,
 } from '@aies/aies-models';
-import { ButtonComponent, FilterDrawerService } from '@aies/aies-ui';
+import { ButtonComponent, FilterDrawerService, ToastService } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
+import { playgroundErrorMessage } from '../shared/playground-notify';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import {
   FILTERS_ASYNC_OPTIONS,
@@ -38,7 +43,8 @@ interface DemoModule {
   id: string;
   label: string;
   config: ModuleFilterConfigModel;
-  optionLists?: Record<string, { value: string; label: string }[]>;
+  /** Host-only optionLists merged after {@link FilterOptionsResolver} (e.g. manifests). */
+  optionListOverrides?: Record<string, { value: string; label: string }[]>;
 }
 
 /**
@@ -248,14 +254,18 @@ interface DemoModule {
 
       <app-demo-section
         title="Async option lists"
-        hint="When select options come from the API (warehouses, carriers), load them yourself and pass optionLists keyed by field.key."
-        subtext="Key by field.key (warehouse_id), not optionsSource. Static selects just use inline options."
+        hint="Select fields with optionsSource resolve via FilterOptionsResolver (warehouses, shipmentMethods). Set an API token in the header for live catalog calls."
+        subtext="Key by field.key (warehouse_id). Manifests stay host-supplied until a SDK service exists."
         [code]="asyncOptionsCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Update shipments already wires mock
-          <span class="pg-code">optionLists</span>
-          in this playground — open that module and expand the select fields.
+          Open
+          <span class="font-medium text-ink dark:text-white">Update shipments</span>
+          — warehouses and carriers load from
+          <span class="pg-code">WarehouseService</span> /
+          <span class="pg-code">ShipmentMethodService</span>
+          (paste a token via <span class="font-medium text-ink dark:text-white">API token</span>
+          in the header); manifests use playground mocks.
         </p>
       </app-demo-section>
 
@@ -283,6 +293,8 @@ interface DemoModule {
 })
 export class FiltersPage {
   private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterOptions = inject(FilterOptionsResolver);
+  private readonly toast = inject(ToastService);
 
   protected readonly openApplyCode = FILTERS_OPEN_APPLY;
   protected readonly authorConfigCode = FILTERS_AUTHOR_CONFIG;
@@ -314,18 +326,10 @@ export class FiltersPage {
       id: 'update-shipments',
       label: 'Update shipments',
       config: updateShipmentsFilterConfig,
-      optionLists: {
-        warehouse_id: [
-          { value: '1', label: 'Lagos Hub' },
-          { value: '2', label: 'Accra Hub' },
-        ],
-        shipment_method_id: [
-          { value: '10', label: 'DHL' },
-          { value: '11', label: 'FedEx' },
-        ],
+      optionListOverrides: {
         shipment_manifest_id: [
-          { value: '100', label: 'Manifest A' },
-          { value: '101', label: 'Manifest B' },
+          { value: '100', label: 'Manifest A (playground mock)' },
+          { value: '101', label: 'Manifest B (playground mock)' },
         ],
       },
     },
@@ -379,16 +383,30 @@ export class FiltersPage {
         config: shipmentTrackingItemFilterConfig,
         state: emptyFilterState(),
         title: 'Tracking items',
-        onApply: ({ params }) => of(params).pipe(delay(500)),
+        onApply: ({ params }) =>
+          of(params).pipe(
+            delay(500),
+            tap(() =>
+              this.toast.success('Named-transport filters applied.', 'Applied'),
+            ),
+          ),
       })
       .afterClosed()
-      .subscribe((result) => {
-        if (!result?.applied) {
-          return;
-        }
-        this.activeId.set(shipmentTrackingItemFilterConfig.id);
-        this.state.set(result.state);
-        this.lastParams.set(result.params);
+      .subscribe({
+        next: (result) => {
+          if (!result?.applied) {
+            return;
+          }
+          this.activeId.set(shipmentTrackingItemFilterConfig.id);
+          this.state.set(result.state);
+          this.lastParams.set(result.params);
+        },
+        error: (err) => {
+          this.toast.error(
+            playgroundErrorMessage(err),
+            'Filters failed',
+          );
+        },
       });
   }
 
@@ -445,15 +463,40 @@ export class FiltersPage {
     if (!mod) {
       return;
     }
-    this.filterDrawer
-      .open({
-        config: mod.config,
-        state: this.state(),
-        optionLists: mod.optionLists,
-        title: mod.label,
-        onApply,
-      })
-      .afterClosed()
+
+    this.filterOptions
+      .resolve(mod.config)
+      .pipe(
+        map((resolved) =>
+          mergeFilterOptionLists(resolved, mod.optionListOverrides),
+        ),
+        switchMap((optionLists) =>
+          this.filterDrawer
+            .open({
+              config: mod.config,
+              state: this.state(),
+              optionLists,
+              title: mod.label,
+              onApply: (draft) =>
+                onApply(draft).pipe(
+                  tap({
+                    next: () =>
+                      this.toast.success(
+                        `${mod.label} filters applied.`,
+                        'Applied',
+                      ),
+                    error: (err) =>
+                      this.toast.error(
+                        playgroundErrorMessage(err),
+                        'Apply failed',
+                      ),
+                  }),
+                ),
+            })
+            .afterClosed(),
+        ),
+        catchError(() => EMPTY),
+      )
       .subscribe((result) => {
         if (!result?.applied) {
           return;

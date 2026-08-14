@@ -1,5 +1,9 @@
 // Config
-export { AIES_SDK_CONFIG, type AiesSdkConfig } from './lib/config/aies-sdk.config';
+export {
+  AIES_SDK_CONFIG,
+  type AiesSdkConfig,
+  type AiesSdkHttpToasts,
+} from './lib/config/aies-sdk.config';
 export { provideAiesSdk } from './lib/config/provide-aies-sdk';
 
 // Auth
@@ -125,6 +129,18 @@ export {
   type ProductReadParams,
   ProductService,
 } from './lib/product';
+
+// Filter select options (SDK catalog → drawer optionLists)
+export {
+  collectFilterOptionsSources,
+  collectResolvableSelectFields,
+  FilterOptionsResolver,
+  type FilterOptionLists,
+  type FilterSelectOption,
+  mapShipmentMethodFilterOptions,
+  mapWarehouseFilterOptions,
+  mergeFilterOptionLists,
+} from './lib/filters';
 
 // Route-driven overlays (openers provided by aies-ui)
 export type {

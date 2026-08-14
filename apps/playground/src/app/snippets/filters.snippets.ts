@@ -303,30 +303,57 @@ toFilterParams(state, shipmentTrackingItemFilterConfig);
 export /**
  *
  */
-const FILTERS_ASYNC_OPTIONS = `
-// Select fields declare optionsSource; you fetch the lists and pass optionLists.
-// Keys must match field.key (warehouse_id, not warehouses).
+const FILTERS_ASYNC_OPTIONS = `// optionsSource → SDK catalog via FilterOptionsResolver (@aies/aies-core).
+// Resolves warehouses + shipmentMethods; merge host lists for manifests, etc.
 
-import { inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
-  FilterDrawerService,
+  FilterOptionsResolver,
+  mergeFilterOptionLists,
+} from '@aies/aies-core';
+import {
+  emptyFilterState,
   updateShipmentsFilterConfig,
-} from '@aies/aies-ui';
+  type FilterStateModel,
+} from '@aies/aies-models';
+import { FilterDrawerService } from '@aies/aies-ui';
+import { switchMap } from 'rxjs';
 
-export function openUpdateShipmentFilters(
-  warehouses: { value: string; label: string }[],
-  methods: { value: string; label: string }[],
-  manifests: { value: string; label: string }[],
-): void {
-  inject(FilterDrawerService).open({
-    config: updateShipmentsFilterConfig,
-    optionLists: {
-      warehouse_id: warehouses,
-      shipment_method_id: methods,
-      shipment_manifest_id: manifests,
-    },
-    onApply: ({ params }) => /* this.api.list(params) */ Promise.resolve(params),
-  });
+@Component({
+  selector: 'app-update-shipment-filters',
+  standalone: true,
+  template: \`<button type="button" (click)="open()">Filters</button>\`,
+})
+export class UpdateShipmentFiltersComponent {
+  private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterOptions = inject(FilterOptionsResolver);
+
+  protected readonly state = signal<FilterStateModel>(emptyFilterState());
+
+  protected open(): void {
+    this.filterOptions
+      .resolve(updateShipmentsFilterConfig)
+      .pipe(
+        switchMap((resolved) =>
+          this.filterDrawer.open({
+            config: updateShipmentsFilterConfig,
+            state: this.state(),
+            optionLists: mergeFilterOptionLists(resolved, {
+              // No built-in SDK service yet — host supplies manifests
+              shipment_manifest_id: [
+                { value: '100', label: 'Manifest A' },
+              ],
+            }),
+            onApply: ({ params }) => this.listApi.fetch(params),
+          }).afterClosed(),
+        ),
+      )
+      .subscribe((result) => {
+        if (result?.applied) {
+          this.state.set(result.state);
+        }
+      });
+  }
 }
 `;
 
