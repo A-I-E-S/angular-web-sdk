@@ -16,6 +16,11 @@ export type {
   ModuleFilterConfigModel,
 } from './filter-config.model';
 export {
+  DEFAULT_FILTER_TRANSPORT,
+  FilterTransport,
+  resolveFilterTransport,
+} from './filter-config.model';
+export {
   clearFilterField,
   cloneFilterState,
   emptyFilterState,

@@ -20,7 +20,7 @@ suffix.
 - **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads
 - **user** — `UserModel` (+ nested business account / plan / subscription) for bare `GET /user` (auth)
-- **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `toFilterParams` / `fromFilterParams`
+- **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `FilterTransport`, `toFilterParams` / `fromFilterParams`
 - **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
 - **async** — `AsyncQueryStateModel` for UI async wrappers

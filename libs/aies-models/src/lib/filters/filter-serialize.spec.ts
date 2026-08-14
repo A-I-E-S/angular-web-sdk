@@ -1,4 +1,4 @@
-import { FilterParamsModel, FilterStateModel, ModuleFilterConfigModel } from './filter-config.model';
+import { FilterParamsModel, FilterStateModel, FilterTransport, ModuleFilterConfigModel } from './filter-config.model';
 import { cloneFilterState, emptyFilterState, fromFilterParams, toFilterParams } from './filter-serialize';
 
 describe('filter-serialize', () => {
@@ -91,11 +91,29 @@ describe('filter-serialize', () => {
     });
   });
 
+  it('defaults transport to legacy-parallel when omitted', () => {
+    const minimal: ModuleFilterConfigModel = {
+      id: 'minimal',
+      fields: [
+        {
+          key: 'status',
+          label: 'Status',
+          type: 'enum',
+          options: [{ value: 'open', label: 'Open' }],
+        },
+      ],
+    };
+    const state: FilterStateModel = { values: { status: 'open' } };
+    const params = toFilterParams(state, minimal);
+    expect(params['filterColumn']).toBe('status');
+    expect(params['filterValue']).toBe('open');
+  });
+
   it('round-trips named transport', () => {
     const named: ModuleFilterConfigModel = {
       ...config,
       id: 'named-demo',
-      transport: 'named',
+      transport: FilterTransport.Named,
       fields: [
         {
           key: 'claim_status',

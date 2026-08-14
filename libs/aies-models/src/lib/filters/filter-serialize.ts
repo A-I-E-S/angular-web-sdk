@@ -3,6 +3,7 @@ import type {
   FilterStateModel,
   ModuleFilterConfigModel,
 } from './filter-config.model';
+import { FilterTransport, resolveFilterTransport } from './filter-config.model';
 
 /**
  * Empty filter state — safe default before hydrate / after reset.
@@ -78,7 +79,7 @@ export function toFilterParams(
     params[config.pagination?.sizeParam ?? 'size'] = state.size;
   }
 
-  if (config.transport === 'named') {
+  if (resolveFilterTransport(config) === FilterTransport.Named) {
     for (const field of config.fields) {
       const v = state.values[field.key];
       if (v != null && v !== '') {
@@ -157,7 +158,7 @@ export function fromFilterParams(
     }
   }
 
-  if (config.transport === 'named') {
+  if (resolveFilterTransport(config) === FilterTransport.Named) {
     for (const field of config.fields) {
       const v = read(field.key);
       if (v != null) {

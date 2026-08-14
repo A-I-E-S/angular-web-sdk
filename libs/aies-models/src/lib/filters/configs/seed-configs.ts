@@ -1,4 +1,5 @@
 import type { ModuleFilterConfigModel } from '../filter-config.model';
+import { FilterTransport } from '../filter-config.model';
 
 /**
  * Track shipments — payment / shipment status chips + tracking number.
@@ -228,7 +229,7 @@ export const usersFilterConfig: ModuleFilterConfigModel = {
  */
 export const shipmentTrackingItemFilterConfig: ModuleFilterConfigModel = {
   id: 'shipment-tracking-item-list',
-  transport: 'named',
+  transport: FilterTransport.Named,
   pagination: { pageParam: 'page', sizeParam: 'size' },
   search: {
     param: 'search',

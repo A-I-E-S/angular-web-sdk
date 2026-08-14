@@ -60,16 +60,83 @@ export class ShipmentListFiltersComponent {
 export /**
  *
  */
-const FILTERS_AUTHOR_CONFIG = `
-// Full ModuleFilterConfigModel — field \`type\` picks the control, \`transport\` how params flatten.
-// Shared blocks (search / date / sort / pagination) sit above “Filter by” when present.
+const FILTERS_CUSTOM_CONFIG = `
+// Custom ModuleFilterConfigModel for your list screen.
+// Omit transport → defaults to FilterTransport.LegacyParallel (filterColumn CSV).
+// Set transport: FilterTransport.Named when each field is its own query param.
 
-import type { ModuleFilterConfigModel } from '@aies/aies-models';
+import {
+  FilterTransport,
+  type ModuleFilterConfigModel,
+} from '@aies/aies-models';
+
+export const myOrdersFilterConfig: ModuleFilterConfigModel = {
+  id: 'my-orders',
+  search: {
+    param: 'search',
+    label: 'Order ref',
+    placeholder: 'Search…',
+  },
+  sort: {
+    param: 'order',
+    options: [
+      { value: 'desc', label: 'Newest first' },
+      { value: 'asc', label: 'Oldest first' },
+    ],
+  },
+  pagination: { pageParam: 'page', sizeParam: 'size' },
+  fields: [
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'enum',
+      options: [
+        { value: 'open', label: 'Open', color: '#3B82F6' },
+        { value: 'closed', label: 'Closed', color: '#25945c' },
+      ],
+    },
+    {
+      key: 'warehouse_id',
+      label: 'Warehouse',
+      type: 'select',
+      optionsSource: 'warehouses',
+      placeholder: 'All warehouses',
+    },
+  ],
+};
+
+// Newer API — explicit named transport:
+export const myClaimsFilterConfig: ModuleFilterConfigModel = {
+  id: 'claims',
+  transport: FilterTransport.Named,
+  search: { param: 'search', label: 'Search' },
+  fields: [
+    {
+      key: 'claim_status',
+      label: 'Claim status',
+      type: 'enum',
+      options: [{ value: 'open', label: 'Open' }],
+    },
+  ],
+};
+
+// Pass to the drawer (same UI for both transports):
+// filterDrawer.open({ config: myOrdersFilterConfig, state, onApply: … });
+`;
+
+export /**
+ *
+ */
+const FILTERS_AUTHOR_CONFIG = `
+// Full seed example (update-shipments) — field \`type\` picks the control.
+// See FILTERS_CUSTOM_CONFIG for a minimal custom module.
+
+import { FilterTransport, type ModuleFilterConfigModel } from '@aies/aies-models';
 
 export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
   id: 'update-shipments',
   route: ['portal', 'shipment', 'update-shipments'],
-  transport: 'legacy-parallel',
+  // transport omitted → FilterTransport.LegacyParallel
   pagination: { pageParam: 'page', sizeParam: 'size' },
   search: {
     param: 'search',
@@ -282,9 +349,10 @@ export /**
  */
 const FILTERS_NAMED = `
 // Newer endpoints: each filter is its own query key (no filterColumn CSVs).
-// Same drawer + FilterStateModel; different serialize.
+// Same drawer + FilterStateModel; set transport: FilterTransport.Named.
 
 import {
+  FilterTransport,
   shipmentTrackingItemFilterConfig,
   toFilterParams,
   type FilterStateModel,

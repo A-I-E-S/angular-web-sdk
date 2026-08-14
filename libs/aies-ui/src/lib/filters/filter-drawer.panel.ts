@@ -21,6 +21,7 @@ import type {
 import {
   cloneFilterState,
   resetFilterState,
+  resolveFilterTransport,
   toFilterParams,
 } from '@aies/aies-models';
 
@@ -81,7 +82,7 @@ import type {
             {{ title() }}
           </h2>
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-            {{ config.id }} · {{ config.transport }}
+            {{ config.id }} · {{ transport }}
           </p>
         </div>
         <button
@@ -259,7 +260,36 @@ import type {
         class="flex shrink-0 flex-col gap-2 border-t border-border bg-white px-6 pt-3 pb-2 dark:border-white/10 dark:bg-ink-950"
       >
         @if (applyError(); as err) {
-          <p class="m-0 text-caption text-danger" role="alert">{{ err }}</p>
+          <div
+            class="flex items-start gap-2.5 rounded-md border border-danger/20 border-l-[3px] border-l-danger bg-danger-subtle/40 px-3 py-2.5 dark:border-danger/25 dark:bg-danger/10"
+            role="alert"
+            aria-live="polite"
+          >
+            <aies-icon
+              name="warning"
+              [size]="16"
+              class="mt-0.5 shrink-0 text-danger"
+            />
+            <div class="min-w-0 flex-1 flex flex-col gap-0.5">
+              <p class="m-0 text-caption font-medium text-danger">Apply failed</p>
+              <p
+                class="m-0 text-caption leading-snug text-neutral-700 dark:text-neutral-300"
+              >
+                {{ err }}
+              </p>
+            </div>
+            <button
+              aies-button
+              type="button"
+              variant="ghost"
+              size="sm"
+              class="shrink-0 !min-h-0 self-start !px-1 !py-0 text-neutral-500 hover:text-ink dark:text-neutral-400 dark:hover:text-white"
+              aria-label="Dismiss"
+              (click)="applyError.set(null)"
+            >
+              <aies-icon name="close" [size]="14" />
+            </button>
+          </div>
         }
         <div class="flex gap-2">
           <button
@@ -294,6 +324,7 @@ export class FilterDrawerPanel {
   private readonly filterOptions = inject(FilterOptionsResolver);
 
   protected readonly config = this.data.config;
+  protected readonly transport = resolveFilterTransport(this.data.config);
   protected readonly title = computed(
     () => this.data.title ?? 'Filters',
   );
@@ -706,13 +737,32 @@ export class FilterDrawerPanel {
   }
 
   private errorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      const body = err.error as { message?: unknown } | string | null;
+      if (body && typeof body === 'object' && typeof body.message === 'string') {
+        return body.message;
+      }
+      if (typeof body === 'string' && body.trim()) {
+        return body.trim();
+      }
+      if (err.status === 0) {
+        return 'Network error. Check your connection and try again.';
+      }
+      if (err.status === 401 || err.status === 403) {
+        return 'Authentication failed. Check your access token and try again.';
+      }
+      if (err.status >= 500) {
+        return 'Server error. Try again in a moment.';
+      }
+      return err.message || `Request failed (${err.status}).`;
+    }
     if (typeof err === 'string' && err.trim()) {
-      return err;
+      return err.trim();
     }
     if (err && typeof err === 'object' && 'message' in err) {
       const msg = (err as { message?: unknown }).message;
       if (typeof msg === 'string' && msg.trim()) {
-        return msg;
+        return msg.trim();
       }
     }
     return 'Could not apply filters. Try again.';

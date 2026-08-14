@@ -12,6 +12,7 @@ import {
   emptyFilterState,
   FILTER_CONFIGS,
   fromFilterParams,
+  resolveFilterTransport,
   shipmentTrackingItemFilterConfig,
   toFilterParams,
   trackShipmentsFilterConfig,
@@ -26,6 +27,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 import {
   FILTERS_ASYNC_OPTIONS,
   FILTERS_AUTHOR_CONFIG,
+  FILTERS_CUSTOM_CONFIG,
   FILTERS_DATE_RANGE,
   FILTERS_ENUM_COLORS,
   FILTERS_FILTER_BY,
@@ -118,7 +120,7 @@ interface DemoModule {
               }}</span>
               · transport
               <span class="font-mono text-caption">{{
-                activeConfig().transport
+                transportLabel()
               }}</span>
             </p>
           </div>
@@ -139,17 +141,24 @@ interface DemoModule {
       </app-demo-section>
 
       <app-demo-section
-        title="Author a ModuleFilterConfigModel"
-        hint="Define the fields your list supports once — search, dates, enums, selects, booleans — then every host reuses the same drawer."
-        subtext="Field type chooses the control; transport chooses the query shape. Seeds are in FILTER_CONFIGS."
-        [code]="authorConfigCode"
+        title="Custom ModuleFilterConfigModel"
+        hint="Define your own schema per list screen — field keys must match API column / query names. Omit transport for legacy Laravel CSV; use FilterTransport.Named for direct params."
+        subtext="Full seed configs (track-shipments, update-shipments, …) live in FILTER_CONFIGS. Expand “Full seed example” below for every field type."
+        [code]="customConfigCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Open the
+          Open
           <span class="font-medium text-ink dark:text-white">Update shipments</span>
-          module above to exercise every field type in the live drawer.
+          above to exercise every field type in the live drawer.
         </p>
       </app-demo-section>
+
+      <app-demo-section
+        title="Full seed example (update-shipments)"
+        hint="Reference config bundled with the SDK — search, date range, sort, enums, selects, booleans."
+        subtext="Field type chooses the control; transport chooses the query shape."
+        [code]="authorConfigCode"
+      />
 
       <app-demo-section
         title="Enum chips + colors"
@@ -290,6 +299,7 @@ export class FiltersPage {
   private readonly toast = inject(ToastService);
 
   protected readonly openApplyCode = FILTERS_OPEN_APPLY;
+  protected readonly customConfigCode = FILTERS_CUSTOM_CONFIG;
   protected readonly authorConfigCode = FILTERS_AUTHOR_CONFIG;
   protected readonly enumColorsCode = FILTERS_ENUM_COLORS;
   protected readonly filterByCode = FILTERS_FILTER_BY;
@@ -346,6 +356,10 @@ export class FiltersPage {
       this.modules.find((m) => m.id === this.activeId())?.config ??
       FILTER_CONFIGS['track-shipments']
     );
+  }
+
+  protected transportLabel(): string {
+    return resolveFilterTransport(this.activeConfig());
   }
 
   protected selectModule(mod: DemoModule): void {

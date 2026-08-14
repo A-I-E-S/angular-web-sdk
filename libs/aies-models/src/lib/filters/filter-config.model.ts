@@ -5,6 +5,26 @@
  * it and {@link toFilterParams} / {@link fromFilterParams} speak to the API.
  */
 
+/**
+ * Backend wire format for filter query serialization.
+ *
+ * Use {@link resolveFilterTransport} when reading `config.transport` — omit the
+ * property on {@link ModuleFilterConfigModel} to default to legacy-parallel.
+ */
+export const FilterTransport = {
+  /** Laravel-style `filterColumn` + `filterValue` CSV pairs (default). */
+  LegacyParallel: 'legacy-parallel',
+  /** Each {@link FilterFieldModel.key} is its own query param. */
+  Named: 'named',
+} as const;
+
+/** Union of {@link FilterTransport} literal values. */
+export type FilterTransport =
+  (typeof FilterTransport)[keyof typeof FilterTransport];
+
+/** Default when {@link ModuleFilterConfigModel.transport} is omitted. */
+export const DEFAULT_FILTER_TRANSPORT = FilterTransport.LegacyParallel;
+
 /** How a filter field is rendered and validated in the drawer. */
 export type FilterFieldType =
   /** Chip / single-select group — exclusive within the field by default. */
@@ -75,7 +95,7 @@ export interface FilterFieldModel {
  * ```ts
  * const trackShipmentsFilterConfig: ModuleFilterConfigModel = {
  *   id: 'track-shipments',
- *   transport: 'legacy-parallel',
+ *   // transport omitted → FilterTransport.LegacyParallel
  *   fields: [
  *     { key: 'payment_status', label: 'Payment Status', type: 'enum', options: […] },
  *   ],
@@ -115,11 +135,10 @@ export interface ModuleFilterConfigModel {
   /** Filterable fields rendered in the drawer. */
   fields: FilterFieldModel[];
   /**
-   * Backend wire format:
-   * - `legacy-parallel` — `filterColumn` + `filterValue` comma strings (Laravel lists)
-   * - `named` — each field key is its own query param (newer endpoints)
+   * Backend wire format — see {@link FilterTransport}.
+   * Defaults to {@link DEFAULT_FILTER_TRANSPORT} when omitted.
    */
-  transport: 'legacy-parallel' | 'named';
+  transport?: FilterTransport;
 }
 
 /**
@@ -151,3 +170,12 @@ export interface FilterStateModel {
  * Values are strings (or numbers for page/size) ready for HttpParams / router.
  */
 export type FilterParamsModel = Record<string, string | number | undefined>;
+
+/**
+ * Resolved transport for a module config (defaults to {@link DEFAULT_FILTER_TRANSPORT}).
+ */
+export function resolveFilterTransport(
+  config: Pick<ModuleFilterConfigModel, 'transport'>,
+): FilterTransport {
+  return config.transport ?? DEFAULT_FILTER_TRANSPORT;
+}
