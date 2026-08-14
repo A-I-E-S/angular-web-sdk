@@ -3,8 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import {
-  NOTIFICATION_PAGE_SIZE,
   type ApiResponseModel,
+  NOTIFICATION_PAGE_SIZE,
   type NotificationModel,
   type ResourceId,
 } from '@aies/aies-models';

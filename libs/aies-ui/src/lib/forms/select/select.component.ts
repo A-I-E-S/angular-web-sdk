@@ -137,6 +137,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       cdkOverlayOrigin
       #triggerOrigin="cdkOverlayOrigin"
       [class]="shellClass()"
+      (click)="onShellClick()"
     >
       @if (shellPrefix(); as prefixIcon) {
         <span [class]="affixClass" data-slot="prefix">
@@ -190,7 +191,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           [attr.aria-invalid]="error() ? true : null"
           [attr.aria-busy]="loading() ? true : null"
           [attr.aria-describedby]="describedBy()"
-          (click)="toggleOpen()"
+          (click)="onTriggerClick($event)"
           (keydown)="onTriggerKeydown($event)"
           (blur)="onBlur()"
         >
@@ -545,6 +546,10 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
       classes += ` ${FORM_DISABLED_CLASS}`;
     } else if (this.loading()) {
       classes += ' cursor-wait';
+    } else {
+      // Whole shell is the hit target (prefix/suffix affixes sit outside the
+      // trigger button); pointer cues that.
+      classes += ' cursor-pointer';
     }
     return classes;
   });
@@ -766,6 +771,24 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
       return false;
     }
     return this.selectedList().length >= max;
+  }
+
+  /**
+   * Opens/closes when the user clicks the shell chrome (prefix/suffix slots
+   * sit outside the trigger button).
+   */
+  protected onShellClick(): void {
+    this.toggleOpen();
+  }
+
+  /**
+   * Trigger button path — stop bubbling so {@link onShellClick} does not
+   * double-toggle.
+   * @param event - Pointer event from the listbox trigger.
+   */
+  protected onTriggerClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.toggleOpen();
   }
 
   protected toggleOpen(): void {

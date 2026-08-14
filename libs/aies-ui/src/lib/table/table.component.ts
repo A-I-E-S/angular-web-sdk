@@ -464,12 +464,20 @@ export class TableComponent<T = unknown> {
     return String(this.rowTrackBy()(row, index));
   }
 
-  /** Whether a row's detail panel is open. */
+  /**
+   * Whether a row's detail panel is open.
+   * @param row
+   * @param index
+   */
   protected isRowExpanded(row: T, index: number): boolean {
     return this.expandedRowIds().has(this.rowId(row, index));
   }
 
-  /** Toggle expanded state for a row. */
+  /**
+   * Toggle expanded state for a row.
+   * @param row
+   * @param index
+   */
   protected toggleRowExpanded(row: T, index: number): void {
     const id = this.rowId(row, index);
     const expanded = this.expandedRowIds().has(id);

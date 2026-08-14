@@ -30,12 +30,12 @@ import {
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
 import { CameraCaptureDialogComponent } from './camera-capture.dialog';
-import { FilePreviewDialogComponent } from './file-preview.dialog';
 import {
   acceptLabels,
   fileExtensionLabel,
   fileMatchesAccept,
 } from './file-accept';
+import { FilePreviewDialogComponent } from './file-preview.dialog';
 
 /**
  * Visual layout for {@link FileUploadComponent}.

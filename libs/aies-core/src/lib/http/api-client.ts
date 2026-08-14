@@ -18,8 +18,8 @@ import {
 } from 'rxjs';
 
 import {
-  DEFAULT_PAGE_SIZE,
   type ApiResponseModel,
+  DEFAULT_PAGE_SIZE,
   type PaginationQueryParamsModel,
   type ResourceId,
 } from '@aies/aies-models';
