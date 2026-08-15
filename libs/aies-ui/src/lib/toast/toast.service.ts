@@ -1,6 +1,13 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { computed, inject, Injectable, Injector, signal } from '@angular/core';
+import {
+  computed,
+  DestroyRef,
+  inject,
+  Injectable,
+  Injector,
+  signal,
+} from '@angular/core';
 
 import type { AiesHttpToastHandler } from '@aies/aies-core';
 
@@ -12,6 +19,18 @@ import {
   type ToastVariant,
 } from './toast.types';
 import { ToastHostComponent } from './toast-host.component';
+
+/**
+ * Above the CDK overlay default (`z-index: 1000` on container, pane, and
+ * backdrop). Only applies when overlays are not in the popover top layer.
+ */
+const TOAST_OVERLAY_Z_INDEX = '1100';
+
+/** Popover API subset — typed locally so older DOM libs still compile. */
+type PopoverToggles = {
+  showPopover?: () => void;
+  hidePopover?: () => void;
+};
 
 /**
  * Imperative toast stack for AIES apps.
@@ -31,10 +50,12 @@ import { ToastHostComponent } from './toast-host.component';
 export class ToastService implements AiesHttpToastHandler {
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly itemsSignal = signal<ToastItem[]>([]);
   private readonly timers = new Map<string, ReturnType<typeof setTimeout>>();
   private readonly fingerprints = new Map<string, string>();
+  private host: HTMLElement | null = null;
   private hostAttached = false;
   private seq = 0;
 
@@ -83,14 +104,19 @@ export class ToastService implements AiesHttpToastHandler {
       panelClass: [
         'aies-toast-panel',
         'pointer-events-none',
-        'z-[1000]',
         '!w-[min(100vw-2rem,24rem)]',
         'max-w-[min(100vw-2rem,24rem)]',
         '!max-h-[calc(100dvh-2rem)]',
       ],
     });
+    // Fallback for overlays outside the popover top layer, where CDK panes and
+    // backdrops sit at z-index 1000 inside `@layer cdk-overlay`.
+    ref.hostElement.classList.add('aies-toast-overlay');
+    ref.hostElement.style.zIndex = TOAST_OVERLAY_Z_INDEX;
     ref.attach(new ComponentPortal(ToastHostComponent, null, this.injector));
+    this.host = ref.hostElement;
     this.hostAttached = true;
+    this.watchOverlayStack(ref.hostElement);
   }
 
   /**
@@ -101,6 +127,7 @@ export class ToastService implements AiesHttpToastHandler {
    */
   show(options: ToastShowOptions): string {
     this.ensureHost();
+    this.raiseToTop();
     const variant: ToastVariant = options.variant ?? 'info';
     const message = options.message.trim();
     if (!message) {
@@ -298,6 +325,53 @@ export class ToastService implements AiesHttpToastHandler {
     if (item) {
       this.armTimer(item);
     }
+  }
+
+  /**
+   * Move the toast host back to the front of the popover top layer.
+   *
+   * WHY: CDK opens overlays as `popover="manual"` elements. The top layer
+   * ignores z-index and paints in `showPopover()` order, so a dialog opened
+   * after the toast host would cover it.
+   */
+  private raiseToTop(): void {
+    const host = this.host as (HTMLElement & PopoverToggles) | null;
+    if (!host?.hidePopover || !host.showPopover) {
+      return;
+    }
+    try {
+      if (host.matches(':popover-open')) {
+        host.hidePopover();
+        host.showPopover();
+      }
+    } catch {
+      // Browser refused the toggle — the z-index fallback still applies.
+    }
+  }
+
+  /**
+   * Re-raise the toast host whenever another overlay attaches, so an open
+   * toast stays visible when a dialog or drawer opens after it.
+   *
+   * @param host - Toast overlay host element.
+   */
+  private watchOverlayStack(host: HTMLElement): void {
+    const container = host.parentElement;
+    if (!container || typeof MutationObserver === 'undefined') {
+      return;
+    }
+
+    const observer = new MutationObserver((records) => {
+      const overlayOpened = records.some((record) =>
+        Array.from(record.addedNodes).some((node) => node !== host),
+      );
+      if (overlayOpened) {
+        this.raiseToTop();
+      }
+    });
+
+    observer.observe(container, { childList: true });
+    this.destroyRef.onDestroy(() => observer.disconnect());
   }
 
   private armTimer(item: ToastItem): void {

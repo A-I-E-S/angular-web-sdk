@@ -15,10 +15,51 @@
  *   content: app sources + ./node_modules/@aies/aies-ui (js/mjs)
  *
  * Also injects base autofill overrides so Chrome/Safari do not paint a
- * yellow/blue fill over AIES form shells (`bg-white` / `dark:bg-ink-950`).
+ * yellow/blue fill over AIES form shells (`bg-white` / `dark:bg-ink-950`),
+ * and a pointer cursor on interactive controls.
  *
  * @type {import('tailwindcss').Config}
  */
+
+/**
+ * Pointer cursor on clickable controls.
+ *
+ * WHY base CSS (not only `cursor-pointer` utilities): browsers use
+ * `cursor: default` on `button`, and Tailwind v4 content detection often
+ * skips pnpm-linked `@aies/aies-ui` bundles so the utility is never emitted.
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function aiesInteractiveCursorPlugin({ addBase }) {
+  addBase({
+    [[
+      'a[href]',
+      'button:not(:disabled):not([aria-disabled="true"])',
+      'summary',
+      'label[for]',
+      'select:not(:disabled)',
+      'input[type="button"]:not(:disabled)',
+      'input[type="submit"]:not(:disabled)',
+      'input[type="reset"]:not(:disabled)',
+      'input[type="checkbox"]:not(:disabled)',
+      'input[type="radio"]:not(:disabled)',
+      'input[type="file"]:not(:disabled)',
+      '[role="button"]:not([aria-disabled="true"])',
+      '[role="link"]:not([aria-disabled="true"])',
+      '[role="menuitem"]:not([aria-disabled="true"])',
+      '[role="option"]:not([aria-disabled="true"])',
+      '[role="tab"]:not([aria-disabled="true"])',
+      '[role="checkbox"]:not([aria-disabled="true"])',
+      '[role="radio"]:not([aria-disabled="true"])',
+      '[role="switch"]:not([aria-disabled="true"])',
+    ].join(', ')]: {
+      cursor: 'pointer',
+    },
+    ':disabled, [aria-disabled="true"]': {
+      cursor: 'not-allowed',
+    },
+  });
+}
 
 /**
  * Neutralize browser autofill chrome so fields keep AIES tokens.
@@ -57,9 +98,51 @@ function aiesAutofillPlugin({ addBase }) {
   });
 }
 
+/**
+ * Always emit spinner motion.
+ *
+ * WHY: Tailwind v4 content detection often skips pnpm-linked `@aies/aies-ui`
+ * bundles, so `animate-spin` on button loading never lands in consumer CSS.
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function aiesSpinPlugin({ addBase }) {
+  addBase({
+    '@keyframes aies-spin': {
+      to: { transform: 'rotate(360deg)' },
+    },
+    '.animate-spin': {
+      animation: 'aies-spin 1s linear infinite',
+    },
+  });
+}
+
+/**
+ * Keep toasts above dialogs, drawers, and other CDK overlays.
+ *
+ * WHY: CDK sets `z-index: 1000` on overlay wrappers, panes, and backdrops.
+ * This covers overlays outside the popover top layer; inside it, ToastService
+ * re-shows the toast popover to stay in front.
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function aiesOverlayStackPlugin({ addBase }) {
+  addBase({
+    '.cdk-global-overlay-wrapper.aies-toast-overlay, .cdk-overlay-pane.aies-toast-panel':
+      {
+        zIndex: '1100',
+      },
+  });
+}
+
 module.exports = {
   darkMode: 'class',
-  plugins: [aiesAutofillPlugin],
+  plugins: [
+    aiesInteractiveCursorPlugin,
+    aiesSpinPlugin,
+    aiesOverlayStackPlugin,
+    aiesAutofillPlugin,
+  ],
   theme: {
     extend: {
       colors: {

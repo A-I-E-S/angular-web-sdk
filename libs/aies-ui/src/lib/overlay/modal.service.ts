@@ -134,10 +134,17 @@ export class ModalService implements OverlayOpener {
           'border-border',
           'dark:border-white/15',
           'p-6',
+          'box-border',
+          // CDK pane is `display: flex` (row). Column + stretch makes hosted
+          // content fill the panel so left/right padding stays even.
+          'flex',
+          'flex-col',
+          'items-stretch',
           'max-w-lg',
           'w-[min(100vw-2rem,32rem)]',
           'max-h-[min(100vh-2rem,90vh)]',
-          'overflow-auto',
+          'overflow-x-hidden',
+          'overflow-y-auto',
           'will-change-transform',
           ...extraPanelClass,
         ],

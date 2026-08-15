@@ -117,6 +117,7 @@ export {
   ConfirmDialogComponent,
   type ConfirmOptions,
   ConfirmService,
+  type ConfirmWork,
   DrawerService,
   ModalService,
   OVERLAY_DATA,

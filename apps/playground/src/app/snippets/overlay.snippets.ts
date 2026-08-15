@@ -281,6 +281,9 @@ export class ConfirmDemoComponent {
         confirmLabel: 'Delete',
         cancelLabel: 'Cancel',
         danger: true,
+        // Optional: keep the dialog open with a loading Confirm until this
+        // settles. Errors leave it open so the user can retry or cancel.
+        // onConfirm: () => this.shipments.delete(id),
       })
       .pipe(takeUntilDestroyed())
       .subscribe((ok) => {

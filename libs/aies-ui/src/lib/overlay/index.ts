@@ -7,7 +7,7 @@
 export { AiesOverlayRef } from './aies-overlay-ref';
 export { ConfirmService } from './confirm.service';
 export { ConfirmDialogComponent } from './confirm-dialog.component';
-export type { ConfirmOptions } from './confirm-options';
+export type { ConfirmOptions, ConfirmWork } from './confirm-options';
 export { DrawerService } from './drawer.service';
 export { ModalService } from './modal.service';
 export type { OverlayOpenConfig } from './overlay-attach';

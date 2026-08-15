@@ -109,8 +109,11 @@ export class ButtonComponent {
   /**
    * In-flight mutation. Replaces the label with a circular spinner while
    * keeping the control's width, and treats the host as disabled.
+   *
+   * Plain boolean (no `booleanAttribute`): confirm/dialog `[loading]="signal()"`
+   * bindings must pass through `true` without attribute-string coercion.
    */
-  readonly loading = input(false, { transform: booleanAttribute });
+  readonly loading = input(false);
 
   protected readonly inactive = computed(
     () => this.disabled() || this.loading(),
@@ -163,12 +166,16 @@ export class ButtonComponent {
 
   /**
    * Anchors lack native `disabled` — block activation while keeping the cursor.
+   *
+   * Uses `stopPropagation` (not `stopImmediatePropagation`) so the host click
+   * does not swallow the same-element `(click)` that starts confirm work.
+   *
    * @param event
    */
   protected blockWhenDisabled(event: Event): void {
     if (this.inactive()) {
       event.preventDefault();
-      event.stopImmediatePropagation();
+      event.stopPropagation();
     }
   }
 }

@@ -1,6 +1,6 @@
-import { inject,Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { map,Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import type { ConfirmOptions } from './confirm-options';
@@ -23,10 +23,11 @@ import { ModalService } from './modal.service';
  *     message: 'This cannot be undone.',
  *     confirmLabel: 'Delete',
  *     danger: true,
+ *     onConfirm: () => this.shipments.delete(id),
  *   })
  *   .subscribe((ok) => {
  *     if (ok) {
- *       this.deleteShipment();
+ *       this.refreshList();
  *     }
  *   });
  * ```
@@ -43,7 +44,11 @@ export class ConfirmService {
    * Escape map to `false` (same as Cancel) so callers only branch on an
    * affirmative click.
    *
-   * @param options - Title, message, and button labels for the dialog.
+   * When `options.onConfirm` is set, Confirm stays open with a loading primary
+   * button until that work settles. Success emits `true`; errors leave the
+   * dialog open (this Observable does not emit until close).
+   *
+   * @param options - Title, message, button labels, and optional confirm work.
    * @returns Observable that emits once with `true` / `false`, then completes.
    */
   confirm(options: ConfirmOptions): Observable<boolean> {
