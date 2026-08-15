@@ -85,7 +85,7 @@ export class ButtonComponent {
    */
   protected readonly hostClass = computed(() => {
     const base =
-      'inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors ' +
+      'inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
       'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 

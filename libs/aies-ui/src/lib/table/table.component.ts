@@ -5,6 +5,7 @@ import {
   Component,
   computed,
   contentChildren,
+  inject,
   input,
   numberAttribute,
   output,
@@ -14,6 +15,7 @@ import {
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { PaginationMetaModel } from '@aies/aies-models';
+import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -28,7 +30,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * `<ng-template aiesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
  *
- * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick});
+ * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
+ * While {@link refreshing} is true the rows stay on screen — the refresh icon
+ * spins and a thin bar runs across the grid (do not swap to a blocking loader).
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
@@ -57,6 +61,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *   [rows]="state().data!"
  *   [meta]="meta()"
  *   [showRefresh]="true"
+ *   [refreshing]="state().isFetching"
  *   [showFilter]="true"
  *   [showExport]="true"
  *   [filterCount]="activeFilterCount()"
@@ -86,7 +91,7 @@ import { TableColumn, TableSortChange } from './table-column';
     PaginationComponent,
   ],
   template: `
-    <div class="flex w-full flex-col gap-3">
+    <div class="flex w-full flex-col gap-3" [attr.aria-busy]="refreshing() || null">
       @if (showRefresh() || showFilter() || showExport()) {
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
@@ -96,10 +101,15 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
+                [disabled]="refreshing()"
                 [attr.aria-label]="refreshLabel()"
                 (click)="refreshClick.emit()"
               >
-                <aies-icon name="refresh" [size]="16" />
+                <aies-icon
+                  name="refresh"
+                  [size]="16"
+                  [class]="refreshing() ? 'animate-spin' : ''"
+                />
                 {{ refreshLabel() }}
               </button>
             }
@@ -143,8 +153,21 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="w-full overflow-x-auto rounded-md border border-border dark:border-white/10"
+        class="relative w-full overflow-x-auto rounded-md border border-border dark:border-white/10"
       >
+        @if (refreshing()) {
+          <div
+            class="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 overflow-hidden"
+            role="status"
+            aria-live="polite"
+            aria-label="Refreshing"
+          >
+            <div
+              class="h-full w-full animate-pulse"
+              [class]="modeColor.classes().bg"
+            ></div>
+          </div>
+        }
         <table
           class="w-full table-fixed border-collapse text-left text-body text-ink dark:text-white"
         >
@@ -308,6 +331,8 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
+  protected readonly modeColor = inject(ModeColorService);
+
   /**
    * When false, hides row expansion even if {@link RowDetailDefDirective}
    * templates are projected. Defaults to true.
@@ -347,6 +372,13 @@ export class TableComponent<T = unknown> {
 
   /** Label on the refresh trigger. Defaults to `Refresh`. */
   readonly refreshLabel = input('Refresh');
+
+  /**
+   * Background refetch in flight. Rows stay visible; the refresh icon spins
+   * and a thin bar runs across the grid. Bind to `state().isFetching` when
+   * wrapped in {@link AsyncStateComponent}.
+   */
+  readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
    * Show a Filters button above the table (top-right). Host should open

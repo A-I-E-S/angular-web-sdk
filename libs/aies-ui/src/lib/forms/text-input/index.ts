@@ -1,4 +1,4 @@
 /**
  * Text input form control exports.
  */
-export { TextInputComponent } from './text-input.component';
+export { TextInputComponent, type TextInputType } from './text-input.component';

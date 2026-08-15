@@ -120,7 +120,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
 
       <app-demo-section
         title="Shipments list"
-        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Use the scenario buttons to preview loading and empty."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh keeps the rows and shows a thin bar — use the scenario buttons for first-load and empty."
         badge="template cells"
         [code]="tableCode"
       >
@@ -146,6 +146,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
             [sort]="sort()"
             [rowTrackBy]="rowTrackBy"
             [showRefresh]="true"
+            [refreshing]="refreshing()"
             [showFilter]="true"
             [showExport]="true"
             [filterCount]="activeFilterCount()"
@@ -271,6 +272,7 @@ export class TablePage {
   protected readonly lastExpandedRow = signal<string | null>(null);
   protected readonly lastExport = signal<string | null>(null);
   protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
+  protected readonly refreshing = signal(false);
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
 
@@ -409,7 +411,7 @@ export class TablePage {
         return {
           data: this.pageRows(),
           isLoading: false,
-          isFetching: false,
+          isFetching: this.refreshing(),
           isError: false,
           error: null,
         };
@@ -452,9 +454,12 @@ export class TablePage {
   }
 
   protected onRefresh(): void {
-    // Demo: flash loading then back to ready.
-    this.setListDemo('loading');
-    setTimeout(() => this.setListDemo('ready'), 600);
+    if (this.refreshing()) {
+      return;
+    }
+    this.refreshing.set(true);
+    this.setListDemo('ready');
+    setTimeout(() => this.refreshing.set(false), 800);
   }
 
   protected onExport(): void {

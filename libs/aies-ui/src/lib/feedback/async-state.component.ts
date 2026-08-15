@@ -35,7 +35,7 @@ type AsyncView =
  * 2. `isError && data === undefined` → {@link ErrorStateComponent}
  * 3. empty data (empty array, or null/undefined after load) → {@link EmptyStateComponent}
  * 4. otherwise project content; never block on background refetch — show a
- *    stale-error or "Updating…" badge instead.
+ *    thin progress bar (and keep a stale-error badge if the last refresh failed).
  *
  * A single `retry` output covers blocking error/empty and the stale-data badge
  * so views wire one handler regardless of which branch fired.
@@ -96,16 +96,15 @@ type AsyncView =
               />
             } @else if (badges.fetching) {
               <div
-                class="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-md border border-border bg-white px-2.5 py-1.5 text-caption text-neutral-600 shadow-sm dark:border-white/15 dark:bg-ink dark:text-neutral-300"
+                class="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 overflow-hidden"
                 role="status"
                 aria-live="polite"
+                aria-label="Updating"
               >
-                <span
-                  class="size-1.5 animate-pulse rounded-full"
+                <div
+                  class="h-full w-full animate-pulse"
                   [class]="modeColor.classes().bg"
-                  aria-hidden="true"
-                ></span>
-                Updating…
+                ></div>
               </div>
             }
           }

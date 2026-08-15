@@ -14,10 +14,52 @@
  *   presets: [require('@aies/aies-theme/tailwind-preset')]
  *   content: app sources + ./node_modules/@aies/aies-ui (js/mjs)
  *
+ * Also injects base autofill overrides so Chrome/Safari do not paint a
+ * yellow/blue fill over AIES form shells (`bg-white` / `dark:bg-ink-950`).
+ *
  * @type {import('tailwindcss').Config}
  */
+
+/**
+ * Neutralize browser autofill chrome so fields keep AIES tokens.
+ *
+ * WHY inset box-shadow (not `background-color`): WebKit ignores background
+ * on `:-webkit-autofill`. A large inset shadow matches the field shell
+ * (`white` / `ink-950`) and `-webkit-text-fill-color` keeps body text on
+ * `ink` / white. `.dark` matches `ThemeService` (`class` on `<html>`).
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function aiesAutofillPlugin({ addBase }) {
+  const autofillSelectors = [
+    'input:-webkit-autofill',
+    'input:-webkit-autofill:hover',
+    'input:-webkit-autofill:focus',
+    'input:-webkit-autofill:active',
+    'textarea:-webkit-autofill',
+    'textarea:-webkit-autofill:hover',
+    'textarea:-webkit-autofill:focus',
+    'textarea:-webkit-autofill:active',
+  ].join(', ');
+
+  addBase({
+    [autofillSelectors]: {
+      WebkitTextFillColor: '#212529',
+      caretColor: '#212529',
+      boxShadow: '0 0 0 1000px #ffffff inset',
+      transition: 'background-color 99999s ease-in-out 0s',
+    },
+    [`.dark ${autofillSelectors}`]: {
+      WebkitTextFillColor: '#ffffff',
+      caretColor: '#ffffff',
+      boxShadow: '0 0 0 1000px #272729 inset',
+    },
+  });
+}
+
 module.exports = {
   darkMode: 'class',
+  plugins: [aiesAutofillPlugin],
   theme: {
     extend: {
       colors: {

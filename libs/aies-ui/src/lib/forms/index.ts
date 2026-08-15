@@ -32,6 +32,6 @@ export {
   type SelectCreateConfig,
   type SelectOption,
 } from './select';
-export { TextInputComponent } from './text-input';
+export { TextInputComponent, type TextInputType } from './text-input';
 export { TextareaComponent } from './textarea';
 export { ToggleComponent } from './toggle';

@@ -9,14 +9,16 @@ import {
  * URL of the SVG sprite served by the host application.
  *
  * Default assumes the published asset is copied to
- * `assets/aies-icons/icons.sprite.svg` (see package README). Override when
- * the host uses a CDN or a different assets path.
+ * `/assets/aies-icons/icons.sprite.svg` (see package README). The leading
+ * slash is required: Angular `[src]` / `fetch()` resolve relative URLs
+ * against the current route (`/login/assets/…`), not `<base href="/">`.
+ * Override when the host uses a CDN or a different assets path.
  */
 export const AIES_ICON_SPRITE_URL = new InjectionToken<string>(
   'AIES_ICON_SPRITE_URL',
   {
     providedIn: 'root',
-    factory: () => 'assets/aies-icons/icons.sprite.svg',
+    factory: () => '/assets/aies-icons/icons.sprite.svg',
   },
 );
 

@@ -157,7 +157,7 @@ export /**
  */
 const FEEDBACK_ASYNC = `
 // Wrap the list (table + pagination). Maps loading / error / empty / success for you.
-// Background refetch shows an “Updating…” badge instead of blocking. One (retry) → refetch.
+// Background refetch keeps content on screen with a thin progress bar. One (retry) → refetch.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import type { AsyncQueryStateModel } from '@aies/aies-models';
@@ -179,7 +179,11 @@ interface Shipment {
   imports: [AsyncStateComponent, TableComponent],
   template: \`
     <aies-async-state [state]="state()" (retry)="refetch()">
-      <aies-table [columns]="columns" [rows]="state().data ?? []" />
+      <aies-table
+        [columns]="columns"
+        [rows]="state().data ?? []"
+        [refreshing]="state().isFetching"
+      />
     </aies-async-state>
   \`,
 })

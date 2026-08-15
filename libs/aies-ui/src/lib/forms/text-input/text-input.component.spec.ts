@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { TextInputComponent } from './text-input.component';
+import { TextInputComponent, type TextInputType } from './text-input.component';
 
 @Component({
   standalone: true,
@@ -79,5 +79,47 @@ describe('TextInputComponent', () => {
 
     expect(prefix?.textContent?.trim()).toBe('P');
     expect(suffix?.textContent?.trim()).toBe('S');
+  });
+
+  it('should default to type=text and omit empty autocomplete', () => {
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input');
+    expect(input.getAttribute('type')).toBe('text');
+    expect(input.hasAttribute('autocomplete')).toBe(false);
+  });
+});
+
+@Component({
+  standalone: true,
+  imports: [TextInputComponent],
+  template: `
+    <aies-text-input
+      label="Password"
+      [type]="type()"
+      autocomplete="current-password"
+    />
+  `,
+})
+class PasswordInputHostComponent {
+  readonly type = signal<TextInputType>('password');
+}
+
+describe('TextInputComponent type/autocomplete', () => {
+  it('should bind password type and autocomplete', async () => {
+    await TestBed.configureTestingModule({
+      imports: [PasswordInputHostComponent],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(PasswordInputHostComponent);
+    fixture.detectChanges();
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input');
+
+    expect(input.getAttribute('type')).toBe('password');
+    expect(input.getAttribute('autocomplete')).toBe('current-password');
+
+    fixture.componentInstance.type.set('text');
+    fixture.detectChanges();
+    expect(input.getAttribute('type')).toBe('text');
   });
 });

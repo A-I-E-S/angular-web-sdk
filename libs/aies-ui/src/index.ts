@@ -152,6 +152,7 @@ export {
   type SelectOption,
   TextareaComponent,
   TextInputComponent,
+  type TextInputType,
   ToggleComponent,
 } from './lib/forms';
 

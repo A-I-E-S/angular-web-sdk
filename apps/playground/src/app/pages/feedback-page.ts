@@ -208,7 +208,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="AsyncState playground"
-        hint="One wrapper around a query result: first load and hard errors block the content; empty shows EmptyState; success renders your template; Updating… and Stale error keep the list visible with a quiet badge. Switch scenarios to see each mapping."
+        hint="One wrapper around a query result: first load and hard errors block the content; empty shows EmptyState; success renders your template; a background refetch keeps the list visible with a thin progress bar. Switch scenarios to see each mapping."
         badge="6 scenarios"
         [code]="asyncCode"
       >
@@ -338,7 +338,7 @@ export class FeedbackPage {
     error: 'Blocking error',
     empty: 'Empty',
     content: 'Success',
-    fetching: 'Updating…',
+    fetching: 'Background refresh',
     stale: 'Stale error',
   };
 

@@ -61,6 +61,7 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
         [sort]="sort()"
         [rowTrackBy]="rowTrackBy"
         [showRefresh]="true"
+        [refreshing]="listState().isFetching"
         [showFilter]="true"
         [showExport]="true"
         (sortChange)="onSort($event)"
@@ -122,6 +123,7 @@ export class ShipmentListPageComponent {
   protected readonly meta = signal<PaginationMetaModel | null>(null);
   protected readonly fetchError = signal<string | null>(null);
   protected readonly isLoading = signal(false);
+  protected readonly isFetching = signal(false);
 
   protected readonly columns: TableColumn<Shipment>[] = [
     { key: 'reference', header: 'Reference', sortable: true },
@@ -162,9 +164,9 @@ export class ShipmentListPageComponent {
   }
 
   protected readonly listState = computed((): AsyncQueryStateModel<Shipment[]> => ({
-    data: this.isLoading() ? undefined : this.rows(),
+    data: this.rows(),
     isLoading: this.isLoading(),
-    isFetching: this.isLoading(),
+    isFetching: this.isFetching(),
     isError: this.fetchError() != null,
     error: this.fetchError(),
   }));
@@ -174,7 +176,9 @@ export class ShipmentListPageComponent {
   }
 
   protected async refetch(): Promise<void> {
-    this.isLoading.set(true);
+    const hadData = this.rows().length > 0;
+    this.isLoading.set(!hadData);
+    this.isFetching.set(true);
     this.fetchError.set(null);
     try {
       const currentSort = this.sort();
@@ -193,6 +197,7 @@ export class ShipmentListPageComponent {
       this.fetchError.set('Could not load shipments.');
     } finally {
       this.isLoading.set(false);
+      this.isFetching.set(false);
     }
   }
 

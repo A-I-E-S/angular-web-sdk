@@ -20,7 +20,7 @@ import { AiesIconComponent, AIES_ICON_SPRITE_URL } from '@aies/aies-icons';
 providers: [
   {
     provide: AIES_ICON_SPRITE_URL,
-    useValue: 'assets/aies-icons/icons.sprite.svg',
+    useValue: '/assets/aies-icons/icons.sprite.svg',
   },
 ],
 ```
@@ -38,7 +38,8 @@ published file:
 `node_modules/@aies/aies-icons/assets/icons.sprite.svg`
 → `src/assets/aies-icons/icons.sprite.svg`
 
-Then point {@link AIES_ICON_SPRITE_URL} at that path (default already matches).
+Then point {@link AIES_ICON_SPRITE_URL} at `/assets/aies-icons/icons.sprite.svg`
+(the package default). Use a leading `/` so the sprite loads on nested routes.
 
 ## Adding a new icon
 

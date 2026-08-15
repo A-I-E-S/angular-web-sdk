@@ -27,6 +27,20 @@ import {
 let nextTextInputId = 0;
 
 /**
+ * Native `type` values supported by {@link TextInputComponent}.
+ *
+ * Keep this list to single-line text controls — multiline is
+ * {@link TextareaComponent}, numeric is {@link NumberInputComponent}.
+ */
+export type TextInputType =
+  | 'text'
+  | 'email'
+  | 'password'
+  | 'search'
+  | 'tel'
+  | 'url';
+
+/**
  * Single-line text field — **reference** form control for `@aies/aies-ui`.
  *
  * Follows the shared AIES form field pattern: label, hint, field-level
@@ -46,7 +60,18 @@ let nextTextInputId = 0;
  *   <button suffix type="button" (click)="tracking.set('')">Clear</button>
  * </aies-text-input>
  *
- * <aies-text-input label="Email" formControlName="email" />
+ * <aies-text-input label="Email" type="email" formControlName="email" />
+ *
+ * <aies-text-input
+ *   label="Password"
+ *   [type]="showPassword() ? 'text' : 'password'"
+ *   autocomplete="current-password"
+ *   formControlName="password"
+ * >
+ *   <button suffix type="button" (click)="showPassword.set(!showPassword())">
+ *     <aies-icon [name]="showPassword() ? 'eye-slash' : 'eye'" [size]="16" />
+ *   </button>
+ * </aies-text-input>
  * ```
  */
 @Component({
@@ -68,11 +93,12 @@ let nextTextInputId = 0;
       </span>
       <input
         [id]="controlId"
-        type="text"
+        [attr.type]="type()"
         [class]="innerClass"
         [value]="value()"
         [disabled]="disabled()"
         [attr.placeholder]="placeholder() || null"
+        [attr.autocomplete]="autocomplete() || null"
         [attr.aria-invalid]="error() ? true : null"
         [attr.aria-describedby]="describedBy()"
         (input)="onInput($event)"
@@ -122,6 +148,19 @@ export class TextInputComponent implements ControlValueAccessor {
    * Native placeholder when the value is empty.
    */
   readonly placeholder = input('');
+
+  /**
+   * Native input type. Defaults to `text`. Use `password` / `email` for
+   * auth fields; toggle visibility by binding `type` between `password` and
+   * `text`.
+   */
+  readonly type = input<TextInputType>('text');
+
+  /**
+   * Native `autocomplete` hint (e.g. `email`, `current-password`).
+   * Omitted from the DOM when empty.
+   */
+  readonly autocomplete = input('');
 
   /**
    * Current text. Supports `[(value)]` and Reactive Forms via CVA.
