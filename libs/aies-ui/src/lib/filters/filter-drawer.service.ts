@@ -8,20 +8,30 @@ import type {
   FilterDrawerData,
   FilterDrawerResult,
 } from './filter-drawer.types';
+import { FilterQueryService } from './filter-query.service';
 
 /**
  * Opens the schema-driven {@link FilterDrawerPanel} via {@link DrawerService}.
  *
  * Requires {@link provideAiesUiOverlays} at bootstrap (same as other overlays).
  *
+ * When the current URL already has filter / pagination query params for the
+ * given config, those values seed the drawer (overriding a stale host `state`).
+ * Successful Apply writes the bag back through {@link FilterQueryService}.
+ *
  * @example
  * ```ts
  * const filters = inject(FilterDrawerService);
+ * const query = inject(FilterQueryService);
+ * const config = trackShipmentsFilterConfig;
+ * const state = signal(
+ *   query.hasParams(config) ? query.read(config) : emptyFilterState(),
+ * );
+ *
  * filters
  *   .open({
- *     config: trackShipmentsFilterConfig,
- *     state: current,
- *     // Drawer stays open until the list request succeeds.
+ *     config,
+ *     state: state(),
  *     onApply: ({ params }) => this.shipments.load(params),
  *   })
  *   .afterClosed()
@@ -35,6 +45,7 @@ import type {
 @Injectable()
 export class FilterDrawerService {
   private readonly drawer = inject(DrawerService);
+  private readonly filterQuery = inject(FilterQueryService);
 
   /**
    * Opens the filter drawer (dismissible by default — backdrop / Escape cancel).
@@ -46,9 +57,12 @@ export class FilterDrawerService {
    * @returns Overlay handle; `afterClosed` emits {@link FilterDrawerResult} on Apply.
    */
   open(data: FilterDrawerData): OverlayHandle<FilterDrawerResult> {
+    const payload = this.filterQuery.hasParams(data.config)
+      ? { ...data, state: this.filterQuery.read(data.config) }
+      : data;
     return this.drawer.open<FilterDrawerData, FilterDrawerResult>(
       FilterDrawerPanel,
-      { data, dismissible: true },
+      { data: payload, dismissible: true },
     );
   }
 }

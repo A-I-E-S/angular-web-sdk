@@ -8,13 +8,15 @@ export /**
 const FILTERS_OPEN_APPLY = `
 // Open the drawer, await the list refetch, then commit state on success.
 // Host owns FilterStateModel; drawer edits a clone. Needs provideAiesUiOverlays().
+// Apply writes the query bag to the URL (page resets to 1). Seed from the URL
+// on first paint with FilterQueryService.read() when those queries are present.
 
 import { Component, inject, signal } from '@angular/core';
 import {
   ButtonComponent,
   FilterDrawerService,
+  FilterQueryService,
   emptyFilterState,
-  toFilterParams,
   trackShipmentsFilterConfig,
   type FilterStateModel,
 } from '@aies/aies-ui';
@@ -31,14 +33,20 @@ import {
 })
 export class ShipmentListFiltersComponent {
   private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterQuery = inject(FilterQueryService);
   private readonly http = inject(/* your HttpClient or list service */);
+  private readonly config = trackShipmentsFilterConfig;
 
-  protected readonly state = signal<FilterStateModel>(emptyFilterState());
+  protected readonly state = signal<FilterStateModel>(
+    this.filterQuery.hasParams(this.config)
+      ? this.filterQuery.read(this.config)
+      : emptyFilterState(),
+  );
 
   protected openFilters(): void {
     this.filterDrawer
       .open({
-        config: trackShipmentsFilterConfig,
+        config: this.config,
         state: this.state(),
         title: 'Track shipments',
         // Stays open until this settles; errors keep it open + show a tip.
@@ -50,8 +58,6 @@ export class ShipmentListFiltersComponent {
           return; // Cancel / backdrop — leave host state alone
         }
         this.state.set(result.state);
-        // Optional: sync the URL with the same bag the API used
-        // this.router.navigate([], { queryParams: result.params, queryParamsHandling: '' });
       });
   }
 }
@@ -418,25 +424,30 @@ export /**
  *
  */
 const FILTERS_HYDRATE = `
-// First paint: rebuild FilterStateModel from queryParams so shared links restore filters.
+// First paint: rebuild FilterStateModel from the URL so shared links restore filters.
+// FilterQueryService.read() is a no-op into empty state when those queries are absent.
+// Apply and aies-pagination write the same keys back (\`page\`, \`size\`, filters).
 
-import { inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { inject, signal } from '@angular/core';
 import {
-  fromFilterParams,
+  FilterQueryService,
+  emptyFilterState,
   trackShipmentsFilterConfig,
   type FilterStateModel,
-} from '@aies/aies-models';
-import { signal } from '@angular/core';
+} from '@aies/aies-ui';
 
 export class ListPage {
-  private readonly route = inject(ActivatedRoute);
+  private readonly filterQuery = inject(FilterQueryService);
+  private readonly config = trackShipmentsFilterConfig;
+
   protected readonly state = signal<FilterStateModel>(
-    fromFilterParams(
-      this.route.snapshot.queryParams,
-      trackShipmentsFilterConfig,
-    ),
+    this.filterQuery.hasParams(this.config)
+      ? this.filterQuery.read(this.config)
+      : emptyFilterState(),
   );
+
+  protected readonly page = signal(this.state().page ?? 1);
+  protected readonly size = signal(this.state().size ?? 15);
 }
 `;
 

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import {
 } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
+import { FilterQueryService } from '../filters/filter-query.service';
 import { SelectComponent, type SelectOption } from '../forms/select';
 
 /** Page number or a gap marker for windowed pagination. */
@@ -35,6 +37,9 @@ type PageItem = number | 'ellipsis';
  *
  * Size options are {@link PAGINATION_PAGE_SIZES} (`5`, `15`, `30`). Changing
  * size emits {@link sizeChange}; the host should refetch at page 1.
+ *
+ * When Angular Router is present, page / size also sync to the URL (`page`,
+ * `size`) via {@link FilterQueryService} — same keys the filter drawer writes.
  *
  * @example
  * ```ts
@@ -156,6 +161,7 @@ type PageItem = number | 'ellipsis';
   `,
 })
 export class PaginationComponent {
+  private readonly filterQuery = inject(FilterQueryService);
   /**
    * Pagination slice from the latest list response.
    *
@@ -252,6 +258,7 @@ export class PaginationComponent {
     if (page === this.meta().current_page) {
       return;
     }
+    void this.filterQuery.setPage(page);
     this.pageChange.emit(page);
   }
 
@@ -267,6 +274,7 @@ export class PaginationComponent {
     if (next.value === this.meta().per_page) {
       return;
     }
+    void this.filterQuery.setSize(next.value);
     this.sizeChange.emit(next.value);
   }
 }

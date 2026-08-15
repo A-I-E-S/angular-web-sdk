@@ -133,6 +133,13 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
   },
   template: `
     <label [attr.for]="controlId" [class]="labelClass">{{ label() }}</label>
+    <!--
+      WHY click on the non-focusable shell: prefix/suffix sit outside the
+      listbox trigger button. Keyboard users still tab to that inner button.
+      This only expands the pointer hit target.
+    -->
+    <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+    <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
     <div
       cdkOverlayOrigin
       #triggerOrigin="cdkOverlayOrigin"
@@ -236,6 +243,8 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <ng-content select="[suffix]" />
       </span>
     </div>
+    <!-- eslint-enable @angular-eslint/template/click-events-have-key-events -->
+    <!-- eslint-enable @angular-eslint/template/interactive-supports-focus -->
 
     <ng-template
       cdkConnectedOverlay

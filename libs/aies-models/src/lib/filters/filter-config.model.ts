@@ -173,6 +173,7 @@ export type FilterParamsModel = Record<string, string | number | undefined>;
 
 /**
  * Resolved transport for a module config (defaults to {@link DEFAULT_FILTER_TRANSPORT}).
+ * @param config
  */
 export function resolveFilterTransport(
   config: Pick<ModuleFilterConfigModel, 'transport'>,

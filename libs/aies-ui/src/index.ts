@@ -70,6 +70,7 @@ export {
   FilterDrawerPanel,
   type FilterDrawerResult,
   FilterDrawerService,
+  FilterQueryService,
 } from './lib/filters';
 
 /**
@@ -94,9 +95,12 @@ export {
   type FilterOptionModel,
   type FilterOptionsSource,
   type FilterParamsModel,
+  type FilterQueryBag,
+  filterQueryKeys,
   type FilterStateModel,
   FilterTransport,
   fromFilterParams,
+  hasFilterParams,
   type ModuleFilterConfigModel,
   resetFilterState,
   resolveFilterTransport,

@@ -213,7 +213,7 @@ export class HomePage {
     {
       path: '/usecases/shipment',
       title: 'Back button and Breadcrumbs',
-      blurb: 'Both ship with the app shell. Back appears on child routes; breadcrumbs follow the nav trail.',
+      blurb: 'App-shell Back and breadcrumbs, plus a list that restores filters and page from the URL.',
       icon: 'truck',
       group: 'Use cases',
     },

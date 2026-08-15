@@ -46,7 +46,7 @@ export const appConfig: ApplicationConfig = {
 | Action menu | `ActionMenu` (+ `aiesActionMenuTrigger`) — overflow / row actions |
 | Avatar | `Avatar`, `AvatarMenu` — initials/image + account dropdown |
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `ErrorIndicator`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
-| Filters | `FilterDrawerService` + schema from `@aies/aies-models` (`ModuleFilterConfigModel`) |
+| Filters | `FilterDrawerService`, `FilterQueryService` — hydrate/write list queries on the URL |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, address (Google Places), number, file upload, checkbox, radio, toggle, textarea, date, OTP — address needs `provideGooglePlaces({ apiKey })` |
 | Navigation | `AppShell` (clock, notifications, avatar menu), `SideNav` (SDK logo, logout), `Breadcrumb`, `Tabs`, `Segment` |

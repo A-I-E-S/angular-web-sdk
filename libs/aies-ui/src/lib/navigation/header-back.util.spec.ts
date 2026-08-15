@@ -90,6 +90,19 @@ describe('resolveContentBackTarget', () => {
       resolveContentBackTarget(null, '/components/button', '/components/button'),
     ).toBeNull();
   });
+
+  it('forwards list query params so Back restores filters and page', () => {
+    expect(
+      resolveContentBackTarget(
+        '/usecases/shipment',
+        '/usecases/shipment/STN-1042?page=2&size=15&search=STN',
+        '/usecases/shipment',
+      ),
+    ).toEqual({
+      routerLink: '/usecases/shipment',
+      queryParams: { page: '2', size: '15', search: 'STN' },
+    });
+  });
 });
 
 describe('route classification', () => {

@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import type { PaginationMetaModel } from '@aies/aies-models';
 
+import { FilterQueryService } from '../filters/filter-query.service';
 import { PaginationComponent } from './pagination.component';
 
 @Component({
@@ -33,10 +34,17 @@ class PaginationHostComponent {
 describe('PaginationComponent', () => {
   let fixture: ComponentFixture<PaginationHostComponent>;
   let host: PaginationHostComponent;
+  let filterQuery: { setPage: jest.Mock; setSize: jest.Mock };
 
   beforeEach(async () => {
+    filterQuery = {
+      setPage: jest.fn().mockResolvedValue(true),
+      setSize: jest.fn().mockResolvedValue(true),
+    };
+
     await TestBed.configureTestingModule({
       imports: [PaginationHostComponent, OverlayModule],
+      providers: [{ provide: FilterQueryService, useValue: filterQuery }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaginationHostComponent);
@@ -90,6 +98,7 @@ describe('PaginationComponent', () => {
     fixture.detectChanges();
 
     expect(host.size()).toBe(30);
+    expect(filterQuery.setSize).toHaveBeenCalledWith(30);
   });
 
   it('emits pageChange from Previous when a previous page exists', () => {
@@ -106,6 +115,7 @@ describe('PaginationComponent', () => {
     fixture.detectChanges();
 
     expect(host.page()).toBe(1);
+    expect(filterQuery.setPage).toHaveBeenCalledWith(1);
   });
 
   it('emits pageChange from a numbered page button', () => {
@@ -116,6 +126,7 @@ describe('PaginationComponent', () => {
     fixture.detectChanges();
 
     expect(host.page()).toBe(1);
+    expect(filterQuery.setPage).toHaveBeenCalledWith(1);
   });
 
   it('windows long page lists with ellipsis', () => {

@@ -24,7 +24,10 @@ export {
   clearFilterField,
   cloneFilterState,
   emptyFilterState,
+  type FilterQueryBag,
+  filterQueryKeys,
   fromFilterParams,
+  hasFilterParams,
   resetFilterState,
   toFilterParams,
 } from './filter-serialize';

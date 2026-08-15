@@ -5,6 +5,12 @@ import type {
 } from './filter-config.model';
 import { FilterTransport, resolveFilterTransport } from './filter-config.model';
 
+/** Router / HTTP query bag accepted by {@link fromFilterParams}. */
+export type FilterQueryBag = Record<
+  string,
+  string | number | null | undefined | readonly string[]
+>;
+
 /**
  * Empty filter state — safe default before hydrate / after reset.
  *
@@ -120,22 +126,12 @@ export function toFilterParams(
  * @returns Hydrated {@link FilterStateModel}.
  */
 export function fromFilterParams(
-  params: Record<string, string | number | null | undefined | readonly string[]>,
+  params: FilterQueryBag,
   config: ModuleFilterConfigModel,
 ): FilterStateModel {
   const state = emptyFilterState();
 
-  const read = (key: string): string | undefined => {
-    const raw = params[key];
-    if (raw == null) {
-      return undefined;
-    }
-    if (Array.isArray(raw)) {
-      return raw[0] != null ? String(raw[0]) : undefined;
-    }
-    const s = String(raw);
-    return s === '' ? undefined : s;
-  };
+  const read = (key: string): string | undefined => queryBagValue(params[key]);
 
   state.search = read(config.search?.param ?? 'search');
   state.from = read(config.date?.rangeParams.from ?? 'from');
@@ -184,6 +180,63 @@ export function fromFilterParams(
   });
 
   return state;
+}
+
+/**
+ * Query keys this config reads and writes (`search`, `page`, `size`, field
+ * keys or `filterColumn` / `filterValue`, etc.).
+ *
+ * @param config - Module schema.
+ * @returns Deduped list of query param names.
+ */
+export function filterQueryKeys(config: ModuleFilterConfigModel): string[] {
+  const keys: string[] = [
+    config.search?.param ?? 'search',
+    config.date?.rangeParams.from ?? 'from',
+    config.date?.rangeParams.to ?? 'to',
+    config.date?.fieldParam ?? 'date',
+    config.sort?.param ?? 'order',
+    config.pagination?.pageParam ?? 'page',
+    config.pagination?.sizeParam ?? 'size',
+  ];
+  if (resolveFilterTransport(config) === FilterTransport.Named) {
+    keys.push(...config.fields.map((field) => field.key));
+  } else {
+    keys.push('filterColumn', 'filterValue');
+  }
+  return [...new Set(keys)];
+}
+
+/**
+ * True when the bag contains any list-filter / pagination key this config
+ * understands. Used to decide whether to hydrate from the URL.
+ *
+ * @param params - Router query params or API query object.
+ * @param config - Module schema.
+ * @returns Whether at least one relevant non-empty param is present.
+ */
+export function hasFilterParams(
+  params: FilterQueryBag,
+  config: ModuleFilterConfigModel,
+): boolean {
+  return filterQueryKeys(config).some((key) => queryBagValue(params[key]) != null);
+}
+
+/**
+ * @param raw - One query-bag value.
+ * @returns First non-empty string, or undefined.
+ */
+function queryBagValue(
+  raw: FilterQueryBag[string],
+): string | undefined {
+  if (raw == null) {
+    return undefined;
+  }
+  if (Array.isArray(raw)) {
+    return raw[0] != null && String(raw[0]) !== '' ? String(raw[0]) : undefined;
+  }
+  const value = String(raw);
+  return value === '' ? undefined : value;
 }
 
 /**

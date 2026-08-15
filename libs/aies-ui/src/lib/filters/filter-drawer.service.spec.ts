@@ -8,11 +8,16 @@ import { DrawerService } from '../overlay/drawer.service';
 import { FilterDrawerPanel } from './filter-drawer.panel';
 import { FilterDrawerService } from './filter-drawer.service';
 import type { FilterDrawerResult } from './filter-drawer.types';
+import { FilterQueryService } from './filter-query.service';
 
 describe('FilterDrawerService', () => {
   let service: FilterDrawerService;
   let drawerOpen: jest.Mock;
   let afterClosed$: Subject<FilterDrawerResult | undefined>;
+  let filterQuery: {
+    hasParams: jest.Mock;
+    read: jest.Mock;
+  };
 
   beforeEach(() => {
     afterClosed$ = new Subject<FilterDrawerResult | undefined>();
@@ -20,11 +25,16 @@ describe('FilterDrawerService', () => {
       afterClosed: () => afterClosed$.asObservable(),
       close: jest.fn(),
     });
+    filterQuery = {
+      hasParams: jest.fn().mockReturnValue(false),
+      read: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
         FilterDrawerService,
         { provide: DrawerService, useValue: { open: drawerOpen } },
+        { provide: FilterQueryService, useValue: filterQuery },
       ],
     });
 
@@ -72,5 +82,19 @@ describe('FilterDrawerService', () => {
     afterClosed$.next({ applied: true, state: { values: {} } });
 
     expect(next).toHaveBeenCalledWith({ applied: true, state: { values: {} } });
+  });
+
+  it('hydrates drawer state from the URL when filter queries are present', () => {
+    const fromUrl = { values: { payment_status: 'paid' }, page: 2, size: 15 };
+    filterQuery.hasParams.mockReturnValue(true);
+    filterQuery.read.mockReturnValue(fromUrl);
+
+    service.open({
+      config: trackShipmentsFilterConfig,
+      state: { values: {} },
+    });
+
+    expect(filterQuery.read).toHaveBeenCalledWith(trackShipmentsFilterConfig);
+    expect(drawerOpen.mock.calls[0][1].data.state).toEqual(fromUrl);
   });
 });

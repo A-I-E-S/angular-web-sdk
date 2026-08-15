@@ -1,4 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 
 import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
@@ -14,6 +16,7 @@ import {
   DEFAULT_PAGE_SIZE,
   emptyFilterState,
   FilterDrawerService,
+  FilterQueryService,
   RowDetailDefDirective,
   type TableColumn,
   TableComponent,
@@ -257,6 +260,8 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
 })
 export class TablePage {
   private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterQuery = inject(FilterQueryService);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly page = signal(1);
   protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE);
@@ -323,6 +328,13 @@ export class TablePage {
     { key: 'destination', header: 'Destination' },
     { key: 'status', header: 'Status' },
   ];
+
+  constructor() {
+    this.syncFromUrl();
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.syncFromUrl();
+    });
+  }
 
   protected readonly tableCode = TABLE_LIST;
   protected readonly compactCode = TABLE_COMPACT;
@@ -411,6 +423,7 @@ export class TablePage {
   protected onSort(change: TableSortChange): void {
     this.sort.set(change);
     this.page.set(1);
+    void this.filterQuery.setPage(1);
   }
 
   protected onPageChange(next: number): void {
@@ -487,5 +500,16 @@ export class TablePage {
       second: '2-digit',
       hour12: true,
     }).format(value);
+  }
+
+  /**
+   * Seed pager + filters from the URL (`page`, `size`, filter keys).
+   * No-ops into defaults when those queries are absent.
+   */
+  private syncFromUrl(): void {
+    const state = this.filterQuery.read(trackShipmentsFilterConfig);
+    this.filterState.set(state);
+    this.page.set(state.page ?? 1);
+    this.pageSize.set(state.size ?? DEFAULT_PAGE_SIZE);
   }
 }

@@ -60,11 +60,16 @@ import { findUsecaseShipment } from './shipment-data';
 
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
           The chevron and breadcrumbs above are provided by the SDK — this page
-          does not add them. Paste
+          does not add them. List filters and page stay on the query string;
+          Back returns to
+          <code class="rounded bg-background-welcome px-1 py-0.5 dark:bg-ink-950">
+            /usecases/shipment
+          </code>
+          with those queries intact. Paste
           <code class="rounded bg-background-welcome px-1 py-0.5 dark:bg-ink-950">
             /usecases/shipment/{{ row.reference }}
           </code>
-          in a new tab and it still appears, returning to the list.
+          in a new tab and Back still appears.
         </p>
       } @else {
         <p class="m-0 text-body text-neutral-600 dark:text-neutral-400">

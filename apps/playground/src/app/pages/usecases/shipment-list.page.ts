@@ -1,14 +1,22 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 
+import type { FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
   type AiesMenuItem,
   CellDefDirective,
   ChipComponent,
   type ChipVariant,
+  DEFAULT_PAGE_SIZE,
+  emptyFilterState,
+  FilterDrawerService,
+  FilterQueryService,
   type TableColumn,
   TableComponent,
+  toFilterParams,
+  trackShipmentsFilterConfig,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../../shared/demo-section.component';
@@ -16,8 +24,11 @@ import { PageHeaderComponent } from '../../shared/page-header.component';
 import { USECASE_SHIPMENT_BACK } from '../../snippets';
 import { USECASE_SHIPMENTS, type UsecaseShipment } from './shipment-data';
 
+const FILTER_CONFIG = trackShipmentsFilterConfig;
+
 /**
- * Parent list — no Back. Row actions open a child detail route.
+ * Parent list — no Back. Filters and the pager sync to the URL. Row actions
+ * open a child detail route and keep those queries so Back restores the list.
  */
 @Component({
   selector: 'app-shipment-list-page',
@@ -35,16 +46,26 @@ import { USECASE_SHIPMENTS, type UsecaseShipment } from './shipment-data';
       <app-page-header
         eyebrow="Use cases"
         title="Back button and Breadcrumbs"
-        description="You do not implement these. They ship with aies-app-shell: breadcrumbs follow the nav trail, and Back appears only when the current page is a child of a parent route."
+        description="You do not implement Back or breadcrumbs — they ship with aies-app-shell. This list also hydrates filters and pagination from the URL, so a shared link (or Back from detail) reopens the same page and criteria."
       />
 
       <app-demo-section
         title="Example: list to detail"
-        hint="Open ⋯ → View details. Back and breadcrumbs show on the detail page automatically. Paste that URL in a new tab — Back still appears and still returns here."
+        hint="Filter or change page — the address bar updates. Open ⋯ → View details, then Back: the same queries return. Paste this list URL in a new tab and it restores too."
         badge="built-in"
         [code]="routeCode"
       >
-        <aies-table [columns]="columns" [rows]="rows">
+        <aies-table
+          [columns]="columns"
+          [rows]="pageRows()"
+          [meta]="meta()"
+          [showFilter]="true"
+          [filterCount]="activeFilterCount()"
+          [rowTrackBy]="rowTrackBy"
+          (filterClick)="openFilters()"
+          (pageChange)="onPageChange($event)"
+          (sizeChange)="onSizeChange($event)"
+        >
           <ng-template aiesCellDef="reference" let-row>
             <span class="font-medium text-ink dark:text-white">{{
               row.reference
@@ -68,9 +89,21 @@ import { USECASE_SHIPMENTS, type UsecaseShipment } from './shipment-data';
 })
 export class ShipmentListPage {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterQuery = inject(FilterQueryService);
 
   protected readonly routeCode = USECASE_SHIPMENT_BACK;
-  protected readonly rows = USECASE_SHIPMENTS;
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE);
+  protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
+
+  constructor() {
+    this.syncFromUrl();
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.syncFromUrl();
+    });
+  }
 
   protected readonly columns: TableColumn<UsecaseShipment>[] = [
     { key: 'reference', header: 'Reference' },
@@ -78,6 +111,70 @@ export class ShipmentListPage {
     { key: 'status', header: 'Status' },
     { key: 'actions', header: '', width: '3.5rem' },
   ];
+
+  protected readonly rowTrackBy = (row: UsecaseShipment) => row.reference;
+
+  protected readonly filteredRows = computed(() => {
+    const state = this.filterState();
+    const search = state.search?.trim().toLowerCase();
+    const shipmentStatus = state.values['shipment_status'];
+    const paymentStatus = state.values['payment_status'];
+    const tracking = state.values['tracking_number']?.trim().toLowerCase();
+    return USECASE_SHIPMENTS.filter((row) => {
+      if (
+        search &&
+        !row.reference.toLowerCase().includes(search) &&
+        !row.trackingNumber.toLowerCase().includes(search)
+      ) {
+        return false;
+      }
+      if (shipmentStatus && row.shipmentStatus !== shipmentStatus) {
+        return false;
+      }
+      if (paymentStatus && row.paymentStatus !== paymentStatus) {
+        return false;
+      }
+      if (
+        tracking &&
+        !row.trackingNumber.toLowerCase().includes(tracking)
+      ) {
+        return false;
+      }
+      return true;
+    });
+  });
+
+  protected readonly pageRows = computed(() => {
+    const size = this.pageSize();
+    const start = (this.page() - 1) * size;
+    return this.filteredRows().slice(start, start + size);
+  });
+
+  protected readonly meta = computed((): PaginationMetaModel => {
+    const per_page = this.pageSize();
+    const total_items = this.filteredRows().length;
+    const total_pages = Math.max(1, Math.ceil(total_items / per_page));
+    const current_page = Math.min(this.page(), total_pages);
+    return {
+      current_page,
+      per_page,
+      total_items,
+      total_pages,
+      has_next_page: current_page < total_pages,
+      has_previous_page: current_page > 1,
+    };
+  });
+
+  protected readonly activeFilterCount = computed(() => {
+    const params = toFilterParams(this.filterState(), FILTER_CONFIG);
+    return Object.keys(params).filter(
+      (key) =>
+        key !== 'page' &&
+        key !== 'size' &&
+        key !== 'order' &&
+        key !== 'per_page',
+    ).length;
+  });
 
   protected statusVariant(status: UsecaseShipment['status']): ChipVariant {
     switch (status) {
@@ -98,9 +195,46 @@ export class ShipmentListPage {
         label: 'View details',
         icon: 'eye',
         onClick: () => {
-          void this.router.navigate(['/usecases/shipment', row.reference]);
+          void this.router.navigate(['/usecases/shipment', row.reference], {
+            queryParamsHandling: 'preserve',
+          });
         },
       },
     ];
+  }
+
+  protected onPageChange(next: number): void {
+    this.page.set(next);
+  }
+
+  protected onSizeChange(next: number): void {
+    this.pageSize.set(next);
+    this.page.set(1);
+  }
+
+  protected openFilters(): void {
+    this.filterDrawer
+      .open({
+        config: FILTER_CONFIG,
+        state: this.filterState(),
+        title: 'Filter shipments',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result?.applied) {
+          this.filterState.set(result.state);
+          this.page.set(1);
+        }
+      });
+  }
+
+  /**
+   * Seed pager + filters from the URL when those queries are present.
+   */
+  private syncFromUrl(): void {
+    const state = this.filterQuery.read(FILTER_CONFIG);
+    this.filterState.set(state);
+    this.page.set(state.page ?? 1);
+    this.pageSize.set(state.size ?? DEFAULT_PAGE_SIZE);
   }
 }

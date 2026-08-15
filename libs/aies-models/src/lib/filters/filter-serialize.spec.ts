@@ -1,5 +1,5 @@
 import { FilterParamsModel, FilterStateModel, FilterTransport, ModuleFilterConfigModel } from './filter-config.model';
-import { cloneFilterState, emptyFilterState, fromFilterParams, toFilterParams } from './filter-serialize';
+import { cloneFilterState, emptyFilterState, fromFilterParams, hasFilterParams, toFilterParams } from './filter-serialize';
 
 describe('filter-serialize', () => {
   const config: ModuleFilterConfigModel = {
@@ -140,5 +140,15 @@ describe('filter-serialize', () => {
     const copy = cloneFilterState(state);
     copy.values['a'] = '2';
     expect(state.values['a']).toBe('1');
+  });
+
+  it('hasFilterParams is true only when relevant query keys are present', () => {
+    expect(hasFilterParams({}, config)).toBe(false);
+    expect(hasFilterParams({ modal: 'edit' }, config)).toBe(false);
+    expect(hasFilterParams({ page: 2 }, config)).toBe(true);
+    expect(hasFilterParams({ search: 'SFN' }, config)).toBe(true);
+    expect(
+      hasFilterParams({ filterColumn: 'payment_status', filterValue: 'paid' }, config),
+    ).toBe(true);
   });
 });

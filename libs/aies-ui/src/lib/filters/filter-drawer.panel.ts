@@ -40,6 +40,7 @@ import type {
   FilterDrawerData,
   FilterDrawerResult,
 } from './filter-drawer.types';
+import { FilterQueryService } from './filter-query.service';
 
 /**
  * Schema-driven filter drawer body.
@@ -48,7 +49,8 @@ import type {
  * component). Edits a cloned {@link FilterStateModel}; Apply serializes with
  * {@link toFilterParams}. When {@link FilterDrawerData.onApply} is set, the
  * drawer stays open until that call succeeds, then closes with
- * {@link FilterDrawerResult}.
+ * {@link FilterDrawerResult}. Successful Apply also writes the query bag to
+ * the browser URL via {@link FilterQueryService} (page resets to 1).
  */
 @Component({
   selector: 'aies-filter-drawer',
@@ -322,6 +324,7 @@ export class FilterDrawerPanel {
   protected readonly ref = inject(AiesOverlayRef<FilterDrawerResult>);
   private readonly destroyRef = inject(DestroyRef);
   private readonly filterOptions = inject(FilterOptionsResolver);
+  private readonly filterQuery = inject(FilterQueryService);
 
   protected readonly config = this.data.config;
   protected readonly transport = resolveFilterTransport(this.data.config);
@@ -690,13 +693,17 @@ export class FilterDrawerPanel {
       return;
     }
 
-    const state = this.draft();
+    const state = cloneFilterState(this.draft());
+    state.page = 1;
+    if (state.size == null) {
+      state.size = this.filterQuery.read(this.config).size;
+    }
     const params = toFilterParams(state, this.config);
     const result: FilterDrawerResult = { applied: true, state, params };
     const hook = this.data.onApply;
 
     if (!hook) {
-      this.ref.close(result);
+      this.commitApply(result);
       return;
     }
 
@@ -709,7 +716,7 @@ export class FilterDrawerPanel {
     }
 
     if (pending == null) {
-      this.ref.close(result);
+      this.commitApply(result);
       return;
     }
 
@@ -718,7 +725,7 @@ export class FilterDrawerPanel {
 
     const succeed = (): void => {
       this.applying.set(false);
-      this.ref.close(result);
+      this.commitApply(result);
     };
     const fail = (err: unknown): void => {
       this.applying.set(false);
@@ -734,6 +741,16 @@ export class FilterDrawerPanel {
     }
 
     void Promise.resolve(pending).then(succeed, fail);
+  }
+
+  /**
+   * Persist the applied bag to the URL, then close.
+   *
+   * @param result - Applied state + params.
+   */
+  private commitApply(result: FilterDrawerResult): void {
+    void this.filterQuery.write(result.state, this.config);
+    this.ref.close(result);
   }
 
   private errorMessage(err: unknown): string {

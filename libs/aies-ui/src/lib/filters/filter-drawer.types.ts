@@ -28,9 +28,9 @@ export interface FilterDrawerData {
    * Optional async apply hook (list refetch, etc.).
    *
    * When provided, Apply waits until the Observable/Promise completes
-   * **successfully**, then closes the drawer. Errors leave the drawer open
-   * so the user can fix filters and retry. Omit for sync close (playground /
-   * local-only state updates).
+   * **successfully**, then closes the drawer and writes the query bag to the
+   * URL. Errors leave the drawer open so the user can fix filters and retry.
+   * Omit for sync close (playground / local-only state updates).
    *
    * @param draft - Pending state + serialized params (not yet committed by the host).
    */

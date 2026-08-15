@@ -5,7 +5,8 @@ export /**
  */
 const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
-// Refetch on sortChange / pageChange / sizeChange. Use aiesCellDef for badges, currency, row menus.
+// Hydrate page/size/filters from FilterQueryService when the URL has those queries.
+// Pager + Apply write the same keys back. Refetch on sortChange / pageChange / sizeChange.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit for equal share; set width (e.g. '3.5rem') to pin actions.
 
@@ -19,8 +20,10 @@ import {
   ChipComponent,
   CopyButtonComponent,
   DEFAULT_PAGE_SIZE,
+  FilterQueryService,
   RowDetailDefDirective,
   TableComponent,
+  trackShipmentsFilterConfig,
   type AiesMenuItem,
   type TableColumn,
   type TableSortChange,
@@ -109,9 +112,11 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 })
 export class ShipmentListPageComponent {
   private readonly api = inject(ApiClient);
+  private readonly filterQuery = inject(FilterQueryService);
+  private readonly urlState = this.filterQuery.read(trackShipmentsFilterConfig);
 
-  protected readonly page = signal(1);
-  protected readonly size = signal(PAGE_SIZE);
+  protected readonly page = signal(this.urlState.page ?? 1);
+  protected readonly size = signal(this.urlState.size ?? PAGE_SIZE);
   protected readonly sort = signal<TableSortChange | null>(null);
   protected readonly rows = signal<Shipment[]>([]);
   protected readonly meta = signal<PaginationMetaModel | null>(null);

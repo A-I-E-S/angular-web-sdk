@@ -1,5 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 
 import { delay, type Observable, of, switchMap, tap, throwError } from 'rxjs';
 
@@ -19,7 +21,7 @@ import {
   updateShipmentsFilterConfig,
   usersFilterConfig,
 } from '@aies/aies-models';
-import { ButtonComponent, FilterDrawerService, ToastService } from '@aies/aies-ui';
+import { ButtonComponent, FilterDrawerService, FilterQueryService, ToastService } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -62,7 +64,7 @@ interface DemoModule {
       <app-page-header
         eyebrow="Components"
         title="Filters"
-        description="Schema-driven filter drawer for list pages. Author one ModuleFilterConfigModel per module; keep FilterStateModel as a values map in the UI; flatten with toFilterParams only when writing the URL or HTTP query."
+        description="Schema-driven filter drawer for list pages. Author one ModuleFilterConfigModel per module; keep FilterStateModel as a values map in the UI. The drawer hydrates from the browser URL when filter queries are present, and Apply writes that bag back to the URL."
       />
 
       <app-demo-section
@@ -275,7 +277,7 @@ interface DemoModule {
       <app-demo-section
         title="Cold load from URL"
         hint="Restore filters from the query string on first paint so shared list links reopen with the same criteria."
-        subtext="fromFilterParams rebuilds values[key] from the CSV pairs. Unknown columns still round-trip."
+        subtext="FilterQueryService.read() uses fromFilterParams. Apply / pagination keep the URL in sync — try Open filters then check the address bar."
         [code]="hydrateCode"
       >
         <button
@@ -296,6 +298,8 @@ interface DemoModule {
 })
 export class FiltersPage {
   private readonly filterDrawer = inject(FilterDrawerService);
+  private readonly filterQuery = inject(FilterQueryService);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
 
   protected readonly openApplyCode = FILTERS_OPEN_APPLY;
@@ -350,6 +354,13 @@ export class FiltersPage {
   protected readonly lastParams = signal<FilterParamsModel>(
     toFilterParams(emptyFilterState(), trackShipmentsFilterConfig),
   );
+
+  constructor() {
+    this.hydrateFromUrl(this.activeConfig());
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.hydrateFromUrl(this.activeConfig());
+    });
+  }
 
   protected activeConfig(): ModuleFilterConfigModel {
     return (
@@ -455,8 +466,19 @@ export class FiltersPage {
   }
 
   protected reset(): void {
-    this.state.set(emptyFilterState());
-    this.lastParams.set(toFilterParams(this.state(), this.activeConfig()));
+    const next = emptyFilterState();
+    this.state.set(next);
+    this.lastParams.set(toFilterParams(next, this.activeConfig()));
+    void this.filterQuery.write(next, this.activeConfig());
+  }
+
+  private hydrateFromUrl(config: ModuleFilterConfigModel): void {
+    if (!this.filterQuery.hasParams(config)) {
+      return;
+    }
+    const restored = this.filterQuery.read(config);
+    this.state.set(restored);
+    this.lastParams.set(toFilterParams(restored, config));
   }
 
   private openWithApply(

@@ -33,7 +33,8 @@ import { TableColumn, TableSortChange } from './table-column';
  * does not own fetch, filter, or export logic — the host handles those events.
  *
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
- * the host still owns refetch via {@link pageChange} / {@link sizeChange}. Rows
+ * the host still owns refetch via {@link pageChange} / {@link sizeChange}. The
+ * pager also writes `page` / `size` to the URL (same keys as filters). Rows
  * are never sliced client-side.
  *
  * WHY no loading / error / empty UI: those branches belong on

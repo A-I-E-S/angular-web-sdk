@@ -54,7 +54,8 @@ export function resolveHeaderBackTarget(
  * `/components/navigation`). Catalog pages with no parent route never get Back.
  *
  * When a side-nav item maps the parent to an overview URL, that link is
- * preferred so the redirect hop is skipped.
+ * preferred so the redirect hop is skipped. Query params on the current URL
+ * (list `page` / filters) are forwarded so Back restores the parent list.
  *
  * @param parentPath - Parent URL from the activated route tree.
  * @param currentUrl - Current router URL.
@@ -89,7 +90,10 @@ export function resolveContentBackTarget(
     return null;
   }
 
-  return { routerLink: target };
+  const queryParams = queryParamsFromUrl(currentUrl);
+  return queryParams
+    ? { routerLink: target, queryParams }
+    : { routerLink: target };
 }
 
 /**
@@ -143,6 +147,25 @@ export function resolveParentPathFromLevels(
 function joinRouteLevels(levels: readonly (readonly string[])[]): string {
   const segments = levels.flat().filter(Boolean);
   return segments.length ? `/${segments.join('/')}` : '/';
+}
+
+/**
+ * Parse `?a=1&b=2` from a router URL into a query map.
+ *
+ * @param url - Router URL, possibly with query or hash.
+ * @returns Query record, or `undefined` when none.
+ */
+function queryParamsFromUrl(url: string): Record<string, string> | undefined {
+  const query = url.split('#')[0]?.split('?')[1];
+  if (!query) {
+    return undefined;
+  }
+  const params = new URLSearchParams(query);
+  const record: Record<string, string> = {};
+  params.forEach((value, key) => {
+    record[key] = value;
+  });
+  return Object.keys(record).length ? record : undefined;
 }
 
 /**

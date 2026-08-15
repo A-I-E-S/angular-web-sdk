@@ -21,7 +21,7 @@ suffix.
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads
 - **user** — `UserModel` (+ nested business account / plan / subscription) for bare `GET /user` (auth)
 - **notification** — `NotificationModel`, `NotificationPayloadModel`, inbox helpers for `GET /user/notifications/read/{id?}`
-- **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `FilterTransport`, `toFilterParams` / `fromFilterParams`
+- **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `FilterTransport`, `toFilterParams` / `fromFilterParams` / `hasFilterParams`
 - **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN
 - **shipping** — `ShippingMode` (`'stn' | 'sfn'`)
 - **async** — `AsyncQueryStateModel` for UI async wrappers
