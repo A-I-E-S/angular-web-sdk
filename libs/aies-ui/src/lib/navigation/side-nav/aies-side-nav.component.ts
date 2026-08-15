@@ -8,7 +8,6 @@ import {
   inject,
   input,
   model,
-  output,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -63,7 +62,6 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  *   [(collapsed)]="collapsed"
  *   [(activeId)]="activeId"
  *   ariaLabel="Main"
- *   (logout)="signOut()"
  * />
  * ```
  */
@@ -126,15 +124,6 @@ export class SideNavComponent {
 
   /** Optional custom compact mark URL (collapsed rail). Defaults to mini logo. */
   readonly logoMiniSrc = input<string | null>(null);
-
-  /** When true, render a logout control in the footer. */
-  readonly showLogout = input(false, { transform: booleanAttribute });
-
-  /** Logout button label when expanded. */
-  readonly logoutLabel = input('Log out');
-
-  /** Emitted when the footer logout control is clicked. */
-  readonly logout = output<void>();
 
   protected readonly resolvedFullLogo = computed(
     () => this.logoSrc() ?? this.defaultLogoUrl,
@@ -251,7 +240,7 @@ export class SideNavComponent {
       'group relative flex w-full items-center gap-2 rounded-lg text-body-sm no-underline transition-colors ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
       (this.collapsed() ? 'justify-center px-1.5 py-2' : 'px-3 py-2') +
-      (item.disabled ? ' cursor-not-allowed opacity-50' : '');
+      (item.disabled ? ' cursor-not-allowed opacity-50' : ' cursor-pointer');
 
     const leaf = this.isLeafActive(item);
     const ancestor = !leaf && this.isItemActive(item);
@@ -272,7 +261,7 @@ export class SideNavComponent {
     const base =
       'relative flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-body-sm no-underline transition-colors ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
-      (item.disabled ? 'cursor-not-allowed opacity-50 ' : '');
+      (item.disabled ? 'cursor-not-allowed opacity-50 ' : 'cursor-pointer ');
 
     if (this.isLeafActive(item)) {
       return `${base} ${this.modeColor.classes().soft} ${this.modeColor.classes().text} font-semibold`;
@@ -281,17 +270,6 @@ export class SideNavComponent {
       `${base} font-medium text-neutral-600 hover:bg-background-welcome hover:text-ink ` +
       'dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white'
     );
-  }
-
-  protected logoutClass(): string {
-    const base =
-      'flex w-full items-center gap-2 rounded-lg text-body-sm font-medium text-neutral-600 transition-colors ' +
-      'hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 ' +
-      'focus-visible:outline-offset-2 focus-visible:outline-ink ' +
-      'dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white';
-    return this.collapsed()
-      ? `${base} justify-center px-1.5 py-2`
-      : `${base} px-3 py-2`;
   }
 
   /**

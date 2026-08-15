@@ -62,7 +62,7 @@ import type { AiesNavItem } from '../nav-item';
               </span>
             } @else if (item.routerLink !== null && item.routerLink !== undefined && !item.disabled) {
               <a
-                class="inline-flex items-center gap-1 truncate transition-colors hover:underline"
+                class="inline-flex cursor-pointer items-center gap-1 truncate transition-colors hover:underline"
                 [ngClass]="modeColor.classes().text"
                 [routerLink]="item.routerLink"
                 [queryParams]="item.queryParams"

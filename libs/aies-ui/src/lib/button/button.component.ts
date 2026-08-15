@@ -7,6 +7,7 @@ import {
   input,
 } from '@angular/core';
 
+import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 /**
@@ -40,6 +41,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
  *   Save shipment
  * </button>
  *
+ * <button aies-button type="button" variant="primary" [loading]="saving()">
+ *   Save shipment
+ * </button>
+ *
  * <button aies-button type="button" variant="danger" size="sm" [disabled]="busy()">
  *   <aies-icon name="trash" [size]="16" />
  *   Delete
@@ -50,12 +55,34 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
   selector: 'button[aies-button], a[aies-button]',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<ng-content />`,
+  imports: [AiesIconComponent],
+  template: `
+    <span
+      class="inline-flex items-center justify-center gap-2"
+      [class.invisible]="loading()"
+      [attr.aria-hidden]="loading() ? true : null"
+    >
+      <ng-content />
+    </span>
+    @if (loading()) {
+      <span
+        class="pointer-events-none absolute inset-0 inline-flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <aies-icon
+          name="spinner"
+          [size]="spinnerSize()"
+          class="animate-spin"
+        />
+      </span>
+    }
+  `,
   host: {
     '[class]': 'hostClass()',
-    '[attr.aria-disabled]': 'disabled() ? true : null',
-    '[attr.disabled]': 'disabled() ? true : null',
-    '[attr.tabindex]': 'disabled() ? -1 : null',
+    '[attr.aria-disabled]': 'inactive() ? true : null',
+    '[attr.disabled]': 'inactive() ? true : null',
+    '[attr.aria-busy]': 'loading() ? true : null',
+    '[attr.tabindex]': 'inactive() ? -1 : null',
     '(click)': 'blockWhenDisabled($event)',
   },
 })
@@ -80,12 +107,33 @@ export class ButtonComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
 
   /**
+   * In-flight mutation. Replaces the label with a circular spinner while
+   * keeping the control's width, and treats the host as disabled.
+   */
+  readonly loading = input(false, { transform: booleanAttribute });
+
+  protected readonly inactive = computed(
+    () => this.disabled() || this.loading(),
+  );
+
+  protected readonly spinnerSize = computed(() => {
+    const size = this.size();
+    if (size === 'sm') {
+      return 14;
+    }
+    if (size === 'lg') {
+      return 18;
+    }
+    return 16;
+  });
+
+  /**
    * Composed Tailwind classes from theme tokens — kept as string literals so
    * the scanner retains utilities in the published UI bundle.
    */
   protected readonly hostClass = computed(() => {
     const base =
-      'inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
+      'relative inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
       'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 
@@ -118,7 +166,7 @@ export class ButtonComponent {
    * @param event
    */
   protected blockWhenDisabled(event: Event): void {
-    if (this.disabled()) {
+    if (this.inactive()) {
       event.preventDefault();
       event.stopImmediatePropagation();
     }

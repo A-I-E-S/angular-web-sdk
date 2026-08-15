@@ -19,6 +19,7 @@ import {
       [variant]="variant()"
       [size]="size()"
       [disabled]="disabled()"
+      [loading]="loading()"
     >
       Label
     </button>
@@ -28,6 +29,7 @@ class ButtonHostComponent {
   readonly variant = signal<ButtonVariant>('primary');
   readonly size = signal<ButtonSize>('md');
   readonly disabled = signal(false);
+  readonly loading = signal(false);
 }
 
 describe('ButtonComponent', () => {
@@ -85,5 +87,15 @@ describe('ButtonComponent', () => {
   it('should keep a native button type for keyboard activation', () => {
     expect(button.tagName).toBe('BUTTON');
     expect(button.getAttribute('type')).toBe('button');
+  });
+
+  it('should show a circular spinner and treat the host as busy while loading', () => {
+    host.loading.set(true);
+    fixture.detectChanges();
+
+    expect(button.getAttribute('aria-busy')).toBe('true');
+    expect(button.disabled).toBe(true);
+    expect(button.querySelector('.animate-spin')).not.toBeNull();
+    expect(button.textContent?.trim()).toBe('Label');
   });
 });

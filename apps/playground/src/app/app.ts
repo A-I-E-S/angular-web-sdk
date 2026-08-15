@@ -34,8 +34,10 @@ import {
   AppShellHeaderSlotDirective,
   buildBreadcrumbsFromSideNav,
   ButtonComponent,
+  ConfirmService,
   type NotificationPageResult,
   SideNavComponent,
+  ToastService,
 } from '@aies/aies-ui';
 
 import { PlaygroundAccessTokenComponent } from './shared/playground-access-token.component';
@@ -66,6 +68,8 @@ export class App {
   private readonly notificationsApi = inject(NotificationService);
   private readonly usersApi = inject(UserService);
   private readonly router = inject(Router);
+  private readonly confirm = inject(ConfirmService);
+  private readonly toast = inject(ToastService);
 
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
@@ -212,6 +216,13 @@ export class App {
       icon: 'cog',
       onClick: () => undefined,
     },
+    {
+      label: 'Log out',
+      icon: 'sign-out',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => this.confirmLogout(),
+    },
   ];
 
   protected readonly navItems: AiesSideNavItem[] = [
@@ -289,5 +300,22 @@ export class App {
 
   protected setShippingMode(mode: ShippingMode): void {
     this.shipping.setMode(mode);
+  }
+
+  private confirmLogout(): void {
+    this.confirm
+      .confirm({
+        title: 'Log out?',
+        message: 'You will need to sign in again to continue.',
+        confirmLabel: 'Log out',
+        danger: true,
+      })
+      .subscribe((ok) => {
+        if (!ok) {
+          return;
+        }
+        this.auth.clear();
+        this.toast.success('You have been logged out.');
+      });
   }
 }

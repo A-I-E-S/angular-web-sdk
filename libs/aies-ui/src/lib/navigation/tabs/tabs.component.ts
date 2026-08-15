@@ -92,6 +92,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
                 ' ' +
                 (isItemActive(item) ? activeTabClass() : inactiveTabClass())
               "
+              [class.cursor-pointer]="!item.disabled"
               [class.cursor-not-allowed]="item.disabled"
               [class.opacity-50]="item.disabled"
               [attr.href]="item.disabled ? null : hrefFor(item)"
@@ -117,6 +118,8 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
                 (isItemActive(item) ? activeTabClass() : inactiveTabClass())
               "
               [disabled]="!!item.disabled"
+              [class.cursor-pointer]="!item.disabled"
+              [class.cursor-not-allowed]="item.disabled"
               [attr.aria-selected]="isItemActive(item)"
               [attr.tabindex]="isItemActive(item) ? 0 : -1"
               [attr.id]="'aies-tab-' + item.id"

@@ -10,10 +10,12 @@ import {
   type AiesNotification,
   type AiesSideNavItem,
   BreadcrumbComponent,
+  ConfirmService,
   SegmentComponent,
   SideNavComponent,
   TabDefDirective,
   TabsComponent,
+  ToastService,
 } from '@aies/aies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
@@ -205,6 +207,8 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 })
 export class NavigationPage {
   private readonly router = inject(Router);
+  private readonly confirm = inject(ConfirmService);
+  private readonly toast = inject(ToastService);
 
   private readonly url = toSignal(
     this.router.events.pipe(
@@ -231,11 +235,11 @@ export class NavigationPage {
     { label: 'Profile', icon: 'user', onClick: () => undefined },
     { label: 'Settings', icon: 'cog', onClick: () => undefined },
     {
-      label: 'Sign out',
+      label: 'Log out',
       icon: 'sign-out',
       danger: true,
       dividerBefore: true,
-      onClick: () => undefined,
+      onClick: () => this.confirmLogout(),
     },
   ];
 
@@ -343,4 +347,19 @@ export class NavigationPage {
       { id: 'leaf', label: leaf },
     ];
   });
+
+  private confirmLogout(): void {
+    this.confirm
+      .confirm({
+        title: 'Log out?',
+        message: 'You will need to sign in again to continue.',
+        confirmLabel: 'Log out',
+        danger: true,
+      })
+      .subscribe((ok) => {
+        if (ok) {
+          this.toast.success('You have been logged out.');
+        }
+      });
+  }
 }

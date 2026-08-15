@@ -286,9 +286,10 @@ const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs + Back in the cont
 // Needs provideAiesUiOverlays() for the notification drawer.
 // Back is built into aies-app-shell — nest child routes under a parent and it appears.
 
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   AppShellComponent,
+  ConfirmService,
   SideNavComponent,
   type AiesMenuItem,
   type AiesNavItem,
@@ -315,8 +316,6 @@ import {
         [items]="nav"
         [(collapsed)]="collapsed"
         [(activeId)]="activeId"
-        [showLogout]="true"
-        (logout)="signOut()"
       >
       </aies-side-nav>
 
@@ -325,6 +324,8 @@ import {
   \`,
 })
 export class ProductShellComponent {
+  private readonly confirm = inject(ConfirmService);
+
   protected readonly collapsed = signal(false);
   protected readonly activeId = signal('home');
   protected readonly pageTitle = 'STN-1042';
@@ -338,6 +339,13 @@ export class ProductShellComponent {
   protected readonly accountMenu: AiesMenuItem[] = [
     { label: 'Profile', icon: 'user', onClick: () => {} },
     { label: 'Settings', icon: 'cog', onClick: () => {} },
+    {
+      label: 'Log out',
+      icon: 'sign-out',
+      danger: true,
+      dividerBefore: true,
+      onClick: () => this.confirmLogout(),
+    },
   ];
 
   protected readonly notifications: AiesNotification[] = [
@@ -353,8 +361,19 @@ export class ProductShellComponent {
     { id: 'shipments', label: 'Shipments', icon: 'truck' },
   ];
 
-  protected signOut(): void {
-    // auth.signOut();
+  protected confirmLogout(): void {
+    this.confirm
+      .confirm({
+        title: 'Log out?',
+        message: 'You will need to sign in again to continue.',
+        confirmLabel: 'Log out',
+        danger: true,
+      })
+      .subscribe((ok) => {
+        if (ok) {
+          // auth.clear();
+        }
+      });
   }
 }
 `;

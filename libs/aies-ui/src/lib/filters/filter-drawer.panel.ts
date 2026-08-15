@@ -193,7 +193,7 @@ import { FilterQueryService } from './filter-query.service';
                     @for (opt of field.options ?? []; track opt.value) {
                       <button
                         type="button"
-                        class="rounded-md border px-2.5 py-1.5 text-body-sm transition-colors"
+                        class="cursor-pointer rounded-md border px-2.5 py-1.5 text-body-sm transition-colors"
                         [style.color]="
                           draft().values[field.key] === opt.value
                             ? opt.color ?? null

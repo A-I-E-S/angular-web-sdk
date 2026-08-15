@@ -205,7 +205,7 @@ export /**
  *
  */
 const BUTTON_DISABLED = `// [disabled] works on buttons and anchors (anchors get aria-disabled + tabindex=-1).
-// Bind it to your in-flight mutation flag.
+// Use this for unavailable actions — in-flight work belongs on [loading].
 
 import { Component, signal } from '@angular/core';
 import { ButtonComponent } from '@aies/aies-ui';
@@ -245,6 +245,50 @@ export class ButtonDisabledComponent {
 export /**
  *
  */
+const BUTTON_LOADING = `// Default loading state is the circular spinner. Label stays in the layout
+// (invisible) so the button does not shrink while the request is in flight.
+
+import { Component, signal } from '@angular/core';
+import { ButtonComponent } from '@aies/aies-ui';
+
+@Component({
+  selector: 'app-button-loading',
+  standalone: true,
+  imports: [ButtonComponent],
+  template: \`
+    <div class="flex flex-wrap items-center gap-3">
+      <button
+        aies-button
+        type="button"
+        variant="primary"
+        [loading]="saving()"
+        (click)="save()"
+      >
+        Save shipment
+      </button>
+
+      <button aies-button type="button" variant="secondary" loading>
+        Saving draft
+      </button>
+
+      <button aies-button type="button" variant="danger" size="sm" loading>
+        Deleting
+      </button>
+    </div>
+  \`,
+})
+export class ButtonLoadingComponent {
+  protected readonly saving = signal(false);
+
+  protected save(): void {
+    this.saving.set(true);
+    // POST → finalize in subscribe/finalize and set saving false.
+  }
+}`;
+
+export /**
+ *
+ */
 const BUTTON_CONTEXT = `// Typical toolbar: ghost cancel → secondary draft → primary submit.
 // Toggle SFN/STN in the sidebar to see primary shift color.
 
@@ -279,7 +323,7 @@ import { ButtonComponent } from '@aies/aies-ui';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="saving()"
+          [loading]="saving()"
           (click)="saveDraft()"
         >
           Save draft
@@ -290,7 +334,7 @@ import { ButtonComponent } from '@aies/aies-ui';
           type="button"
           variant="primary"
           size="sm"
-          [disabled]="saving()"
+          [loading]="saving()"
           (click)="submit()"
         >
           Submit

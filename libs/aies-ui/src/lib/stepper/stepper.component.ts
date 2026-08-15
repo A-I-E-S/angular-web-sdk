@@ -82,11 +82,11 @@ import { StepDefinition } from './step-definition';
           <li class="flex items-center gap-2 min-w-0">
             <button
               type="button"
-              class="inline-flex items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-50"
+              class="inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
               [class]="
                 i === activeIndex()
-                  ? 'inline-flex items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-50 text-ink dark:text-white'
-                  : 'inline-flex items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-50 text-neutral-500 dark:text-neutral-400'
+                  ? 'inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50 text-ink dark:text-white'
+                  : 'inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50 text-neutral-500 dark:text-neutral-400'
               "
               [attr.aria-current]="i === activeIndex() ? 'step' : null"
               [disabled]="!canActivate(i)"

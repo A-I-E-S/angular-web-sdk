@@ -63,7 +63,7 @@ export type ChipSize = 'sm' | 'md';
     @if (removable()) {
       <button
         type="button"
-        class="inline-flex shrink-0 items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ink"
+        class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ink"
         [attr.aria-label]="removeLabel()"
         (click)="onRemove($event)"
       >

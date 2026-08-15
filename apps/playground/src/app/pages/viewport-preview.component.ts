@@ -35,7 +35,6 @@ import {
           [items]="sideNav()"
           [(collapsed)]="collapsed"
           [(activeId)]="activeId"
-          [showLogout]="true"
           [attr.aria-label]="ariaLabel()"
         />
         <div class="flex flex-col gap-1.5">

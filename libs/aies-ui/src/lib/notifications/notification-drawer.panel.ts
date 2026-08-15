@@ -214,7 +214,7 @@ const SCROLL_PREFETCH_PX = 120;
                         }
                         <button
                           type="button"
-                          class="inline-flex self-start rounded-md text-caption font-medium text-neutral-600 transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50 dark:text-neutral-400 dark:hover:text-white"
+                          class="inline-flex cursor-pointer self-start rounded-md text-caption font-medium text-neutral-600 transition-colors hover:text-ink disabled:cursor-not-allowed disabled:opacity-50 dark:text-neutral-400 dark:hover:text-white"
                           [disabled]="markingId() === item.id"
                           (click)="markRead(item)"
                         >
@@ -283,7 +283,7 @@ export class NotificationDrawerPanel {
 
   protected readonly viewLinkClass = computed(() => {
     const base =
-      'inline-flex items-center gap-1 self-start text-caption font-semibold underline underline-offset-[3px] transition-colors';
+      'inline-flex cursor-pointer items-center gap-1 self-start text-caption font-semibold underline underline-offset-[3px] transition-colors';
     if (this.shipping.mode() === 'stn') {
       return `${base} text-import decoration-import/35 hover:decoration-import dark:text-import-light dark:decoration-import-light/40 dark:hover:decoration-import-light`;
     }

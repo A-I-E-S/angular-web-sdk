@@ -170,7 +170,7 @@ const ADDRESS_PANEL_POSITIONS: ConnectedPosition[] = [
               type="button"
               [id]="optionId(i)"
               role="option"
-              class="flex w-full flex-col gap-0.5 px-3 py-2 text-left text-body text-ink outline-none hover:bg-background-welcome focus-visible:bg-background-welcome dark:text-white dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+              class="flex w-full flex-col gap-0.5 px-3 py-2 text-left text-body text-ink outline-none cursor-pointer hover:bg-background-welcome focus-visible:bg-background-welcome dark:text-white dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
               [class.bg-background-welcome]="activeIndex() === i"
               [class.dark:bg-white/5]="activeIndex() === i"
               [attr.aria-selected]="activeIndex() === i"

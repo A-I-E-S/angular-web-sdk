@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import {
@@ -17,6 +17,7 @@ import {
   BUTTON_DISABLED,
   BUTTON_ICONS,
   BUTTON_LINKS,
+  BUTTON_LOADING,
   BUTTON_MATRIX,
   BUTTON_SIZES,
   BUTTON_VARIANTS,
@@ -140,6 +141,30 @@ import {
       </app-demo-section>
 
       <app-demo-section
+        title="Loading"
+        hint="Bind [loading] for in-flight mutations. The circular spinner replaces the label and the control stays the same width."
+        [code]="loadingCode"
+      >
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            aies-button
+            type="button"
+            variant="primary"
+            [loading]="saving()"
+            (click)="save()"
+          >
+            Save shipment
+          </button>
+          <button aies-button type="button" variant="secondary" loading>
+            Saving draft
+          </button>
+          <button aies-button type="button" variant="danger" size="sm" loading>
+            Deleting
+          </button>
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
         title="Disabled"
         hint="Unavailable actions. Native buttons use disabled; anchors use aria-disabled so they stay in the tab order safely."
         [code]="disabledCode"
@@ -215,9 +240,16 @@ export class ButtonPage {
   protected readonly iconsCode = BUTTON_ICONS;
   protected readonly linksCode = BUTTON_LINKS;
   protected readonly disabledCode = BUTTON_DISABLED;
+  protected readonly loadingCode = BUTTON_LOADING;
   protected readonly contextCode = BUTTON_CONTEXT;
   protected readonly copyCode = BUTTON_COPY;
 
   protected readonly copyReference = 'SFN-1042';
   protected readonly copySnippet = '<aies-icon name="airplane" />';
+  protected readonly saving = signal(false);
+
+  protected save(): void {
+    this.saving.set(true);
+    window.setTimeout(() => this.saving.set(false), 1600);
+  }
 }

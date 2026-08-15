@@ -79,6 +79,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
               ' ' +
               (isItemActive(item) ? selectedClass() : idleClass())
             "
+            [class.cursor-pointer]="!item.disabled"
             [class.cursor-not-allowed]="item.disabled"
             [class.opacity-50]="item.disabled"
             [attr.href]="item.disabled ? null : hrefFor(item)"
@@ -100,6 +101,8 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
               (isItemActive(item) ? selectedClass() : idleClass())
             "
             [disabled]="!!item.disabled"
+            [class.cursor-pointer]="!item.disabled"
+            [class.cursor-not-allowed]="item.disabled"
             [attr.aria-pressed]="isItemActive(item)"
             (click)="selectLocal(item)"
           >

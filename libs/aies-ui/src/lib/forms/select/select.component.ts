@@ -178,7 +178,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
               }
               <button
                 type="button"
-                class="inline-flex text-neutral-600 dark:text-neutral-400 hover:text-ink dark:hover:text-white"
+                class="inline-flex cursor-pointer text-neutral-600 dark:text-neutral-400 hover:text-ink dark:hover:text-white disabled:cursor-not-allowed"
                 [attr.aria-label]="'Remove ' + chip.label"
                 [disabled]="disabled()"
                 (click)="removeChip(chip, $event)"
@@ -191,7 +191,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <button
           [id]="controlId"
           type="button"
-          class="flex flex-1 items-center justify-between gap-2 min-w-[6rem] text-left text-body bg-transparent border-0 outline-none disabled:cursor-not-allowed"
+          class="flex flex-1 cursor-pointer items-center justify-between gap-2 min-w-[6rem] text-left text-body bg-transparent border-0 outline-none disabled:cursor-not-allowed"
           [disabled]="triggerDisabled()"
           [attr.aria-expanded]="open()"
           [attr.aria-haspopup]="'listbox'"
@@ -374,7 +374,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <span>{{ err }}</span>
         <button
           type="button"
-          class="inline underline font-medium text-danger hover:text-danger/80 disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
+          class="inline cursor-pointer underline font-medium text-danger hover:text-danger/80 disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
           [disabled]="disabled() || retrying()"
           (click)="onRetry($event)"
         >
@@ -686,7 +686,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     const active = this.activeIndex() === this.optionIndex(filteredIndex);
     const colors = this.modeColor.classes();
     const base =
-      'flex w-full items-center gap-2 px-3 py-2 text-left text-body text-ink dark:text-white disabled:opacity-50 disabled:cursor-not-allowed';
+      'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-body text-ink dark:text-white disabled:opacity-50 disabled:cursor-not-allowed';
     return active
       ? `${base} ${colors.soft}`
       : `${base} ${colors.softHover}`;
@@ -696,7 +696,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected freeTextClass(): string {
     const active = this.activeIndex() === this.freeTextIndex();
     const colors = this.modeColor.classes();
-    const base = `flex w-full items-center gap-2 px-3 py-2 text-left text-body ${colors.text}`;
+    const base = `flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-body ${colors.text}`;
     return active
       ? `${base} ${colors.soft}`
       : `${base} ${colors.softHover}`;
@@ -706,7 +706,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected createRowClass(): string {
     const active = this.activeIndex() === this.createIndex();
     const colors = this.modeColor.classes();
-    const base = `flex w-full items-center gap-2 px-3 py-2 text-left text-body ${colors.text} border-t border-border dark:border-white/10`;
+    const base = `flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-body ${colors.text} border-t border-border dark:border-white/10`;
     return active
       ? `${base} ${colors.soft}`
       : `${base} ${colors.softHover}`;

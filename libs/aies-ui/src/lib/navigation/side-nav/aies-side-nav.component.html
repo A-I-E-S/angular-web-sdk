@@ -43,7 +43,7 @@
         }
         <button
           type="button"
-          class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+          class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
           [attr.aria-label]="
             collapsed() ? 'Expand navigation' : 'Collapse navigation'
           "
@@ -61,7 +61,7 @@
         @if (!collapsed() && expandParents() && hasOpenBranches()) {
           <button
             type="button"
-            class="absolute right-1.5 top-1.5 z-10 inline-flex size-7 items-center justify-center rounded-md bg-white text-neutral-500 shadow-sm ring-1 ring-border/80 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ink dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
+            class="absolute right-1.5 top-1.5 z-10 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-white text-neutral-500 shadow-sm ring-1 ring-border/80 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ink dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
             aria-label="Collapse all"
             (click)="collapseAllBranches()"
           >
@@ -266,25 +266,7 @@
         </ul>
       </nav>
 
-      @if (showLogout()) {
-        <div
-          class="shrink-0 border-t border-border px-3 py-3 dark:border-white/10"
-        >
-          <ng-content select="[footer]" />
-          <button
-            type="button"
-            [class]="logoutClass()"
-            (click)="logout.emit()"
-          >
-            <aies-icon name="sign-out" [size]="16" class="shrink-0" />
-            @if (!collapsed()) {
-              <span class="truncate">{{ logoutLabel() }}</span>
-            }
-          </button>
-        </div>
-      } @else {
-        <ng-content select="[footer]" />
-      }
+      <ng-content select="[footer]" />
     </aside>
 
     <ng-template #rowInner let-item>
