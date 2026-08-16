@@ -208,7 +208,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
 
       <app-demo-section
         title="AsyncState playground"
-        hint="One wrapper around a query result: first load and hard errors block the content; empty shows EmptyState; success renders your template; a background refetch keeps the list visible with a spinning refresh icon. Switch scenarios to see each mapping."
+        hint="One wrapper around a query result: first load and hard errors block the content; empty shows EmptyState; success renders your template; a background refetch keeps the list visible (use your own control, e.g. table Refresh). Switch scenarios to see each mapping."
         badge="6 scenarios"
         [code]="asyncCode"
       >

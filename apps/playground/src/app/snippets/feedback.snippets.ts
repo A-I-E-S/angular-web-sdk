@@ -157,7 +157,7 @@ export /**
  */
 const FEEDBACK_ASYNC = `
 // Wrap the list (table + pagination). Maps loading / error / empty / success for you.
-// Background refetch keeps content on screen with a spinning refresh icon. One (retry) → refetch.
+// Background refetch keeps content on screen. Wire your own in-flight cue (e.g. table Refresh). One (retry) → refetch.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import type { AsyncQueryStateModel } from '@aies/aies-models';

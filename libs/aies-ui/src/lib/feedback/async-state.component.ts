@@ -2,14 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   output,
 } from '@angular/core';
 
-import { AiesIconComponent } from '@aies/aies-icons';
 import type { AsyncQueryStateModel } from '@aies/aies-models';
-import { ModeColorService } from '@aies/aies-theme';
 
 import { EmptyStateComponent } from './empty-state.component';
 import { ErrorIndicatorComponent } from './error-indicator.component';
@@ -35,8 +32,9 @@ type AsyncView =
  * 1. `isLoading` → {@link LoadingStateComponent}
  * 2. `isError && data === undefined` → {@link ErrorStateComponent}
  * 3. empty data (empty array, or null/undefined after load) → {@link EmptyStateComponent}
- * 4. otherwise project content; never block on background refetch — spin a
- *    refresh icon (and keep a stale-error badge if the last refresh failed).
+ * 4. otherwise project content; never block on background refetch (hosts can
+ *    spin their own control, e.g. table Refresh). Keep a stale-error badge if
+ *    the last refresh failed.
  *
  * A single `retry` output covers blocking error/empty and the stale-data badge
  * so views wire one handler regardless of which branch fired.
@@ -67,7 +65,6 @@ type AsyncView =
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AiesIconComponent,
     EmptyStateComponent,
     ErrorIndicatorComponent,
     ErrorStateComponent,
@@ -96,19 +93,6 @@ type AsyncView =
                 [refreshing]="badges.fetching"
                 (retry)="retry.emit()"
               />
-            } @else if (badges.fetching) {
-              <div
-                class="pointer-events-none absolute inset-x-0 top-2 z-10 flex justify-center"
-                role="status"
-                aria-live="polite"
-                aria-label="Updating"
-              >
-                <aies-icon
-                  name="refresh"
-                  [size]="18"
-                  [class]="'animate-spin ' + modeColor.classes().text"
-                />
-              </div>
             }
           }
           <ng-content />
@@ -118,8 +102,6 @@ type AsyncView =
   `,
 })
 export class AsyncStateComponent<T = unknown> {
-  protected readonly modeColor = inject(ModeColorService);
-
   /**
    * Snapshot from the app's query layer (e.g. mapped `injectQuery()` signals).
    */

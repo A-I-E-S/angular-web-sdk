@@ -5,7 +5,6 @@ import {
   Component,
   computed,
   contentChildren,
-  inject,
   input,
   numberAttribute,
   output,
@@ -15,7 +14,6 @@ import {
 
 import { AiesIconComponent } from '@aies/aies-icons';
 import type { PaginationMetaModel } from '@aies/aies-models';
-import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { PaginationComponent } from '../pagination/pagination.component';
@@ -170,20 +168,6 @@ import { TableColumn, TableSortChange } from './table-column';
       <div
         class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
       >
-        @if (refreshing() && !showRefresh()) {
-          <div
-            class="pointer-events-none absolute top-2 right-2 z-10"
-            role="status"
-            aria-live="polite"
-            aria-label="Refreshing"
-          >
-            <aies-icon
-              name="refresh"
-              [size]="18"
-              [class]="'animate-spin ' + modeColor.classes().text"
-            />
-          </div>
-        }
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
@@ -344,8 +328,6 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
-  protected readonly modeColor = inject(ModeColorService);
-
   /**
    * When false, hides row expansion even if {@link RowDetailDefDirective}
    * templates are projected. Defaults to true.
