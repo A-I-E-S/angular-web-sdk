@@ -267,11 +267,17 @@ import { ButtonComponent } from '@aies/aies-ui';
         Save shipment
       </button>
 
-      <button aies-button type="button" variant="secondary" loading>
+      <button aies-button type="button" variant="secondary" [loading]="true">
         Saving draft
       </button>
 
-      <button aies-button type="button" variant="danger" size="sm" loading>
+      <button
+        aies-button
+        type="button"
+        variant="danger"
+        size="sm"
+        [loading]="true"
+      >
         Deleting
       </button>
     </div>

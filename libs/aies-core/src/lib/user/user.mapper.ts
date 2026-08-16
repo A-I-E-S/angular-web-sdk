@@ -18,6 +18,13 @@ import type {
 /** Current-user path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const USER_PATH = '/user';
 
+/** Change-password path after a default-password first login. */
+export const USER_CHANGE_PASSWORD_PATH = '/user/change/password';
+
+/** Invalidate every session for the signed-in user. */
+export const USER_LOGOUT_FROM_ALL_SESSIONS_PATH =
+  '/user/logout-from-all-sessions';
+
 const ACCOUNT_TYPES = new Set<AccountType>(['business', 'individual']);
 const SHIPPING_TYPES = new Set<ShippingType>(['instant', 'consolidation']);
 const PLAN_TYPES = new Set<PlanType>([

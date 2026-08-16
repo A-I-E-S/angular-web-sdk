@@ -215,7 +215,80 @@ export class ZoneLoaderComponent {
 export /**
  *
  */
-const API_USER = `// GET /user — bare user object (no { success, data } wrapper).
+const API_AUTH = `// POST /auth/forgot/password — email-only, unauthenticated. Body { email }.
+// The backend emails a reset link. This frontend never shows a new-password
+// form for that link (no token in the route).
+// /onboarding/reset-password is a different flow (default_password first login).
+// Admins can call the same forgot(email) from user/partner screens.
+
+import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { AuthService, isValidEmail } from '@aies/aies-core';
+import { ButtonComponent, TextInputComponent } from '@aies/aies-ui';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-forgot-password',
+  standalone: true,
+  imports: [ButtonComponent, TextInputComponent, RouterLink],
+  template: \`
+    <p>We will send you a password reset link.</p>
+    <aies-text-input
+      type="email"
+      label="Email"
+      autocomplete="email"
+      [(value)]="email"
+    />
+    <button
+      aies-button
+      type="button"
+      variant="primary"
+      [loading]="sending()"
+      [disabled]="!canSubmit()"
+      (click)="forgot()"
+    >
+      Send reset link
+    </button>
+    @if (status(); as copy) {
+      <p>{{ copy }}</p>
+      <a routerLink="/onboarding/login">Reset completed? Login here</a>
+    }
+  \`,
+})
+export class ForgotPasswordComponent {
+  private readonly authApi = inject(AuthService);
+
+  protected readonly email = signal('');
+  protected readonly sending = signal(false);
+  protected readonly status = signal<string | null>(null);
+  protected readonly canSubmit = computed(() => isValidEmail(this.email()));
+
+  protected async forgot(): Promise<void> {
+    if (!this.canSubmit()) {
+      return;
+    }
+    this.sending.set(true);
+    this.status.set(null);
+    try {
+      const res = await firstValueFrom(this.authApi.forgot(this.email()));
+      if (res.success) {
+        this.status.set(res.message?.trim() || 'We have emailed your reset password.');
+      } else {
+        this.status.set(res.message?.trim() || 'Could not send a reset email.');
+      }
+    } finally {
+      this.sending.set(false);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const API_USER = `// GET  /user — bare user object (no { success, data } wrapper).
+// POST /user/change/password — first-login default password.
+// POST /user/logout-from-all-sessions — while the token is still set, then clear().
 // After login/register in your app:
 //   inject(AuthTokenService).set(access_token);
 // UserService.me() then sends Authorization: Bearer …
@@ -246,6 +319,13 @@ export class ProfileComponent {
     if (res.success && res.data) {
       this.user.set(res.data);
     }
+  }
+
+  logout(): void {
+    this.users.logoutFromAllSessions().subscribe({
+      next: () => this.auth.clear(),
+      error: () => this.auth.clear(),
+    });
   }
 }
 `;

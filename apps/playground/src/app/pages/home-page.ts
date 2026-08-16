@@ -26,7 +26,8 @@ interface CatalogCard {
     | 'filter'
     | 'tags'
     | 'book'
-    | 'truck';
+    | 'truck'
+    | 'key';
   group: string;
 }
 
@@ -215,6 +216,13 @@ export class HomePage {
       title: 'Back button and Breadcrumbs',
       blurb: 'App-shell Back and breadcrumbs, plus a list that restores filters and page from the URL.',
       icon: 'truck',
+      group: 'Use cases',
+    },
+    {
+      path: '/usecases/onboarding/login',
+      title: 'Forgot password',
+      blurb: 'Email-only reset link from login. First-login default password is a separate screen.',
+      icon: 'key',
       group: 'Use cases',
     },
     {

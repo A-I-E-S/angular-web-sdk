@@ -120,6 +120,37 @@ const appRoutes: Route[] = [
     ],
   },
   {
+    path: 'usecases/onboarding',
+    loadComponent: () =>
+      import('./pages/usecases/onboarding-usecase.page').then(
+        (m) => m.OnboardingUsecasePage,
+      ),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'login' },
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./pages/usecases/onboarding-login.page').then(
+            (m) => m.OnboardingLoginPage,
+          ),
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./pages/usecases/onboarding-forgot-password.page').then(
+            (m) => m.OnboardingForgotPasswordPage,
+          ),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./pages/usecases/onboarding-reset-password.page').then(
+            (m) => m.OnboardingResetPasswordPage,
+          ),
+      },
+    ],
+  },
+  {
     path: 'lecture',
     loadComponent: () =>
       import('./pages/lecture-page').then((m) => m.LecturePage),

@@ -11,6 +11,7 @@ import {
 } from '../layout';
 import { BreadcrumbComponent } from '../navigation/breadcrumb';
 import { SegmentComponent } from '../navigation/segment';
+import { ShippingModeSwitchComponent } from '../navigation/shipping-mode-switch';
 import { SideNavComponent } from '../navigation/side-nav';
 import { TabDefDirective, TabsComponent } from '../navigation/tabs';
 
@@ -27,12 +28,13 @@ const NAV = [
   TabsComponent,
   TabDefDirective,
   SegmentComponent,
+  ShippingModeSwitchComponent,
   SideNavComponent,
 ] as const;
 
 /**
- * App shell, breadcrumb, tabs (+ `aiesTabDef`), segment, side nav, brand logo,
- * avatar menu, and shell header chrome.
+ * App shell, breadcrumb, tabs (+ `aiesTabDef`), segment, side nav, shipping
+ * mode switch, brand logo, avatar menu, and shell header chrome.
  *
  * @example
  * ```ts

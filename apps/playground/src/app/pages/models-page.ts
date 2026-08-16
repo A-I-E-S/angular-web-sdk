@@ -425,12 +425,30 @@ export class ModelsPage {
     {
       id: 'session-config',
       title: 'Session & config',
-      hint: 'Authenticated user profile and STN/SFN region units.',
+      hint: 'Auth email flows, authenticated user profile, and STN/SFN region units.',
       groups: [
+        {
+          id: 'auth',
+          title: 'Auth',
+          hint: 'POST /auth/forgot/password — email only; backend emails a reset link. This frontend does not handle that link.',
+          apiFragment: 'auth',
+          apiLabel: 'AuthService',
+          models: [
+            {
+              name: 'ForgotPasswordRequestModel',
+              packagePath: 'auth',
+              description:
+                'Request body for AuthService.forgot. Response data is typically []. Same call from login and admin user/partner screens.',
+              structure: `interface ForgotPasswordRequestModel {
+  email: string;
+}`,
+            },
+          ],
+        },
         {
           id: 'user',
           title: 'Current user',
-          hint: 'Profile from GET /user after AuthTokenService.set.',
+          hint: 'Profile from GET /user after AuthTokenService.set. default_password → /onboarding/reset-password (change password), not the email-link flow.',
           apiFragment: 'user',
           apiLabel: 'UserService',
           models: [
@@ -452,7 +470,19 @@ export class ModelsPage {
   shipping_type?: ShippingType | null;
   business_account?: UserBusinessAccountModel | null;
   account_manager?: UserAccountManagerModel | null;
+  default_password?: boolean | null;
   // …verification, flags, accounts
+}`,
+            },
+            {
+              name: 'ChangePasswordRequestModel',
+              packagePath: 'user',
+              description:
+                'POST /user/change/password after first login when default_password is set.',
+              structure: `interface ChangePasswordRequestModel {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
 }`,
             },
             {

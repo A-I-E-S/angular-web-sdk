@@ -42,7 +42,7 @@ Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
 | `provideAiesUiOverlays()` | Enables modal / drawer / confirm overlay services used by UI components (filters, dialogs, etc.). |
 | `provideAiesToasts()` | **Optional.** Mounts the toast UI and connects it to HTTP. Then mark individual requests with `withToast()` to show success/error toasts. Without this, `withToast()` is a no-op. |
 | `inject(ThemeService)` in an app initializer | Applies light/dark theme class early so the first paint matches the stored preference. |
-| `AuthTokenService.set(access_token)` | **After login** (in your app code, not usually in `app.config`). Saves the token so SDK requests send `Authorization: Bearer …`. Call `.clear()` on logout. |
+| `AuthTokenService.set(access_token)` | **After login** (in your app code, not usually in `app.config`). Saves the token so SDK requests send `Authorization: Bearer …`. On logout, call `UserService.logoutFromAllSessions()` while the token is still set, then `.clear()`. Use `AuthService.forgot(email)` for the email-only reset-link POST. If `user.default_password`, send the user to change password via `UserService.changePassword`. |
 
 ```ts
 // app.config.ts
@@ -79,6 +79,7 @@ export const appConfig: ApplicationConfig = {
 // inject(AuthTokenService).set(access_token);
 //
 // Then SDK calls like UserService.me() are authenticated automatically.
+// On logout: UserService.logoutFromAllSessions() then AuthTokenService.clear().
 ```
 
 ```js

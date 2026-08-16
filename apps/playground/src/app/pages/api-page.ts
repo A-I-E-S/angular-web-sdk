@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import {
+  AUTH_FORGOT_PASSWORD_PATH,
   COUNTRY_READ_PATH,
   FILE_READ_PATH,
   MODE_CONFIG_PATH,
@@ -9,6 +10,8 @@ import {
   NOTIFICATION_UPDATE_PATH,
   PRODUCT_READ_PATH,
   SHIPMENT_METHOD_READ_PATH,
+  USER_CHANGE_PASSWORD_PATH,
+  USER_LOGOUT_FROM_ALL_SESSIONS_PATH,
   USER_PATH,
   WAREHOUSE_READ_PATH,
   ZONE_READ_PATH,
@@ -16,7 +19,9 @@ import {
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
+import { PlaygroundForgotPasswordComponent } from '../shared/playground-forgot-password.component';
 import {
+  API_AUTH,
   API_COUNTRY,
   API_FILE,
   API_MODE_CONFIG,
@@ -68,7 +73,12 @@ interface ApiServiceGroup {
 @Component({
   selector: 'app-api-page',
   standalone: true,
-  imports: [PageHeaderComponent, DemoSectionComponent, RouterLink],
+  imports: [
+    PageHeaderComponent,
+    DemoSectionComponent,
+    RouterLink,
+    PlaygroundForgotPasswordComponent,
+  ],
   template: `
     <div class="pg-page-enter flex flex-col gap-10">
       <app-page-header
@@ -236,6 +246,9 @@ interface ApiServiceGroup {
                   >
                 </dd>
               </dl>
+              @if (entry.id === 'auth') {
+                <app-playground-forgot-password />
+              }
             </app-demo-section>
           }
         </section>
@@ -351,16 +364,27 @@ export class ApiPage {
     {
       id: 'session-config',
       title: 'Session & config',
-      hint: 'Current user and STN/SFN region units — not ResourceId list reads.',
+      hint: 'Auth email flows, current user, and STN/SFN region units — not ResourceId list reads.',
       services: [
+        {
+          id: 'auth',
+          title: 'AuthService',
+          hint: 'Email-only. POST { email } — backend emails a reset link. This UI never collects a new password for that link. Admins reuse forgot(email).',
+          path: `POST ${AUTH_FORGOT_PASSWORD_PATH}`,
+          modelAnchor: 'auth',
+          modelLabel: 'ForgotPasswordRequestModel',
+          returns: 'forgot(email) → ApiResponseModel<unknown[]>',
+          code: API_AUTH,
+        },
         {
           id: 'user',
           title: 'UserService',
-          hint: 'Current user. Call AuthTokenService.set(access_token) after login.',
-          path: `GET ${USER_PATH}`,
+          hint: 'Current user. Call AuthTokenService.set(access_token) after login. If user.default_password, send them to /onboarding/reset-password (not the email-link flow). Logout: POST while the token is set, then AuthTokenService.clear().',
+          path: `GET ${USER_PATH} · POST ${USER_CHANGE_PASSWORD_PATH} · POST ${USER_LOGOUT_FROM_ALL_SESSIONS_PATH}`,
           modelAnchor: 'user',
           modelLabel: 'UserModel',
-          returns: 'me() → ApiResponseModel<UserModel>',
+          returns:
+            'me() → UserModel · changePassword(body) → ApiResponseModel · logoutFromAllSessions() → ApiResponseModel',
           code: API_USER,
         },
         {

@@ -175,6 +175,7 @@ export {
   resolveHeaderBackTarget,
   resolveParentPathFromRootSnapshot,
   SegmentComponent,
+  ShippingModeSwitchComponent,
   SideNavComponent,
   type TabDefContext,
   TabDefDirective,

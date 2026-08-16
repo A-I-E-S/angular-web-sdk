@@ -1,5 +1,5 @@
 /**
- * Navigation chrome: breadcrumb, tabs, segment, and side nav.
+ * Navigation chrome: breadcrumb, tabs, segment, side nav, and shipping mode.
  *
  * Items share {@link AiesNavItem} (tabs / segment / breadcrumb). Side nav uses
  * {@link AiesSideNavItem} (icons + nested children). Optional `routerLink`
@@ -28,6 +28,7 @@ export {
   navItemHref,
 } from './navigate-nav-item';
 export { SegmentComponent } from './segment';
+export { ShippingModeSwitchComponent } from './shipping-mode-switch';
 export {
   type AiesSideNavItem,
   SideNavComponent,

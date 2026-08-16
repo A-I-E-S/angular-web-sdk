@@ -49,7 +49,7 @@ export const appConfig: ApplicationConfig = {
 | Filters | `FilterDrawerService`, `FilterQueryService` — hydrate/write list queries on the URL |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
 | Forms | Text, select, address (Google Places), number, file upload, checkbox, radio, toggle, textarea, date, OTP — address needs `provideGooglePlaces({ apiKey })` |
-| Navigation | `AppShell` (clock, notifications, avatar menu), `SideNav` (SDK logo), `Breadcrumb`, `Tabs`, `Segment` |
+| Navigation | `AppShell` (clock, notifications, avatar menu), `SideNav` (SDK logo), `ShippingModeSwitch`, `Breadcrumb`, `Tabs`, `Segment` |
 | Notifications | `NotificationDrawerService` — inbox drawer (via `DrawerService`) |
 | Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |
 | NgModules | `AiesFormsModule`, `AiesFeedbackModule`, `AiesActionsModule`, `AiesNavigationModule`, `AiesTableModule`, `AiesStepperModule`, `AiesTooltipModule` — optional one-import facades over the standalones |

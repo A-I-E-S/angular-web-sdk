@@ -285,8 +285,13 @@ const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs + Back in the cont
 // header holds clock, notifications, and avatar.
 // Needs provideAiesUiOverlays() for the notification drawer.
 // Back is built into aies-app-shell — nest child routes under a parent and it appears.
+// Log out: confirm → UserService.logoutFromAllSessions() → AuthTokenService.clear().
 
 import { Component, inject, signal } from '@angular/core';
+
+import { finalize } from 'rxjs';
+
+import { AuthTokenService, UserService } from '@aies/aies-core';
 import {
   AppShellComponent,
   ConfirmService,
@@ -325,6 +330,8 @@ import {
 })
 export class ProductShellComponent {
   private readonly confirm = inject(ConfirmService);
+  private readonly users = inject(UserService);
+  private readonly auth = inject(AuthTokenService);
 
   protected readonly collapsed = signal(false);
   protected readonly activeId = signal('home');
@@ -366,14 +373,18 @@ export class ProductShellComponent {
       .confirm({
         title: 'Log out?',
         message:
-          'This ends your current session. Sign in again when you want to come back.',
+          'This signs you out of this device and every other session.',
         confirmLabel: 'Log out',
         danger: true,
       })
       .subscribe((ok) => {
-        if (ok) {
-          // auth.clear();
+        if (!ok) {
+          return;
         }
+        this.users
+          .logoutFromAllSessions()
+          .pipe(finalize(() => this.auth.clear()))
+          .subscribe();
       });
   }
 }

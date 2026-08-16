@@ -1,5 +1,6 @@
 export * from './lib/api';
 export * from './lib/async';
+export * from './lib/auth';
 export * from './lib/country';
 export * from './lib/file';
 export * from './lib/filters';

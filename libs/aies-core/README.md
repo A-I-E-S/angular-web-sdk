@@ -44,7 +44,7 @@ export const appConfig: ApplicationConfig = {
 | Area | Exports |
 |------|---------|
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG`, `httpToasts` (`'off'` \| `'errors'` \| `'all'`) |
-| Auth | `AuthTokenService` (`set` / `clear` / `get`) |
+| Auth | `AuthService` (`forgot`), `isValidEmail`, `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
 | HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`), `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
@@ -54,7 +54,7 @@ export const appConfig: ApplicationConfig = {
 | Warehouse | `WarehouseService` (`readPage` / `readAll` / `readById`), `WAREHOUSE_READ_PATH`, mappers |
 | Zone | `ZoneService` (`readPage` / `readAll` / `readById`), `ZONE_READ_PATH`, mappers |
 | Product | `ProductService` (`readPage` / `readAll` / `readById`), `PRODUCT_READ_PATH`, mappers |
-| User | `UserService`, `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
+| User | `UserService` (`me`, `changePassword`, `logoutFromAllSessions`), `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
 | Notification | `NotificationService` (`readPage` / `readAll` / `readOne`), `NOTIFICATION_READ_PATH`, `mapNotification` / `mapNotificationInboxItem` |
 | File | `FileService`, `FILE_READ_PATH`, `mapFileRead` (`data` is a single object) |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |

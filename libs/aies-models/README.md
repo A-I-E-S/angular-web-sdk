@@ -19,7 +19,8 @@ suffix.
 - **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
 - **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads
-- **user** — `UserModel` (+ nested business account / plan / subscription) for bare `GET /user` (auth)
+- **auth** — `ForgotPasswordRequestModel` for email-only `POST /auth/forgot/password`
+- **user** — `UserModel` (+ nested business account / plan / subscription) for bare `GET /user` (auth); `ChangePasswordRequestModel` for first-login `POST /user/change/password`
 - **notification** — `NotificationModel`, `NotificationPayloadModel`, inbox helpers for `GET /user/notifications/read/{id?}`
 - **filters** — `ModuleFilterConfigModel`, `FilterStateModel`, `FilterTransport`, `toFilterParams` / `fromFilterParams` / `hasFilterParams`
 - **mode** — `ModeConfigDataModel`, region/currency/unit config for STN and SFN

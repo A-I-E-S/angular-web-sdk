@@ -7,7 +7,12 @@ export {
 export { provideAiesSdk } from './lib/config/provide-aies-sdk';
 
 // Auth
-export { AuthTokenService } from './lib/auth';
+export {
+  AUTH_FORGOT_PASSWORD_PATH,
+  AuthService,
+  AuthTokenService,
+  isValidEmail,
+} from './lib/auth';
 
 // Shipping mode
 export { shipmentModeInterceptor } from './lib/shipping/shipment-mode.interceptor';
@@ -110,6 +115,8 @@ export {
   mapUserPlanPackage,
   mapUserStateLabel,
   mapUserSubscription,
+  USER_CHANGE_PASSWORD_PATH,
+  USER_LOGOUT_FROM_ALL_SESSIONS_PATH,
   USER_PATH,
   UserService,
 } from './lib/user';

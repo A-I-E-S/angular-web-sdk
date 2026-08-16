@@ -353,7 +353,7 @@ export class NavigationPage {
       .confirm({
         title: 'Log out?',
         message:
-          'This ends your current session. Sign in again when you want to come back.',
+          'This signs you out of this device and every other session.',
         confirmLabel: 'Log out',
         danger: true,
       })

@@ -201,6 +201,11 @@ export interface UserModel {
   suspended_at?: string | null;
   deactivated_at?: string | null;
   active?: boolean | null;
+  /**
+   * When true after login, send the user to `/onboarding/reset-password`
+   * (change current → new via `POST /user/change/password`). Not the
+   * email-link forgot-password flow.
+   */
   default_password?: boolean | null;
   type?: AccountType | null;
   deleted_at?: string | null;
@@ -216,4 +221,20 @@ export interface UserModel {
   accounts?: unknown[] | null;
   business_account?: UserBusinessAccountModel | null;
   account_manager?: UserAccountManagerModel | null;
+}
+
+/**
+ * Request body for `POST /user/change/password`.
+ *
+ * First login with a default password (`user.default_password`) — not the
+ * email-link forgot-password flow. Host apps typically land on
+ * `/onboarding/reset-password`, then the dashboard.
+ */
+export interface ChangePasswordRequestModel {
+  /** Password the user signed in with (the default / current password). */
+  current_password: string;
+  /** Replacement password. */
+  password: string;
+  /** Must match {@link ChangePasswordRequestModel.password}. */
+  password_confirmation: string;
 }

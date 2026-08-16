@@ -7,7 +7,7 @@ import {
   RouterOutlet,
 } from '@angular/router';
 
-import { catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, finalize, map, of, switchMap, tap } from 'rxjs';
 
 import {
   AuthTokenService,
@@ -273,6 +273,11 @@ export class App {
           label: 'Back button and Breadcrumbs',
           routerLink: '/usecases/shipment',
         },
+        {
+          id: 'onboarding-forgot',
+          label: 'Forgot password',
+          routerLink: '/usecases/onboarding/login',
+        },
       ],
     },
     {
@@ -307,7 +312,7 @@ export class App {
       .confirm({
         title: 'Log out?',
         message:
-          'This ends your current session. Sign in again when you want to come back.',
+          'This signs you out of this device and every other session.',
         confirmLabel: 'Log out',
         danger: true,
       })
@@ -315,8 +320,27 @@ export class App {
         if (!ok) {
           return;
         }
-        this.auth.clear();
-        this.toast.success('You have been logged out.');
+        const finishLocalLogout = (): void => {
+          this.auth.clear();
+        };
+        if (!this.auth.get()) {
+          finishLocalLogout();
+          this.toast.success('You have been logged out.');
+          return;
+        }
+        this.usersApi
+          .logoutFromAllSessions()
+          .pipe(finalize(finishLocalLogout))
+          .subscribe({
+            next: (res) => {
+              this.toast.success(
+                res.message?.trim() || 'You have been logged out.',
+              );
+            },
+            error: () => {
+              this.toast.success('You have been logged out.');
+            },
+          });
       });
   }
 }

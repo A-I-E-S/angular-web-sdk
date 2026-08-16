@@ -1,5 +1,6 @@
 export type {
   AccountType,
+  ChangePasswordRequestModel,
   PlanType,
   ShippingType,
   UserAccountManagerModel,

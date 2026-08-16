@@ -9,18 +9,23 @@ import { ApiClient } from '../http/api-client';
  *
  * After login/register in the host app, call {@link set}. The SDK persists the
  * token via {@link STORAGE_TOKEN} and attaches `Authorization: Bearer …` on
- * outbound HTTP. Call {@link clear} on logout (also clears the GET response cache).
+ * outbound HTTP. On logout, call {@link UserService.logoutFromAllSessions}
+ * while the token is still set, then {@link clear} (also clears the GET cache).
  *
  * @example
  * ```ts
  * const auth = inject(AuthTokenService);
+ * const users = inject(UserService);
  *
  * // after login
  * auth.set(res.access_token);
  *
  * // later — UserService.me() is authenticated automatically
- * // on logout
- * auth.clear();
+ * // on logout — POST while the token is still set, then drop it
+ * users.logoutFromAllSessions().subscribe({
+ *   next: () => auth.clear(),
+ *   error: () => auth.clear(),
+ * });
  * ```
  */
 @Injectable({ providedIn: 'root' })
