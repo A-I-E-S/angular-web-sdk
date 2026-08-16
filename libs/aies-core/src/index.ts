@@ -108,8 +108,11 @@ export {
   mapPaymentMethodCurrency,
   mapPaymentMethodList,
   PAYMENT_METHOD_READ_PATH,
+  PAYMENT_METHOD_UPDATE_PATH,
   type PaymentMethodReadParams,
   PaymentMethodService,
+  toPaymentMethodFlag01,
+  toPaymentMethodUpdateBody,
 } from './lib/payment-method';
 
 // Shipment methods / carriers

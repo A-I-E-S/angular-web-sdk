@@ -3,6 +3,9 @@ import {
   mapPaymentMethodCurrency,
   mapPaymentMethodList,
   PAYMENT_METHOD_READ_PATH,
+  PAYMENT_METHOD_UPDATE_PATH,
+  toPaymentMethodFlag01,
+  toPaymentMethodUpdateBody,
 } from './payment-method.mapper';
 
 /** Abbreviated wire sample from GET /payment_method/read. */
@@ -35,8 +38,9 @@ const WIRE_SQUAD = {
 };
 
 describe('payment-method.mapper', () => {
-  it('exposes the payment-method read path', () => {
+  it('exposes the payment-method read and update paths', () => {
     expect(PAYMENT_METHOD_READ_PATH).toBe('/payment_method/read');
+    expect(PAYMENT_METHOD_UPDATE_PATH).toBe('/payment_method/update');
   });
 
   it('maps a nested currency with pivot', () => {
@@ -70,5 +74,38 @@ describe('payment-method.mapper', () => {
     expect(mapPaymentMethod({ id: 1, name: 'X', model: 'App\\X' }).currencies).toEqual(
       [],
     );
+  });
+
+  it('toPaymentMethodFlag01 serializes booleans and wire flags', () => {
+    expect(toPaymentMethodFlag01(true)).toBe('1');
+    expect(toPaymentMethodFlag01(false)).toBe('0');
+    expect(toPaymentMethodFlag01('1')).toBe('1');
+    expect(toPaymentMethodFlag01('0')).toBe('0');
+    expect(toPaymentMethodFlag01(1)).toBe('1');
+    expect(toPaymentMethodFlag01(0)).toBe('0');
+  });
+
+  it('toPaymentMethodUpdateBody resends name/model and serializes active', () => {
+    expect(
+      toPaymentMethodUpdateBody({
+        id: 1,
+        name: 'Paystack',
+        model: 'App\\Models\\Paystack',
+        active: true,
+      }),
+    ).toEqual({
+      id: 1,
+      name: 'Paystack',
+      model: 'App\\Models\\Paystack',
+      active: '1',
+    });
+    expect(
+      toPaymentMethodUpdateBody({
+        id: 1,
+        name: 'Paystack',
+        model: 'App\\Models\\Paystack',
+        active: false,
+      }).active,
+    ).toBe('0');
   });
 });

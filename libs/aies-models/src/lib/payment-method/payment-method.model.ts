@@ -44,3 +44,21 @@ export interface PaymentMethodModel {
   /** Currencies this processor accepts. */
   currencies: PaymentMethodCurrencyModel[];
 }
+
+/** `"1"` / `"0"` flag as sent on payment-method update. */
+export type PaymentMethodFlag01 = '0' | '1';
+
+/**
+ * Request body for `PUT /payment_method/update` (App Settings → Payment Methods).
+ *
+ * The status switch is the only write UI. `name` and `model` are resent from
+ * the current row (not edited in a form). The SDK serializes `active` to
+ * `"1"` / `"0"`.
+ */
+export interface PaymentMethodUpdateRequestModel {
+  id: number;
+  name: string;
+  model: string;
+  /** Boolean or wire `"1"` / `"0"`. */
+  active: boolean | PaymentMethodFlag01;
+}

@@ -13,6 +13,7 @@ import {
   NOTIFICATION_READ_PATH,
   NOTIFICATION_UPDATE_PATH,
   PAYMENT_METHOD_READ_PATH,
+  PAYMENT_METHOD_UPDATE_PATH,
   PRODUCT_READ_PATH,
   SHIPMENT_METHOD_READ_PATH,
   USER_CHANGE_PASSWORD_PATH,
@@ -330,15 +331,16 @@ export class ApiPage {
         {
           id: 'payment-method',
           title: 'PaymentMethodService',
-          hint: 'Checkout processors with nested currencies they accept.',
-          path: `GET ${PAYMENT_METHOD_READ_PATH}/{id?}`,
+          hint: 'App Settings payment methods. Read + active toggle only (no create/delete). After update, show res.message and patch that row’s updated_at — do not reload the list. Processors are linked from Currencies via payment_method_ids.',
+          path: `GET ${PAYMENT_METHOD_READ_PATH}/{id?} · PUT ${PAYMENT_METHOD_UPDATE_PATH}`,
           modelAnchor: 'payment-method',
           modelLabel: 'PaymentMethodModel',
           resourceCalls: {
-            page: 'readPage({ page }) → PaymentMethodModel[]',
+            page: 'readPage({ page, order, search, from, to }) → PaymentMethodModel[]',
             all: 'readAll() → PaymentMethodModel[]',
             byId: 'readById(n) → PaymentMethodModel',
           },
+          returns: 'update({ id, name, model, active }) → ApiResponseModel',
           code: API_PAYMENT_METHOD,
         },
         {

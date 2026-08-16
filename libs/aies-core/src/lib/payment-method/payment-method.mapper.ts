@@ -1,6 +1,8 @@
 import type {
   PaymentMethodCurrencyModel,
+  PaymentMethodFlag01,
   PaymentMethodModel,
+  PaymentMethodUpdateRequestModel,
 } from '@aies/aies-models';
 
 import {
@@ -15,10 +17,47 @@ import {
   asString,
   mapArray,
   mapList,
+  toFlag01,
 } from '../http/wire';
 
 /** Payment-method read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const PAYMENT_METHOD_READ_PATH = '/payment_method/read';
+
+/** Payment-method update path (`PUT`). */
+export const PAYMENT_METHOD_UPDATE_PATH = '/payment_method/update';
+
+/**
+ * Serialize a boolean / `"1"` / `"0"` flag for payment-method update.
+ * @param value - Host boolean or wire flag.
+ * @returns `"1"` or `"0"`.
+ */
+export function toPaymentMethodFlag01(
+  value: boolean | PaymentMethodFlag01 | number | null | undefined,
+): PaymentMethodFlag01 {
+  return toFlag01(value);
+}
+
+/**
+ * Build the wire body for `PUT /payment_method/update`.
+ *
+ * @param body - Host update payload (`active` may be boolean).
+ * @returns Body with `active` as `"1"` / `"0"`.
+ */
+export function toPaymentMethodUpdateBody(
+  body: PaymentMethodUpdateRequestModel,
+): {
+  id: number;
+  name: string;
+  model: string;
+  active: PaymentMethodFlag01;
+} {
+  return {
+    id: asNumber(body?.id),
+    name: asString(body?.name),
+    model: asString(body?.model),
+    active: toPaymentMethodFlag01(body?.active),
+  };
+}
 
 /**
  * Map a currency nested on a payment method (rates + pivot, no processors).

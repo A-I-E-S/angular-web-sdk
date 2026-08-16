@@ -17,7 +17,7 @@ suffix.
 - **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`, `ApiJsonValue`
 - **country** — `CountryModel`, `CountryStateModel` for public country utility reads
 - **currency** — `CurrencyModel`, `CurrencyPaymentMethodModel` for `/currency/read`; `CurrencyCreateRequestModel` / `CurrencyUpdateRequestModel` / `CurrencyDeleteRequestModel` for App Settings writes
-- **payment-method** — `PaymentMethodModel`, `PaymentMethodCurrencyModel` for `/payment_method/read` (processors + nested currencies)
+- **payment-method** — `PaymentMethodModel`, `PaymentMethodCurrencyModel` for `/payment_method/read`; `PaymentMethodUpdateRequestModel` for App Settings active toggle (`PUT /payment_method/update`). No create/delete models.
 - **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
 - **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads

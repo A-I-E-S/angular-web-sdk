@@ -373,11 +373,17 @@ export /**
  *
  */
 const MODELS_PAYMENT_METHOD = `// Payment methods — GET /payment_method/read/{id?} (ResourceId).
-// readPage() → PaymentMethodModel[] · readAll() → PaymentMethodModel[] · readById(n) → PaymentMethodModel
+// PUT /payment_method/update — active toggle; resend name + model from the row.
+// No create/delete. After update: toast message + patch updated_at (do not reload).
+// readPage({ page, order, search, from, to }) → PaymentMethodModel[]
+// readAll() → PaymentMethodModel[] · readById(n) → PaymentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
 import { PaymentMethodService } from '@aies/aies-core';
-import type { PaymentMethodModel } from '@aies/aies-models';
+import type {
+  PaymentMethodModel,
+  PaymentMethodUpdateRequestModel,
+} from '@aies/aies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -396,9 +402,24 @@ export class PaymentMethodSetupComponent {
   protected readonly methods = signal<PaymentMethodModel[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const res = await firstValueFrom(this.methodsApi.readPage({ page: 1 }));
+    const res = await firstValueFrom(
+      this.methodsApi.readPage({ page: 1, order: 'desc' }),
+    );
     if (res.success && res.data) {
       this.methods.set(res.data);
+    }
+  }
+
+  async setActive(row: PaymentMethodModel, active: boolean): Promise<void> {
+    const body: PaymentMethodUpdateRequestModel = {
+      id: row.id,
+      name: row.name,
+      model: row.model,
+      active,
+    };
+    const res = await firstValueFrom(this.methodsApi.update(body));
+    if (res.success) {
+      // toast res.message; patch row locally — do not readPage()
     }
   }
 }

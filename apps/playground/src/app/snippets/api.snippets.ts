@@ -157,8 +157,10 @@ export /**
  *
  */
 const API_PAYMENT_METHOD = `// GET /payment_method/read/{id?} — ResourceId: null | 'all' | number.
+// PUT /payment_method/update — active toggle only (resend name + model from the row).
+// No create/delete on this board. After update: toast message + patch updated_at locally.
 // Laravel paginator in data is flattened to data[] + pagination.
-// readPage({ page, size: 10 }) → PaymentMethodModel[]
+// readPage({ page, size, order, search, from, to }) → PaymentMethodModel[]
 // readAll()            → full PaymentMethodModel[]
 // readById(4)          → single PaymentMethodModel
 
@@ -183,10 +185,33 @@ export class PaymentMethodLoaderComponent {
   protected readonly meta = signal<PaginationMetaModel | null>(null);
 
   async ngOnInit(): Promise<void> {
-    const page = await firstValueFrom(this.methodsApi.readPage({ page: 1 }));
+    const page = await firstValueFrom(
+      this.methodsApi.readPage({ page: 1, order: 'desc' }),
+    );
     if (page.success && page.data) {
       this.methods.set(page.data);
       this.meta.set(page.pagination);
+    }
+  }
+
+  async toggleActive(row: PaymentMethodModel, next: boolean): Promise<void> {
+    const res = await firstValueFrom(
+      this.methodsApi.update({
+        id: row.id,
+        name: row.name,
+        model: row.model,
+        active: next,
+      }),
+    );
+    if (res.success) {
+      // toast res.message; patch row.active + row.updated_at in place — do not readPage()
+      this.methods.update((list) =>
+        list.map((m) =>
+          m.id === row.id
+            ? { ...m, active: next, updated_at: new Date().toISOString() }
+            : m,
+        ),
+      );
     }
   }
 }

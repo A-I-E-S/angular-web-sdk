@@ -5,12 +5,17 @@ import { of } from 'rxjs';
 import type { ApiResponseModel } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
-import { PAYMENT_METHOD_READ_PATH } from './payment-method.mapper';
+import {
+  PAYMENT_METHOD_READ_PATH,
+  PAYMENT_METHOD_UPDATE_PATH,
+} from './payment-method.mapper';
 import { PaymentMethodService } from './payment-method.service';
 
 describe('PaymentMethodService', () => {
   let service: PaymentMethodService;
   let getMock: jest.Mock;
+  let putMock: jest.Mock;
+  let clearCacheMock: jest.Mock;
 
   const wireEnvelope: ApiResponseModel<unknown> = {
     success: true,
@@ -41,11 +46,29 @@ describe('PaymentMethodService', () => {
 
   beforeEach(() => {
     getMock = jest.fn().mockReturnValue(of(wireEnvelope));
+    putMock = jest.fn().mockReturnValue(
+      of({
+        success: true,
+        message: 'Record updated',
+        data: null,
+        errors: null,
+        pagination: null,
+        status_code: 200,
+      }),
+    );
+    clearCacheMock = jest.fn();
 
     TestBed.configureTestingModule({
       providers: [
         PaymentMethodService,
-        { provide: ApiClient, useValue: { get: getMock } },
+        {
+          provide: ApiClient,
+          useValue: {
+            get: getMock,
+            put: putMock,
+            clearCache: clearCacheMock,
+          },
+        },
       ],
     });
 
@@ -64,14 +87,30 @@ describe('PaymentMethodService', () => {
     });
   });
 
-  it('readPage forwards page and size', (done) => {
-    service.readPage({ page: 1, size: 10 }).subscribe(() => {
-      expect(getMock).toHaveBeenCalledWith(PAYMENT_METHOD_READ_PATH, {
-        params: { page: 1, size: 10 },
-        cacheTtlMs: undefined,
+  it('readPage forwards page, size, search, and dates', (done) => {
+    service
+      .readPage({
+        page: 1,
+        size: 10,
+        order: 'desc',
+        search: 'pay',
+        from: '2024-01-01',
+        to: '2024-12-31',
+      })
+      .subscribe(() => {
+        expect(getMock).toHaveBeenCalledWith(PAYMENT_METHOD_READ_PATH, {
+          params: {
+            page: 1,
+            size: 10,
+            order: 'desc',
+            search: 'pay',
+            from: '2024-01-01',
+            to: '2024-12-31',
+          },
+          cacheTtlMs: undefined,
+        });
+        done();
       });
-      done();
-    });
   });
 
   it('readAll hits /all with cache TTL and strips pagination params', (done) => {
@@ -94,5 +133,26 @@ describe('PaymentMethodService', () => {
       expect(res.data?.model).toBe('App\\Models\\Squad');
       done();
     });
+  });
+
+  it('update PUTs id/name/model with active as 1/0 and clears cache', (done) => {
+    service
+      .update({
+        id: 1,
+        name: 'Paystack',
+        model: 'App\\Models\\Paystack',
+        active: true,
+      })
+      .subscribe((res) => {
+        expect(putMock).toHaveBeenCalledWith(PAYMENT_METHOD_UPDATE_PATH, {
+          id: 1,
+          name: 'Paystack',
+          model: 'App\\Models\\Paystack',
+          active: '1',
+        });
+        expect(clearCacheMock).toHaveBeenCalled();
+        expect(res.message).toBe('Record updated');
+        done();
+      });
   });
 });

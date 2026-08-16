@@ -380,7 +380,7 @@ export class ModelsPage {
         {
           id: 'payment-method',
           title: 'Payment methods',
-          hint: 'Checkout processors — nested currencies they accept.',
+          hint: 'App Settings processors — read + active toggle only (no create/delete). Nested currencies they accept.',
           apiFragment: 'payment-method',
           apiLabel: 'PaymentMethodService',
           models: [
@@ -418,6 +418,18 @@ export class ModelsPage {
   created_at: string | null;
   updated_at: string | null;
   pivot: CurrencyPaymentMethodPivotModel;
+}`,
+            },
+            {
+              name: 'PaymentMethodUpdateRequestModel',
+              packagePath: 'payment-method',
+              description:
+                'PUT /payment_method/update — id, name, model, active. Name/model are resent from the row; only active is edited (status switch).',
+              structure: `interface PaymentMethodUpdateRequestModel {
+  id: number;
+  name: string;
+  model: string;
+  active: boolean | PaymentMethodFlag01;
 }`,
             },
           ],
