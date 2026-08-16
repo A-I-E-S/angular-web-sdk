@@ -35,6 +35,9 @@ import type {
 /** Pixels before the list end to prefetch the next page. */
 const SCROLL_PREFETCH_PX = 120;
 
+/** How long the “click again to confirm” arm stays active. */
+const MARK_ALL_CONFIRM_MS = 4000;
+
 /**
  * Right-edge drawer listing in-app notifications.
  *
@@ -73,12 +76,14 @@ const SCROLL_PREFETCH_PX = 120;
             <button
               aies-button
               type="button"
-              variant="ghost"
+              [variant]="confirmingMarkAll() ? 'secondary' : 'ghost'"
               size="sm"
+              class="whitespace-nowrap"
               [disabled]="markingAll()"
+              [attr.aria-label]="markAllReadAria()"
               (click)="markAllRead()"
             >
-              {{ markingAll() ? 'Marking…' : 'Mark all read' }}
+              {{ markAllReadLabel() }}
             </button>
           }
           <button
@@ -296,6 +301,7 @@ export class NotificationDrawerPanel {
   );
   protected readonly markingId = signal<string | null>(null);
   protected readonly markingAll = signal(false);
+  protected readonly confirmingMarkAll = signal(false);
   protected readonly loadingInitial = signal(!!this.data.onLoadPage);
   protected readonly loadingMore = signal(false);
   protected readonly loadError = signal<string | null>(null);
@@ -306,6 +312,25 @@ export class NotificationDrawerPanel {
     () => this.items().filter((item) => !item.read).length,
   );
   protected readonly hasUnread = computed(() => this.unreadCount() > 0);
+
+  protected readonly markAllReadLabel = computed(() => {
+    if (this.markingAll()) {
+      return 'Marking…';
+    }
+    if (this.confirmingMarkAll()) {
+      return 'Click again to confirm';
+    }
+    return 'Mark all as read';
+  });
+
+  protected readonly markAllReadAria = computed(() => {
+    if (this.confirmingMarkAll()) {
+      return 'Click again to confirm mark all as read';
+    }
+    return 'Mark all as read';
+  });
+
+  private markAllConfirmTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     if (this.data.onLoadPage) {
@@ -329,6 +354,7 @@ export class NotificationDrawerPanel {
     this.destroyRef.onDestroy(() => {
       this.observer?.disconnect();
       this.observer = null;
+      this.clearMarkAllConfirm();
     });
   }
 
@@ -426,11 +452,21 @@ export class NotificationDrawerPanel {
     );
   }
 
+  /**
+   * First click arms a short confirm (Cursor Undo-style). Second click
+   * marks every notification read.
+   */
   protected markAllRead(): void {
     if (this.markingAll() || !this.data.onMarkAllRead) {
       return;
     }
 
+    if (!this.confirmingMarkAll()) {
+      this.armMarkAllConfirm();
+      return;
+    }
+
+    this.clearMarkAllConfirm();
     this.markingAll.set(true);
     this.runHook(
       () => this.data.onMarkAllRead?.(),
@@ -441,6 +477,27 @@ export class NotificationDrawerPanel {
       },
       () => this.markingAll.set(false),
     );
+  }
+
+  private armMarkAllConfirm(): void {
+    this.confirmingMarkAll.set(true);
+    this.clearMarkAllConfirmTimer();
+    this.markAllConfirmTimer = setTimeout(() => {
+      this.confirmingMarkAll.set(false);
+      this.markAllConfirmTimer = null;
+    }, MARK_ALL_CONFIRM_MS);
+  }
+
+  private clearMarkAllConfirm(): void {
+    this.confirmingMarkAll.set(false);
+    this.clearMarkAllConfirmTimer();
+  }
+
+  private clearMarkAllConfirmTimer(): void {
+    if (this.markAllConfirmTimer != null) {
+      clearTimeout(this.markAllConfirmTimer);
+      this.markAllConfirmTimer = null;
+    }
   }
 
   protected formatTimestamp(value: string): string {
