@@ -20,6 +20,7 @@ export { ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';
+export { formatApiErrorMessage } from './lib/http/api-error-message';
 export { authInterceptor } from './lib/http/auth.interceptor';
 export { HttpResponseCache } from './lib/http/http-cache';
 export { httpToastInterceptor } from './lib/http/http-toast.interceptor';
@@ -43,6 +44,12 @@ export {
   type ToastHttpOptions,
   withToast,
 } from './lib/http/toast-http.context';
+export {
+  fieldErrorsMap,
+  isLaravelValidationBag,
+  joinApiErrorMessages,
+  mapLaravelValidationBag,
+} from './lib/http/validation-bag';
 export {
   asArray,
   asBoolean,

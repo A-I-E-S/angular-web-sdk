@@ -4,6 +4,11 @@ import type {
   PaginationMetaModel,
 } from '@aies/aies-models';
 
+import {
+  isLaravelValidationBag,
+  joinApiErrorMessages,
+  mapLaravelValidationBag,
+} from './validation-bag';
 import { asArray, asNullableString, asNumber, asRecord, asString } from './wire';
 
 /**
@@ -119,19 +124,57 @@ function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
 }
 
 /**
+ * Resolve field errors from an envelope `errors` value or a failure `data` bag.
+ * @param errorsRaw - Wire `errors` (array or Laravel object map).
+ * @param data - Envelope `data` (may hold a validation bag on failure).
+ * @param success - Envelope success flag.
+ */
+function resolveErrors(
+  errorsRaw: unknown,
+  data: unknown,
+  success: boolean,
+): ApiErrorDetailModel[] | null {
+  if (Array.isArray(errorsRaw)) {
+    const details = asArray(errorsRaw).map(normalizeErrorDetail);
+    return details.length > 0 ? details : null;
+  }
+
+  if (isLaravelValidationBag(errorsRaw)) {
+    const details = mapLaravelValidationBag(asRecord(errorsRaw) ?? {});
+    return details.length > 0 ? details : null;
+  }
+
+  // Soft/hard validation failures often put the bag in `data` (not `errors`).
+  if (!success && isLaravelValidationBag(data)) {
+    const details = mapLaravelValidationBag(asRecord(data) ?? {});
+    return details.length > 0 ? details : null;
+  }
+
+  return null;
+}
+
+/**
  * Normalize any HTTP JSON body into a fully null-safe {@link ApiResponseModel}.
  *
  * Envelope fields use snake_case where the wire does (`status_code`,
  * pagination keys). Paginated list reads often embed a Laravel paginator in
  * `data` (`data.data` + totals) — that shape is flattened here so consumers
  * always see `data: T[]` and `pagination`.
+ *
+ * Validation failures that return a Laravel field bag in `errors` or `data`
+ * are lifted into `errors: ApiErrorDetailModel[]`. On failure, a bag in
+ * `data` is cleared (`data: null`) so it is not typed as success payload `T`.
+ * Top-level `message` is enriched to the joined field messages when a bag
+ * exists (API `message` alone is often only the first field).
  * @param raw
  */
 export function normalize<T>(raw: unknown): ApiResponseModel<T> {
   if (isWrappedEnvelope(raw)) {
     const record = asRecord(raw);
     if (record !== null) {
-      const success = record['success'];
+      const successRaw = record['success'];
+      const success =
+        typeof successRaw === 'boolean' ? successRaw : Boolean(successRaw);
       const status_code =
         record['status_code'] ?? record['statusCode'] ?? null;
 
@@ -144,13 +187,19 @@ export function normalize<T>(raw: unknown): ApiResponseModel<T> {
         pagination = unwrapped.pagination;
       }
 
+      const errors = resolveErrors(record['errors'], data, success);
+      const apiMessage = asNullableString(record['message']);
+
+      // Do not leave a validation bag typed as success payload `T`.
+      if (!success && isLaravelValidationBag(data)) {
+        data = null;
+      }
+
       return {
-        success: typeof success === 'boolean' ? success : Boolean(success),
-        message: asNullableString(record['message']),
+        success,
+        message: joinApiErrorMessages(errors) ?? apiMessage,
         data,
-        errors: Array.isArray(record['errors'])
-          ? asArray(record['errors']).map(normalizeErrorDetail)
-          : null,
+        errors,
         pagination,
         status_code:
           status_code === null || status_code === undefined

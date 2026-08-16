@@ -184,7 +184,7 @@ export class TokensPage {
     { name: 'neutral-300', bgClass: 'bg-neutral-300', hex: '#c9d5e1', group: 'Neutral' },
     { name: 'neutral-400', bgClass: 'bg-neutral-400', hex: '#a9b5cb', group: 'Neutral' },
     { name: 'neutral-600', bgClass: 'bg-neutral-600', hex: '#667185', group: 'Neutral' },
-    { name: 'border', bgClass: 'bg-border', hex: '#f0f2f5', group: 'Neutral' },
+    { name: 'border', bgClass: 'bg-border', hex: '#c9d5e1', group: 'Neutral' },
     {
       name: 'background-welcome',
       bgClass: 'bg-background-welcome',

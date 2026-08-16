@@ -46,7 +46,7 @@ export const appConfig: ApplicationConfig = {
 | Config | `provideAiesSdk`, `AIES_SDK_CONFIG`, `httpToasts` (`'off'` \| `'errors'` \| `'all'`) |
 | Auth | `AuthService` (`forgot`), `isValidEmail`, `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService`, `shipmentModeInterceptor` |
-| HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`), `withToast`, `httpToastInterceptor`, `normalize`, `authInterceptor` |
+| HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`; HTTP failures → `Error` with formatted `.message`), `withToast`, `httpToastInterceptor`, `normalize` (lifts Laravel validation bags into `errors` + joined `message`), `formatApiErrorMessage` (used internally; rare for hosts), `fieldErrorsMap`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |

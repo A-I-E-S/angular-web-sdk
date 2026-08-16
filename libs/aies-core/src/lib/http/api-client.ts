@@ -7,6 +7,7 @@ import {
 import { inject, Injectable } from '@angular/core';
 
 import {
+  catchError,
   map,
   Observable,
   of,
@@ -26,6 +27,7 @@ import {
 
 import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
+import { formatApiErrorMessage } from './api-error-message';
 import { HttpResponseCache } from './http-cache';
 import { isRetryableGetError } from './is-retryable-get-error';
 import { normalize } from './normalize';
@@ -81,15 +83,22 @@ type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
  *
  * Features:
  * - `responseMode` overloads (`wrapped` | `raw`)
- * - {@link normalize} on every body
+ * - {@link normalize} on every **2xx** body
+ * - HTTP failures rethrown as `Error` whose `.message` is already
+ *   user-facing ({@link formatApiErrorMessage}) — consumers do not need to
+ *   parse `HttpErrorResponse` bodies
  * - Exponential-backoff retry (max 3) for **GET only**
  * - Optional per-GET TTL cache via `cacheTtlMs`
  *
  * @example
  * ```ts
  * const api = inject(ApiClient);
- * api.get<User>('/users/1').subscribe((res) => {
- *   if (res.success) console.log(res.data);
+ * api.get<User>('/users/1').subscribe({
+ *   next: (res) => {
+ *     if (res.success) console.log(res.data);
+ *     else console.error(res.message); // already joined when a validation bag exists
+ *   },
+ *   error: (err: Error) => console.error(err.message),
  * });
  * ```
  */
@@ -413,7 +422,13 @@ export class ApiClient {
       method === 'PUT' ||
       method === 'PATCH' ||
       (method === 'DELETE' && body !== undefined && body !== null);
-    const headers = this.buildHeaders(options.headers, hasBody);
+    const isFormData =
+      typeof FormData !== 'undefined' && body instanceof FormData;
+    // FormData must not send application/json — the browser sets multipart + boundary.
+    let headers = this.buildHeaders(options.headers, hasBody && !isFormData);
+    if (isFormData && headers.has('Content-Type')) {
+      headers = headers.delete('Content-Type');
+    }
     const params = this.buildParams(options.params);
     const context = this.buildHttpContext(options);
     const cacheKey =
@@ -489,6 +504,9 @@ export class ApiClient {
         }
       }),
       map((envelope) => this.unwrap(envelope, responseMode)),
+      catchError((err: unknown) =>
+        throwError(() => new Error(formatApiErrorMessage(err))),
+      ),
     );
   }
 

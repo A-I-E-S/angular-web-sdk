@@ -104,7 +104,7 @@ import { TableColumn, TableSortChange } from './table-column';
     /* Full-row hover: sticky action cells use an opaque fill that would
        otherwise mask a <tr> background. Paint every cell the same way. */
     :host tr.aies-table-row:hover > td {
-      background-color: #f9fafb;
+      background-color: #eef2f6;
     }
     :host-context(.dark) tr.aies-table-row:hover > td {
       background-color: #272729;
@@ -620,7 +620,7 @@ export class TableComponent<T = unknown> {
     // previous row is expanded so the action column stays flush under detail.
     const rowDivider =
       !afterExpanded && index > 0
-        ? 'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
+        ? 'shadow-[0_-1px_0_0_#c9d5e1] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
         : '';
     // Expanded: no opaque fill — a solid sticky cell is only as tall as the
     // main row, so its bottom edge would read as a divider over the detail.

@@ -160,7 +160,9 @@ module.exports = {
           600: '#667185',
         },
         border: {
-          DEFAULT: '#f0f2f5',
+          // Light chrome on white — match form field borders (`neutral-300`).
+          // Previous `#f0f2f5` was too close to white and washed out.
+          DEFAULT: '#c9d5e1',
         },
         background: {
           welcome: '#f9fafb',

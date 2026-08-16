@@ -1,4 +1,8 @@
 import { normalize, normalizePagination, unwrapLaravelPaginator } from './normalize';
+import {
+  fieldErrorsMap,
+  joinApiErrorMessages,
+} from './validation-bag';
 
 describe('normalize', () => {
   it('keeps flat list + top-level pagination unchanged', () => {
@@ -90,6 +94,61 @@ describe('normalize', () => {
 
     expect(result.data?.id).toBe(12);
     expect(result.pagination).toBeNull();
+  });
+
+  it('lifts a Laravel validation bag from failure data into errors', () => {
+    const result = normalize({
+      success: false,
+      status_code: 424,
+      message: 'The name field is required.',
+      data: {
+        name: ['The name field is required.'],
+        value: ['The value field is required.'],
+        currency: ['The currency field is required.'],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.data).toBeNull();
+    expect(result.errors).toEqual([
+      { field: 'name', message: 'The name field is required.', code: null },
+      { field: 'value', message: 'The value field is required.', code: null },
+      {
+        field: 'currency',
+        message: 'The currency field is required.',
+        code: null,
+      },
+    ]);
+    expect(result.message).toBe(
+      [
+        'The name field is required.',
+        'The value field is required.',
+        'The currency field is required.',
+      ].join('\n'),
+    );
+  });
+
+  it('lifts a Laravel validation bag from the errors object map', () => {
+    const result = normalize({
+      success: false,
+      status_code: 422,
+      message: 'Validation failed',
+      data: null,
+      errors: {
+        email: ['The email field is required.', 'The email must be valid.'],
+      },
+    });
+
+    expect(result.errors).toEqual([
+      { field: 'email', message: 'The email field is required.', code: null },
+      { field: 'email', message: 'The email must be valid.', code: null },
+    ]);
+    expect(fieldErrorsMap(result.errors)).toEqual({
+      email: 'The email field is required.',
+    });
+    expect(joinApiErrorMessages(result.errors)).toBe(
+      'The email field is required.\nThe email must be valid.',
+    );
   });
 });
 

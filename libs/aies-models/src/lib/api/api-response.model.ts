@@ -1,5 +1,10 @@
 /**
  * Field-level validation or business-rule error returned inside an API envelope.
+ *
+ * Laravel-style bags (`{ name: ["…"], value: ["…"] }` in `errors` or failure
+ * `data`) are normalized by the SDK into this array. Prefer `errors` for forms
+ * (`fieldErrorsMap`) and joined `message` / `formatApiErrorMessage` for toasts —
+ * the wire top-level `message` alone is often only the first field.
  */
 export interface ApiErrorDetailModel {
   field: string | null;

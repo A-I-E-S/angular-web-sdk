@@ -1,11 +1,9 @@
-import {
-  HttpErrorResponse,
-  type HttpInterceptorFn,
-} from '@angular/common/http';
+import { type HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 
 import { catchError, tap, throwError } from 'rxjs';
 
+import { formatApiErrorMessage } from './api-error-message';
 import {
   AIES_HTTP_TOAST,
   TOAST_HTTP_OPTIONS,
@@ -48,27 +46,8 @@ export const httpToastInterceptor: HttpInterceptorFn = (req, next) => {
 
 /**
  * @param err - Failure from HttpClient.
- * @returns Short user-facing copy.
+ * @returns User-facing copy (joined field errors when the body is a validation bag).
  */
 function defaultHttpErrorMessage(err: unknown): string {
-  if (err instanceof HttpErrorResponse) {
-    const body = err.error as { message?: unknown } | string | null;
-    if (body && typeof body === 'object' && typeof body.message === 'string') {
-      return body.message;
-    }
-    if (typeof body === 'string' && body.trim()) {
-      return body;
-    }
-    if (err.status === 0) {
-      return 'Network error. Check your connection.';
-    }
-    if (err.status === 401 || err.status === 403) {
-      return 'Authentication failed. Check your access token.';
-    }
-    if (err.status >= 500) {
-      return 'Server error. Try again in a moment.';
-    }
-    return err.message || `Request failed (${err.status})`;
-  }
-  return 'Something went wrong.';
+  return formatApiErrorMessage(err);
 }
