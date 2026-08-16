@@ -267,7 +267,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 }
                 @for (col of columns(); track col.key) {
                   <td
-                    [class]="bodyCellClass(col, i)"
+                    [class]="bodyCellClass(col, i, isRowExpanded(row, i))"
                     [style.width]="col.width ?? null"
                   >
                     @if (templateFor(col.key); as tpl) {
@@ -511,7 +511,9 @@ export class TableComponent<T = unknown> {
    */
   protected bodyRowClass(row: T, index: number): string {
     if (this.isExpandable() && this.isRowExpanded(row, index)) {
-      return 'aies-table-row group [&>td]:border-y-0';
+      // Only the bottom edge — keep the top divider so the row still
+      // separates from the row above.
+      return 'aies-table-row group [&>td]:border-b-0';
     }
     return 'aies-table-row group last:[&>td]:border-b-0';
   }
@@ -552,16 +554,24 @@ export class TableComponent<T = unknown> {
    * same pixel and read brighter (especially in dark mode).
    * @param col - Column definition.
    * @param index - Index within {@link rows}.
+   * @param expanded - This row's detail panel is open.
    * @returns Body cell class list.
    */
-  protected bodyCellClass(col: TableColumn<T>, index: number): string {
+  protected bodyCellClass(
+    col: TableColumn<T>,
+    index: number,
+    expanded = false,
+  ): string {
     const rowLine = this.stickyEdge(col)
       ? ''
       : 'border-b border-border dark:border-white/10 ';
+    const prev = index > 0 ? this.rowList()[index - 1] : undefined;
+    const afterExpanded =
+      prev !== undefined && this.isRowExpanded(prev, index - 1);
     return (
       rowLine +
       'px-3 py-3.5 align-middle whitespace-nowrap ' +
-      this.stickySurfaceClass(col, 'body', index)
+      this.stickySurfaceClass(col, 'body', index, expanded, afterExpanded)
     );
   }
 
@@ -572,12 +582,19 @@ export class TableComponent<T = unknown> {
    * @param col - Column definition.
    * @param surface - Header vs body fill tokens.
    * @param index - Body row index; unused for the header.
+   * @param expanded - This row is expanded — drop the opaque fill so the
+   *   cell bottom does not read as a divider above the detail panel. Top
+   *   divider shadow is kept.
+   * @param afterExpanded - Previous row is expanded — skip the top shadow
+   *   divider so the action column stays seamless under the detail panel.
    * @returns Sticky utilities, or empty when the column scrolls.
    */
   protected stickySurfaceClass(
     col: TableColumn<T>,
     surface: 'head' | 'body',
     index = 0,
+    expanded = false,
+    afterExpanded = false,
   ): string {
     const edge = this.stickyEdge(col);
     if (!edge) {
@@ -588,16 +605,18 @@ export class TableComponent<T = unknown> {
     if (surface === 'head') {
       return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
     }
-    // Row divider via box-shadow, not border-t / border-b: a top border adds
-    // 1px of height and drops the line below the rest of the row. Skip the
-    // first body row — thead already paints that line.
+    // Top divider via box-shadow. Keep it when this row is expanded (only the
+    // bottom seam into the detail panel should disappear). Skip when the
+    // previous row is expanded so the action column stays flush under detail.
     const rowDivider =
-      index > 0
+      !afterExpanded && index > 0
         ? 'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
         : '';
-    // Opaque resting fill so scrolled cells do not show through. Row hover
-    // is applied in component styles on `tr.aies-table-row:hover > td`.
-    return `${side} bg-white dark:bg-ink ${rowDivider}`;
+    // Expanded: no opaque fill — a solid sticky cell is only as tall as the
+    // main row, so its bottom edge would read as a divider over the detail.
+    const fill = expanded ? '' : 'bg-white dark:bg-ink';
+    // Row hover is applied in component styles on `tr.aies-table-row:hover > td`.
+    return `${side} ${fill} ${rowDivider}`;
   }
 
   /**
