@@ -274,7 +274,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             <input
               #searchInput
               type="search"
-              class="w-full rounded-md border border-border dark:border-white/15 bg-transparent text-body text-ink dark:text-white px-2.5 py-1.5 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              class="w-full rounded-md border-2 border-neutral-300 dark:border-white/25 bg-transparent text-body text-ink dark:text-white px-2.5 py-1.5 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
               [value]="searchQuery()"
               placeholder="Search…"
               (input)="onSearchInput($event)"

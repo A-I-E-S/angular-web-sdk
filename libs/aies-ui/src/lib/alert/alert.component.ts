@@ -63,10 +63,10 @@ const DEFAULT_ICONS: Record<AlertVariant, IconName> = {
         [name]="resolvedIcon()"
         [size]="20"
         [class]="iconClass()"
-        class="shrink-0 mt-0.5"
+        class="shrink-0"
       />
 
-      <div class="min-w-0 flex-1 flex flex-col gap-1">
+      <div class="min-w-0 flex-1 flex flex-col justify-center gap-1">
         @if (title(); as heading) {
           <p [class]="titleClass()">{{ heading }}</p>
         }
@@ -80,7 +80,7 @@ const DEFAULT_ICONS: Record<AlertVariant, IconName> = {
           type="button"
           variant="ghost"
           size="sm"
-          class="shrink-0 self-start"
+          class="shrink-0 !min-h-0 !px-1.5 !py-1"
           aria-label="Dismiss"
           (click)="onDismiss()"
         >
@@ -127,7 +127,7 @@ export class AlertComponent {
 
   protected readonly shellClass = computed(() => {
     const base =
-      'flex items-start gap-3 rounded-lg border px-4 py-3 text-body ' +
+      'flex items-center gap-3 rounded-lg border px-4 py-3 text-body ' +
       'text-ink dark:text-white';
     switch (this.variant()) {
       case 'success':

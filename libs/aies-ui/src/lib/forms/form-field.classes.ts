@@ -12,12 +12,12 @@ export const FORM_LABEL_CLASS =
 
 /** Default control shell (bordered wrapper or native input). */
 export const FORM_FIELD_CLASS =
-  'flex items-stretch w-full min-h-10 rounded-md border border-border bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/15 ' +
+  'flex items-stretch w-full min-h-10 rounded-md border-2 border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
   'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
 
 /**
- * Error border — `!` so it wins over shell `border-border` /
- * `dark:border-white/15` (same specificity; those utilities sort later in the
+ * Error border — `!` so it wins over shell `border-neutral-300` /
+ * `dark:border-white/25` (same specificity; those utilities sort later in the
  * generated CSS and otherwise paint over `border-danger`).
  */
 export const FORM_FIELD_ERROR_CLASS = '!border-danger dark:!border-danger';
