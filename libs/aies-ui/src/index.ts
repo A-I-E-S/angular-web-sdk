@@ -195,6 +195,7 @@ export {
   type AppShellLayoutPreview,
   type HeaderGreeting,
   headerGreetingFirstName,
+  PageHeaderComponent,
   pickHeaderGreeting,
 } from './lib/layout';
 

@@ -6,7 +6,7 @@ export /**
  *
  */
 const API_OVERVIEW = `// Domain services in @aies/aies-core own paths and mapping.
-// Apps call inject(CountryService) / ProductService / … — or ApiClient for custom routes.
+// Apps call inject(CountryService) / CurrencyService / PaymentMethodService / ProductService / … — or ApiClient for custom routes.
 //
 // List GET convention (ResourceId) — built-in services AND custom calls:
 //   null  → paginated page   GET {base}           (+ page/size/order)
@@ -75,6 +75,119 @@ export class CountryLoaderComponent {
 
     // Full dump:  await firstValueFrom(this.countriesApi.readAll());
     // One record: await firstValueFrom(this.countriesApi.readById(1));
+  }
+}
+`;
+
+export /**
+ *
+ */
+const API_CURRENCY = `// GET /currency/read/{id?} — ResourceId: null | 'all' | number.
+// POST /currency/create · PUT /currency/update · DELETE /currency/delete ({ id } body).
+// Laravel paginator in data is flattened to data[] + pagination.
+// readPage({ page, order, search, from, to }) → CurrencyModel[]
+// create / update serialize active + is_naira_greater to "1" / "0".
+// After each write: show res.message, then readPage again.
+
+import { Component, inject, signal } from '@angular/core';
+import { CurrencyService, PaymentMethodService } from '@aies/aies-core';
+import type { CurrencyModel, PaginationMetaModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-currency-loader',
+  standalone: true,
+  template: \`
+    <p>{{ currencies().length }} currencies</p>
+    @if (currencies()[0]; as first) {
+      <p>{{ first.name }} ({{ first.short_code }})</p>
+    }
+  \`,
+})
+export class CurrencyLoaderComponent {
+  private readonly currenciesApi = inject(CurrencyService);
+  private readonly paymentMethodsApi = inject(PaymentMethodService);
+  protected readonly currencies = signal<CurrencyModel[]>([]);
+  protected readonly meta = signal<PaginationMetaModel | null>(null);
+
+  async ngOnInit(): Promise<void> {
+    const methods = await firstValueFrom(
+      this.paymentMethodsApi.readPage({ page: 1 }),
+    );
+    const page = await firstValueFrom(
+      this.currenciesApi.readPage({
+        page: 1,
+        order: 'desc',
+        size: 15,
+        search: '',
+        from: '',
+        to: '',
+      }),
+    );
+    if (page.success && page.data) {
+      this.currencies.set(page.data);
+      this.meta.set(page.pagination);
+    }
+    void methods;
+  }
+
+  async saveUsd(methodIds: number[]): Promise<void> {
+    const res = await firstValueFrom(
+      this.currenciesApi.create({
+        name: 'United States Dollar',
+        short_code: 'USD',
+        multiplication_rate: '1600',
+        division_rate: '1400',
+        active: true,
+        is_naira_greater: false,
+        payment_method_ids: methodIds,
+      }),
+    );
+    if (res.success) {
+      // toast res.message, close modal, then readPage again
+      await firstValueFrom(
+        this.currenciesApi.readPage({ page: 1, order: 'desc', size: 15 }),
+      );
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const API_PAYMENT_METHOD = `// GET /payment_method/read/{id?} — ResourceId: null | 'all' | number.
+// Laravel paginator in data is flattened to data[] + pagination.
+// readPage({ page, size: 10 }) → PaymentMethodModel[]
+// readAll()            → full PaymentMethodModel[]
+// readById(4)          → single PaymentMethodModel
+
+import { Component, inject, signal } from '@angular/core';
+import { PaymentMethodService } from '@aies/aies-core';
+import type { PaginationMetaModel, PaymentMethodModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-payment-method-loader',
+  standalone: true,
+  template: \`
+    <p>{{ methods().length }} payment methods</p>
+    @if (methods()[0]; as first) {
+      <p>{{ first.name }} — {{ first.currencies.length }} currencies</p>
+    }
+  \`,
+})
+export class PaymentMethodLoaderComponent {
+  private readonly methodsApi = inject(PaymentMethodService);
+  protected readonly methods = signal<PaymentMethodModel[]>([]);
+  protected readonly meta = signal<PaginationMetaModel | null>(null);
+
+  async ngOnInit(): Promise<void> {
+    const page = await firstValueFrom(this.methodsApi.readPage({ page: 1 }));
+    if (page.success && page.data) {
+      this.methods.set(page.data);
+      this.meta.set(page.pagination);
+    }
   }
 }
 `;

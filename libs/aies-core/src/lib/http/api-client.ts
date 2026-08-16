@@ -227,9 +227,11 @@ export class ApiClient {
    * DELETE with wrapped envelope (default).
    *
    * @typeParam T - Payload type inside `data`.
+   * @typeParam TBody - Optional JSON body (Laravel deletes that expect `{ id }`).
    */
-  delete<T>(
+  delete<T, TBody = unknown>(
     path: string,
+    body?: TBody,
     options?: ApiRequestOptions & { responseMode?: 'wrapped' },
   ): Observable<ApiResponseModel<T>>;
 
@@ -237,17 +239,20 @@ export class ApiClient {
    * DELETE returning bare payload `T`.
    *
    * @typeParam T - Unwrapped payload type.
+   * @typeParam TBody - Optional JSON body.
    */
-  delete<T>(
+  delete<T, TBody = unknown>(
     path: string,
+    body: TBody | undefined,
     options: ApiRequestOptions & { responseMode: 'raw' },
   ): Observable<T>;
 
-  delete<T>(
+  delete<T, TBody = unknown>(
     path: string,
+    body?: TBody,
     options: ApiRequestOptions = {},
   ): Observable<ApiResponseModel<T> | T> {
-    return this.request<T>('DELETE', path, undefined, options);
+    return this.request<T>('DELETE', path, body, options);
   }
 
   /**
@@ -403,7 +408,11 @@ export class ApiClient {
   ): Observable<ApiResponseModel<T> | T> {
     const responseMode: ResponseMode = options.responseMode ?? 'wrapped';
     const url = this.resolveUrl(path);
-    const hasBody = method === 'POST' || method === 'PUT' || method === 'PATCH';
+    const hasBody =
+      method === 'POST' ||
+      method === 'PUT' ||
+      method === 'PATCH' ||
+      (method === 'DELETE' && body !== undefined && body !== null);
     const headers = this.buildHeaders(options.headers, hasBody);
     const params = this.buildParams(options.params);
     const context = this.buildHttpContext(options);
@@ -435,7 +444,10 @@ export class ApiClient {
         req$ = this.http.patch(url, body, httpOpts);
         break;
       case 'DELETE':
-        req$ = this.http.delete(url, httpOpts);
+        req$ = this.http.delete(
+          url,
+          hasBody ? { ...httpOpts, body } : httpOpts,
+        );
         break;
     }
 

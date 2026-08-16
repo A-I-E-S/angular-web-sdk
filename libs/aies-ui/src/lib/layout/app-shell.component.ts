@@ -55,8 +55,9 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
  * - default — page body inside a centered max-width column (playground-style)
  *
  * When no `[aiesAppShellHeader]` is projected, a dedicated product header renders with
- * live clock, notification drawer, and avatar menu. Breadcrumbs, title, and Back live
- * in the content column (see {@link AppShellContentHeaderComponent}).
+ * live clock, notification drawer, and avatar menu. Breadcrumbs, page title,
+ * subtitle, and Back live in the content column
+ * (see {@link AppShellContentHeaderComponent} / {@link PageHeaderComponent}).
  *
  * Below `lg`, the rail hides and a host-owned mobile drawer opens from the
  * menu button (or set {@link layoutPreview} in demos).
@@ -118,6 +119,9 @@ export class AppShellComponent {
 
   /** Page title rendered above the content column. */
   readonly headerTitle = input('');
+
+  /** Supporting line under the page title (what this screen is for). */
+  readonly headerSubtitle = input('');
 
   /** Breadcrumb trail rendered above the content column. */
   readonly breadcrumbs = input<AiesNavItem[]>([]);
@@ -184,6 +188,7 @@ export class AppShellComponent {
     () =>
       this.breadcrumbs().length > 0 ||
       this.headerTitle().length > 0 ||
+      this.headerSubtitle().length > 0 ||
       this.showContentBack(),
   );
 

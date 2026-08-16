@@ -9,8 +9,10 @@ import type {
   AsyncQueryStateModel,
   ApiResponseModel,
   CountryModel,
+  CurrencyModel,
   PaginationMetaModel,
   PaginationQueryParamsModel,
+  PaymentMethodModel,
   ResourceId,
   ShippingMode,
   ModeConfigDataModel,
@@ -324,6 +326,79 @@ export class CountryPickerSetupComponent {
     const res = await firstValueFrom(this.countriesApi.readAll());
     if (res.success && res.data) {
       this.countries.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_CURRENCY = `// Currencies — GET /currency/read/{id?} (ResourceId).
+// readPage() → CurrencyModel[] · create / update / remove → envelope
+// Flags on GET are boolean; create/update accept boolean or "1"/"0".
+
+import { Component, inject, signal } from '@angular/core';
+import { CurrencyService } from '@aies/aies-core';
+import type { CurrencyModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-currency-setup',
+  standalone: true,
+  template: \`
+    <p>{{ currencies().length }} currencies loaded</p>
+    @if (currencies()[0]; as first) {
+      <p>{{ first.name }} ({{ first.short_code }}) — {{ first.payment_methods.length }} methods</p>
+    }
+  \`,
+})
+export class CurrencySetupComponent {
+  private readonly currenciesApi = inject(CurrencyService);
+
+  protected readonly currencies = signal<CurrencyModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(
+      this.currenciesApi.readPage({ page: 1, order: 'desc' }),
+    );
+    if (res.success && res.data) {
+      this.currencies.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_PAYMENT_METHOD = `// Payment methods — GET /payment_method/read/{id?} (ResourceId).
+// readPage() → PaymentMethodModel[] · readAll() → PaymentMethodModel[] · readById(n) → PaymentMethodModel
+
+import { Component, inject, signal } from '@angular/core';
+import { PaymentMethodService } from '@aies/aies-core';
+import type { PaymentMethodModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-payment-method-setup',
+  standalone: true,
+  template: \`
+    <p>{{ methods().length }} payment methods loaded</p>
+    @if (methods()[0]; as first) {
+      <p>{{ first.name }} — {{ first.currencies.length }} currencies</p>
+    }
+  \`,
+})
+export class PaymentMethodSetupComponent {
+  private readonly methodsApi = inject(PaymentMethodService);
+
+  protected readonly methods = signal<PaymentMethodModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.methodsApi.readPage({ page: 1 }));
+    if (res.success && res.data) {
+      this.methods.set(res.data);
     }
   }
 }

@@ -4,10 +4,15 @@ import { RouterLink } from '@angular/router';
 import {
   AUTH_FORGOT_PASSWORD_PATH,
   COUNTRY_READ_PATH,
+  CURRENCY_CREATE_PATH,
+  CURRENCY_DELETE_PATH,
+  CURRENCY_READ_PATH,
+  CURRENCY_UPDATE_PATH,
   FILE_READ_PATH,
   MODE_CONFIG_PATH,
   NOTIFICATION_READ_PATH,
   NOTIFICATION_UPDATE_PATH,
+  PAYMENT_METHOD_READ_PATH,
   PRODUCT_READ_PATH,
   SHIPMENT_METHOD_READ_PATH,
   USER_CHANGE_PASSWORD_PATH,
@@ -23,10 +28,12 @@ import { PlaygroundForgotPasswordComponent } from '../shared/playground-forgot-p
 import {
   API_AUTH,
   API_COUNTRY,
+  API_CURRENCY,
   API_FILE,
   API_MODE_CONFIG,
   API_NOTIFICATION,
   API_OVERVIEW,
+  API_PAYMENT_METHOD,
   API_PRODUCT,
   API_SHIPMENT_METHOD,
   API_USER,
@@ -221,7 +228,8 @@ interface ApiServiceGroup {
                     <span>{{ calls.all }}</span>
                     <span>{{ calls.byId }}</span>
                   </dd>
-                } @else if (entry.returns) {
+                }
+                @if (entry.returns) {
                   <dt
                     class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-500"
                   >
@@ -302,6 +310,36 @@ export class ApiPage {
             byId: 'readById(n) → CountryModel',
           },
           code: API_COUNTRY,
+        },
+        {
+          id: 'currency',
+          title: 'CurrencyService',
+          hint: 'App Settings currencies. PaymentMethodService.readPage() fills create/update checkboxes. Create name/code come from the host list, not GET. After each write, show res.message and readPage again.',
+          path: `GET ${CURRENCY_READ_PATH}/{id?} · POST ${CURRENCY_CREATE_PATH} · PUT ${CURRENCY_UPDATE_PATH} · DELETE ${CURRENCY_DELETE_PATH}`,
+          modelAnchor: 'currency',
+          modelLabel: 'CurrencyModel',
+          resourceCalls: {
+            page: 'readPage({ page, order, search, from, to }) → CurrencyModel[]',
+            all: 'readAll() → CurrencyModel[]',
+            byId: 'readById(n) → CurrencyModel',
+          },
+          returns:
+            'create(body) · update(body) · remove({ id }) → ApiResponseModel',
+          code: API_CURRENCY,
+        },
+        {
+          id: 'payment-method',
+          title: 'PaymentMethodService',
+          hint: 'Checkout processors with nested currencies they accept.',
+          path: `GET ${PAYMENT_METHOD_READ_PATH}/{id?}`,
+          modelAnchor: 'payment-method',
+          modelLabel: 'PaymentMethodModel',
+          resourceCalls: {
+            page: 'readPage({ page }) → PaymentMethodModel[]',
+            all: 'readAll() → PaymentMethodModel[]',
+            byId: 'readById(n) → PaymentMethodModel',
+          },
+          code: API_PAYMENT_METHOD,
         },
         {
           id: 'shipment-method',

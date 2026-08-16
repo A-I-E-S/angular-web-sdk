@@ -70,6 +70,34 @@ export {
   mapCountryState,
 } from './lib/country';
 
+// Currencies
+export {
+  CURRENCY_CREATE_PATH,
+  CURRENCY_DELETE_PATH,
+  CURRENCY_READ_PATH,
+  CURRENCY_UPDATE_PATH,
+  type CurrencyReadParams,
+  CurrencyService,
+  mapCurrency,
+  mapCurrencyList,
+  mapCurrencyPaymentMethod,
+  mapCurrencyPaymentMethodPivot,
+  toCurrencyCreateBody,
+  toCurrencyDeleteBody,
+  toCurrencyFlag01,
+  toCurrencyUpdateBody,
+} from './lib/currency';
+
+// Payment methods (checkout processors)
+export {
+  mapPaymentMethod,
+  mapPaymentMethodCurrency,
+  mapPaymentMethodList,
+  PAYMENT_METHOD_READ_PATH,
+  type PaymentMethodReadParams,
+  PaymentMethodService,
+} from './lib/payment-method';
+
 // Shipment methods / carriers
 export {
   mapShipmentMethod,

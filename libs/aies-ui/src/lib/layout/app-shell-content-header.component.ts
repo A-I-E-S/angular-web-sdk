@@ -21,19 +21,20 @@ import {
 } from '../navigation/header-back.util';
 import type { AiesNavItem } from '../navigation/nav-item';
 import type { AiesSideNavItem } from '../navigation/side-nav';
+import { PageHeaderComponent } from './page-header.component';
 
 /**
  * Content chrome above the app-shell body: Back, breadcrumbs, then the page
- * title when the shell provides one.
+ * title and optional subtitle.
  */
 @Component({
   selector: 'aies-app-shell-content-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AiesIconComponent, BreadcrumbComponent, RouterLink],
+  imports: [AiesIconComponent, BreadcrumbComponent, PageHeaderComponent, RouterLink],
   template: `
-    @if (showBackButton() || breadcrumbs().length || title()) {
-      <div class="mb-6 flex flex-col gap-2">
+    @if (showBackButton() || breadcrumbs().length || title() || subtitle()) {
+      <div class="mb-6 flex flex-col gap-4">
         @if (showBackButton() || breadcrumbs().length) {
           <div class="flex min-w-0 items-center gap-2 sm:gap-3">
             @if (showBackButton()) {
@@ -63,12 +64,8 @@ import type { AiesSideNavItem } from '../navigation/side-nav';
           </div>
         }
 
-        @if (title() && breadcrumbs().length === 0 && !showBackButton()) {
-          <h1
-            class="m-0 text-heading-3 font-bold text-ink dark:text-white"
-          >
-            {{ title() }}
-          </h1>
+        @if (title() || subtitle()) {
+          <aies-page-header [title]="title()" [subtitle]="subtitle()" />
         }
       </div>
     }
@@ -79,6 +76,8 @@ export class AppShellContentHeaderComponent {
 
   readonly breadcrumbs = input<AiesNavItem[]>([]);
   readonly title = input('');
+  /** Supporting line under the title (what this page is for). */
+  readonly subtitle = input('');
   readonly url = input('');
   readonly catalogNav = input<AiesSideNavItem[]>([]);
   readonly showBack = input(true, { transform: booleanAttribute });

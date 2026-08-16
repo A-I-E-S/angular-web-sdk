@@ -16,6 +16,8 @@ suffix.
 
 - **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`, `ApiJsonValue`
 - **country** — `CountryModel`, `CountryStateModel` for public country utility reads
+- **currency** — `CurrencyModel`, `CurrencyPaymentMethodModel` for `/currency/read`; `CurrencyCreateRequestModel` / `CurrencyUpdateRequestModel` / `CurrencyDeleteRequestModel` for App Settings writes
+- **payment-method** — `PaymentMethodModel`, `PaymentMethodCurrencyModel` for `/payment_method/read` (processors + nested currencies)
 - **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
 - **warehouse** — `WarehouseModel`, `WarehouseStateModel` (nested `CountryModel`)
 - **zone** — `ZoneModel` for `/zone/read/records` utility reads
@@ -36,7 +38,9 @@ UI models stay camelCase.
 import type {
   ApiResponseModel,
   CountryModel,
+  CurrencyModel,
   ModeConfigDataModel,
+  PaymentMethodModel,
   ShipmentMethodModel,
   ShippingMode,
   WarehouseModel,

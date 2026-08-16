@@ -286,6 +286,143 @@ export class ModelsPage {
           ],
         },
         {
+          id: 'currency',
+          title: 'Currencies',
+          hint: 'App Settings currencies — rates, flags, nested processors, and create/update/delete bodies.',
+          apiFragment: 'currency',
+          apiLabel: 'CurrencyService',
+          models: [
+            {
+              name: 'CurrencyModel',
+              packagePath: 'currency',
+              description:
+                'Currency record (snake_case) with wire rate strings and payment methods. is_naira_greater is the same flag as is_local_currency_greater.',
+              structure: `interface CurrencyModel {
+  id: number;
+  name: string;
+  short_code: string;
+  division_rate: string;
+  multiplication_rate: string;
+  is_local_currency_greater: boolean;
+  is_naira_greater: boolean;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  payment_methods: CurrencyPaymentMethodModel[];
+}`,
+            },
+            {
+              name: 'CurrencyPaymentMethodModel',
+              packagePath: 'currency',
+              description:
+                'Processor attached to a currency (Paystack, Stripe, …) plus pivot ids.',
+              structure: `interface CurrencyPaymentMethodModel {
+  id: number;
+  name: string;
+  model: string;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  pivot: CurrencyPaymentMethodPivotModel;
+}`,
+            },
+            {
+              name: 'CurrencyPaymentMethodPivotModel',
+              packagePath: 'currency',
+              description: 'Join keys on currency ↔ payment-method pivots.',
+              structure: `interface CurrencyPaymentMethodPivotModel {
+  currency_id: number;
+  payment_method_id: number;
+}`,
+            },
+            {
+              name: 'CurrencyCreateRequestModel',
+              packagePath: 'currency',
+              description:
+                'POST /currency/create. name / short_code come from the host currency list. Flags may be boolean or "1" / "0".',
+              structure: `interface CurrencyCreateRequestModel {
+  name: string;
+  short_code: string;
+  multiplication_rate: string;
+  division_rate: string;
+  active: boolean | CurrencyFlag01;
+  is_naira_greater: boolean | CurrencyFlag01;
+  payment_method_ids: number[];
+}`,
+            },
+            {
+              name: 'CurrencyUpdateRequestModel',
+              packagePath: 'currency',
+              description:
+                'PUT /currency/update — id, rates, flags, payment_method_ids. Name and short code are not sent.',
+              structure: `interface CurrencyUpdateRequestModel {
+  id: number;
+  multiplication_rate: string;
+  division_rate: string;
+  active: boolean | CurrencyFlag01;
+  is_naira_greater: boolean | CurrencyFlag01;
+  payment_method_ids: number[];
+}`,
+            },
+            {
+              name: 'CurrencyDeleteRequestModel',
+              packagePath: 'currency',
+              description:
+                'DELETE /currency/delete JSON body. CurrencyService.remove also accepts a bare id.',
+              structure: `interface CurrencyDeleteRequestModel {
+  id: number;
+}`,
+            },
+          ],
+        },
+        {
+          id: 'payment-method',
+          title: 'Payment methods',
+          hint: 'Checkout processors — nested currencies they accept.',
+          apiFragment: 'payment-method',
+          apiLabel: 'PaymentMethodService',
+          models: [
+            {
+              name: 'PaymentMethodModel',
+              packagePath: 'payment-method',
+              description:
+                'Processor record (snake_case) with nested currencies and pivot ids.',
+              structure: `interface PaymentMethodModel {
+  id: number;
+  name: string;
+  model: string;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  currencies: PaymentMethodCurrencyModel[];
+}`,
+            },
+            {
+              name: 'PaymentMethodCurrencyModel',
+              packagePath: 'payment-method',
+              description:
+                'Currency nested on a processor — same rate fields as CurrencyModel plus pivot.',
+              structure: `interface PaymentMethodCurrencyModel {
+  id: number;
+  name: string;
+  short_code: string;
+  division_rate: string;
+  multiplication_rate: string;
+  is_local_currency_greater: boolean;
+  is_naira_greater: boolean;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  pivot: CurrencyPaymentMethodPivotModel;
+}`,
+            },
+          ],
+        },
+        {
           id: 'shipment-method',
           title: 'Shipment methods / carriers',
           hint: 'Carrier records with delivery windows, limits, and zone pages.',
