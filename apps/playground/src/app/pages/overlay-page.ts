@@ -66,6 +66,9 @@ import {
           <button aies-button type="button" variant="secondary" (click)="openModal(true)">
             Open (dismissible)
           </button>
+          <button aies-button type="button" variant="ghost" (click)="openWideModal()">
+            Open (size: lg)
+          </button>
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
             Last result:
             <span class="font-medium text-ink dark:text-white">{{
@@ -159,6 +162,26 @@ export class OverlayPage {
             : dismissible
               ? 'Dismissed (backdrop / Escape / Cancel)'
               : 'Closed via Cancel',
+        );
+      });
+  }
+
+  protected openWideModal(): void {
+    this.modal
+      .open<
+        { shipmentRef: string },
+        { saved: boolean; note: string }
+      >(DemoModalPanel, {
+        data: { shipmentRef: 'SFN-1042' },
+        size: 'lg',
+        dismissible: true,
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        this.modalResult.set(
+          result?.saved
+            ? `Saved (lg) — “${result.note}”`
+            : 'Dismissed wide modal',
         );
       });
   }

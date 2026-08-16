@@ -11,7 +11,4 @@ export {
   toPaymentMethodFlag01,
   toPaymentMethodUpdateBody,
 } from './payment-method.mapper';
-export {
-  type PaymentMethodReadParams,
-  PaymentMethodService,
-} from './payment-method.service';
+export { PaymentMethodService } from './payment-method.service';

@@ -16,6 +16,7 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import type { PaginationMetaModel } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
+import { LoadingStateComponent } from '../feedback/loading-state.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
 import { RowDetailDefDirective } from './row-detail-def.directive';
@@ -30,18 +31,22 @@ import { TableColumn, TableSortChange } from './table-column';
  *
  * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
- * spins (do not swap to a blocking loader).
+ * spins (do not swap to a blocking loader). Use {@link loading} when the page
+ * of data is changing (pagination / size) so the grid shows
+ * {@link LoadingStateComponent} instead of stale rows.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
  * the host still owns refetch via {@link pageChange} / {@link sizeChange}. The
  * pager also writes `page` / `size` to the URL (same keys as filters). Rows
- * are never sliced client-side.
+ * are never sliced client-side. While {@link loading} is true the pager is
+ * disabled.
  *
- * WHY no loading / error / empty UI: those branches belong on
+ * WHY no first-load / error / empty UI: those branches belong on
  * {@link AsyncStateComponent}. This component only renders whatever `rows`
- * it is given so list screens share one async pattern.
+ * it is given so list screens share one async pattern — except {@link loading},
+ * which covers in-place page transitions without tearing down the toolbar.
  *
  * Sorting is server-driven — sortable headers emit {@link TableSortChange}
  * and never reorder local rows.
@@ -59,7 +64,8 @@ import { TableColumn, TableSortChange } from './table-column';
  *   [rows]="state().data!"
  *   [meta]="meta()"
  *   [showRefresh]="true"
- *   [refreshing]="state().isFetching"
+ *   [refreshing]="softFetching()"
+ *   [loading]="pageLoading()"
  *   [showFilter]="true"
  *   [showExport]="true"
  *   [filterCount]="activeFilterCount()"
@@ -88,6 +94,7 @@ import { TableColumn, TableSortChange } from './table-column';
     NgTemplateOutlet,
     ButtonComponent,
     AiesIconComponent,
+    LoadingStateComponent,
     PaginationComponent,
   ],
   host: {
@@ -104,7 +111,10 @@ import { TableColumn, TableSortChange } from './table-column';
     }
   `,
   template: `
-    <div class="flex w-full min-w-0 flex-col gap-3" [attr.aria-busy]="refreshing() || null">
+    <div
+      class="flex w-full min-w-0 flex-col gap-3"
+      [attr.aria-busy]="loading() || refreshing() || null"
+    >
       @if (showRefresh() || showFilter() || showExport()) {
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
@@ -114,7 +124,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
-                [disabled]="refreshing()"
+                [disabled]="loading() || refreshing()"
                 [attr.aria-label]="refreshLabel()"
                 (click)="refreshClick.emit()"
               >
@@ -134,6 +144,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
+                [disabled]="loading()"
                 [attr.aria-label]="filterLabel()"
                 (click)="filterClick.emit()"
               >
@@ -154,6 +165,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
+                [disabled]="loading()"
                 [attr.aria-label]="exportLabel()"
                 (click)="exportClick.emit()"
               >
@@ -168,6 +180,9 @@ import { TableColumn, TableSortChange } from './table-column';
       <div
         class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
       >
+        @if (loading()) {
+          <aies-loading-state [message]="loadingLabel()" />
+        } @else {
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
@@ -315,11 +330,13 @@ import { TableColumn, TableSortChange } from './table-column';
             }
           </tbody>
         </table>
+        }
       </div>
 
       @if (meta(); as pager) {
         <aies-pagination
           [meta]="pager"
+          [disabled]="loading()"
           (pageChange)="pageChange.emit($event)"
           (sizeChange)="sizeChange.emit($event)"
         />
@@ -371,9 +388,20 @@ export class TableComponent<T = unknown> {
 
   /**
    * Background refetch in flight. Rows stay visible; the refresh icon spins.
-   * Bind to `state().isFetching` when wrapped in {@link AsyncStateComponent}.
+   * Bind to a soft refetch flag (e.g. refresh button) — not page changes.
+   * Prefer {@link loading} when the page of rows is changing.
    */
   readonly refreshing = input(false, { transform: booleanAttribute });
+
+  /**
+   * Page of data is loading (pagination, page size, or similar). Replaces the
+   * grid with {@link LoadingStateComponent} and disables the pager. Toolbar
+   * stays mounted. Distinct from {@link refreshing}.
+   */
+  readonly loading = input(false, { transform: booleanAttribute });
+
+  /** Copy under the loading spinner. Defaults to `Loading…`. */
+  readonly loadingLabel = input('Loading…');
 
   /**
    * Show a Filters button above the table (top-right). Host should open

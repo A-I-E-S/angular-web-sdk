@@ -19,8 +19,11 @@ export const FORM_FIELD_CLASS =
  * Error border — `!` so it wins over shell `border-neutral-300` /
  * `dark:border-white/25` (same specificity; those utilities sort later in the
  * generated CSS and otherwise paint over `border-danger`).
+ *
+ * Keep these literals static for Tailwind content scanning in consumer apps.
  */
-export const FORM_FIELD_ERROR_CLASS = '!border-danger dark:!border-danger';
+export const FORM_FIELD_ERROR_CLASS =
+  '!border-danger dark:!border-danger focus-within:!outline-danger';
 
 /** Native input / textarea inside a shell. */
 export const FORM_CONTROL_INNER_CLASS =

@@ -105,6 +105,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
  *   [error]="loadError()"
  *   [loading]="loading()"
  *   [retrying]="loading()"
+ *   [showRetry]="true"
  *   (retry)="loadWarehouses()"
  * >
  *   <aies-icon prefix name="warehouse" [size]="16" />
@@ -378,14 +379,16 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         role="alert"
       >
         <span>{{ err }}</span>
-        <button
-          type="button"
-          class="inline cursor-pointer underline font-medium text-danger hover:text-danger/80 disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
-          [disabled]="disabled() || retrying()"
-          (click)="onRetry($event)"
-        >
-          {{ retrying() ? retryingLabel() : retryLabel() }}
-        </button>
+        @if (showRetry()) {
+          <button
+            type="button"
+            class="inline cursor-pointer underline font-medium text-danger hover:text-danger/80 disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
+            [disabled]="disabled() || retrying()"
+            (click)="onRetry($event)"
+          >
+            {{ retrying() ? retryingLabel() : retryLabel() }}
+          </button>
+        }
       </p>
     } @else if (loading()) {
       <p [id]="hintId" [class]="hintClass" role="status" aria-live="polite">
@@ -430,10 +433,17 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   /** Helper copy. Hidden while {@link error} is set. */
   readonly hint = input<string | undefined>(undefined);
 
-  /** Field-level validation message. Distinct from `ErrorStateComponent`. */
+  /** Field-level validation or load message. Distinct from `ErrorStateComponent`. */
   readonly error = input<string | null>(null);
 
-  /** Retry link label when {@link error} is set. */
+  /**
+   * When true, shows an inline Retry control next to {@link error}.
+   * Use for async option load failures with `(retry)`. Leave false for
+   * validation messages (e.g. “Type is required.”).
+   */
+  readonly showRetry = input(false, { transform: booleanAttribute });
+
+  /** Retry link label when {@link showRetry} is true. */
   readonly retryLabel = input('Retry');
 
   /** Retry link copy while {@link retrying} is true. */
@@ -445,7 +455,8 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   readonly retrying = input(false, { transform: booleanAttribute });
 
   /**
-   * Emitted when the user activates the inline retry control (shown with {@link error}).
+   * Emitted when the user activates the inline retry control.
+   * Pair with {@link showRetry} for async option load failures.
    */
   readonly retry = output<void>();
 

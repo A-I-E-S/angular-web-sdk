@@ -10,7 +10,4 @@ export {
   mapShipmentZone,
   SHIPMENT_METHOD_READ_PATH,
 } from './shipment-method.mapper';
-export {
-  type ShipmentMethodReadParams,
-  ShipmentMethodService,
-} from './shipment-method.service';
+export { ShipmentMethodService } from './shipment-method.service';

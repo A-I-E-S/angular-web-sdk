@@ -120,7 +120,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
 
       <app-demo-section
         title="Shipments list"
-        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh keeps the rows and spins the refresh icon — use the scenario buttons for first-load and empty."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh spins the button only; page/size changes show the table loading state."
         badge="template cells"
         [code]="tableCode"
       >
@@ -147,6 +147,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
             [rowTrackBy]="rowTrackBy"
             [showRefresh]="true"
             [refreshing]="refreshing()"
+            [loading]="pageLoading()"
             [showFilter]="true"
             [showExport]="true"
             [filterCount]="activeFilterCount()"
@@ -273,6 +274,7 @@ export class TablePage {
   protected readonly lastExport = signal<string | null>(null);
   protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
   protected readonly refreshing = signal(false);
+  protected readonly pageLoading = signal(false);
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
 
@@ -429,12 +431,26 @@ export class TablePage {
   }
 
   protected onPageChange(next: number): void {
-    this.page.set(next);
+    this.runPageLoad(() => this.page.set(next));
   }
 
   protected onSizeChange(next: number): void {
-    this.pageSize.set(next);
-    this.page.set(1);
+    this.runPageLoad(() => {
+      this.pageSize.set(next);
+      this.page.set(1);
+    });
+  }
+
+  /** Simulate a server page fetch: show table loading, then apply the change. */
+  private runPageLoad(apply: () => void): void {
+    if (this.pageLoading()) {
+      return;
+    }
+    this.pageLoading.set(true);
+    setTimeout(() => {
+      apply();
+      this.pageLoading.set(false);
+    }, 500);
   }
 
   protected openFilters(): void {

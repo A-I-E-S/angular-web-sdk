@@ -1,5 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { inject,Injectable, Injector, type Type } from '@angular/core';
+import { inject, Injectable, Injector, type Type } from '@angular/core';
 
 import type { OverlayHandle, OverlayOpener } from '@aies/aies-core';
 
@@ -7,6 +7,21 @@ import {
   attachOverlayContent,
   type OverlayOpenConfig,
 } from './overlay-attach';
+import { MODAL_SIZE_PANEL_CLASS, type ModalSize } from './modal-size';
+
+/**
+ * Open options for {@link ModalService} (shared overlay flags + width size).
+ *
+ * @typeParam TData - Value injected as {@link OVERLAY_DATA}.
+ */
+export interface ModalOpenConfig<TData = unknown>
+  extends OverlayOpenConfig<TData> {
+  /**
+   * Panel width. Defaults to `md`.
+   * Use `lg` for dense forms; `xl` for media previews.
+   */
+  size?: ModalSize;
+}
 
 /**
  * Opens centered modal dialogs via Angular CDK Overlay.
@@ -43,6 +58,9 @@ import {
  *   data: { id: shipmentId },
  * });
  *
+ * // Wider form modal:
+ * modal.open(CouponFormModal, { data, size: 'lg' });
+ *
  * // Opt into backdrop / Escape dismiss:
  * modal.open(QuickLookModal, { dismissible: true });
  *
@@ -66,10 +84,13 @@ export class ModalService implements OverlayOpener {
    * hosted component via {@link OVERLAY_DATA}; call
    * `inject(AiesOverlayRef).close(result)` to dismiss with a value.
    *
+   * Panel height is capped at `90vh` (scrolls inside). Width comes from
+   * {@link ModalOpenConfig.size} (`md` default).
+   *
    * @typeParam TData - Shape injected as {@link OVERLAY_DATA}.
    * @typeParam TResult - Value emitted by `afterClosed` when closed with a result.
    * @param component - Standalone component type to attach via ComponentPortal.
-   * @param config - Optional data bag and close-behavior flags.
+   * @param config - Optional data bag, size, and close-behavior flags.
    * @returns Handle used to close the modal and observe dismissal.
    *
    * @example
@@ -99,7 +120,7 @@ export class ModalService implements OverlayOpener {
    */
   open<TData = unknown, TResult = unknown>(
     component: Type<unknown>,
-    config?: OverlayOpenConfig<TData>,
+    config?: ModalOpenConfig<TData>,
   ): OverlayHandle<TResult> {
     const extraPanelClass =
       config?.panelClass == null
@@ -107,6 +128,8 @@ export class ModalService implements OverlayOpener {
         : Array.isArray(config.panelClass)
           ? [...config.panelClass]
           : [config.panelClass];
+    const size = config?.size ?? 'md';
+    const sizeClasses = MODAL_SIZE_PANEL_CLASS[size];
 
     return attachOverlayContent<TData, TResult>(
       this.overlay,
@@ -140,13 +163,13 @@ export class ModalService implements OverlayOpener {
           'flex',
           'flex-col',
           'items-stretch',
-          'max-w-lg',
-          'w-[min(100vw-2rem,32rem)]',
-          'max-h-[min(100vh-2rem,90vh)]',
+          ...sizeClasses,
           'overflow-x-hidden',
           'overflow-y-auto',
           'will-change-transform',
           ...extraPanelClass,
+          // Always cap viewport usage — after extras so hosts cannot stretch full height.
+          '!max-h-[90vh]',
         ],
         scrollStrategy: this.overlay.scrollStrategies.block(),
         positionStrategy: this.overlay

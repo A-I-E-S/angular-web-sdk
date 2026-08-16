@@ -8,7 +8,4 @@ export {
   mapCountryList,
   mapCountryState,
 } from './country.mapper';
-export {
-  type CountryReadParams,
-  CountryService,
-} from './country.service';
+export { CountryService } from './country.service';

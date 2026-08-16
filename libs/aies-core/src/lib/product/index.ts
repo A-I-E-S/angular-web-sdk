@@ -7,7 +7,4 @@ export {
   mapProductList,
   PRODUCT_READ_PATH,
 } from './product.mapper';
-export {
-  type ProductReadParams,
-  ProductService,
-} from './product.service';
+export { ProductService } from './product.service';

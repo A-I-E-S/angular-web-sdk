@@ -677,10 +677,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
       this.modal.open(FilePreviewDialogComponent, {
         dismissible: true,
         data: item,
-        panelClass: [
-          '!max-w-4xl',
-          '!w-[min(100vw-2rem,56rem)]',
-        ],
+        size: 'xl',
       });
       return;
     }

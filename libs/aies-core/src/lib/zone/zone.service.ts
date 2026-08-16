@@ -18,9 +18,6 @@ import {
 } from '../http/resource-path';
 import { mapZone, mapZoneList, ZONE_READ_PATH } from './zone.mapper';
 
-/** Query bag for zone reads (pagination applies only when `id` is `null`). */
-export type ZoneReadParams = ResourceQueryParams;
-
 /** In-memory GET cache TTL for zone reference dumps / by-id (5 minutes). */
 const ZONE_CACHE_TTL_MS = 5 * 60_000;
 
@@ -50,24 +47,24 @@ export class ZoneService {
   /** Paginated zone page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel[]>>;
 
   /** Full zone list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel[]>>;
 
   /** Single zone — {@link ResourceId} number. */
   read(
     id: number,
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel>>;
 
   read(
     id: ResourceId = null,
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel | ZoneModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(ZONE_READ_PATH, id), {
@@ -87,7 +84,7 @@ export class ZoneService {
    * @param params
    */
   readPage(
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel[]>> {
     return this.read(null, params);
   }
@@ -96,7 +93,7 @@ export class ZoneService {
    * Full list — alias for {@link read}(`'all'`).
    * @param params
    */
-  readAll(params?: ZoneReadParams): Observable<ApiResponseModel<ZoneModel[]>> {
+  readAll(params?: ResourceQueryParams): Observable<ApiResponseModel<ZoneModel[]>> {
     return this.read('all', params);
   }
 
@@ -107,7 +104,7 @@ export class ZoneService {
    */
   readById(
     id: number,
-    params?: ZoneReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ZoneModel>> {
     return this.read(id, params);
   }

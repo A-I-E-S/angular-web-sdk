@@ -25,21 +25,6 @@ import {
   toPaymentMethodUpdateBody,
 } from './payment-method.mapper';
 
-/**
- * Query bag for payment-method reads.
- *
- * Pagination (`page` / `size` / `order`) applies only when `id` is `null`.
- * App Settings also sends `search`, `from`, and `to` on the paginated list.
- */
-export type PaymentMethodReadParams = ResourceQueryParams & {
-  /** Search text. */
-  search?: string;
-  /** Date-range start. */
-  from?: string;
-  /** Date-range end. */
-  to?: string;
-};
-
 /** In-memory GET cache TTL for payment-method dumps / by-id (5 minutes). */
 const PAYMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
 
@@ -86,24 +71,24 @@ export class PaymentMethodService {
   /** Paginated payment-method page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel[]>>;
 
   /** Full payment-method list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel[]>>;
 
   /** Single payment method — {@link ResourceId} number. */
   read(
     id: number,
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel>>;
 
   read(
     id: ResourceId = null,
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel | PaymentMethodModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(PAYMENT_METHOD_READ_PATH, id), {
@@ -128,7 +113,7 @@ export class PaymentMethodService {
    * @param params
    */
   readPage(
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel[]>> {
     return this.read(null, params);
   }
@@ -138,7 +123,7 @@ export class PaymentMethodService {
    * @param params
    */
   readAll(
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel[]>> {
     return this.read('all', params);
   }
@@ -150,7 +135,7 @@ export class PaymentMethodService {
    */
   readById(
     id: number,
-    params?: PaymentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<PaymentMethodModel>> {
     return this.read(id, params);
   }

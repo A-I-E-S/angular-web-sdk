@@ -22,9 +22,6 @@ import {
   mapCountryList,
 } from './country.mapper';
 
-/** Query bag for country reads (pagination applies only when `id` is `null`). */
-export type CountryReadParams = ResourceQueryParams;
-
 /** In-memory GET cache TTL for country reference dumps / by-id (5 minutes). */
 const COUNTRY_CACHE_TTL_MS = 5 * 60_000;
 
@@ -60,7 +57,7 @@ export class CountryService {
    */
   read(
     id?: null,
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel[]>>;
 
   /**
@@ -71,7 +68,7 @@ export class CountryService {
    */
   read(
     id: 'all',
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel[]>>;
 
   /**
@@ -82,12 +79,12 @@ export class CountryService {
    */
   read(
     id: number,
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel>>;
 
   read(
     id: ResourceId = null,
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel | CountryModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(COUNTRY_READ_PATH, id), {
@@ -107,7 +104,7 @@ export class CountryService {
    * @param params
    */
   readPage(
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel[]>> {
     return this.read(null, params);
   }
@@ -117,7 +114,7 @@ export class CountryService {
    * @param params
    */
   readAll(
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel[]>> {
     return this.read('all', params);
   }
@@ -129,7 +126,7 @@ export class CountryService {
    */
   readById(
     id: number,
-    params?: CountryReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CountryModel>> {
     return this.read(id, params);
   }

@@ -31,21 +31,6 @@ import {
   toCurrencyUpdateBody,
 } from './currency.mapper';
 
-/**
- * Query bag for currency reads.
- *
- * Pagination (`page` / `size` / `order`) applies only when `id` is `null`.
- * App Settings also sends `search`, `from`, and `to` on the paginated list.
- */
-export type CurrencyReadParams = ResourceQueryParams & {
-  /** Search text. */
-  search?: string;
-  /** Date-range start. */
-  from?: string;
-  /** Date-range end. */
-  to?: string;
-};
-
 /** In-memory GET cache TTL for currency reference dumps / by-id (5 minutes). */
 const CURRENCY_CACHE_TTL_MS = 5 * 60_000;
 
@@ -81,24 +66,24 @@ export class CurrencyService {
   /** Paginated currency page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel[]>>;
 
   /** Full currency list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel[]>>;
 
   /** Single currency — {@link ResourceId} number. */
   read(
     id: number,
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel>>;
 
   read(
     id: ResourceId = null,
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel | CurrencyModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(CURRENCY_READ_PATH, id), {
@@ -118,7 +103,7 @@ export class CurrencyService {
    * @param params
    */
   readPage(
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel[]>> {
     return this.read(null, params);
   }
@@ -128,7 +113,7 @@ export class CurrencyService {
    * @param params
    */
   readAll(
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel[]>> {
     return this.read('all', params);
   }
@@ -140,7 +125,7 @@ export class CurrencyService {
    */
   readById(
     id: number,
-    params?: CurrencyReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<CurrencyModel>> {
     return this.read(id, params);
   }

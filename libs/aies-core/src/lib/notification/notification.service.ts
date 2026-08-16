@@ -24,9 +24,6 @@ import {
   NOTIFICATION_UPDATE_PATH,
 } from './notification.mapper';
 
-/** Query bag for notification reads (pagination applies only when `id` is `null`). */
-export type NotificationReadParams = ResourceQueryParams;
-
 /**
  * Authenticated user notifications (`GET /user/notifications/read/{id?}`).
  *
@@ -52,20 +49,20 @@ export class NotificationService {
   /** Paginated inbox page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: NotificationReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<NotificationModel[]>>;
 
   /** Full inbox list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: NotificationReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<NotificationModel[]>>;
 
   read(
     id: ResourceId = null,
-    params?: NotificationReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
-    const query: NotificationReadParams | undefined =
+    const query: ResourceQueryParams | undefined =
       id === null
         ? { ...params, size: params?.size ?? NOTIFICATION_PAGE_SIZE }
         : params;
@@ -103,7 +100,7 @@ export class NotificationService {
    * @param params
    */
   readPage(
-    params?: NotificationReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
     return this.read(null, params);
   }
@@ -113,7 +110,7 @@ export class NotificationService {
    * @param params
    */
   readAll(
-    params?: NotificationReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<NotificationModel[]>> {
     return this.read('all', params);
   }

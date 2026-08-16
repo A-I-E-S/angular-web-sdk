@@ -23,6 +23,11 @@ export interface ModeColorClasses {
    */
   primary: string;
   /**
+   * Transparent / text-only CTA — `variant="ghost-primary"` on buttons.
+   * Mode accent text + soft hover fill.
+   */
+  ghostPrimary: string;
+  /**
    * Soft highlight for selected / active rows (works in dark mode).
    */
   soft: string;
@@ -66,6 +71,8 @@ export class ModeColorService {
         border: 'border-export',
         primary:
           'bg-export text-white border-transparent hover:bg-export-light',
+        ghostPrimary:
+          'bg-transparent text-export border-transparent hover:bg-export-subtle dark:hover:bg-export/15',
         soft: 'bg-export-subtle dark:bg-export/15',
         softHover: 'hover:bg-export-subtle dark:hover:bg-export/15',
       };
@@ -77,6 +84,8 @@ export class ModeColorService {
       border: 'border-import',
       primary:
         'bg-import text-white border-transparent hover:bg-import-light',
+      ghostPrimary:
+        'bg-transparent text-import border-transparent hover:bg-import-subtle dark:hover:bg-import/15',
       soft: 'bg-import-subtle dark:bg-import/15',
       softHover: 'hover:bg-import-subtle dark:hover:bg-import/15',
     };

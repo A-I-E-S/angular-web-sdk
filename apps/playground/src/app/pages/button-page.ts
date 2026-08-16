@@ -42,13 +42,13 @@ import {
       <app-page-header
         eyebrow="Components"
         title="Button"
-        description="Primary CTAs, secondary actions, and ghost/danger controls. Use the aies-button attribute on a native button or anchor. Primary color follows shipping mode — Export (SFN) green or Import (STN) orange."
+        description="Primary CTAs, secondary actions, and ghost/danger controls. Use the aies-button attribute on a native button or anchor. Primary and ghost-primary follow shipping mode — Export (SFN) green or Import (STN) orange."
       />
 
       <app-demo-section
         title="Variants"
-        hint="Pick the visual weight for the action. Primary is mode-colored — flip STN/SFN in the sidebar to see it change."
-        badge="4"
+        hint="Pick the visual weight for the action. Primary and ghost-primary are mode-colored — flip STN/SFN in the sidebar to see them change."
+        badge="5"
         [code]="variantsCode"
       >
         <div class="flex flex-wrap items-end gap-6">
@@ -230,6 +230,7 @@ export class ButtonPage {
     'primary',
     'secondary',
     'ghost',
+    'ghost-primary',
     'danger',
   ];
   protected readonly sizes: ButtonSize[] = ['sm', 'md', 'lg'];
@@ -237,6 +238,7 @@ export class ButtonPage {
     primary: 'Save shipment',
     secondary: 'Save draft',
     ghost: 'Cancel',
+    'ghost-primary': 'Add row',
     danger: 'Delete',
   };
 

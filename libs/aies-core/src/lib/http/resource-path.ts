@@ -9,6 +9,10 @@ import {
  *
  * `page` / `size` / `order` apply only when `id` is `null` (paginated list).
  * Extra keys are always forwarded (filters, includes, etc.).
+ *
+ * App Settings list screens commonly send `search`, `from`, and `to` on the
+ * paginated read — use this type directly; do not invent per-domain
+ * `*ReadParams` aliases for the same bag.
  */
 export type ResourceQueryParams = PaginationQueryParamsModel &
   Record<string, string | number | boolean | null | undefined>;

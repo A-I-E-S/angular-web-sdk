@@ -3,8 +3,9 @@
 export /**
  *
  */
-const BUTTON_VARIANTS = `// Four variants. Primary picks up SFN green / STN orange from ModeColorService —
-// don't hard-code those colors yourself.
+const BUTTON_VARIANTS = `// Five variants. Primary and ghost-primary pick up SFN green / STN orange
+// from ModeColorService — don't hard-code those colors yourself.
+// ghost stays neutral (Cancel); ghost-primary is a mode-colored text button.
 
 import { Component } from '@angular/core';
 import {
@@ -34,6 +35,7 @@ export class ShipmentActionsComponent {
     'primary',
     'secondary',
     'ghost',
+    'ghost-primary',
     'danger',
   ];
 
@@ -41,6 +43,7 @@ export class ShipmentActionsComponent {
     primary: 'Save shipment',
     secondary: 'Save draft',
     ghost: 'Cancel',
+    'ghost-primary': 'Add row',
     danger: 'Delete',
   };
 }`;

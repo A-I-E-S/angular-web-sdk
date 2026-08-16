@@ -67,10 +67,7 @@ let nextDatePickerId = 0;
   ],
   template: `
     <label [attr.for]="controlId" [class]="labelClass">{{ label() }}</label>
-    <div
-      [class]="shellClass()"
-      [class.cursor-pointer]="!disabled()"
-    >
+    <div [class]="shellClass()">
       <span [class]="affixClass" data-slot="prefix">
         <ng-content select="[prefix]" />
       </span>
@@ -158,6 +155,8 @@ export class DatePickerComponent implements ControlValueAccessor {
     }
     if (this.disabled()) {
       classes += ` ${FORM_DISABLED_CLASS}`;
+    } else {
+      classes += ' cursor-pointer';
     }
     return classes;
   });

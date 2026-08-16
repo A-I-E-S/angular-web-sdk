@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -89,6 +90,7 @@ type PageItem = number | 'ellipsis';
     <nav
       class="flex flex-wrap items-center justify-between gap-3 py-2 text-body text-ink dark:text-white"
       aria-label="Pagination"
+      [attr.aria-busy]="disabled() || null"
     >
       <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
         Page {{ meta().current_page }} of {{ meta().total_pages }}
@@ -101,6 +103,7 @@ type PageItem = number | 'ellipsis';
           class="w-20 [&_button[aria-haspopup]]:min-w-0"
           size="sm"
           [showTriggerIcon]="false"
+          [disabled]="disabled()"
           [options]="sizeOptions()"
           [selected]="selectedSizeOption()"
           (selectedChange)="onSizeSelect($event)"
@@ -117,7 +120,7 @@ type PageItem = number | 'ellipsis';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="!meta().has_previous_page"
+          [disabled]="disabled() || !meta().has_previous_page"
           (click)="emitPage(meta().current_page - 1)"
         >
           Previous
@@ -137,6 +140,7 @@ type PageItem = number | 'ellipsis';
               size="sm"
               class="min-w-8"
               [variant]="item === meta().current_page ? 'primary' : 'secondary'"
+              [disabled]="disabled()"
               [attr.aria-label]="'Page ' + item"
               [attr.aria-current]="
                 item === meta().current_page ? 'page' : null
@@ -152,7 +156,7 @@ type PageItem = number | 'ellipsis';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="!meta().has_next_page"
+          [disabled]="disabled() || !meta().has_next_page"
           (click)="emitPage(meta().current_page + 1)"
         >
           Next
@@ -169,6 +173,12 @@ export class PaginationComponent {
    * Prefer binding `response().pagination` directly when non-null.
    */
   readonly meta = input.required<PaginationMetaModel>();
+
+  /**
+   * When true, disables size and page controls (e.g. while the table is
+   * loading a new page).
+   */
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   /**
    * Allowed row counts. Defaults to {@link PAGINATION_PAGE_SIZES}.
@@ -256,7 +266,7 @@ export class PaginationComponent {
    *   in the common case; still guard against no-ops).
    */
   protected emitPage(page: number): void {
-    if (page === this.meta().current_page) {
+    if (this.disabled() || page === this.meta().current_page) {
       return;
     }
     void this.filterQuery.setPage(page);
@@ -269,7 +279,7 @@ export class PaginationComponent {
   protected onSizeSelect(
     next: SelectOption<number> | SelectOption<number>[] | null,
   ): void {
-    if (next == null || Array.isArray(next)) {
+    if (this.disabled() || next == null || Array.isArray(next)) {
       return;
     }
     if (next.value === this.meta().per_page) {

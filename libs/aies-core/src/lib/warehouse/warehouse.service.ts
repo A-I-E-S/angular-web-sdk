@@ -22,9 +22,6 @@ import {
   WAREHOUSE_READ_PATH,
 } from './warehouse.mapper';
 
-/** Query bag for warehouse reads (pagination applies only when `id` is `null`). */
-export type WarehouseReadParams = ResourceQueryParams;
-
 /** In-memory GET cache TTL for warehouse reference dumps / by-id (5 minutes). */
 const WAREHOUSE_CACHE_TTL_MS = 5 * 60_000;
 
@@ -54,24 +51,24 @@ export class WarehouseService {
   /** Paginated warehouse page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>>;
 
   /** Full warehouse list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>>;
 
   /** Single warehouse — {@link ResourceId} number. */
   read(
     id: number,
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel>>;
 
   read(
     id: ResourceId = null,
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel | WarehouseModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(WAREHOUSE_READ_PATH, id), {
@@ -96,7 +93,7 @@ export class WarehouseService {
    * @param params
    */
   readPage(
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>> {
     return this.read(null, params);
   }
@@ -106,7 +103,7 @@ export class WarehouseService {
    * @param params
    */
   readAll(
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel[]>> {
     return this.read('all', params);
   }
@@ -118,7 +115,7 @@ export class WarehouseService {
    */
   readById(
     id: number,
-    params?: WarehouseReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<WarehouseModel>> {
     return this.read(id, params);
   }

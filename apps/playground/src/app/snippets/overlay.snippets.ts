@@ -103,6 +103,7 @@ export class OpenModalDemoComponent {
       .open<EditShipmentData, EditShipmentResult>(EditShipmentModalComponent, {
         data: { shipmentRef: 'SFN-1042' },
         // dismissible defaults to false — backdrop / Escape do nothing.
+        // size defaults to 'md'. Use 'lg' for dense forms, 'xl' for media.
       })
       .afterClosed()
       .pipe(takeUntilDestroyed())
@@ -118,6 +119,7 @@ export class OpenModalDemoComponent {
       .open<EditShipmentData, EditShipmentResult>(EditShipmentModalComponent, {
         data: { shipmentRef: 'SFN-1042' },
         dismissible: true,
+        size: 'lg',
       })
       .afterClosed()
       .pipe(takeUntilDestroyed())

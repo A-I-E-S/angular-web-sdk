@@ -16,7 +16,4 @@ export {
   toCurrencyFlag01,
   toCurrencyUpdateBody,
 } from './currency.mapper';
-export {
-  type CurrencyReadParams,
-  CurrencyService,
-} from './currency.service';
+export { CurrencyService } from './currency.service';

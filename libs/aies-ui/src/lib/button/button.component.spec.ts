@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import type { ShippingMode } from '@aies/aies-models';
 import { ShippingModeService } from '@aies/aies-core';
 
 import {
@@ -36,10 +37,21 @@ describe('ButtonComponent', () => {
   let fixture: ComponentFixture<ButtonHostComponent>;
   let host: ButtonHostComponent;
   let button: HTMLButtonElement;
+  let mode: ReturnType<typeof signal<ShippingMode>>;
 
   beforeEach(async () => {
+    mode = signal<ShippingMode>('sfn');
     await TestBed.configureTestingModule({
       imports: [ButtonHostComponent],
+      providers: [
+        {
+          provide: ShippingModeService,
+          useValue: {
+            mode: mode.asReadonly(),
+            setMode: (next: ShippingMode) => mode.set(next),
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ButtonHostComponent);
@@ -58,12 +70,24 @@ describe('ButtonComponent', () => {
   });
 
   it('should switch primary to import orange when mode is STN', () => {
-    const shipping = TestBed.inject(ShippingModeService);
-    shipping.setMode('stn');
+    mode.set('stn');
     fixture.detectChanges();
 
     expect(button.className).toContain('bg-import');
     expect(button.className).not.toContain('bg-export');
+  });
+
+  it('should switch ghost-primary text accent with shipping mode', () => {
+    host.variant.set('ghost-primary');
+    fixture.detectChanges();
+    expect(button.className).toContain('text-export');
+    expect(button.className).toContain('bg-transparent');
+
+    mode.set('stn');
+    fixture.detectChanges();
+
+    expect(button.className).toContain('text-import');
+    expect(button.className).not.toContain('text-export');
   });
 
   it('should switch variant and size classes', () => {

@@ -240,6 +240,7 @@ import { FilterQueryService } from './filter-query.service';
                     [error]="optionErrorFor(field.key)"
                     [loading]="optionLoadingFor(field.key)"
                     [retrying]="optionLoadingFor(field.key)"
+                    [showRetry]="true"
                     (retry)="retryFieldOptions(field.key)"
                     (selectedChange)="onSelectChange(field.key, $event)"
                   />

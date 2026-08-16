@@ -77,7 +77,6 @@ export { provideModeConfig } from './lib/mode/provide-mode-config';
 // Country utility
 export {
   COUNTRY_READ_PATH,
-  type CountryReadParams,
   CountryService,
   mapCountry,
   mapCountryList,
@@ -90,7 +89,6 @@ export {
   CURRENCY_DELETE_PATH,
   CURRENCY_READ_PATH,
   CURRENCY_UPDATE_PATH,
-  type CurrencyReadParams,
   CurrencyService,
   mapCurrency,
   mapCurrencyList,
@@ -109,7 +107,6 @@ export {
   mapPaymentMethodList,
   PAYMENT_METHOD_READ_PATH,
   PAYMENT_METHOD_UPDATE_PATH,
-  type PaymentMethodReadParams,
   PaymentMethodService,
   toPaymentMethodFlag01,
   toPaymentMethodUpdateBody,
@@ -123,7 +120,6 @@ export {
   mapShipmentMethodZonePage,
   mapShipmentZone,
   SHIPMENT_METHOD_READ_PATH,
-  type ShipmentMethodReadParams,
   ShipmentMethodService,
 } from './lib/shipment-method';
 
@@ -134,7 +130,6 @@ export {
   mapWarehouseList,
   mapWarehouseState,
   WAREHOUSE_READ_PATH,
-  type WarehouseReadParams,
   WarehouseService,
 } from './lib/warehouse';
 
@@ -143,7 +138,6 @@ export {
   mapZone,
   mapZoneList,
   ZONE_READ_PATH,
-  type ZoneReadParams,
   ZoneService,
 } from './lib/zone';
 
@@ -174,7 +168,6 @@ export {
   mapNotificationPayload,
   NOTIFICATION_READ_PATH,
   NOTIFICATION_UPDATE_PATH,
-  type NotificationReadParams,
   NotificationService,
   resolveNotificationLinkForMode,
 } from './lib/notification';
@@ -191,7 +184,6 @@ export {
   mapProduct,
   mapProductList,
   PRODUCT_READ_PATH,
-  type ProductReadParams,
   ProductService,
 } from './lib/product';
 

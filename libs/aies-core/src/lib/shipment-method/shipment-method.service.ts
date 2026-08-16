@@ -22,9 +22,6 @@ import {
   SHIPMENT_METHOD_READ_PATH,
 } from './shipment-method.mapper';
 
-/** Query bag for shipment-method reads (pagination only when `id` is `null`). */
-export type ShipmentMethodReadParams = ResourceQueryParams;
-
 /** In-memory GET cache TTL for method reference dumps / by-id (5 minutes). */
 const SHIPMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
 
@@ -54,24 +51,24 @@ export class ShipmentMethodService {
   /** Paginated method page — {@link ResourceId} `null`. */
   read(
     id?: null,
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel[]>>;
 
   /** Full method list — {@link ResourceId} `'all'`. */
   read(
     id: 'all',
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel[]>>;
 
   /** Single method — {@link ResourceId} number. */
   read(
     id: number,
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel>>;
 
   read(
     id: ResourceId = null,
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel | ShipmentMethodModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(SHIPMENT_METHOD_READ_PATH, id), {
@@ -96,7 +93,7 @@ export class ShipmentMethodService {
    * @param params
    */
   readPage(
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
     return this.read(null, params);
   }
@@ -106,7 +103,7 @@ export class ShipmentMethodService {
    * @param params
    */
   readAll(
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel[]>> {
     return this.read('all', params);
   }
@@ -118,7 +115,7 @@ export class ShipmentMethodService {
    */
   readById(
     id: number,
-    params?: ShipmentMethodReadParams,
+    params?: ResourceQueryParams,
   ): Observable<ApiResponseModel<ShipmentMethodModel>> {
     return this.read(id, params);
   }

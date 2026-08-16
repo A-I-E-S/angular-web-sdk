@@ -15,10 +15,16 @@ import { ModeColorService } from '@aies/aies-theme';
  *
  * - `primary` — filled mode accent (SFN green / STN orange) for the main action
  * - `secondary` — outlined chrome for secondary actions
- * - `ghost` — text-only for low-emphasis actions (Cancel, tertiary)
+ * - `ghost` — neutral text-only for low-emphasis actions (Cancel, tertiary)
+ * - `ghost-primary` — text-only mode accent (SFN green / STN orange)
  * - `danger` — destructive confirmations and deletes
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'ghost-primary'
+  | 'danger';
 
 /**
  * Control size for {@link ButtonComponent}.
@@ -32,13 +38,18 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
  * keyboard behavior on the host element (Enter/Space, focus rings) instead of
  * nesting an interactive element inside a custom component host.
  *
- * **Primary** follows {@link ModeColorService} / shipping mode:
+ * **Primary** and **ghost-primary** follow {@link ModeColorService} / shipping mode:
  * SFN → export green, STN → import orange.
  *
  * @example
  * ```html
  * <button aies-button type="button" variant="primary" (click)="save()">
  *   Save shipment
+ * </button>
+ *
+ * <button aies-button type="button" variant="ghost-primary" size="sm">
+ *   <aies-icon name="plus" [size]="14" />
+ *   Add row
  * </button>
  *
  * <button aies-button type="button" variant="primary" [loading]="saving()">
@@ -150,6 +161,8 @@ export class ButtonComponent {
     let variantClass: string;
     if (variant === 'primary') {
       variantClass = this.modeColor.classes().primary;
+    } else if (variant === 'ghost-primary') {
+      variantClass = this.modeColor.classes().ghostPrimary;
     } else if (variant === 'secondary') {
       variantClass =
         'bg-white dark:bg-ink-950 text-ink dark:text-white border-border dark:border-white/15 hover:bg-background-welcome dark:hover:bg-white/10';

@@ -9,7 +9,4 @@ export {
   mapWarehouseState,
   WAREHOUSE_READ_PATH,
 } from './warehouse.mapper';
-export {
-  type WarehouseReadParams,
-  WarehouseService,
-} from './warehouse.service';
+export { WarehouseService } from './warehouse.service';
