@@ -59,9 +59,14 @@ export function buildResourceQueryParams(
   params?: ResourceQueryParams,
 ): Record<string, string | number | boolean | null | undefined> | undefined {
   const { page, size, order, ...rest } = params ?? {};
-  const out: Record<string, string | number | boolean | null | undefined> = {
-    ...rest,
-  };
+  const out: Record<string, string | number | boolean | null | undefined> = {};
+
+  for (const [key, value] of Object.entries(rest)) {
+    if (value === null || value === undefined || value === '') {
+      continue;
+    }
+    out[key] = value;
+  }
 
   if (id === null) {
     if (page !== undefined) {
@@ -104,7 +109,8 @@ export function resourceCacheTtlMs(
  * @param raw - Envelope `data` payload.
  * @param mapOne - Mapper for a single record.
  * @param mapMany - Mapper for a list (or single object coerced to list).
- * @returns Mapped payload, or `null` when wire data is nullish / empty by-id.
+ * @returns Mapped payload, or `null` when by-id data is missing.
+ *          List reads (`null` / `'all'`) return `[]` when `raw` is nullish.
  */
 export function mapResourcePayload<T>(
   id: ResourceId,
@@ -113,7 +119,7 @@ export function mapResourcePayload<T>(
   mapMany: (raw: unknown) => T[],
 ): T | T[] | null {
   if (raw == null) {
-    return null;
+    return typeof id === 'number' ? null : [];
   }
 
   if (typeof id === 'number') {

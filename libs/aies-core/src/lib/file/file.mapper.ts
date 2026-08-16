@@ -1,14 +1,9 @@
 import type { FileReadModel } from '@aies/aies-models';
 
+import { asRecord, asString } from '../http/wire';
+
 /** File read path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const FILE_READ_PATH = '/file/read';
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
 
 /**
  * Map wire `data` into {@link FileReadModel} (snake_case preserved).
@@ -23,8 +18,8 @@ export function mapFileRead(raw: unknown): FileReadModel {
   const entry = Array.isArray(raw) ? raw[0] : raw;
   const record = asRecord(entry) ?? {};
   return {
-    mime_type: String(record['mime_type'] ?? record['mimeType'] ?? ''),
-    base_64: String(record['base_64'] ?? record['base64'] ?? ''),
-    url: String(record['url'] ?? ''),
+    mime_type: asString(record['mime_type'] ?? record['mimeType']),
+    base_64: asString(record['base_64'] ?? record['base64']),
+    url: asString(record['url']),
   };
 }

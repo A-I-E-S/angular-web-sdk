@@ -6,35 +6,18 @@ import type {
 
 import { mapCountry } from '../country/country.mapper';
 import { mapApiJsonValue } from '../http/map-api-json';
+import {
+  asBoolean,
+  asNullableNumber,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapList,
+} from '../http/wire';
 
 /** Warehouse read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const WAREHOUSE_READ_PATH = '/warehouse/read';
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asFlag01(value: unknown): boolean {
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  return String(value ?? '').trim() === '1';
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
-}
 
 /**
  * Map warehouse state into {@link WarehouseStateModel} (snake_case).
@@ -47,12 +30,10 @@ export function mapWarehouseState(raw: unknown): WarehouseStateModel | null {
   }
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    state_code: String(record['state_code'] ?? record['stateCode'] ?? ''),
-    country: String(record['country'] ?? ''),
-    country_code: String(
-      record['country_code'] ?? record['countryCode'] ?? '',
-    ),
+    name: asString(record['name']),
+    state_code: asString(record['state_code'] ?? record['stateCode']),
+    country: asString(record['country']),
+    country_code: asString(record['country_code'] ?? record['countryCode']),
   };
 }
 
@@ -74,37 +55,25 @@ export function mapWarehouseCountry(raw: unknown): CountryModel | null {
 export function mapWarehouse(raw: unknown): WarehouseModel {
   const record = asRecord(raw) ?? {};
 
-  const partnerIdRaw = record['partner_id'] ?? record['partnerId'];
-  const partner_id =
-    partnerIdRaw == null || partnerIdRaw === ''
-      ? null
-      : asNumber(partnerIdRaw);
-
   return {
     id: asNumber(record['id']),
-    partner_id,
-    name: String(record['name'] ?? ''),
-    phone: String(record['phone'] ?? ''),
-    email: String(record['email'] ?? ''),
+    partner_id: asNullableNumber(record['partner_id'] ?? record['partnerId']),
+    name: asString(record['name']),
+    phone: asString(record['phone']),
+    email: asString(record['email']),
     country: mapWarehouseCountry(record['country']),
-    api_enabled: asFlag01(record['api_enabled'] ?? record['apiEnabled']),
+    api_enabled: asBoolean(record['api_enabled'] ?? record['apiEnabled']),
     state: mapWarehouseState(record['state']),
-    city: String(record['city'] ?? ''),
-    address: String(record['address'] ?? ''),
+    city: asString(record['city']),
+    address: asString(record['address']),
     longitude: asNumber(record['longitude']),
     latitude: asNumber(record['latitude']),
-    zip_code: String(record['zip_code'] ?? record['zipCode'] ?? ''),
+    zip_code: asString(record['zip_code'] ?? record['zipCode']),
     usage: asNumber(record['usage']),
-    active: Boolean(record['active']),
-    deleted_at: asNullableString(
-      record['deleted_at'] ?? record['deletedAt'],
-    ),
-    created_at: asNullableString(
-      record['created_at'] ?? record['createdAt'],
-    ),
-    updated_at: asNullableString(
-      record['updated_at'] ?? record['updatedAt'],
-    ),
+    active: asBoolean(record['active']),
+    deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
+    created_at: asNullableString(record['created_at'] ?? record['createdAt']),
+    updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
     storage_charge: asNumber(
       record['storage_charge'] ?? record['storageCharge'],
     ),
@@ -117,12 +86,12 @@ export function mapWarehouse(raw: unknown): WarehouseModel {
     delivery_count: asNumber(
       record['delivery_count'] ?? record['deliveryCount'],
     ),
-    currency: String(record['currency'] ?? ''),
-    etw_shipment_available: Boolean(
+    currency: asString(record['currency']),
+    etw_shipment_available: asBoolean(
       record['etw_shipment_available'] ?? record['etwShipmentAvailable'],
     ),
-    local: Boolean(record['local']),
-    no_shippo: Boolean(record['no_shippo'] ?? record['noShippo']),
+    local: asBoolean(record['local']),
+    no_shippo: asBoolean(record['no_shippo'] ?? record['noShippo']),
     partner: mapApiJsonValue(record['partner']),
   };
 }
@@ -132,11 +101,5 @@ export function mapWarehouse(raw: unknown): WarehouseModel {
  * @param raw
  */
 export function mapWarehouseList(raw: unknown): WarehouseModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapWarehouse(entry));
-  }
-  return [mapWarehouse(raw)];
+  return mapList(raw, mapWarehouse);
 }

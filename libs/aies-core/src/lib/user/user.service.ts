@@ -9,6 +9,7 @@ import type {
 } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
+import { asString } from '../http/wire';
 import {
   mapUser,
   USER_CHANGE_PASSWORD_PATH,
@@ -75,9 +76,9 @@ export class UserService {
     return this.api.post<unknown, ChangePasswordRequestModel>(
       USER_CHANGE_PASSWORD_PATH,
       {
-        current_password: body.current_password,
-        password: body.password,
-        password_confirmation: body.password_confirmation,
+        current_password: asString(body?.current_password),
+        password: asString(body?.password),
+        password_confirmation: asString(body?.password_confirmation),
       },
     );
   }

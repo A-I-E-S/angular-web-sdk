@@ -15,6 +15,15 @@ import type {
   UserSubscriptionModel,
 } from '@aies/aies-models';
 
+import {
+  asNullableBoolean,
+  asNullableFlag01,
+  asNullableNumber,
+  asNullableString,
+  asRecord,
+  mapArray,
+} from '../http/wire';
+
 /** Current-user path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const USER_PATH = '/user';
 
@@ -37,94 +46,6 @@ const USER_MODEL_TYPES = new Set<UserModelType>([
   'App\\Models\\Customer',
   'App\\Models\\Admin',
 ]);
-
-/**
- * Narrow unknown JSON into a record for defensive key reads.
- * @param value - Candidate JSON value.
- * @returns A record when `value` is a plain object; otherwise `null`.
- */
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-/**
- * Coerce a wire number that may arrive as a string.
- * @param value - Raw numeric field.
- * @returns Finite number, or `null` when missing/invalid.
- */
-function asNumber(value: unknown): number | null {
-  if (value == null || value === '') {
-    return null;
-  }
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
-}
-
-/**
- * Nullable string from wire.
- * @param value - Raw string field.
- * @returns String or `null`.
- */
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  if (typeof value === 'string') {
-    return value;
-  }
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return String(value);
-  }
-  return null;
-}
-
-/**
- * Nullable boolean (keeps explicit `false`).
- * @param value - Raw flag.
- * @returns Boolean or `null` when absent.
- */
-function asNullableBoolean(value: unknown): boolean | null {
-  if (value == null) {
-    return null;
-  }
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  if (typeof value === 'number') {
-    return value === 1;
-  }
-  if (typeof value === 'string') {
-    const trimmed = value.trim().toLowerCase();
-    if (trimmed === '1' || trimmed === 'true') {
-      return true;
-    }
-    if (trimmed === '0' || trimmed === 'false') {
-      return false;
-    }
-  }
-  return null;
-}
-
-/**
- * Wire `0` / `1` flag (socialite / form signup).
- * @param value - Raw flag.
- * @returns `0`, `1`, or `null`.
- */
-function asFlag01(value: unknown): 0 | 1 | null {
-  if (value == null || value === '') {
-    return null;
-  }
-  if (value === 1 || value === '1' || value === true) {
-    return 1;
-  }
-  if (value === 0 || value === '0' || value === false) {
-    return 0;
-  }
-  return null;
-}
 
 /**
  * @param value - Candidate union member.
@@ -169,15 +90,14 @@ export function mapUserCountry(raw: unknown): UserCountryModel | null {
   if (record === null) {
     return null;
   }
-  const statesRaw = record['states'];
-  const states = Array.isArray(statesRaw)
-    ? statesRaw
-        .map((entry) => mapUserCountryState(entry))
-        .filter((entry): entry is UserStateModel => entry !== null)
+  const states = Array.isArray(record['states'])
+    ? mapArray(record['states'], mapUserCountryState).filter(
+        (entry): entry is UserStateModel => entry !== null,
+      )
     : null;
 
   return {
-    id: asNumber(record['id']),
+    id: asNullableNumber(record['id']),
     name: asNullableString(record['name']),
     iso3: asNullableString(record['iso3']),
     iso2: asNullableString(record['iso2']),
@@ -214,14 +134,14 @@ export function mapUserPlanPackage(raw: unknown): UserPlanPackageModel | null {
     return null;
   }
   return {
-    id: asNumber(record['id']),
-    plan_id: asNumber(record['plan_id'] ?? record['planId']),
-    company_service_id: asNumber(
+    id: asNullableNumber(record['id']),
+    plan_id: asNullableNumber(record['plan_id'] ?? record['planId']),
+    company_service_id: asNullableNumber(
       record['company_service_id'] ?? record['companyServiceId'],
     ),
     name: asNullableString(record['name']),
     metrics: asNullableString(record['metrics']),
-    volume: asNumber(record['volume']),
+    volume: asNullableNumber(record['volume']),
     discount: asNullableString(record['discount']),
     model: asNullableString(record['model']),
     monthly: asNullableString(record['monthly']),
@@ -250,15 +170,14 @@ export function mapUserPlan(raw: unknown): UserPlanModel | null {
   if (record === null) {
     return null;
   }
-  const packagesRaw = record['packages'];
-  const packages = Array.isArray(packagesRaw)
-    ? packagesRaw
-        .map((entry) => mapUserPlanPackage(entry))
-        .filter((entry): entry is UserPlanPackageModel => entry !== null)
+  const packages = Array.isArray(record['packages'])
+    ? mapArray(record['packages'], mapUserPlanPackage).filter(
+        (entry): entry is UserPlanPackageModel => entry !== null,
+      )
     : null;
 
   return {
-    id: asNumber(record['id']),
+    id: asNullableNumber(record['id']),
     name: asNullableString(record['name']),
     active: asNullableBoolean(record['active']),
     deleted_at: asNullableString(
@@ -334,10 +253,10 @@ export function mapUserSubscription(
     return null;
   }
   return {
-    id: asNumber(record['id']),
-    user_id: asNumber(record['user_id'] ?? record['userId']),
-    plan_id: asNumber(record['plan_id'] ?? record['planId']),
-    account_id: asNumber(record['account_id'] ?? record['accountId']),
+    id: asNullableNumber(record['id']),
+    user_id: asNullableNumber(record['user_id'] ?? record['userId']),
+    plan_id: asNullableNumber(record['plan_id'] ?? record['planId']),
+    account_id: asNullableNumber(record['account_id'] ?? record['accountId']),
     reference: asNullableString(record['reference']),
     process_url: asNullableString(
       record['process_url'] ?? record['processUrl'],
@@ -353,7 +272,7 @@ export function mapUserSubscription(
     payment_currency: asNullableString(
       record['payment_currency'] ?? record['paymentCurrency'],
     ),
-    coupon_id: asNumber(record['coupon_id'] ?? record['couponId']),
+    coupon_id: asNullableNumber(record['coupon_id'] ?? record['couponId']),
     coupon_discount: asNullableString(
       record['coupon_discount'] ?? record['couponDiscount'],
     ),
@@ -392,9 +311,9 @@ export function mapUserBusinessAccount(
     return null;
   }
   return {
-    id: asNumber(record['id']),
-    user_id: asNumber(record['user_id'] ?? record['userId']),
-    plan_id: asNumber(record['plan_id'] ?? record['planId']),
+    id: asNullableNumber(record['id']),
+    user_id: asNullableNumber(record['user_id'] ?? record['userId']),
+    plan_id: asNullableNumber(record['plan_id'] ?? record['planId']),
     name: asNullableString(record['name']),
     account_email: asNullableString(
       record['account_email'] ?? record['accountEmail'],
@@ -432,7 +351,7 @@ export function mapUserBusinessAccount(
       record['updated_at'] ?? record['updatedAt'],
     ),
     type: asEnumMember(record['type'], ACCOUNT_TYPES),
-    days_left: asNumber(record['days_left'] ?? record['daysLeft']),
+    days_left: asNullableNumber(record['days_left'] ?? record['daysLeft']),
     plan: mapUserPlan(record['plan']),
     subscription: mapUserSubscription(record['subscription']),
   };
@@ -450,10 +369,10 @@ export function mapUserAccountManager(
     return null;
   }
   return {
-    id: asNumber(record['id']),
-    user_id: asNumber(record['user_id'] ?? record['userId']),
-    manager_id: asNumber(record['manager_id'] ?? record['managerId']),
-    account_id: asNumber(record['account_id'] ?? record['accountId']),
+    id: asNullableNumber(record['id']),
+    user_id: asNullableNumber(record['user_id'] ?? record['userId']),
+    manager_id: asNullableNumber(record['manager_id'] ?? record['managerId']),
+    account_id: asNullableNumber(record['account_id'] ?? record['accountId']),
     name: asNullableString(record['name']),
     email: asNullableString(record['email']),
     phone: asNullableString(record['phone']),
@@ -476,10 +395,9 @@ export function mapUserAccountManager(
  */
 export function mapUser(raw: unknown): UserModel {
   const record = asRecord(raw) ?? {};
-  const accountsRaw = record['accounts'];
 
   return {
-    id: asNumber(record['id']),
+    id: asNullableNumber(record['id']),
     central_id: asNullableString(
       record['central_id'] ?? record['centralId'],
     ),
@@ -554,10 +472,10 @@ export function mapUser(raw: unknown): UserModel {
     last_login_at: asNullableString(
       record['last_login_at'] ?? record['lastLoginAt'],
     ),
-    socialite_signup: asFlag01(
+    socialite_signup: asNullableFlag01(
       record['socialite_signup'] ?? record['socialiteSignup'],
     ),
-    form_signup: asFlag01(
+    form_signup: asNullableFlag01(
       record['form_signup'] ?? record['formSignup'],
     ),
     main_region: asNullableString(
@@ -567,7 +485,7 @@ export function mapUser(raw: unknown): UserModel {
       record['shipping_type'] ?? record['shippingType'],
       SHIPPING_TYPES,
     ),
-    accounts: Array.isArray(accountsRaw) ? accountsRaw : null,
+    accounts: Array.isArray(record['accounts']) ? record['accounts'] : null,
     business_account: mapUserBusinessAccount(
       record['business_account'] ?? record['businessAccount'],
     ),

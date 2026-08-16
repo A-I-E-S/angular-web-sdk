@@ -7,28 +7,18 @@ import {
   mapCurrency,
   mapCurrencyPaymentMethodPivot,
 } from '../currency/currency.mapper';
+import {
+  asBoolean,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapArray,
+  mapList,
+} from '../http/wire';
 
 /** Payment-method read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const PAYMENT_METHOD_READ_PATH = '/payment_method/read';
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
-}
 
 /**
  * Map a currency nested on a payment method (rates + pivot, no processors).
@@ -63,20 +53,16 @@ export function mapPaymentMethodCurrency(
  */
 export function mapPaymentMethod(raw: unknown): PaymentMethodModel {
   const record = asRecord(raw) ?? {};
-  const currenciesRaw = record['currencies'];
-  const currencies = Array.isArray(currenciesRaw)
-    ? currenciesRaw.map((entry) => mapPaymentMethodCurrency(entry))
-    : [];
 
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    model: String(record['model'] ?? ''),
-    active: Boolean(record['active']),
+    name: asString(record['name']),
+    model: asString(record['model']),
+    active: asBoolean(record['active']),
     deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
     created_at: asNullableString(record['created_at'] ?? record['createdAt']),
     updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
-    currencies,
+    currencies: mapArray(record['currencies'], mapPaymentMethodCurrency),
   };
 }
 
@@ -87,11 +73,5 @@ export function mapPaymentMethod(raw: unknown): PaymentMethodModel {
  * @returns Mapped payment-method list (empty when `raw` is null/undefined).
  */
 export function mapPaymentMethodList(raw: unknown): PaymentMethodModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapPaymentMethod(entry));
-  }
-  return [mapPaymentMethod(raw)];
+  return mapList(raw, mapPaymentMethod);
 }

@@ -1,5 +1,7 @@
 import type { ShippingMode } from '@aies/aies-models';
 
+import { asString } from '../http/wire';
+
 const SHIPMENT_APP_BY_MODE: Record<ShippingMode, string> = {
   stn: 'shiptonaija',
   sfn: 'shipfromnaija',
@@ -14,10 +16,10 @@ const SHIPMENT_APP_BY_MODE: Record<ShippingMode, string> = {
  * @param mode
  */
 export function resolveNotificationLinkForMode(
-  link: string,
+  link: string | null | undefined,
   mode: ShippingMode,
 ): string {
-  const trimmed = link.trim();
+  const trimmed = asString(link).trim();
   if (!trimmed) {
     return trimmed;
   }

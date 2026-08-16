@@ -141,15 +141,13 @@ export class FilterOptionsResolver {
       case 'warehouses':
         return this.warehouses.readAll().pipe(
           map((res) =>
-            res.success && res.data ? mapWarehouseFilterOptions(res.data) : [],
+            res.success ? mapWarehouseFilterOptions(res.data) : [],
           ),
         );
       case 'shipmentMethods':
         return this.shipmentMethods.readAll().pipe(
           map((res) =>
-            res.success && res.data
-              ? mapShipmentMethodFilterOptions(res.data)
-              : [],
+            res.success ? mapShipmentMethodFilterOptions(res.data) : [],
           ),
         );
       default:

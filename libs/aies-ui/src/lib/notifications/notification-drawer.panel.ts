@@ -309,7 +309,7 @@ export class NotificationDrawerPanel {
   protected readonly currentPage = signal(0);
 
   protected readonly unreadCount = computed(
-    () => this.items().filter((item) => !item.read).length,
+    () => (this.items() ?? []).filter((item) => !item.read).length,
   );
   protected readonly hasUnread = computed(() => this.unreadCount() > 0);
 
@@ -471,7 +471,9 @@ export class NotificationDrawerPanel {
     this.runHook(
       () => this.data.onMarkAllRead?.(),
       () => {
-        this.items.update((rows) => rows.map((row) => ({ ...row, read: true })));
+        this.items.update((rows) =>
+          (rows ?? []).map((row) => ({ ...row, read: true })),
+        );
         this.markingAll.set(false);
         this.ref.close({ markedAllRead: true });
       },
@@ -593,13 +595,18 @@ export class NotificationDrawerPanel {
       () => loadPage(page),
       (result) => {
         if (mode === 'replace') {
-          this.items.set(result.items);
+          this.items.set(result.items ?? []);
         } else {
-          this.appendItems(result.items);
+          this.appendItems(result.items ?? []);
         }
 
         this.currentPage.set(page);
-        this.hasMore.set(this.resolveHasMore(result.pagination, result.items.length));
+        this.hasMore.set(
+          this.resolveHasMore(
+            result.pagination,
+            (result.items ?? []).length,
+          ),
+        );
         this.loadingInitial.set(false);
         this.loadingMore.set(false);
       },
@@ -613,21 +620,22 @@ export class NotificationDrawerPanel {
     );
   }
 
-  private appendItems(incoming: AiesNotification[]): void {
-    if (!incoming.length) {
+  private appendItems(incoming: AiesNotification[] | null | undefined): void {
+    const rows = incoming ?? [];
+    if (!rows.length) {
       return;
     }
 
     this.items.update((existing) => {
-      const seen = new Set(existing.map((item) => item.id));
-      const next = incoming.filter((item) => !seen.has(item.id));
+      const seen = new Set((existing ?? []).map((item) => item.id));
+      const next = rows.filter((item) => !seen.has(item.id));
       return next.length ? [...existing, ...next] : existing;
     });
   }
 
   private patchRead(id: string): void {
     this.items.update((rows) =>
-      rows.map((row) => (row.id === id ? { ...row, read: true } : row)),
+      (rows ?? []).map((row) => (row.id === id ? { ...row, read: true } : row)),
     );
   }
 

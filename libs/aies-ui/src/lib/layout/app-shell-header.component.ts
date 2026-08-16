@@ -223,7 +223,7 @@ export class AppShellHeaderComponent {
   );
 
   protected readonly unreadCount = computed(
-    () => this.notifications().filter((n) => !n.read).length,
+    () => (this.notifications() ?? []).filter((n) => !n.read).length,
   );
 
   protected readonly unreadBadge = computed(() => {

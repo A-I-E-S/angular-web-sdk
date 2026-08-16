@@ -197,6 +197,27 @@ describe('currency.mapper', () => {
     });
   });
 
+  it('toCurrencyCreateBody does not throw when optional lists are missing', () => {
+    expect(
+      toCurrencyCreateBody({
+        name: 'USD',
+        short_code: 'USD',
+        multiplication_rate: '1',
+        division_rate: '1',
+        active: true,
+        is_naira_greater: false,
+      } as never),
+    ).toEqual({
+      name: 'USD',
+      short_code: 'USD',
+      multiplication_rate: '1',
+      division_rate: '1',
+      active: '1',
+      is_naira_greater: '0',
+      payment_method_ids: [],
+    });
+  });
+
   it('toCurrencyDeleteBody accepts id or { id }', () => {
     expect(toCurrencyDeleteBody(12)).toEqual({ id: 12 });
     expect(toCurrencyDeleteBody({ id: 12 })).toEqual({ id: 12 });

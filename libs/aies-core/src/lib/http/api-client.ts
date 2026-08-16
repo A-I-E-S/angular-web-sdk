@@ -52,7 +52,7 @@ export interface ApiRequestOptions {
   /** Extra headers; override {@link AiesSdkConfig.defaultHeaders} on conflict. */
   headers?: Record<string, string>;
 
-  /** Query string values; `null` / `undefined` entries are omitted. */
+  /** Query string values; `null` / `undefined` / `''` entries are omitted. */
   params?: Record<string, string | number | boolean | null | undefined>;
 
   /**
@@ -536,7 +536,7 @@ export class ApiClient {
       return httpParams;
     }
     for (const [key, value] of Object.entries(params)) {
-      if (value === null || value === undefined) {
+      if (value === null || value === undefined || value === '') {
         continue;
       }
       httpParams = httpParams.set(key, String(value));

@@ -12,6 +12,8 @@ describe('isValidEmail', () => {
   it('rejects empty, missing host, or missing tld', () => {
     expect(isValidEmail('')).toBe(false);
     expect(isValidEmail('   ')).toBe(false);
+    expect(isValidEmail(null)).toBe(false);
+    expect(isValidEmail(undefined)).toBe(false);
     expect(isValidEmail('user@')).toBe(false);
     expect(isValidEmail('user@localhost')).toBe(false);
     expect(isValidEmail('not-an-email')).toBe(false);

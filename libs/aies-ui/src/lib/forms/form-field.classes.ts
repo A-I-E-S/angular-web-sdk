@@ -12,7 +12,7 @@ export const FORM_LABEL_CLASS =
 
 /** Default control shell (bordered wrapper or native input). */
 export const FORM_FIELD_CLASS =
-  'flex items-stretch w-full min-h-10 rounded-md border-2 border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
+  'flex items-stretch w-full min-h-10 rounded-md border border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
   'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
 
 /**

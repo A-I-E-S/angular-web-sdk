@@ -1,6 +1,7 @@
 import {
   mapNotification,
   mapNotificationInboxItem,
+  mapNotificationList,
   mapNotificationPayload,
 } from './notification.mapper';
 
@@ -44,5 +45,13 @@ describe('notification.mapper', () => {
     });
     expect(payload.title).toBe('Hello');
     expect(payload.external_link).toBe(true);
+  });
+
+  it('never throws when list or row data is missing', () => {
+    expect(mapNotificationList(undefined)).toEqual([]);
+    expect(mapNotificationList(null)).toEqual([]);
+    expect(mapNotification(undefined).id).toBe('');
+    expect(mapNotificationInboxItem(undefined).title).toBe('');
+    expect(mapNotificationPayload(undefined).title).toBe('');
   });
 });

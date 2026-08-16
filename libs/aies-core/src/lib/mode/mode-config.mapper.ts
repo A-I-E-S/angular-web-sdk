@@ -9,6 +9,8 @@ import type {
   ShippingMode,
 } from '@aies/aies-models';
 
+import { asRecord, asString } from '../http/wire';
+
 /** Public mode-config endpoint path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const MODE_CONFIG_PATH = '/public/mode/config';
 
@@ -37,18 +39,15 @@ function asCurrency(value: unknown): ModeCurrencyCode {
  * @param raw
  */
 export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
-  const record =
-    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
-      ? (raw as Record<string, unknown>)
-      : {};
+  const record = asRecord(raw) ?? {};
   return {
     dimension_unit: asDimensionUnit(
       record['dimension_unit'] ?? record['dimensionUnit'],
     ),
     mass_unit: asMassUnit(record['mass_unit'] ?? record['massUnit']),
     currency: asCurrency(record['currency']),
-    currency_symbol: String(
-      record['currency_symbol'] ?? record['currencySymbol'] ?? '',
+    currency_symbol: asString(
+      record['currency_symbol'] ?? record['currencySymbol'],
     ),
   };
 }
@@ -60,10 +59,7 @@ export function mapRegionConfig(raw: unknown): ModeRegionConfigModel {
 export function mapModeRegions(
   modeRaw: unknown,
 ): Record<string, ModeRegionConfigModel> {
-  const mode =
-    modeRaw !== null && typeof modeRaw === 'object' && !Array.isArray(modeRaw)
-      ? (modeRaw as Record<string, unknown>)
-      : {};
+  const mode = asRecord(modeRaw) ?? {};
   const out: Record<string, ModeRegionConfigModel> = {};
   for (const [key, value] of Object.entries(mode)) {
     out[key] = mapRegionConfig(value);
@@ -85,10 +81,7 @@ function regionOrDefault(
 export function mapModeConfigData(
   raw: ModeConfigDataModel | Record<string, unknown>,
 ): ModeConfigDataModel {
-  const record =
-    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
-      ? (raw as Record<string, unknown>)
-      : {};
+  const record = asRecord(raw) ?? {};
   const sfnRegions = mapModeRegions(record['sfn']);
   const stnRegions = mapModeRegions(record['stn']);
 
@@ -141,20 +134,19 @@ export function isModeConfigData(value: unknown): value is ModeConfigDataModel {
  * @param countryCode
  */
 export function resolveModeRegionConfig(
-  config: ModeConfigDataModel,
+  config: ModeConfigDataModel | null | undefined,
   mode: ShippingMode,
   countryCode: string | null | undefined,
 ): ModeRegionConfigModel {
-  const regions: ModeSfnConfigModel | ModeStnConfigModel =
-    mode === 'sfn' ? config.sfn : config.stn;
+  const regions = mode === 'sfn' ? config?.sfn : config?.stn;
+  const keyed = (regions ?? {}) as unknown as Record<
+    string,
+    ModeRegionConfigModel | undefined
+  >;
 
   if (countryCode != null && countryCode !== '') {
-    const key = countryCode.toLowerCase();
+    const key = asString(countryCode).toLowerCase();
     if (key !== 'default') {
-      const keyed = regions as unknown as Record<
-        string,
-        ModeRegionConfigModel | undefined
-      >;
       const region = keyed[key];
       if (region != null) {
         return region;
@@ -162,5 +154,5 @@ export function resolveModeRegionConfig(
     }
   }
 
-  return regions.default;
+  return keyed['default'] ?? { ...DEFAULT_REGION };
 }

@@ -37,6 +37,20 @@ export {
   type ResourceQueryParams,
 } from './lib/http/resource-path';
 export {
+  asArray,
+  asBoolean,
+  asNullableBoolean,
+  asNullableFlag01,
+  asNullableNumber,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapArray,
+  mapList,
+  toFlag01,
+} from './lib/http/wire';
+export {
   AIES_HTTP_TOAST,
   type AiesHttpToastHandler,
   TOAST_HTTP_OPTIONS,

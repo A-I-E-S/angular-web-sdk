@@ -1,26 +1,16 @@
 import type { ZoneModel } from '@aies/aies-models';
 
+import {
+  asBoolean,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapList,
+} from '../http/wire';
+
 /** Zone read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const ZONE_READ_PATH = '/zone/read/records';
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
-}
 
 /**
  * Map a wire zone into {@link ZoneModel} (snake_case preserved).
@@ -30,18 +20,12 @@ export function mapZone(raw: unknown): ZoneModel {
   const record = asRecord(raw) ?? {};
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    type: String(record['type'] ?? ''),
-    active: Boolean(record['active']),
-    deleted_at: asNullableString(
-      record['deleted_at'] ?? record['deletedAt'],
-    ),
-    created_at: asNullableString(
-      record['created_at'] ?? record['createdAt'],
-    ),
-    updated_at: asNullableString(
-      record['updated_at'] ?? record['updatedAt'],
-    ),
+    name: asString(record['name']),
+    type: asString(record['type']),
+    active: asBoolean(record['active']),
+    deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
+    created_at: asNullableString(record['created_at'] ?? record['createdAt']),
+    updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
   };
 }
 
@@ -50,11 +34,5 @@ export function mapZone(raw: unknown): ZoneModel {
  * @param raw
  */
 export function mapZoneList(raw: unknown): ZoneModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapZone(entry));
-  }
-  return [mapZone(raw)];
+  return mapList(raw, mapZone);
 }

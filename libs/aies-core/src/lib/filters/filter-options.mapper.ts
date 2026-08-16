@@ -5,6 +5,8 @@ import type {
 } from '@aies/aies-models';
 import type { ShipmentMethodModel, WarehouseModel } from '@aies/aies-models';
 
+import { asArray } from '../http/wire';
+
 /** One select row for filter drawer `optionLists` (wire value + label). */
 export interface FilterSelectOption {
   value: string;
@@ -27,9 +29,9 @@ export type ResolvableSelectField = Omit<FilterFieldModel, 'optionsSource' | 'ty
  * @returns Fields that need async option resolution.
  */
 export function collectResolvableSelectFields(
-  config: ModuleFilterConfigModel,
+  config: ModuleFilterConfigModel | null | undefined,
 ): ResolvableSelectField[] {
-  return config.fields.filter(
+  return asArray<FilterFieldModel>(config?.fields).filter(
     (field): field is ResolvableSelectField =>
       field.type === 'select' &&
       field.optionsSource != null &&

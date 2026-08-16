@@ -1,3 +1,5 @@
+import { asString } from '../http/wire';
+
 /**
  * Enable forgot-password submit when the address looks like an email.
  *
@@ -7,6 +9,6 @@
  * @param value - Raw field value.
  * @returns Whether submit should be enabled.
  */
-export function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+export function isValidEmail(value: unknown): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(asString(value).trim());
 }

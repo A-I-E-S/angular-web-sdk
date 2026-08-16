@@ -3,6 +3,7 @@ import { inject, Injectable, type Signal, signal } from '@angular/core';
 import { AIES_ACCESS_TOKEN_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
 
 import { ApiClient } from '../http/api-client';
+import { asString } from '../http/wire';
 
 /**
  * Holds the bearer access token used by {@link authInterceptor}.
@@ -51,7 +52,7 @@ export class AuthTokenService {
    * @param accessToken - Bearer token string (whitespace-only is treated as clear).
    */
   set(accessToken: string): void {
-    const trimmed = accessToken.trim();
+    const trimmed = asString(accessToken).trim();
     if (trimmed === '') {
       this.clear();
       return;

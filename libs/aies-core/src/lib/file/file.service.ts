@@ -9,6 +9,7 @@ import type {
 } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
+import { asString } from '../http/wire';
 import { FILE_READ_PATH, mapFileRead } from './file.mapper';
 
 /**
@@ -38,7 +39,7 @@ export class FileService {
    * @returns Normalized envelope with mapped {@link FileReadModel}.
    */
   read(ref: string): Observable<ApiResponseModel<FileReadModel>> {
-    return this.readByBody({ ref });
+    return this.readByBody({ ref: asString(ref) });
   }
 
   /**
@@ -51,7 +52,9 @@ export class FileService {
     body: FileReadRequestModel,
   ): Observable<ApiResponseModel<FileReadModel>> {
     return this.api
-      .post<unknown, FileReadRequestModel>(FILE_READ_PATH, body)
+      .post<unknown, FileReadRequestModel>(FILE_READ_PATH, {
+        ref: asString(body?.ref),
+      })
       .pipe(
         map((res) => ({
           ...res,

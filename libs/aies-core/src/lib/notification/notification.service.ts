@@ -16,6 +16,7 @@ import {
   mapResourcePayload,
   type ResourceQueryParams,
 } from '../http/resource-path';
+import { asString } from '../http/wire';
 import {
   mapNotification,
   mapNotificationList,
@@ -112,7 +113,7 @@ export class NotificationService {
    * @param id
    */
   readOne(id: string): Observable<ApiResponseModel<NotificationModel>> {
-    const trimmed = id.trim();
+    const trimmed = asString(id).trim();
     return this.api
       .get<unknown>(`${NOTIFICATION_READ_PATH}/${encodeURIComponent(trimmed)}`)
       .pipe(
@@ -134,7 +135,7 @@ export class NotificationService {
    * @param id - When set, marks that notification read; omit to mark all read.
    */
   markRead(id?: string): Observable<ApiResponseModel<unknown>> {
-    const body = id ? { id } : {};
+    const body = id ? { id: asString(id) } : {};
     return this.api.put<unknown, { id?: string }>(NOTIFICATION_UPDATE_PATH, body);
   }
 }

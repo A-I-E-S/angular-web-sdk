@@ -8,6 +8,17 @@ import type {
   CurrencyUpdateRequestModel,
 } from '@aies/aies-models';
 
+import {
+  asBoolean,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapArray,
+  mapList,
+  toFlag01,
+} from '../http/wire';
+
 /** Currency read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const CURRENCY_READ_PATH = '/currency/read';
 
@@ -20,48 +31,15 @@ export const CURRENCY_UPDATE_PATH = '/currency/update';
 /** Delete path — JSON body `{ id }`. */
 export const CURRENCY_DELETE_PATH = '/currency/delete';
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asFlag01(value: unknown): boolean {
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  if (typeof value === 'number') {
-    return value === 1;
-  }
-  const trimmed = String(value ?? '').trim().toLowerCase();
-  return trimmed === '1' || trimmed === 'true';
-}
-
 /**
  * Serialize a boolean / `"1"` / `"0"` flag for currency create/update.
  * @param value - Host boolean or wire flag.
  * @returns `"1"` or `"0"`.
  */
 export function toCurrencyFlag01(
-  value: boolean | CurrencyFlag01 | number,
+  value: boolean | CurrencyFlag01 | number | null | undefined,
 ): CurrencyFlag01 {
-  if (value === true || value === 1 || value === '1') {
-    return '1';
-  }
-  return '0';
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
+  return toFlag01(value);
 }
 
 /**
@@ -92,9 +70,9 @@ export function mapCurrencyPaymentMethod(
   const record = asRecord(raw) ?? {};
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    model: String(record['model'] ?? ''),
-    active: asFlag01(record['active']),
+    name: asString(record['name']),
+    model: asString(record['model']),
+    active: asBoolean(record['active']),
     deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
     created_at: asNullableString(record['created_at'] ?? record['createdAt']),
     updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
@@ -109,12 +87,11 @@ export function mapCurrencyPaymentMethod(
  */
 export function mapCurrency(raw: unknown): CurrencyModel {
   const record = asRecord(raw) ?? {};
-  const methodsRaw =
-    record['payment_methods'] ?? record['paymentMethods'];
-  const payment_methods = Array.isArray(methodsRaw)
-    ? methodsRaw.map((entry) => mapCurrencyPaymentMethod(entry))
-    : [];
-  const nairaGreater = asFlag01(
+  const payment_methods = mapArray(
+    record['payment_methods'] ?? record['paymentMethods'],
+    mapCurrencyPaymentMethod,
+  );
+  const nairaGreater = asBoolean(
     record['is_naira_greater'] ??
       record['isNairaGreater'] ??
       record['is_local_currency_greater'] ??
@@ -123,17 +100,15 @@ export function mapCurrency(raw: unknown): CurrencyModel {
 
   return {
     id: asNumber(record['id']),
-    name: String(record['name'] ?? ''),
-    short_code: String(record['short_code'] ?? record['shortCode'] ?? ''),
-    division_rate: String(
-      record['division_rate'] ?? record['divisionRate'] ?? '',
-    ),
-    multiplication_rate: String(
-      record['multiplication_rate'] ?? record['multiplicationRate'] ?? '',
+    name: asString(record['name']),
+    short_code: asString(record['short_code'] ?? record['shortCode']),
+    division_rate: asString(record['division_rate'] ?? record['divisionRate']),
+    multiplication_rate: asString(
+      record['multiplication_rate'] ?? record['multiplicationRate'],
     ),
     is_local_currency_greater: nairaGreater,
     is_naira_greater: nairaGreater,
-    active: asFlag01(record['active']),
+    active: asBoolean(record['active']),
     deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
     created_at: asNullableString(record['created_at'] ?? record['createdAt']),
     updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
@@ -148,20 +123,11 @@ export function mapCurrency(raw: unknown): CurrencyModel {
  * @returns Mapped currency list (empty when `raw` is null/undefined).
  */
 export function mapCurrencyList(raw: unknown): CurrencyModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapCurrency(entry));
-  }
-  return [mapCurrency(raw)];
+  return mapList(raw, mapCurrency);
 }
 
 function paymentMethodIds(raw: unknown): number[] {
-  if (!Array.isArray(raw)) {
-    return [];
-  }
-  return raw.map((entry) => asNumber(entry));
+  return mapArray(raw, (entry) => asNumber(entry));
 }
 
 /**
@@ -170,7 +136,7 @@ function paymentMethodIds(raw: unknown): number[] {
  * @returns JSON body with `"1"` / `"0"` flags.
  */
 export function toCurrencyCreateBody(
-  body: CurrencyCreateRequestModel,
+  body: CurrencyCreateRequestModel | null | undefined,
 ): {
   name: string;
   short_code: string;
@@ -181,13 +147,13 @@ export function toCurrencyCreateBody(
   payment_method_ids: number[];
 } {
   return {
-    name: body.name.trim(),
-    short_code: body.short_code.trim(),
-    multiplication_rate: String(body.multiplication_rate ?? ''),
-    division_rate: String(body.division_rate ?? ''),
-    active: toCurrencyFlag01(body.active),
-    is_naira_greater: toCurrencyFlag01(body.is_naira_greater),
-    payment_method_ids: paymentMethodIds(body.payment_method_ids),
+    name: asString(body?.name).trim(),
+    short_code: asString(body?.short_code).trim(),
+    multiplication_rate: asString(body?.multiplication_rate),
+    division_rate: asString(body?.division_rate),
+    active: toCurrencyFlag01(body?.active),
+    is_naira_greater: toCurrencyFlag01(body?.is_naira_greater),
+    payment_method_ids: paymentMethodIds(body?.payment_method_ids),
   };
 }
 
@@ -197,7 +163,7 @@ export function toCurrencyCreateBody(
  * @returns JSON body with `"1"` / `"0"` flags.
  */
 export function toCurrencyUpdateBody(
-  body: CurrencyUpdateRequestModel,
+  body: CurrencyUpdateRequestModel | null | undefined,
 ): {
   id: number;
   multiplication_rate: string;
@@ -207,12 +173,12 @@ export function toCurrencyUpdateBody(
   payment_method_ids: number[];
 } {
   return {
-    id: asNumber(body.id),
-    multiplication_rate: String(body.multiplication_rate ?? ''),
-    division_rate: String(body.division_rate ?? ''),
-    active: toCurrencyFlag01(body.active),
-    is_naira_greater: toCurrencyFlag01(body.is_naira_greater),
-    payment_method_ids: paymentMethodIds(body.payment_method_ids),
+    id: asNumber(body?.id),
+    multiplication_rate: asString(body?.multiplication_rate),
+    division_rate: asString(body?.division_rate),
+    active: toCurrencyFlag01(body?.active),
+    is_naira_greater: toCurrencyFlag01(body?.is_naira_greater),
+    payment_method_ids: paymentMethodIds(body?.payment_method_ids),
   };
 }
 
@@ -222,10 +188,10 @@ export function toCurrencyUpdateBody(
  * @returns `{ id }`.
  */
 export function toCurrencyDeleteBody(
-  body: CurrencyDeleteRequestModel | number,
+  body: CurrencyDeleteRequestModel | number | null | undefined,
 ): { id: number } {
   if (typeof body === 'number') {
     return { id: asNumber(body) };
   }
-  return { id: asNumber(body.id) };
+  return { id: asNumber(body?.id) };
 }

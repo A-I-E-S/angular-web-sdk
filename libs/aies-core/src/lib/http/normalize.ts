@@ -4,16 +4,7 @@ import type {
   PaginationMetaModel,
 } from '@aies/aies-models';
 
-/**
- * Narrow unknown JSON into a record for defensive key reads.
- * @param value
- */
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
+import { asArray, asNullableString, asNumber, asRecord, asString } from './wire';
 
 /**
  * Whether the payload looks like an AIES API envelope.
@@ -79,10 +70,10 @@ export function normalizePagination(value: unknown): PaginationMetaModel | null 
   }
 
   return {
-    current_page: Number(current_page ?? 0),
-    per_page: Number(per_page ?? 0),
-    total_items: Number(total_items ?? 0),
-    total_pages: Number(total_pages ?? 0),
+    current_page: asNumber(current_page),
+    per_page: asNumber(per_page),
+    total_items: asNumber(total_items),
+    total_pages: asNumber(total_pages),
     has_next_page: Boolean(has_next_page),
     has_previous_page: Boolean(has_previous_page),
   };
@@ -121,9 +112,9 @@ export function unwrapLaravelPaginator<T>(raw: unknown): {
 function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
   const record = asRecord(value) ?? {};
   return {
-    field: (record['field'] as string | null | undefined) ?? null,
-    message: String(record['message'] ?? ''),
-    code: (record['code'] as string | null | undefined) ?? null,
+    field: asString(record['field']) || null,
+    message: asString(record['message']),
+    code: asString(record['code']) || null,
   };
 }
 
@@ -155,16 +146,16 @@ export function normalize<T>(raw: unknown): ApiResponseModel<T> {
 
       return {
         success: typeof success === 'boolean' ? success : Boolean(success),
-        message: (record['message'] as string | null | undefined) ?? null,
+        message: asNullableString(record['message']),
         data,
         errors: Array.isArray(record['errors'])
-          ? record['errors'].map(normalizeErrorDetail)
+          ? asArray(record['errors']).map(normalizeErrorDetail)
           : null,
         pagination,
         status_code:
           status_code === null || status_code === undefined
             ? null
-            : Number(status_code),
+            : asNumber(status_code),
       };
     }
   }

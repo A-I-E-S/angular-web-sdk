@@ -1,5 +1,13 @@
 import type { CountryModel, CountryStateModel } from '@aies/aies-models';
 
+import {
+  asNumber,
+  asRecord,
+  asString,
+  mapArray,
+  mapList,
+} from '../http/wire';
+
 /** Public country-read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const COUNTRY_READ_PATH = '/public/country/read';
 
@@ -9,10 +17,10 @@ export const COUNTRY_READ_PATH = '/public/country/read';
  * @returns Normalized {@link CountryStateModel}.
  */
 export function mapCountryState(raw: unknown): CountryStateModel {
-  const record = (raw ?? {}) as Record<string, unknown>;
+  const record = asRecord(raw) ?? {};
   return {
-    name: String(record['name'] ?? ''),
-    state_code: String(record['state_code'] ?? record['stateCode'] ?? ''),
+    name: asString(record['name']),
+    state_code: asString(record['state_code'] ?? record['stateCode']),
   };
 }
 
@@ -22,22 +30,14 @@ export function mapCountryState(raw: unknown): CountryStateModel {
  * @returns Normalized {@link CountryModel}.
  */
 export function mapCountry(raw: unknown): CountryModel {
-  const record =
-    raw !== null && typeof raw === 'object' && !Array.isArray(raw)
-      ? (raw as Record<string, unknown>)
-      : {};
-  const statesRaw = record['states'];
-  const states = Array.isArray(statesRaw)
-    ? statesRaw.map((entry) => mapCountryState(entry))
-    : [];
+  const record = asRecord(raw) ?? {};
 
-  const id = Number(record['id'] ?? 0);
   return {
-    id: Number.isFinite(id) ? id : 0,
-    name: String(record['name'] ?? ''),
-    iso3: String(record['iso3'] ?? ''),
-    iso2: String(record['iso2'] ?? ''),
-    states,
+    id: asNumber(record['id']),
+    name: asString(record['name']),
+    iso3: asString(record['iso3']),
+    iso2: asString(record['iso2']),
+    states: mapArray(record['states'], mapCountryState),
   };
 }
 
@@ -48,11 +48,5 @@ export function mapCountry(raw: unknown): CountryModel {
  * @returns Mapped country list (empty when `raw` is null/undefined).
  */
 export function mapCountryList(raw: unknown): CountryModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapCountry(entry));
-  }
-  return [mapCountry(raw)];
+  return mapList(raw, mapCountry);
 }

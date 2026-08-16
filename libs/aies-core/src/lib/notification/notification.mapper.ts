@@ -4,52 +4,20 @@ import type {
   NotificationPayloadModel,
 } from '@aies/aies-models';
 
+import {
+  asNullableBoolean,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapList,
+} from '../http/wire';
+
 /** User notifications read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const NOTIFICATION_READ_PATH = '/user/notifications/read';
 
 /** Mark read endpoint (single `{ id }` or `{}` for all). */
 export const NOTIFICATION_UPDATE_PATH = '/user/notifications/update';
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
-}
-
-function asNullableBoolean(value: unknown): boolean | null {
-  if (value == null) {
-    return null;
-  }
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  if (typeof value === 'number') {
-    return value === 1;
-  }
-  if (typeof value === 'string') {
-    const trimmed = value.trim().toLowerCase();
-    if (trimmed === '1' || trimmed === 'true') {
-      return true;
-    }
-    if (trimmed === '0' || trimmed === 'false') {
-      return false;
-    }
-  }
-  return null;
-}
 
 /**
  * Parse the Laravel `data` column (JSON string or object) into
@@ -68,12 +36,10 @@ export function mapNotificationPayload(raw: unknown): NotificationPayloadModel {
   }
 
   const payload = record ?? {};
+  const userId = payload['user_id'] ?? payload['userId'];
   return {
-    user_id:
-      payload['user_id'] == null && payload['userId'] == null
-        ? null
-        : asNumber(payload['user_id'] ?? payload['userId']),
-    title: String(payload['title'] ?? ''),
+    user_id: userId == null ? null : asNumber(userId),
+    title: asString(payload['title']),
     body: asNullableString(payload['body']),
     link: asNullableString(payload['link']),
     image: asNullableString(payload['image']),
@@ -91,10 +57,10 @@ export function mapNotification(raw: unknown): NotificationModel {
   const record = asRecord(raw) ?? {};
 
   return {
-    id: String(record['id'] ?? ''),
-    type: String(record['type'] ?? ''),
-    notifiable_type: String(
-      record['notifiable_type'] ?? record['notifiableType'] ?? '',
+    id: asString(record['id']),
+    type: asString(record['type']),
+    notifiable_type: asString(
+      record['notifiable_type'] ?? record['notifiableType'],
     ),
     notifiable_id: asNumber(record['notifiable_id'] ?? record['notifiableId']),
     data: mapNotificationPayload(record['data']),
@@ -109,12 +75,7 @@ export function mapNotification(raw: unknown): NotificationModel {
  * @param raw
  */
 export function mapNotificationList(raw: unknown): NotificationModel[] {
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapNotification(entry));
-  }
-
-  const one = mapNotification(raw);
-  return one.id ? [one] : [];
+  return mapList(raw, mapNotification).filter((row) => row.id !== '');
 }
 
 /**
@@ -122,16 +83,17 @@ export function mapNotificationList(raw: unknown): NotificationModel[] {
  * @param notification
  */
 export function mapNotificationInboxItem(
-  notification: NotificationModel,
+  notification: NotificationModel | null | undefined,
 ): NotificationInboxItemModel {
-  const { data, read_at, created_at } = notification;
+  const row = notification ?? mapNotification(null);
+  const data = row.data ?? mapNotificationPayload(null);
 
   return {
-    id: notification.id,
-    title: data.title,
+    id: asString(row.id),
+    title: asString(data.title),
     body: data.body ?? undefined,
-    timestamp: created_at ?? undefined,
-    read: read_at != null && read_at !== '',
+    timestamp: row.created_at ?? undefined,
+    read: row.read_at != null && row.read_at !== '',
     link: data.link ?? undefined,
     external_link: data.external_link ?? undefined,
     image: data.image,

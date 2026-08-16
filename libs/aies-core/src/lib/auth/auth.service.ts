@@ -8,6 +8,7 @@ import type {
 } from '@aies/aies-models';
 
 import { ApiClient } from '../http/api-client';
+import { asString } from '../http/wire';
 import { AUTH_FORGOT_PASSWORD_PATH } from './auth.paths';
 
 /**
@@ -54,7 +55,7 @@ export class AuthService {
   forgot(email: string): Observable<ApiResponseModel<unknown[]>> {
     return this.api.post<unknown[], ForgotPasswordRequestModel>(
       AUTH_FORGOT_PASSWORD_PATH,
-      { email: email.trim() },
+      { email: asString(email).trim() },
     );
   }
 }

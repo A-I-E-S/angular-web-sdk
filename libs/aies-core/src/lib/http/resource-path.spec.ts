@@ -40,6 +40,9 @@ describe('resource-path helpers', () => {
 
     expect(buildResourceQueryParams(null)).toEqual({ size: 15 });
     expect(buildResourceQueryParams('all', {})).toBeUndefined();
+    expect(
+      buildResourceQueryParams('all', { search: '', include: 'states' }),
+    ).toEqual({ include: 'states' });
   });
 
   it('resourceCacheTtlMs skips paginated lists', () => {
@@ -67,6 +70,7 @@ describe('resource-path helpers', () => {
       id: 3,
     });
     expect(mapResourcePayload(3, [], mapOne, mapMany)).toBeNull();
-    expect(mapResourcePayload(null, null, mapOne, mapMany)).toBeNull();
+    expect(mapResourcePayload(null, null, mapOne, mapMany)).toEqual([]);
+    expect(mapResourcePayload('all', undefined, mapOne, mapMany)).toEqual([]);
   });
 });

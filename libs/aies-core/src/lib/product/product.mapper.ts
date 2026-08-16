@@ -1,52 +1,25 @@
 import type { ProductModel } from '@aies/aies-models';
 
 import { mapApiJsonList } from '../http/map-api-json';
+import {
+  asBoolean,
+  asNullableNumber,
+  asNullableString,
+  asNumber,
+  asRecord,
+  asString,
+  mapArray,
+  mapList,
+} from '../http/wire';
 
 /** Product read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const PRODUCT_READ_PATH = '/product/read';
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-    return value as Record<string, unknown>;
-  }
-  return null;
-}
-
-function asNumber(value: unknown): number {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function asNullableNumber(value: unknown): number | null {
-  if (value == null || value === '') {
-    return null;
-  }
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
-}
-
-function asNullableString(value: unknown): string | null {
-  if (value == null) {
-    return null;
-  }
-  return String(value);
-}
-
 function asNullableNumberArray(value: unknown): number[] | null {
-  if (value == null) {
+  if (value == null || !Array.isArray(value)) {
     return null;
   }
-  if (!Array.isArray(value)) {
-    return null;
-  }
-  return value.map((entry) => asNumber(entry));
-}
-
-function asStringArray(value: unknown): string[] {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-  return value.map((entry) => String(entry ?? ''));
+  return mapArray(value, (entry) => asNumber(entry));
 }
 
 /**
@@ -59,41 +32,33 @@ export function mapProduct(raw: unknown): ProductModel {
 
   return {
     id: asNumber(record['id']),
-    account_id: asNullableNumber(
-      record['account_id'] ?? record['accountId'],
-    ),
+    account_id: asNullableNumber(record['account_id'] ?? record['accountId']),
     product_category_id: asNullableNumber(
       record['product_category_id'] ?? record['productCategoryId'],
     ),
-    hs_code: String(record['hs_code'] ?? record['hsCode'] ?? ''),
-    hs_code_10: asNullableString(
-      record['hs_code_10'] ?? record['hsCode10'],
-    ),
+    hs_code: asString(record['hs_code'] ?? record['hsCode']),
+    hs_code_10: asNullableString(record['hs_code_10'] ?? record['hsCode10']),
     hs_code_8: asNullableString(record['hs_code_8'] ?? record['hsCode8']),
     hs_code_6: asNullableString(record['hs_code_6'] ?? record['hsCode6']),
-    name: String(record['name'] ?? ''),
+    name: asString(record['name']),
     value: asNumber(record['value']),
     usage: asNumber(record['usage']),
     document_ids: asNullableNumberArray(
       record['document_ids'] ?? record['documentIds'],
     ),
     etw_ids: asNullableNumberArray(record['etw_ids'] ?? record['etwIds']),
-    active: Boolean(record['active']),
-    is_external: Boolean(record['is_external'] ?? record['isExternal']),
-    deleted_at: asNullableString(
-      record['deleted_at'] ?? record['deletedAt'],
-    ),
-    created_at: asNullableString(
-      record['created_at'] ?? record['createdAt'],
-    ),
-    updated_at: asNullableString(
-      record['updated_at'] ?? record['updatedAt'],
-    ),
-    document_details: asStringArray(
+    active: asBoolean(record['active']),
+    is_external: asBoolean(record['is_external'] ?? record['isExternal']),
+    deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
+    created_at: asNullableString(record['created_at'] ?? record['createdAt']),
+    updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
+    document_details: mapArray(
       record['document_details'] ?? record['documentDetails'],
+      (entry) => asString(entry),
     ),
-    etw_document_details: asStringArray(
+    etw_document_details: mapArray(
       record['etw_document_details'] ?? record['etwDocumentDetails'],
+      (entry) => asString(entry),
     ),
     zone_product_required_documents: mapApiJsonList(
       record['zone_product_required_documents'] ??
@@ -108,11 +73,5 @@ export function mapProduct(raw: unknown): ProductModel {
  * @returns Mapped product list.
  */
 export function mapProductList(raw: unknown): ProductModel[] {
-  if (raw == null) {
-    return [];
-  }
-  if (Array.isArray(raw)) {
-    return raw.map((entry) => mapProduct(entry));
-  }
-  return [mapProduct(raw)];
+  return mapList(raw, mapProduct);
 }
