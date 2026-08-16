@@ -352,7 +352,8 @@ export class NavigationPage {
     this.confirm
       .confirm({
         title: 'Log out?',
-        message: 'You will need to sign in again to continue.',
+        message:
+          'This ends your current session. Sign in again when you want to come back.',
         confirmLabel: 'Log out',
         danger: true,
       })

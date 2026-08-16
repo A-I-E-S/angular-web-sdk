@@ -17,7 +17,7 @@ import {
   throwError,
 } from 'rxjs';
 
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AiesIconComponent, type IconName } from '@aies/aies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 import { AiesOverlayRef } from './aies-overlay-ref';
@@ -45,21 +45,17 @@ import { OVERLAY_DATA } from './overlay-data.token';
   },
   template: `
     <div
-      class="flex flex-col gap-4"
+      class="flex flex-col gap-5"
       role="alertdialog"
       [attr.aria-labelledby]="titleId"
       [attr.aria-describedby]="messageId"
       [attr.aria-busy]="loading() ? true : null"
     >
-      <div class="flex items-start gap-3">
-        @if (options.danger) {
-          <aies-icon
-            name="warning"
-            [size]="24"
-            class="mt-0.5 shrink-0 text-danger"
-          />
-        }
-        <div class="flex min-w-0 flex-1 flex-col gap-2">
+      <div class="flex flex-col gap-3">
+        <div [class]="iconWellClass()" aria-hidden="true">
+          <aies-icon [name]="iconName()" [size]="32" />
+        </div>
+        <div class="flex min-w-0 flex-col gap-1.5">
           <h2
             [id]="titleId"
             class="m-0 text-heading-3 font-semibold text-ink dark:text-white"
@@ -125,6 +121,23 @@ export class ConfirmDialogComponent {
   protected readonly cancelLabel = computed(
     () => this.options.cancelLabel ?? 'Cancel',
   );
+
+  /** Warning for destructive confirms; question mark otherwise. */
+  protected readonly iconName = computed(
+    (): IconName => (this.options.danger ? 'warning' : 'question'),
+  );
+
+  /**
+   * Tinted well so the icon reads as a status, not a thin glyph beside the
+   * heading. Danger uses the red subtle token; default uses export green.
+   */
+  protected readonly iconWellClass = computed(() => {
+    const well =
+      'inline-flex size-14 shrink-0 items-center justify-center rounded-2xl';
+    return this.options.danger
+      ? `${well} bg-danger-subtle text-danger dark:bg-danger/20 dark:text-danger`
+      : `${well} bg-export-subtle text-export dark:bg-export/20 dark:text-export-light`;
+  });
 
   constructor() {
     this.destroyRef.onDestroy(() => this.workSub?.unsubscribe());
