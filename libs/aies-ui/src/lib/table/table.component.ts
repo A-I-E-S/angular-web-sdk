@@ -256,7 +256,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 }
                 @for (col of columns(); track col.key) {
                   <td
-                    [class]="bodyCellClass(col)"
+                    [class]="bodyCellClass(col, i)"
                     [style.width]="col.width ?? null"
                   >
                     @if (templateFor(col.key); as tpl) {
@@ -502,7 +502,7 @@ export class TableComponent<T = unknown> {
     const hover =
       'hover:bg-background-welcome/60 dark:hover:bg-white/5';
     if (this.isExpandable() && this.isRowExpanded(row, index)) {
-      return `group [&>td]:border-y-0 [&>td]:shadow-none ${hover}`;
+      return `group [&>td]:border-y-0 ${hover}`;
     }
     const last = 'last:[&>td]:border-b-0';
     return `group ${last} ${hover}`;
@@ -539,13 +539,21 @@ export class TableComponent<T = unknown> {
 
   /**
    * Body cell classes, including sticky pin when set.
+   * Sticky cells omit `border-b`: their opaque fill sits in a higher stacking
+   * context, so a bottom border plus the next row's top shadow paint on the
+   * same pixel and read brighter (especially in dark mode).
    * @param col - Column definition.
+   * @param index - Index within {@link rows}.
    * @returns Body cell class list.
    */
-  protected bodyCellClass(col: TableColumn<T>): string {
+  protected bodyCellClass(col: TableColumn<T>, index: number): string {
+    const rowLine = this.stickyEdge(col)
+      ? ''
+      : 'border-b border-border dark:border-white/10 ';
     return (
-      'border-b border-border px-3 py-3.5 align-middle whitespace-nowrap dark:border-white/10 ' +
-      this.stickySurfaceClass(col, 'body')
+      rowLine +
+      'px-3 py-3.5 align-middle whitespace-nowrap ' +
+      this.stickySurfaceClass(col, 'body', index)
     );
   }
 
@@ -555,11 +563,13 @@ export class TableComponent<T = unknown> {
    * grid fill (`bg-white` / `dark:bg-ink`).
    * @param col - Column definition.
    * @param surface - Header vs body fill tokens.
+   * @param index - Body row index; unused for the header.
    * @returns Sticky utilities, or empty when the column scrolls.
    */
   protected stickySurfaceClass(
     col: TableColumn<T>,
     surface: 'head' | 'body',
+    index = 0,
   ): string {
     const edge = this.stickyEdge(col);
     if (!edge) {
@@ -570,13 +580,16 @@ export class TableComponent<T = unknown> {
     if (surface === 'head') {
       return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
     }
-    // Divider via box-shadow, not border-t: a top border adds 1px of height
-    // and drops the line below the rest of the row. The next sticky cell's
-    // fill covers border-b; an upward shadow paints on this cell and lines
-    // up with the other columns.
+    // Row divider via box-shadow, not border-t / border-b: a top border adds
+    // 1px of height and drops the line below the rest of the row. Skip the
+    // first body row — thead already paints that line.
+    const rowDivider =
+      index > 0
+        ? 'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
+        : '';
     return (
       `${side} bg-white dark:bg-ink group-hover:bg-background-welcome dark:group-hover:bg-ink ` +
-      'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
+      rowDivider
     );
   }
 
