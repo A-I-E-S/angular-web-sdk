@@ -32,7 +32,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *
  * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
- * spins and a thin bar runs across the grid (do not swap to a blocking loader).
+ * spins (do not swap to a blocking loader).
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
@@ -95,6 +95,16 @@ import { TableColumn, TableSortChange } from './table-column';
   host: {
     class: 'block w-full min-w-0',
   },
+  styles: `
+    /* Full-row hover: sticky action cells use an opaque fill that would
+       otherwise mask a <tr> background. Paint every cell the same way. */
+    :host tr.aies-table-row:hover > td {
+      background-color: #f9fafb;
+    }
+    :host-context(.dark) tr.aies-table-row:hover > td {
+      background-color: #272729;
+    }
+  `,
   template: `
     <div class="flex w-full min-w-0 flex-col gap-3" [attr.aria-busy]="refreshing() || null">
       @if (showRefresh() || showFilter() || showExport()) {
@@ -160,17 +170,18 @@ import { TableColumn, TableSortChange } from './table-column';
       <div
         class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
       >
-        @if (refreshing()) {
+        @if (refreshing() && !showRefresh()) {
           <div
-            class="pointer-events-none absolute inset-x-0 top-0 z-10 h-0.5 overflow-hidden"
+            class="pointer-events-none absolute top-2 right-2 z-10"
             role="status"
             aria-live="polite"
             aria-label="Refreshing"
           >
-            <div
-              class="h-full w-full animate-pulse"
-              [class]="modeColor.classes().bg"
-            ></div>
+            <aies-icon
+              name="refresh"
+              [size]="18"
+              [class]="'animate-spin ' + modeColor.classes().text"
+            />
           </div>
         }
         <table
@@ -377,9 +388,8 @@ export class TableComponent<T = unknown> {
   readonly refreshLabel = input('Refresh');
 
   /**
-   * Background refetch in flight. Rows stay visible; the refresh icon spins
-   * and a thin bar runs across the grid. Bind to `state().isFetching` when
-   * wrapped in {@link AsyncStateComponent}.
+   * Background refetch in flight. Rows stay visible; the refresh icon spins.
+   * Bind to `state().isFetching` when wrapped in {@link AsyncStateComponent}.
    */
   readonly refreshing = input(false, { transform: booleanAttribute });
 
@@ -493,19 +503,17 @@ export class TableComponent<T = unknown> {
   }
 
   /**
-   * Body row classes — hover fill plus hide cell borders on the last / expanded row.
+   * Body row classes — row marker for hover styles, plus hide cell borders on
+   * the last / expanded row.
    * @param row - Current row.
    * @param index - Index within {@link rows}.
    * @returns Tailwind class list.
    */
   protected bodyRowClass(row: T, index: number): string {
-    const hover =
-      'hover:bg-background-welcome/60 dark:hover:bg-white/5';
     if (this.isExpandable() && this.isRowExpanded(row, index)) {
-      return `group [&>td]:border-y-0 ${hover}`;
+      return 'aies-table-row group [&>td]:border-y-0';
     }
-    const last = 'last:[&>td]:border-b-0';
-    return `group ${last} ${hover}`;
+    return 'aies-table-row group last:[&>td]:border-b-0';
   }
 
   /**
@@ -587,10 +595,9 @@ export class TableComponent<T = unknown> {
       index > 0
         ? 'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
         : '';
-    return (
-      `${side} bg-white dark:bg-ink group-hover:bg-background-welcome dark:group-hover:bg-ink ` +
-      rowDivider
-    );
+    // Opaque resting fill so scrolled cells do not show through. Row hover
+    // is applied in component styles on `tr.aies-table-row:hover > td`.
+    return `${side} bg-white dark:bg-ink ${rowDivider}`;
   }
 
   /**

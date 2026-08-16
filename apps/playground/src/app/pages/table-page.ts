@@ -120,7 +120,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
 
       <app-demo-section
         title="Shipments list"
-        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh keeps the rows and shows a thin bar — use the scenario buttons for first-load and empty."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh keeps the rows and spins the refresh icon — use the scenario buttons for first-load and empty."
         badge="template cells"
         [code]="tableCode"
       >
