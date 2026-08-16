@@ -28,12 +28,19 @@ describe('wire coercions', () => {
     expect(mapArray([1, 2], (entry) => Number(entry) * 2)).toEqual([2, 4]);
   });
 
-  it('mapList accepts array, single object, or empty', () => {
+  it('mapList unwraps paginator wrappers and empty nested data', () => {
     const mapOne = (raw: unknown) => asNumber(asRecord(raw)?.['id']);
     expect(mapList(undefined, mapOne)).toEqual([]);
     expect(mapList(null, mapOne)).toEqual([]);
     expect(mapList([{ id: 3 }, { id: 4 }], mapOne)).toEqual([3, 4]);
     expect(mapList({ id: 9 }, mapOne)).toEqual([9]);
+    expect(
+      mapList({ current_page: 1, data: [{ id: 4 }], last_page: 1 }, mapOne),
+    ).toEqual([4]);
+    expect(
+      mapList({ current_page: 1, data: null, last_page: 1 }, mapOne),
+    ).toEqual([]);
+    expect(mapList({ items: [{ id: 8 }] }, mapOne)).toEqual([8]);
   });
 
   it('numbers and strings default instead of throwing', () => {

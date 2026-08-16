@@ -8,7 +8,8 @@ const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep 
 // Hydrate page/size/filters from FilterQueryService when the URL has those queries.
 // Pager + Apply write the same keys back. Refetch on sortChange / pageChange / sizeChange.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
-// Column width: omit for equal share; set width (e.g. '3.5rem') to pin actions.
+// Column width: omit to size to content; set width (e.g. '3.5rem') to pin actions.
+// The actions column sticks to the right while the table scrolls horizontally.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { ApiClient } from '@aies/aies-core';

@@ -72,7 +72,7 @@ describe('ButtonComponent', () => {
     fixture.detectChanges();
 
     expect(button.className).toContain('bg-danger');
-    expect(button.className).toContain('min-h-8');
+    expect(button.className).toContain('h-8');
   });
 
   it('should expose disabled and aria-disabled for a11y', () => {

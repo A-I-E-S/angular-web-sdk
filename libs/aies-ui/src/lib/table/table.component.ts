@@ -78,7 +78,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * </aies-table>
  * ```
  *
- * Sortable columns and template cells. Wrap in AsyncState for loading.
+ * **Sticky actions:** a column with `key: 'actions'` stays pinned to the
+ * right while the grid scrolls horizontally. Override with
+ * {@link TableColumn.sticky}.
  */
 @Component({
   selector: 'aies-table',
@@ -90,8 +92,11 @@ import { TableColumn, TableSortChange } from './table-column';
     AiesIconComponent,
     PaginationComponent,
   ],
+  host: {
+    class: 'block w-full min-w-0',
+  },
   template: `
-    <div class="flex w-full flex-col gap-3" [attr.aria-busy]="refreshing() || null">
+    <div class="flex w-full min-w-0 flex-col gap-3" [attr.aria-busy]="refreshing() || null">
       @if (showRefresh() || showFilter() || showExport()) {
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
@@ -153,7 +158,7 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="relative w-full overflow-x-auto rounded-md border border-border dark:border-white/10"
+        class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
       >
         @if (refreshing()) {
           <div
@@ -169,14 +174,14 @@ import { TableColumn, TableSortChange } from './table-column';
           </div>
         }
         <table
-          class="w-full table-fixed border-collapse text-left text-body text-ink dark:text-white"
+          class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
           <thead
             class="border-b border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
           >
             <tr>
               @if (isExpandable()) {
-                <th scope="col" class="w-10 px-2 py-3.5">
+                <th scope="col" class="w-10 border-b border-border px-2 py-3.5 dark:border-white/10">
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
@@ -191,7 +196,7 @@ import { TableColumn, TableSortChange } from './table-column';
                       type="button"
                       class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Expand all"
-                      [disabled]="rows().length === 0"
+                      [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
                     >
                       <aies-icon name="plus" [size]="16" />
@@ -202,7 +207,7 @@ import { TableColumn, TableSortChange } from './table-column';
               @for (col of columns(); track col.key) {
                 <th
                   scope="col"
-                  class="whitespace-nowrap px-3 py-3.5 font-medium text-neutral-600 dark:text-neutral-400"
+                  [class]="headerCellClass(col)"
                   [style.width]="col.width ?? null"
                 >
                   @if (col.sortable) {
@@ -227,13 +232,10 @@ import { TableColumn, TableSortChange } from './table-column';
             </tr>
           </thead>
           <tbody>
-            @for (row of rows(); track rowId(row, $index); let i = $index) {
-              <tr
-                class="border-b border-border last:border-b-0 hover:bg-background-welcome/60 dark:border-white/10 dark:hover:bg-white/5"
-                [class.border-b-0]="isExpandable() && isRowExpanded(row, i)"
-              >
+            @for (row of rowList(); track rowId(row, $index); let i = $index) {
+              <tr [class]="bodyRowClass(row, i)">
                 @if (isExpandable()) {
-                  <td class="w-10 px-2 py-3.5 align-middle">
+                  <td class="w-10 border-b border-border px-2 py-3.5 align-middle dark:border-white/10">
                     <button
                       type="button"
                       class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
@@ -254,7 +256,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 }
                 @for (col of columns(); track col.key) {
                   <td
-                    class="px-3 py-3.5 align-middle whitespace-normal break-words"
+                    [class]="bodyCellClass(col)"
                     [style.width]="col.width ?? null"
                   >
                     @if (templateFor(col.key); as tpl) {
@@ -353,8 +355,9 @@ export class TableComponent<T = unknown> {
   readonly columns = input.required<TableColumn<T>[]>();
 
   /**
-   * Row records to render. Empty arrays render an empty `<tbody>` — wrap with
-   * {@link AsyncStateComponent} when empty should show EmptyState instead.
+   * Row records to render. Empty or missing arrays render an empty `<tbody>` —
+   * wrap with {@link AsyncStateComponent} when empty should show EmptyState
+   * instead. Missing `data` during load is treated as `[]`.
    */
   readonly rows = input.required<T[]>();
 
@@ -445,12 +448,14 @@ export class TableComponent<T = unknown> {
 
   private readonly expandedRowIds = signal<ReadonlySet<string>>(new Set());
 
+  protected readonly rowList = computed(() => this.rows() ?? []);
+
   protected readonly isExpandable = computed(
     () => this.expandable() && this.rowDetailDefs().length > 0,
   );
 
   protected readonly visibleRowIds = computed(() =>
-    this.rows().map((row, index) => this.rowId(row, index)),
+    this.rowList().map((row, index) => this.rowId(row, index)),
   );
 
   protected readonly someRowsExpanded = computed(() => {
@@ -488,10 +493,99 @@ export class TableComponent<T = unknown> {
   }
 
   /**
+   * Body row classes — hover fill plus hide cell borders on the last / expanded row.
+   * @param row - Current row.
+   * @param index - Index within {@link rows}.
+   * @returns Tailwind class list.
+   */
+  protected bodyRowClass(row: T, index: number): string {
+    const hover =
+      'hover:bg-background-welcome/60 dark:hover:bg-white/5';
+    if (this.isExpandable() && this.isRowExpanded(row, index)) {
+      return `group [&>td]:border-y-0 [&>td]:shadow-none ${hover}`;
+    }
+    const last = 'last:[&>td]:border-b-0';
+    return `group ${last} ${hover}`;
+  }
+
+  /**
+   * Horizontal pin edge for a column. `key: 'actions'` sticks right unless
+   * {@link TableColumn.sticky} opts out.
+   *
+   * @param col - Column definition.
+   * @returns `'left'` / `'right'`, or `null` when the column scrolls with the grid.
+   */
+  protected stickyEdge(col: TableColumn<T>): 'left' | 'right' | null {
+    if (col.sticky === false) {
+      return null;
+    }
+    if (col.sticky === 'left' || col.sticky === 'right') {
+      return col.sticky;
+    }
+    return col.key === 'actions' ? 'right' : null;
+  }
+
+  /**
+   * Header cell classes, including sticky pin when set.
+   * @param col - Column definition.
+   * @returns Header class list.
+   */
+  protected headerCellClass(col: TableColumn<T>): string {
+    return (
+      'border-b border-border whitespace-nowrap px-3 py-3.5 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      this.stickySurfaceClass(col, 'head')
+    );
+  }
+
+  /**
+   * Body cell classes, including sticky pin when set.
+   * @param col - Column definition.
+   * @returns Body cell class list.
+   */
+  protected bodyCellClass(col: TableColumn<T>): string {
+    return (
+      'border-b border-border px-3 py-3.5 align-middle whitespace-nowrap dark:border-white/10 ' +
+      this.stickySurfaceClass(col, 'body')
+    );
+  }
+
+  /**
+   * Sticky pin plus an opaque fill matching the table surface, so scrolled
+   * cells do not show through. Header uses the thead fill; body uses the
+   * grid fill (`bg-white` / `dark:bg-ink`).
+   * @param col - Column definition.
+   * @param surface - Header vs body fill tokens.
+   * @returns Sticky utilities, or empty when the column scrolls.
+   */
+  protected stickySurfaceClass(
+    col: TableColumn<T>,
+    surface: 'head' | 'body',
+  ): string {
+    const edge = this.stickyEdge(col);
+    if (!edge) {
+      return '';
+    }
+    const side =
+      edge === 'right' ? 'sticky right-0 z-[1]' : 'sticky left-0 z-[1]';
+    if (surface === 'head') {
+      return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
+    }
+    // Divider via box-shadow, not border-t: a top border adds 1px of height
+    // and drops the line below the rest of the row. The next sticky cell's
+    // fill covers border-b; an upward shadow paints on this cell and lines
+    // up with the other columns.
+    return (
+      `${side} bg-white dark:bg-ink group-hover:bg-background-welcome dark:group-hover:bg-ink ` +
+      'shadow-[0_-1px_0_0_#f0f2f5] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
+    );
+  }
+
+  /**
    * Stable id for a row — used for expand/collapse state.
    *
    * @param row - Current row.
    * @param index - Index within {@link rows}.
+   * @returns String form of {@link rowTrackBy} for this row.
    */
   protected rowId(row: T, index: number): string {
     return String(this.rowTrackBy()(row, index));
@@ -499,8 +593,9 @@ export class TableComponent<T = unknown> {
 
   /**
    * Whether a row's detail panel is open.
-   * @param row
-   * @param index
+   * @param row - Current row.
+   * @param index - Index within {@link rows}.
+   * @returns True when this row's detail panel is expanded.
    */
   protected isRowExpanded(row: T, index: number): boolean {
     return this.expandedRowIds().has(this.rowId(row, index));

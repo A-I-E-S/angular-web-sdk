@@ -32,6 +32,14 @@ export interface SelectOption<T = string> {
 }
 
 /**
+ * Control height for {@link SelectComponent}.
+ *
+ * - `md` — default field height (`h-10`), matches md `aies-button`
+ * - `sm` — compact (`h-8`), matches sm `aies-button` (pagination size picker)
+ */
+export type SelectSize = 'sm' | 'md';
+
+/**
  * Config for creating a new entity via {@link ModalService} from the select.
  *
  * Free-text creatable (`allowFreeText`) is independent: use free-text for

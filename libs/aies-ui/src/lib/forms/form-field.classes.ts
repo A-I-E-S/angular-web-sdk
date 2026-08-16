@@ -10,9 +10,9 @@
 export const FORM_LABEL_CLASS =
   'block text-body-sm font-medium text-ink dark:text-white mb-1.5 empty:hidden';
 
-/** Default control shell (bordered wrapper or native input). */
+/** Default control shell — `h-10` matches md `aies-button`. */
 export const FORM_FIELD_CLASS =
-  'flex items-stretch w-full min-h-10 rounded-md border border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
+  'flex items-center w-full h-10 box-border rounded-md border border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
   'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
 
 /**
@@ -24,7 +24,7 @@ export const FORM_FIELD_ERROR_CLASS = '!border-danger dark:!border-danger';
 
 /** Native input / textarea inside a shell. */
 export const FORM_CONTROL_INNER_CLASS =
-  'flex-1 min-w-0 w-full bg-transparent border-0 outline-none text-body text-ink dark:text-white px-3 py-2 ' +
+  'flex-1 min-w-0 min-h-0 h-full w-full bg-transparent border-0 outline-none text-body text-ink dark:text-white px-3 py-0 ' +
   'placeholder:text-neutral-400 disabled:cursor-not-allowed';
 
 /** Prefix / suffix projection gutters. Hidden when nothing is projected. */

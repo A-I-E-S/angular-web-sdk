@@ -37,6 +37,13 @@ export {
   type ResourceQueryParams,
 } from './lib/http/resource-path';
 export {
+  AIES_HTTP_TOAST,
+  type AiesHttpToastHandler,
+  TOAST_HTTP_OPTIONS,
+  type ToastHttpOptions,
+  withToast,
+} from './lib/http/toast-http.context';
+export {
   asArray,
   asBoolean,
   asNullableBoolean,
@@ -50,13 +57,6 @@ export {
   mapList,
   toFlag01,
 } from './lib/http/wire';
-export {
-  AIES_HTTP_TOAST,
-  type AiesHttpToastHandler,
-  TOAST_HTTP_OPTIONS,
-  type ToastHttpOptions,
-  withToast,
-} from './lib/http/toast-http.context';
 
 // Query defaults (plain object — no @tanstack dependency)
 export {

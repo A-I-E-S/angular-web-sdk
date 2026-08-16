@@ -36,7 +36,7 @@ import {
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
-import type { SelectCreateConfig, SelectOption } from './select.types';
+import type { SelectCreateConfig, SelectOption, SelectSize } from './select.types';
 
 let nextSelectId = 0;
 
@@ -163,7 +163,11 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       >
         <ng-content select="[prefix]" />
       </span>
-      <div class="flex flex-1 flex-wrap items-center gap-1.5 min-w-0 px-2 py-1.5">
+      <div
+        class="flex h-full min-h-0 min-w-0 flex-1 flex-wrap items-center gap-1.5 py-0"
+        [class.px-3]="size() !== 'sm'"
+        [class.px-2]="size() === 'sm'"
+      >
         @if (multiple() && selectedList().length) {
           @for (chip of selectedList(); track trackOption(chip)) {
             <span
@@ -191,7 +195,9 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <button
           [id]="controlId"
           type="button"
-          class="flex flex-1 cursor-pointer items-center justify-between gap-2 min-w-[6rem] text-left text-body bg-transparent border-0 outline-none disabled:cursor-not-allowed"
+          class="flex flex-1 cursor-pointer items-center justify-between gap-2 min-w-[6rem] text-left bg-transparent border-0 outline-none disabled:cursor-not-allowed"
+          [class.text-body]="size() !== 'sm'"
+          [class.text-body-sm]="size() === 'sm'"
           [disabled]="triggerDisabled()"
           [attr.aria-expanded]="open()"
           [attr.aria-haspopup]="'listbox'"
@@ -523,6 +529,12 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
    */
   readonly showTriggerIcon = input(true, { transform: booleanAttribute });
 
+  /**
+   * Control height. Defaults to `md` (`h-10`). Use `sm` (`h-8`) next to
+   * sm `aies-button` (pagination size picker).
+   */
+  readonly size = input<SelectSize>('md');
+
   protected readonly open = signal(false);
   protected readonly searchQuery = signal('');
   protected readonly activeIndex = signal(0);
@@ -550,6 +562,12 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     let classes = FORM_FIELD_CLASS;
     if (this.error()) {
       classes += ` ${FORM_FIELD_ERROR_CLASS}`;
+    }
+    if (this.size() === 'sm') {
+      classes += ' !h-8';
+    }
+    if (this.multiple() && this.selectedList().length) {
+      classes += ' !h-auto min-h-10 items-stretch py-1.5';
     }
     if (this.disabled()) {
       classes += ` ${FORM_DISABLED_CLASS}`;

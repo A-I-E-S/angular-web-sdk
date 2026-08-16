@@ -25,13 +25,22 @@ export interface TableColumn<T = unknown> {
   sortable?: boolean;
 
   /**
-   * Optional CSS width (e.g. `'3.5rem'`, `'20%'`, `'14rem'`).
+   * Optional CSS width (e.g. `'3.5rem'`, `'14rem'`).
    *
-   * The table uses `table-layout: fixed`. Columns **without** `width` share
-   * the remaining space equally. Set this to pin a column (typical for
-   * `actions`).
+   * The table uses `table-layout: auto` and scrolls horizontally when columns
+   * exceed the container. `width` is a hint for that column; columns without
+   * it size to their content. Pin a narrow column (typical for `actions`)
+   * when you do not want it to grow with the rest.
    */
   width?: string;
+
+  /**
+   * Pin the column while the table scrolls horizontally.
+   *
+   * Omit to use the default: `key: 'actions'` sticks to the right. Set
+   * `false` to opt out, or `'left'` / `'right'` for any column.
+   */
+  sticky?: 'left' | 'right' | false;
 }
 
 /**

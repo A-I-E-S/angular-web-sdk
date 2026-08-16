@@ -38,9 +38,41 @@ export function mapArray<T>(
 }
 
 /**
+ * If a list payload is wrapped in a Laravel paginator / `{ data | items }`,
+ * return the inner array. Otherwise return `value` unchanged.
+ * @param value - Envelope `data` or a nested list field.
+ */
+function unwrapListPayload(value: unknown): unknown {
+  if (Array.isArray(value) || value == null) {
+    return value;
+  }
+  const record = asRecord(value);
+  if (record === null) {
+    return value;
+  }
+  const nested = record['data'] ?? record['items'] ?? record['results'];
+  if (Array.isArray(nested)) {
+    return nested;
+  }
+  if (
+    nested == null &&
+    ('current_page' in record ||
+      'currentPage' in record ||
+      'last_page' in record ||
+      'lastPage' in record ||
+      'per_page' in record ||
+      'perPage' in record)
+  ) {
+    return [];
+  }
+  return value;
+}
+
+/**
  * Map a list-or-single payload (Laravel sometimes sends one object).
  *
  * - `null` / `undefined` → `[]`
+ * - paginator / `{ data | items }` → mapped inner rows
  * - array → mapped items
  * - anything else → one mapped item
  *
@@ -51,13 +83,14 @@ export function mapList<T>(
   value: unknown,
   mapOne: (entry: unknown) => T,
 ): T[] {
-  if (value == null) {
+  const list = unwrapListPayload(value);
+  if (list == null) {
     return [];
   }
-  if (Array.isArray(value)) {
-    return value.map(mapOne);
+  if (Array.isArray(list)) {
+    return list.map(mapOne);
   }
-  return [mapOne(value)];
+  return [mapOne(list)];
 }
 
 /**

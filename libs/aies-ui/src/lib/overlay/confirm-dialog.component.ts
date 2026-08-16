@@ -10,8 +10,8 @@ import {
 import {
   defer,
   from,
-  of,
   type Observable,
+  of,
   type Subscription,
   take,
   throwError,

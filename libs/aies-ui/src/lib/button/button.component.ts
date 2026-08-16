@@ -136,14 +136,14 @@ export class ButtonComponent {
    */
   protected readonly hostClass = computed(() => {
     const base =
-      'relative inline-flex items-center justify-center gap-2 font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
+      'relative inline-flex items-center justify-center gap-2 box-border font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
       'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 
     const sizes: Record<ButtonSize, string> = {
-      sm: 'text-body-sm px-2.5 py-1.5 min-h-8',
-      md: 'text-body px-3.5 py-2 min-h-10',
-      lg: 'text-body-lg px-4 py-2.5 min-h-12',
+      sm: 'text-body-sm px-2.5 py-0 h-8',
+      md: 'text-body px-3.5 py-0 h-10',
+      lg: 'text-body-lg px-4 py-0 h-12',
     };
 
     const variant = this.variant();

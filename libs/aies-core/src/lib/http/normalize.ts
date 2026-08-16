@@ -26,7 +26,7 @@ export function isLaravelPaginator(value: unknown): boolean {
   }
 
   return (
-    Array.isArray(record['data']) &&
+    (Array.isArray(record['data']) || record['data'] == null) &&
     ('current_page' in record ||
       'currentPage' in record ||
       'last_page' in record ||
@@ -100,7 +100,7 @@ export function unwrapLaravelPaginator<T>(raw: unknown): {
   }
 
   return {
-    data: (record['data'] as T[] | null | undefined) ?? null,
+    data: Array.isArray(record['data']) ? (record['data'] as T[]) : [],
     pagination: normalizePagination(record),
   };
 }

@@ -89,7 +89,7 @@ export class TextareaComponent implements ControlValueAccessor {
 
   protected readonly labelClass = FORM_LABEL_CLASS;
   protected readonly affixClass = FORM_AFFIX_CLASS;
-  protected readonly innerClass = `${FORM_CONTROL_INNER_CLASS} resize-y min-h-20`;
+  protected readonly innerClass = `${FORM_CONTROL_INNER_CLASS} resize-y min-h-20 h-auto py-2`;
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
 
@@ -127,7 +127,7 @@ export class TextareaComponent implements ControlValueAccessor {
   );
 
   protected readonly shellClass = computed(() => {
-    let classes = FORM_FIELD_CLASS;
+    let classes = `${FORM_FIELD_CLASS} !h-auto min-h-10 items-stretch`;
     if (this.error()) {
       classes += ` ${FORM_FIELD_ERROR_CLASS}`;
     }

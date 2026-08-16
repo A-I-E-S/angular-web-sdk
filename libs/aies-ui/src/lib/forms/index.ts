@@ -31,6 +31,7 @@ export {
   SelectComponent,
   type SelectCreateConfig,
   type SelectOption,
+  type SelectSize,
 } from './select';
 export { TextInputComponent, type TextInputType } from './text-input';
 export { TextareaComponent } from './textarea';

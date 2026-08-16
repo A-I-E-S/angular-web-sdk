@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 import {
   type ApiResponseModel,
@@ -79,11 +79,21 @@ export class NotificationService {
           ...res,
           data: mapResourcePayload(
             id,
-            res.data,
+            res?.data,
             mapNotification,
             mapNotificationList,
           ) as NotificationModel[] | null,
         })),
+        catchError(() =>
+          of({
+            success: false,
+            message: null,
+            data: [] as NotificationModel[],
+            errors: null,
+            pagination: null,
+            status_code: null,
+          }),
+        ),
       );
   }
 

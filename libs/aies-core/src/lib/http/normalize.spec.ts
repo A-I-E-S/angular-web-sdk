@@ -55,6 +55,24 @@ describe('normalize', () => {
     });
   });
 
+  it('unwraps Laravel paginator when nested data is null', () => {
+    const result = normalize<unknown[]>({
+      success: true,
+      status_code: 200,
+      message: 'OK',
+      data: {
+        current_page: 1,
+        data: null,
+        last_page: 1,
+        per_page: 10,
+        total: 0,
+      },
+    });
+
+    expect(result.data).toEqual([]);
+    expect(result.pagination?.total_items).toBe(0);
+  });
+
   it('does not treat single records with nested paginators as list pages', () => {
     const result = normalize<{ id: number; zone_values: unknown }>({
       success: true,

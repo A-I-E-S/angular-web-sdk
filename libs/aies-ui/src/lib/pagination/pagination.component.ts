@@ -99,6 +99,7 @@ type PageItem = number | 'ellipsis';
       <div class="inline-flex flex-wrap items-center gap-2">
         <aies-select
           class="w-20 [&_button[aria-haspopup]]:min-w-0"
+          size="sm"
           [showTriggerIcon]="false"
           [options]="sizeOptions()"
           [selected]="selectedSizeOption()"

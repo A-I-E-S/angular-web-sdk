@@ -151,6 +151,7 @@ export {
   SelectComponent,
   type SelectCreateConfig,
   type SelectOption,
+  type SelectSize,
   TextareaComponent,
   TextInputComponent,
   type TextInputType,
