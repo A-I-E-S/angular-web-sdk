@@ -3,11 +3,12 @@
 export /**
  *
  */
-const TABLE_LIST = `// Server-driven list: wrap fetch in aies-async-state, keep the table presentational.
+const TABLE_LIST = `// Server-driven list: keep the table mounted; loading / empty / error render in the body.
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Hydrate page/size/filters from FilterQueryService when the URL has those queries.
 // Pager + Apply write the same keys back. Refetch on sortChange / pageChange / sizeChange.
-// Refresh → [refreshing] (rows stay, button spins). Page/size → [loading] (grid shows LoadingState).
+// Refresh → [refreshing] (rows stay, button spins). Page/size / first load → [loading] (body spinner).
+// Empty and hard errors stay in-grid so Filters / Export / pager remain available.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit to size to content; set width (e.g. '3.5rem') to pin actions.
 // The actions column sticks to the right while the table scrolls horizontally.
@@ -17,7 +18,6 @@ import { ApiClient } from '@aies/aies-core';
 import type { AsyncQueryStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
-  AsyncStateComponent,
   CellDefDirective,
   ChipComponent,
   CopyButtonComponent,
@@ -46,7 +46,6 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
   selector: 'app-shipment-list-page',
   standalone: true,
   imports: [
-    AsyncStateComponent,
     TableComponent,
     CellDefDirective,
     RowDetailDefDirective,
@@ -55,8 +54,7 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
     CopyButtonComponent,
   ],
   template: \`
-    <aies-async-state [state]="listState()" (retry)="refetch()">
-      <aies-table
+    <aies-table
         [columns]="columns"
         [rows]="rows()"
         [meta]="meta()"
@@ -65,6 +63,8 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
         [showRefresh]="true"
         [refreshing]="isRefreshing()"
         [loading]="isPageLoading()"
+        [error]="listError()"
+        emptyMessage="No shipments match these filters."
         [showFilter]="true"
         [showExport]="true"
         (sortChange)="onSort($event)"
@@ -111,7 +111,6 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
           <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
         </ng-template>
       </aies-table>
-    </aies-async-state>
   \`,
 })
 export class ShipmentListPageComponent {

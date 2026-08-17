@@ -11,3 +11,4 @@ export { AiesNavigationModule } from './aies-navigation.module';
 export { AiesStepperModule } from './aies-stepper.module';
 export { AiesTableModule } from './aies-table.module';
 export { AiesTooltipModule } from './aies-tooltip.module';
+export { AiesInfoPopoverModule } from './aies-info-popover.module';

@@ -6,7 +6,6 @@ import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from
 import {
   ActionMenuComponent,
   type AiesMenuItem,
-  AsyncStateComponent,
   ButtonComponent,
   CellDefDirective,
   ChipComponent,
@@ -106,7 +105,6 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
     ContentStackComponent,
     CopyButtonComponent,
     ButtonComponent,
-    AsyncStateComponent,
     PageHeaderComponent,
     DemoSectionComponent,
   ],
@@ -115,12 +113,12 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
       <app-page-header
         eyebrow="Components"
         title="Table & pagination"
-        description="Presentational data grid with sortable columns, template cells, and optional pager. It does not load data itself — wrap it in AsyncState (or your own loading UI) for fetch states."
+        description="Presentational data grid with sortable columns, template cells, and optional pager. Loading, empty, and error states render in the body so the toolbar and headers stay available."
       />
 
       <app-demo-section
         title="Shipments list"
-        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh spins the button only; page/size changes show the table loading state."
+        hint="Full list pattern: toolbar (refresh / filters / export), custom cells, expandable row details, row action menu, and [meta] for server-style pagination. Refresh spins the button only; page/size and first load show a body spinner. Empty and error keep Filters available."
         badge="template cells"
         [code]="tableCode"
       >
@@ -138,16 +136,17 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
           }
         </div>
 
-        <aies-async-state [state]="listState()" (retry)="setListDemo('ready')">
-          <aies-table
+        <aies-table
             [columns]="columns"
-            [rows]="pageRows()"
+            [rows]="listState().data ?? []"
             [meta]="meta()"
             [sort]="sort()"
             [rowTrackBy]="rowTrackBy"
             [showRefresh]="true"
             [refreshing]="refreshing()"
-            [loading]="pageLoading()"
+            [loading]="listState().isLoading || pageLoading()"
+            [error]="listState().error"
+            emptyMessage="No shipments match these filters."
             [showFilter]="true"
             [showExport]="true"
             [filterCount]="activeFilterCount()"
@@ -219,7 +218,6 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
               </aies-chip>
             </ng-template>
           </aies-table>
-        </aies-async-state>
         @if (lastRowAction()) {
           <p class="mt-3 m-0 text-caption text-neutral-600 dark:text-neutral-400">
             Last row action: {{ lastRowAction() }}

@@ -64,6 +64,14 @@ export {
   TooltipTriggerDirective,
 } from './lib/tooltip';
 
+// Info popover (hover card — optional title + projected body of any kind)
+export {
+  InfoPopoverComponent,
+  InfoPopoverContentDirective,
+  type InfoPopoverPlacement,
+  InfoPopoverTriggerDirective,
+} from './lib/info-popover';
+
 // Filters (schema-driven list filter drawer)
 export {
   type FilterDrawerData,
@@ -271,4 +279,5 @@ export {
   AiesStepperModule,
   AiesTableModule,
   AiesTooltipModule,
+  AiesInfoPopoverModule,
 } from './lib/modules';

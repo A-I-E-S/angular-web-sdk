@@ -285,7 +285,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
               [value]="searchQuery()"
               placeholder="Search…"
               (input)="onSearchInput($event)"
-              (keydown)="onPanelKeydown($event)"
+              (keydown)="onSearchKeydown($event)"
             />
           </div>
         }
@@ -309,7 +309,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             [class]="freeTextClass()"
             role="option"
             [attr.aria-selected]="false"
-            (click)="commitFreeText()"
+            (click)="onFreeTextClick($event)"
             (mouseenter)="activeIndex.set(freeTextIndex())"
           >
             Add "{{ searchQuery().trim() }}"
@@ -361,7 +361,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           <button
             type="button"
             [class]="createRowClass()"
-            (click)="openCreateModal()"
+            (click)="onCreateClick($event)"
             (mouseenter)="activeIndex.set(createIndex())"
           >
             <aies-icon name="file-add" [size]="16" />
@@ -897,6 +897,27 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected onSearchInput(event: Event): void {
     this.searchQuery.set((event.target as HTMLInputElement).value);
     this.activeIndex.set(0);
+  }
+
+  /**
+   * Search sits inside the listbox; without stopping propagation, Enter /
+   * arrows run {@link onPanelKeydown} twice (input then listbox) and the
+   * second pass toggles the first option — deselecting an existing chip
+   * right after a free-text add.
+   */
+  protected onSearchKeydown(event: KeyboardEvent): void {
+    event.stopPropagation();
+    this.onPanelKeydown(event);
+  }
+
+  protected onFreeTextClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.commitFreeText();
+  }
+
+  protected onCreateClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.openCreateModal();
   }
 
   protected onTriggerKeydown(event: KeyboardEvent): void {

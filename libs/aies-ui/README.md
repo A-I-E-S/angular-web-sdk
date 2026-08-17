@@ -32,9 +32,13 @@ export const appConfig: ApplicationConfig = {
 
 ```html
 <button aies-button type="button" variant="primary">Save</button>
-<aies-async-state [state]="state()" (retry)="refetch()">
-  <aies-table [columns]="columns" [rows]="state().data!" />
-</aies-async-state>
+<aies-table
+  [columns]="columns"
+  [rows]="state().data ?? []"
+  [loading]="state().isLoading"
+  [error]="state().error"
+  emptyMessage="No results match these filters."
+/>
 ```
 
 ## Modules

@@ -16,6 +16,9 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import type { PaginationMetaModel } from '@aies/aies-models';
 
 import { ButtonComponent } from '../button/button.component';
+import { EmptyStateComponent } from '../feedback/empty-state.component';
+import { ErrorIndicatorComponent } from '../feedback/error-indicator.component';
+import { ErrorStateComponent } from '../feedback/error-state.component';
 import { LoadingStateComponent } from '../feedback/loading-state.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
@@ -32,8 +35,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
- * of data is changing (pagination / size) so the grid shows
- * {@link LoadingStateComponent} instead of stale rows.
+ * of data is changing (pagination / size) so the **body** shows
+ * {@link LoadingStateComponent} instead of stale rows. Toolbar, column headers,
+ * and pager stay mounted.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
@@ -43,10 +47,12 @@ import { TableColumn, TableSortChange } from './table-column';
  * are never sliced client-side. While {@link loading} is true the pager is
  * disabled.
  *
- * WHY no first-load / error / empty UI: those branches belong on
- * {@link AsyncStateComponent}. This component only renders whatever `rows`
- * it is given so list screens share one async pattern — except {@link loading},
- * which covers in-place page transitions without tearing down the toolbar.
+ * **Async body:** first load, empty results, and hard errors render inside the
+ * grid (headers + toolbar stay). Bind {@link loading}, {@link error}, and
+ * {@link emptyMessage}. Empty/error Retry emits {@link refreshClick}. A stale
+ * error (rows still on screen) shows {@link ErrorIndicatorComponent} over the
+ * grid. Do not wrap list tables in {@link AsyncStateComponent} — that tears
+ * down Filters / Export / pager.
  *
  * Sorting is server-driven — sortable headers emit {@link TableSortChange}
  * and never reorder local rows.
@@ -66,6 +72,8 @@ import { TableColumn, TableSortChange } from './table-column';
  *   [showRefresh]="true"
  *   [refreshing]="softFetching()"
  *   [loading]="pageLoading()"
+ *   [error]="listError()"
+ *   emptyMessage="No shipments match these filters."
  *   [showFilter]="true"
  *   [showExport]="true"
  *   [filterCount]="activeFilterCount()"
@@ -94,6 +102,9 @@ import { TableColumn, TableSortChange } from './table-column';
     NgTemplateOutlet,
     ButtonComponent,
     AiesIconComponent,
+    EmptyStateComponent,
+    ErrorIndicatorComponent,
+    ErrorStateComponent,
     LoadingStateComponent,
     PaginationComponent,
   ],
@@ -144,7 +155,6 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
-                [disabled]="loading()"
                 [attr.aria-label]="filterLabel()"
                 (click)="filterClick.emit()"
               >
@@ -165,7 +175,6 @@ import { TableColumn, TableSortChange } from './table-column';
                 type="button"
                 variant="secondary"
                 size="sm"
-                [disabled]="loading()"
                 [attr.aria-label]="exportLabel()"
                 (click)="exportClick.emit()"
               >
@@ -180,9 +189,15 @@ import { TableColumn, TableSortChange } from './table-column';
       <div
         class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
       >
-        @if (loading()) {
-          <aies-loading-state [message]="loadingLabel()" />
-        } @else {
+        @if (staleError(); as staleMessage) {
+          <aies-error-indicator
+            class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+            [error]="staleMessage"
+            retryText="Refresh"
+            [refreshing]="refreshing()"
+            (retry)="refreshClick.emit()"
+          />
+        }
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
@@ -242,6 +257,35 @@ import { TableColumn, TableSortChange } from './table-column';
             </tr>
           </thead>
           <tbody>
+            @switch (bodyKind()) {
+              @case ('loading') {
+                <tr>
+                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                    <aies-loading-state [message]="loadingLabel()" />
+                  </td>
+                </tr>
+              }
+              @case ('error') {
+                <tr>
+                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                    <aies-error-state
+                      [message]="errorMessage()"
+                      (retry)="refreshClick.emit()"
+                    />
+                  </td>
+                </tr>
+              }
+              @case ('empty') {
+                <tr>
+                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                    <aies-empty-state
+                      [message]="emptyMessage()"
+                      (retry)="refreshClick.emit()"
+                    />
+                  </td>
+                </tr>
+              }
+              @default {
             @for (row of rowList(); track rowId(row, $index); let i = $index) {
               <tr [class]="bodyRowClass(row, i)">
                 @if (isExpandable()) {
@@ -328,9 +372,10 @@ import { TableColumn, TableSortChange } from './table-column';
                 </tr>
               }
             }
+              }
+            }
           </tbody>
         </table>
-        }
       </div>
 
       @if (meta(); as pager) {
@@ -365,9 +410,9 @@ export class TableComponent<T = unknown> {
   readonly columns = input.required<TableColumn<T>[]>();
 
   /**
-   * Row records to render. Empty or missing arrays render an empty `<tbody>` —
-   * wrap with {@link AsyncStateComponent} when empty should show EmptyState
-   * instead. Missing `data` during load is treated as `[]`.
+   * Row records to render. Empty arrays show {@link EmptyStateComponent} in
+   * the body unless {@link loading} or {@link error} is set. Missing `data`
+   * during load is treated as `[]`.
    */
   readonly rows = input.required<T[]>();
 
@@ -394,14 +439,26 @@ export class TableComponent<T = unknown> {
   readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
-   * Page of data is loading (pagination, page size, or similar). Replaces the
-   * grid with {@link LoadingStateComponent} and disables the pager. Toolbar
-   * stays mounted. Distinct from {@link refreshing}.
+   * Page of data is loading (first load, pagination, page size). Replaces the
+   * **body** with {@link LoadingStateComponent}. Toolbar, headers, and pager
+   * stay mounted. Distinct from {@link refreshing}.
    */
   readonly loading = input(false, { transform: booleanAttribute });
 
   /** Copy under the loading spinner. Defaults to `Loading…`. */
   readonly loadingLabel = input('Loading…');
+
+  /**
+   * Hard fetch failure. Empty rows → {@link ErrorStateComponent} in the body.
+   * Rows still present → {@link ErrorIndicatorComponent} over the grid.
+   * Retry emits {@link refreshClick}.
+   */
+  readonly error = input<string | null>(null);
+
+  /**
+   * Copy for the in-grid empty state when there are no rows and no error.
+   */
+  readonly emptyMessage = input('No results found.');
 
   /**
    * Show a Filters button above the table (top-right). Host should open
@@ -472,6 +529,37 @@ export class TableComponent<T = unknown> {
 
   protected readonly isExpandable = computed(
     () => this.expandable() && this.rowDetailDefs().length > 0,
+  );
+
+  protected readonly colSpan = computed(
+    () => this.columns().length + (this.isExpandable() ? 1 : 0),
+  );
+
+  protected readonly errorMessage = computed(
+    () => this.error()?.trim() || 'Something went wrong.',
+  );
+
+  protected readonly staleError = computed(() => {
+    const message = this.error()?.trim();
+    if (!message || this.loading() || this.rowList().length === 0) {
+      return null;
+    }
+    return message;
+  });
+
+  protected readonly bodyKind = computed(
+    (): 'loading' | 'error' | 'empty' | 'rows' => {
+      if (this.loading()) {
+        return 'loading';
+      }
+      if (this.error()?.trim() && this.rowList().length === 0) {
+        return 'error';
+      }
+      if (this.rowList().length === 0) {
+        return 'empty';
+      }
+      return 'rows';
+    },
   );
 
   protected readonly visibleRowIds = computed(() =>
