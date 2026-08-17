@@ -17,7 +17,7 @@ const AUTOCOMPLETE_FIELD_MASK = [
 ].join(',');
 
 const PLACE_DETAILS_FIELD_MASK =
-  'id,formattedAddress,addressComponents,location';
+  'id,displayName,formattedAddress,addressComponents,location';
 
 interface AutocompleteApiResponse {
   suggestions?: Array<{
@@ -34,6 +34,7 @@ interface AutocompleteApiResponse {
 
 interface PlaceDetailsApiResponse {
   id?: string;
+  displayName?: { text?: string };
   formattedAddress?: string;
   addressComponents?: Array<{
     longText?: string;
@@ -222,10 +223,17 @@ function mapPlaceDetails(
     find('neighborhood') ??
     find('administrative_area_level_2');
   const country = find('country');
+  const landmark =
+    find('landmark') ??
+    find('neighborhood') ??
+    find('sublocality') ??
+    find('premise') ??
+    find('point_of_interest');
 
   return {
     placeId: details.id || fallbackId,
     formattedAddress: details.formattedAddress ?? '',
+    name: details.displayName?.text?.trim() || undefined,
     lat: details.location?.latitude,
     lng: details.location?.longitude,
     streetNumber: find('street_number')?.longName,
@@ -236,6 +244,7 @@ function mapPlaceDetails(
     country: country?.longName,
     countryCode: country?.shortName,
     postalCode: find('postal_code')?.longName,
+    landmark: landmark?.longName || undefined,
     addressComponents: components.length ? components : undefined,
   };
 }

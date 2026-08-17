@@ -53,6 +53,10 @@ export interface AddressPlace {
   country?: string;
   countryCode?: string;
   postalCode?: string;
+  /**
+   * Nearby landmark from Google (`landmark`, else neighborhood / sublocality).
+   */
+  landmark?: string;
   addressComponents?: AddressComponent[];
 }
 

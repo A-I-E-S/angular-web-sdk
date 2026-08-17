@@ -146,4 +146,17 @@ describe('AddressInputComponent', () => {
     expect(host.lastSelected()).toEqual(LAGOS_PLACE);
     expect(input.value).toBe(LAGOS_PLACE.formattedAddress);
   });
+
+  it('should show formatted address from the value model (edit prepopulate)', () => {
+    host.control.setValue(null);
+    fixture.detectChanges();
+
+    const input: HTMLInputElement =
+      fixture.nativeElement.querySelector('input');
+    expect(input.value).toBe('');
+
+    host.control.setValue(LAGOS_PLACE);
+    fixture.detectChanges();
+    expect(input.value).toBe(LAGOS_PLACE.formattedAddress);
+  });
 });

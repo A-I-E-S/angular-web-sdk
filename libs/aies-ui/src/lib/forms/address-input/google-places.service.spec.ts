@@ -92,6 +92,11 @@ describe('GooglePlacesService (Places API New REST)', () => {
         addressComponents: [
           { longText: '12', shortText: '12', types: ['street_number'] },
           { longText: 'Broad Street', shortText: 'Broad St', types: ['route'] },
+          {
+            longText: 'Abule ijesha',
+            shortText: 'Abule ijesha',
+            types: ['neighborhood'],
+          },
           { longText: 'Lagos', shortText: 'Lagos', types: ['locality'] },
           {
             longText: 'Lagos',
@@ -116,6 +121,7 @@ describe('GooglePlacesService (Places API New REST)', () => {
       country: 'Nigeria',
       countryCode: 'NG',
       postalCode: undefined,
+      landmark: 'Abule ijesha',
       addressComponents: expect.any(Array),
     });
 

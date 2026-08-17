@@ -9,6 +9,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   forwardRef,
   inject,
   input,
@@ -328,6 +329,13 @@ export class AddressInputComponent implements ControlValueAccessor {
   private onTouched: () => void = () => undefined;
 
   constructor() {
+    effect(() => {
+      const formatted = this.value()?.formattedAddress?.trim() ?? '';
+      if (formatted) {
+        this.query.set(formatted);
+      }
+    });
+
     this.querySubject
       .pipe(
         debounce(() => timer(Math.max(0, Number(this.debounceMs()) || 0))),
