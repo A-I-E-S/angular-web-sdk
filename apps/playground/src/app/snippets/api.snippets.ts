@@ -17,7 +17,9 @@ const API_OVERVIEW = `// Domain services in @aies/aies-core own paths and mappin
 //   api.getResourcePage<T>('shipments', { page: 1 })
 //   api.getResourceAll<T>('shipments')
 //   api.getResourceById<T>('shipments', 42)
-//   // or overloads: getResource(base, null | 'all' | number, query?)
+//   // or overloads: getResource(base, null | 'all' | number, query?, options?)
+//   // Per-request mode override (tab mode unchanged):
+//   api.post('/claim', body, { shippingMode: 'stn' })
 //   // path helper:  buildResourcePath('/my/read', id)
 
 import { ApplicationConfig } from '@angular/core';

@@ -230,9 +230,10 @@ export /**
  */
 const MODELS_SHIPPING_MODE = `// 'stn' | 'sfn' literals for theme + HTTP. Read/set via ShippingModeService —
 // Persists in sessionStorage (per tab). ModeColorService and the interceptor follow along.
+// One-off API call in the other mode? Pass shippingMode — tab mode stays unchanged.
 
 import { Component, inject } from '@angular/core';
-import { ShippingModeService } from '@aies/aies-core';
+import { ApiClient, ShippingModeService } from '@aies/aies-core';
 import type { ShippingMode } from '@aies/aies-models';
 
 @Component({
@@ -241,9 +242,11 @@ import type { ShippingMode } from '@aies/aies-models';
   template: \`
     <button type="button" (click)="setMode('sfn')">SFN — Ship From Nigeria</button>
     <button type="button" (click)="setMode('stn')">STN — Ship To Nigeria</button>
+    <button type="button" (click)="claimInStnWhileOnSfn()">Claim (STN header only)</button>
   \`,
 })
 export class ModeSwitcherComponent {
+  private readonly api = inject(ApiClient);
   private readonly shippingMode = inject(ShippingModeService);
 
   protected activeMode(): ShippingMode {
@@ -252,7 +255,13 @@ export class ModeSwitcherComponent {
 
   protected setMode(mode: ShippingMode): void {
     this.shippingMode.setMode(mode);
-    // Interceptor attaches x-shipment-mode; theme accents update via ModeColorService.
+  }
+
+  protected claimInStnWhileOnSfn(): void {
+    // Tab stays SFN; this request sends x-shipment-mode: stn
+    this.api.post('/public/shipment_tracking_item/claim', formData, {
+      shippingMode: 'stn',
+    }).subscribe();
   }
 }
 `;

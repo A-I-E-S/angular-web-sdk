@@ -16,6 +16,11 @@ export {
 
 // Shipping mode
 export { shipmentModeInterceptor } from './lib/shipping/shipment-mode.interceptor';
+export {
+  asShippingMode,
+  SHIPPING_MODE_OVERRIDE,
+  withShippingMode,
+} from './lib/shipping/shipping-mode.context';
 export { ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP

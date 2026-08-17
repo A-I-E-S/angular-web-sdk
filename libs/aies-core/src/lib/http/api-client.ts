@@ -23,6 +23,7 @@ import {
   DEFAULT_PAGE_SIZE,
   type PaginationQueryParamsModel,
   type ResourceId,
+  type ShippingMode,
 } from '@aies/aies-models';
 
 import { AIES_SDK_CONFIG } from '../config/aies-sdk.config';
@@ -31,7 +32,10 @@ import { formatApiErrorMessage } from './api-error-message';
 import { HttpResponseCache } from './http-cache';
 import { isRetryableGetError } from './is-retryable-get-error';
 import { normalize } from './normalize';
-import { resolveHttpToastContext } from './resolve-http-toast-context';
+import {
+  resolveApiRequestContext,
+  resolveRequestShippingMode,
+} from './resolve-api-request-context';
 import { buildResourcePath } from './resource-path';
 import type { ToastHttpOptions } from './toast-http.context';
 
@@ -71,6 +75,15 @@ export interface ApiRequestOptions {
    * - Partial flags — merge with config defaults (same shape as {@link withToast}).
    */
   toast?: Partial<ToastHttpOptions> | false;
+
+  /**
+   * Override `x-shipment-mode` for this request only.
+   *
+   * Does not call {@link ShippingModeService.setMode} — the tab / session mode
+   * stays unchanged. {@link getResource} also uses this for the `mode` query
+   * param when provided.
+   */
+  shippingMode?: ShippingMode;
 }
 
 type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
@@ -272,8 +285,8 @@ export class ApiClient {
    * - {@link getResourceAll} — `id: 'all'`
    * - {@link getResourceById} — numeric id
    *
-   * Always attaches `mode` from {@link ShippingModeService} (in addition to
-   * the `x-shipment-mode` header from {@link shipmentModeInterceptor}).
+   * Always attaches `mode` from the active tab or {@link ApiRequestOptions.shippingMode}
+   * (in addition to the `x-shipment-mode` header from {@link shipmentModeInterceptor}).
    *
    * @typeParam T - Element type for lists, or record type for by-id.
    *
@@ -287,56 +300,45 @@ export class ApiClient {
     basePath: string,
     id: null,
     query?: PaginationQueryParamsModel,
+    options?: ApiRequestOptions,
   ): Observable<ApiResponseModel<T[]>>;
 
   /**
    * Full unpaginated list: `GET {basePath}/all` (pagination query ignored).
    *
    * @typeParam T - Element type of the list.
-   *
-   * @example
-   * ```ts
-   * api.getResource<Port>('ports', 'all').subscribe((res) => {
-   *   console.log(res.data); // Port[] | null
-   * });
-   * ```
    */
   getResource<T>(
     basePath: string,
     id: 'all',
     query?: PaginationQueryParamsModel,
+    options?: ApiRequestOptions,
   ): Observable<ApiResponseModel<T[]>>;
 
   /**
    * Single record: `GET {basePath}/{id}` (pagination query ignored).
    *
    * @typeParam T - Record type.
-   *
-   * @example
-   * ```ts
-   * api.getResource<Shipment>('shipments', 42).subscribe((res) => {
-   *   console.log(res.data); // Shipment | null
-   * });
-   * ```
    */
   getResource<T>(
     basePath: string,
     id: number,
     query?: PaginationQueryParamsModel,
+    options?: ApiRequestOptions,
   ): Observable<ApiResponseModel<T>>;
 
   getResource<T>(
     basePath: string,
     id: ResourceId,
     query?: PaginationQueryParamsModel,
+    options: ApiRequestOptions = {},
   ): Observable<ApiResponseModel<T | T[]>> {
     const path = buildResourcePath(basePath, id);
 
     const params: Record<string, string | number | boolean | null | undefined> =
       {
-        // Always send mode as a query param — some endpoints require it even
-        // though shipmentModeInterceptor already sets x-shipment-mode.
-        mode: this.shippingMode.mode(),
+        mode: resolveRequestShippingMode(options, this.shippingMode.mode()),
+        ...(options.params ?? {}),
       };
 
     // Pagination applies only to the paginated-list shape (id === null).
@@ -351,7 +353,8 @@ export class ApiClient {
       }
     }
 
-    return this.get<T | T[]>(path, { params });
+    const { responseMode: _ignored, ...requestOptions } = options;
+    return this.get<T | T[]>(path, { ...requestOptions, params });
   }
 
   /**
@@ -406,7 +409,7 @@ export class ApiClient {
   }
 
   private buildHttpContext(options: ApiRequestOptions): HttpContext | undefined {
-    return resolveHttpToastContext(this.config.httpToasts, options.toast);
+    return resolveApiRequestContext(this.config.httpToasts, options);
   }
 
   private request<T>(
