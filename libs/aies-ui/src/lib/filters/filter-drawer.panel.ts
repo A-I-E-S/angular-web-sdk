@@ -534,7 +534,12 @@ export class FilterDrawerPanel {
     const fromLoaded = this.optionLists()[field.key];
     const source: FilterOptionModel[] =
       fromLoaded ?? field.options ?? [];
-    return source.map((o) => ({ label: o.label, value: o.value }));
+    return source.map((o) => ({
+      label: o.label,
+      value: o.value,
+      ...(o.prefixText ? { prefixText: o.prefixText } : {}),
+      ...(o.prefixImageUrl ? { prefixImageUrl: o.prefixImageUrl } : {}),
+    }));
   }
 
   protected optionErrorFor(key: string): string | null {
@@ -566,6 +571,8 @@ export class FilterDrawerPanel {
       lists[key] = rows.map((row) => ({
         value: row.value,
         label: row.label,
+        ...(row.prefixText ? { prefixText: row.prefixText } : {}),
+        ...(row.prefixImageUrl ? { prefixImageUrl: row.prefixImageUrl } : {}),
       }));
     }
     return lists;

@@ -49,7 +49,7 @@ export const appConfig: ApplicationConfig = {
 | HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`; optional `shippingMode` per call; HTTP failures → `Error` with formatted `.message`), `withToast`, `withShippingMode`, `httpToastInterceptor`, `normalize` (lifts Laravel validation bags into `errors` + joined `message`), `formatApiErrorMessage` (used internally; rare for hosts), `fieldErrorsMap`, `authInterceptor` |
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
-| Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
+| Country | `CountryService`, `countryFlagUrl` / `mapCountrySelectOptions` (flagcdn.com), `COUNTRY_READ_PATH`, mappers |
 | Service | `ServiceService` (`readPage` / `readAll` / `readById`), `SERVICE_READ_PATH` (`/public/service/read`), mappers |
 | Document | `DocumentService` (`readPage` / `readAll` / `readById`), `DOCUMENT_READ_PATH` (`/public/document/read`) — preview via `file_ref` on by-id |
 | Plan | `PlanService` (`readPage` / `readAll` / `readById`), `PLAN_READ_PATH` (`/public/plan/read`), mappers |

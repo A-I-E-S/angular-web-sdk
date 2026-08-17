@@ -88,6 +88,12 @@ export { provideModeConfig } from './lib/mode/provide-mode-config';
 
 // Country utility
 export {
+  COUNTRY_FLAG_CDN_BASE,
+  countryFlagUrl,
+  type CountryFlagFormat,
+  type CountryFlagUrlOptions,
+  type CountrySelectOption,
+  mapCountrySelectOptions,
   COUNTRY_READ_PATH,
   CountryService,
   mapCountry,

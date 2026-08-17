@@ -46,6 +46,10 @@ export interface FilterOptionModel {
   value: string;
   /** Visible label. */
   label: string;
+  /** Optional leading text/emoji (e.g. country flag emoji) in select rows. */
+  prefixText?: string;
+  /** Optional leading image URL (e.g. flag CDN from {@link countryFlagUrl}). */
+  prefixImageUrl?: string;
   /** Optional chip / badge color (hex or CSS). */
   color?: string;
 }

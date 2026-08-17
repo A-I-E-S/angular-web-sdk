@@ -21,7 +21,10 @@ export interface FilterDrawerData {
    * SDK catalogs (`warehouses`, `shipmentMethods`) load lazily inside the drawer
    * when the user adds the field via Filter by — no prefetch required.
    */
-  optionLists?: Record<string, { value: string; label: string }[]>;
+  optionLists?: Record<
+    string,
+    { value: string; label: string; prefixText?: string; prefixImageUrl?: string }[]
+  >;
   /** Drawer title override (defaults to “Filters”). */
   title?: string;
   /**

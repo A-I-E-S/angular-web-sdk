@@ -11,6 +11,10 @@ import { asArray } from '../http/wire';
 export interface FilterSelectOption {
   value: string;
   label: string;
+  /** Optional leading text/emoji (e.g. country flag emoji) in select rows. */
+  prefixText?: string;
+  /** Optional leading image URL (e.g. {@link countryFlagUrl} flag CDN). */
+  prefixImageUrl?: string;
 }
 
 /** Host bag keyed by {@link FilterFieldModel.key}. */

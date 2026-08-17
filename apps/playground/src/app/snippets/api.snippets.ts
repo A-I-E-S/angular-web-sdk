@@ -43,40 +43,39 @@ export /**
  *
  */
 const API_COUNTRY = `// GET /public/country/read/{id?} — ResourceId: null | 'all' | number.
-// read() / readPage() → paginated CountryModel[]
-// readAll()            → full CountryModel[]
-// readById(1)          → single CountryModel
+// Flag images: countryFlagUrl(iso2) or mapCountrySelectOptions(rows) → prefixImageUrl
 
 import { Component, inject, signal } from '@angular/core';
-import { CountryService } from '@aies/aies-core';
-import type { CountryModel, PaginationMetaModel } from '@aies/aies-models';
+import { CountryService, mapCountrySelectOptions } from '@aies/aies-core';
+import type { SelectOption } from '@aies/aies-ui';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-country-loader',
   standalone: true,
   template: \`
-    <p>{{ countries().length }} countries</p>
-    @if (countries()[0]; as first) {
-      <p>{{ first.name }} ({{ first.iso2 }})</p>
-    }
+    <aies-select
+      label="Destination country"
+      [options]="countryOptions()"
+      searchable
+    />
   \`,
 })
 export class CountryLoaderComponent {
   private readonly countriesApi = inject(CountryService);
-  protected readonly countries = signal<CountryModel[]>([]);
-  protected readonly meta = signal<PaginationMetaModel | null>(null);
+  protected readonly countryOptions = signal<SelectOption<number>[]>([]);
 
   async ngOnInit(): Promise<void> {
-    // Paginated (default):
-    const page = await firstValueFrom(this.countriesApi.readPage({ page: 1 }));
-    if (page.success && page.data) {
-      this.countries.set(page.data);
-      this.meta.set(page.pagination);
+    const res = await firstValueFrom(this.countriesApi.readAll());
+    if (res.success && res.data) {
+      this.countryOptions.set(
+        mapCountrySelectOptions(res.data, { width: 40 }).map((row) => ({
+          label: row.label,
+          value: row.value,
+          prefixImageUrl: row.prefixImageUrl,
+        })),
+      );
     }
-
-    // Full dump:  await firstValueFrom(this.countriesApi.readAll());
-    // One record: await firstValueFrom(this.countriesApi.readById(1));
   }
 }
 `;

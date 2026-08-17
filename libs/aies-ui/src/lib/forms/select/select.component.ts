@@ -151,6 +151,20 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <span [class]="affixClass" data-slot="prefix">
           <aies-icon [name]="prefixIcon" [size]="16" class="shrink-0" />
         </span>
+      } @else if (shellPrefixImageUrl(); as prefixImageUrl) {
+        <span [class]="affixClass" data-slot="prefix">
+          <img
+            [src]="prefixImageUrl"
+            alt=""
+            [class]="optionPrefixImageClass"
+            loading="lazy"
+            aria-hidden="true"
+          />
+        </span>
+      } @else if (shellPrefixText(); as prefixText) {
+        <span [class]="affixClass" data-slot="prefix" aria-hidden="true">
+          {{ prefixText }}
+        </span>
       }
       <!--
         Keep ng-content always mounted so projection is not dropped by @if/@else.
@@ -160,7 +174,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       <span
         [class]="affixClass"
         data-slot="prefix"
-        [class.hidden]="!!shellPrefix()"
+        [class.hidden]="!!shellPrefix() || !!shellPrefixImageUrl() || !!shellPrefixText()"
       >
         <ng-content select="[prefix]" />
       </span>
@@ -176,6 +190,16 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             >
               @if (chip.prefix; as prefixIcon) {
                 <aies-icon [name]="prefixIcon" [size]="14" class="shrink-0" />
+              } @else if (chip.prefixImageUrl) {
+                <img
+                  [src]="chip.prefixImageUrl"
+                  alt=""
+                  [class]="optionPrefixImageClass"
+                  loading="lazy"
+                  aria-hidden="true"
+                />
+              } @else if (chip.prefixText) {
+                <span class="shrink-0" aria-hidden="true">{{ chip.prefixText }}</span>
               }
               {{ chip.label }}
               @if (chip.suffix; as suffixIcon) {
@@ -341,6 +365,16 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             }
             @if (opt.prefix; as prefixIcon) {
               <aies-icon [name]="prefixIcon" [size]="16" class="shrink-0" />
+            } @else if (opt.prefixImageUrl) {
+              <img
+                [src]="opt.prefixImageUrl"
+                alt=""
+                [class]="optionPrefixImageClass"
+                loading="lazy"
+                aria-hidden="true"
+              />
+            } @else if (opt.prefixText) {
+              <span class="shrink-0" aria-hidden="true">{{ opt.prefixText }}</span>
             }
             <span class="min-w-0 flex-1 truncate text-left">{{ opt.label }}</span>
             @if (opt.suffix; as suffixIcon) {
@@ -416,6 +450,9 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
 
   protected readonly labelClass = FORM_LABEL_CLASS;
   protected readonly affixClass = FORM_AFFIX_CLASS;
+  /** Leading flag / avatar image in option rows and the single-select shell. */
+  protected readonly optionPrefixImageClass =
+    'h-4 w-6 shrink-0 rounded-sm object-cover';
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
   protected readonly panelPositions = SELECT_PANEL_POSITIONS;
@@ -693,6 +730,22 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected readonly shellPrefix = computed(
     () => this.singleSelected()?.prefix ?? null,
   );
+
+  /** Selected option image prefix → shell prefix slot (single-select only). */
+  protected readonly shellPrefixImageUrl = computed(() => {
+    if (this.shellPrefix()) {
+      return null;
+    }
+    return this.singleSelected()?.prefixImageUrl ?? null;
+  });
+
+  /** Selected option text prefix → shell prefix slot (single-select only). */
+  protected readonly shellPrefixText = computed(() => {
+    if (this.shellPrefix() || this.shellPrefixImageUrl()) {
+      return null;
+    }
+    return this.singleSelected()?.prefixText ?? null;
+  });
 
   /** Selected option suffix → shell suffix slot (single-select only). */
   protected readonly shellSuffix = computed(

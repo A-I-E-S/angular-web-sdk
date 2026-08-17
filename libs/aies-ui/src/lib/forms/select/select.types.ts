@@ -25,6 +25,16 @@ export interface SelectOption<T = string> {
    */
   prefix?: IconName;
   /**
+   * Leading image URL (e.g. {@link countryFlagUrl} for country pickers).
+   * Ignored when {@link prefix} is set.
+   */
+  prefixImageUrl?: string;
+  /**
+   * Leading text/emoji shown before the label (e.g. country flag emoji).
+   * Ignored when {@link prefix} or {@link prefixImageUrl} is set.
+   */
+  prefixText?: string;
+  /**
    * Trailing icon slot for this option (`aies-icon` name).
    * Omit when the row is label-only.
    */

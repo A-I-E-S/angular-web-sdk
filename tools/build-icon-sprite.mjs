@@ -80,7 +80,26 @@ function parseSvg(svg, iconName) {
 }
 
 /**
- * Rewrites hardcoded fill/stroke paints to `currentColor`, preserving `none`.
+ * Brand accent fills kept literal in the sprite (outline strokes still themify).
+ * @type {Set<string>}
+ */
+const PRESERVED_FILLS = new Set([
+  '#ef8833',
+  '#1cbd5d',
+  '#26a4f0',
+]);
+
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
+function isPreservedFill(value) {
+  return PRESERVED_FILLS.has(value.trim().toLowerCase());
+}
+
+/**
+ * Rewrites hardcoded fill/stroke paints to `currentColor`, preserving `none`
+ * and partner badge accent fills.
  *
  * @param {string} body
  * @returns {string}
@@ -92,6 +111,9 @@ function themifyPaints(body) {
       (match, q, value) => {
         const v = value.trim().toLowerCase();
         if (v === 'none' || v === 'currentcolor') {
+          return match;
+        }
+        if (attr === 'fill' && isPreservedFill(value)) {
           return match;
         }
         return ` ${attr}=${q}currentColor${q}`;
