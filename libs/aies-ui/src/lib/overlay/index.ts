@@ -13,4 +13,9 @@ export { ModalService, type ModalOpenConfig } from './modal.service';
 export { type ModalSize, MODAL_SIZE_PANEL_CLASS } from './modal-size';
 export type { OverlayOpenConfig } from './overlay-attach';
 export { OVERLAY_DATA } from './overlay-data.token';
+export {
+  OverlayFooterDirective,
+  OverlayFrameComponent,
+  OverlayHeaderDirective,
+} from './overlay-frame.component';
 export { provideAiesUiOverlays } from './provide-aies-ui-overlays';

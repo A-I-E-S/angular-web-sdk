@@ -26,7 +26,12 @@ import {
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
-import { TABLE_COMPACT, TABLE_CONTENT_STACK, TABLE_LIST } from '../snippets';
+import {
+  TABLE_COMPACT,
+  TABLE_CONTENT_STACK,
+  TABLE_CUSTOMERS,
+  TABLE_LIST,
+} from '../snippets';
 
 interface DemoShipment {
   reference: string;
@@ -70,6 +75,85 @@ const PACKAGERS = [
     email: 'chinedu.b@africanies.com',
   },
 ] as const;
+
+type KycStatus = 'Pending' | 'Approved' | 'Rejected';
+
+interface DemoCustomer {
+  id: string;
+  createdAt: Date;
+  name: string;
+  email: string;
+  attempts: number;
+  identifier: string;
+  status: KycStatus;
+  performedBy: string;
+  companyType: string;
+  incorpNo: string;
+  incorpDate: Date;
+  website: string;
+}
+
+const KYC_STATUSES = [
+  'Pending',
+  'Approved',
+  'Rejected',
+] as const satisfies readonly KycStatus[];
+
+const CUSTOMER_NAMES = [
+  { name: 'Ada Okonkwo', email: 'ada.okonkwo@example.com' },
+  { name: 'Chinedu Bello', email: 'chinedu.bello@example.com' },
+  { name: 'Fatima Yusuf', email: 'fatima.yusuf@example.com' },
+] as const;
+
+const BUSINESS_NAMES = [
+  { name: 'Acme Logistics Ltd', email: 'ops@acmelogistics.ng' },
+  { name: 'Naija Trade Co', email: 'hello@naijatrade.co' },
+  { name: 'Sahara Imports Plc', email: 'contact@saharaimports.com' },
+] as const;
+
+const COMPANY_TYPES = ['Ltd', 'Llc', 'Plc'] as const;
+
+const BUSINESS_SITES = [
+  'https://acmelogistics.ng',
+  'https://naijatrade.co',
+  'https://saharaimports.com',
+] as const;
+
+const USER_ROWS: DemoCustomer[] = Array.from({ length: 6 }, (_, i) => {
+  const person = CUSTOMER_NAMES[i % CUSTOMER_NAMES.length] ?? CUSTOMER_NAMES[0];
+  return {
+    id: `USR-${2000 + i}`,
+    createdAt: new Date(Date.UTC(2026, 6, 4 + i, 10, 12)),
+    name: person.name,
+    email: person.email,
+    attempts: (i % 4) + 1,
+    identifier: `NIN-${800100 + i}`,
+    status: KYC_STATUSES[i % KYC_STATUSES.length] ?? 'Pending',
+    performedBy: PACKAGERS[i % PACKAGERS.length]?.name ?? 'Oladotun Adedeji',
+    companyType: '',
+    incorpNo: '',
+    incorpDate: new Date(Date.UTC(2019, 2, 12)),
+    website: '',
+  };
+});
+
+const BUSINESS_ROWS: DemoCustomer[] = Array.from({ length: 6 }, (_, i) => {
+  const company = BUSINESS_NAMES[i % BUSINESS_NAMES.length] ?? BUSINESS_NAMES[0];
+  return {
+    id: `BIZ-${3000 + i}`,
+    createdAt: new Date(Date.UTC(2026, 5, 8 + i, 9, 30)),
+    name: company.name,
+    email: company.email,
+    attempts: (i % 3) + 1,
+    identifier: '',
+    status: KYC_STATUSES[i % KYC_STATUSES.length] ?? 'Pending',
+    performedBy: PACKAGERS[i % PACKAGERS.length]?.name ?? 'Oladotun Adedeji',
+    companyType: COMPANY_TYPES[i % COMPANY_TYPES.length] ?? 'Ltd',
+    incorpNo: `RC-${10400 + i}`,
+    incorpDate: new Date(Date.UTC(2018 + (i % 6), 3, 15)),
+    website: BUSINESS_SITES[i % BUSINESS_SITES.length] ?? BUSINESS_SITES[0],
+  };
+});
 
 const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
   const packager = PACKAGERS[i % PACKAGERS.length] ?? {
@@ -236,6 +320,80 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
       </app-demo-section>
 
       <app-demo-section
+        title="Customers — user vs business"
+        hint="Same table; switch the column set. User: date created, customer, attempts, identifier, status, performed by, action. Business: date created, business, attempts, company type, incorp no, incorp date, website, status, action."
+        badge="columns"
+        [code]="customersCode"
+      >
+        <div class="mb-4 flex flex-wrap gap-2">
+          @for (kind of accountKinds; track kind) {
+            <button
+              aies-button
+              type="button"
+              size="sm"
+              [variant]="accountKind() === kind ? 'primary' : 'secondary'"
+              (click)="accountKind.set(kind)"
+            >
+              {{ kind }}
+            </button>
+          }
+        </div>
+
+        <aies-table
+          [columns]="customerColumns()"
+          [rows]="customerRows()"
+          [rowTrackBy]="customerTrackBy"
+        >
+          <ng-template aiesCellDef="createdAt" let-row>
+            <span class="whitespace-nowrap text-body-sm tabular-nums">
+              {{ formatDate(row.createdAt) }}
+            </span>
+          </ng-template>
+          <ng-template aiesCellDef="customer" let-row>
+            <aies-content-stack [title]="row.name" [subtitle]="row.email" />
+          </ng-template>
+          <ng-template aiesCellDef="business" let-row>
+            <aies-content-stack [title]="row.name" [subtitle]="row.email" />
+          </ng-template>
+          <ng-template aiesCellDef="identifier" let-row>
+            <div class="flex items-center gap-1">
+              <span class="font-medium tabular-nums">{{ row.identifier }}</span>
+              <aies-copy
+                [value]="row.identifier"
+                [ariaLabel]="'Copy ' + row.identifier"
+              />
+            </div>
+          </ng-template>
+          <ng-template aiesCellDef="status" let-row>
+            <aies-chip [variant]="kycStatusVariant(row.status)">
+              {{ row.status }}
+            </aies-chip>
+          </ng-template>
+          <ng-template aiesCellDef="incorpDate" let-row>
+            <span class="whitespace-nowrap text-body-sm tabular-nums">
+              {{ formatDate(row.incorpDate) }}
+            </span>
+          </ng-template>
+          <ng-template aiesCellDef="website" let-row>
+            <a
+              class="text-body-sm text-ink underline-offset-2 hover:underline dark:text-white"
+              [href]="row.website"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ row.website.replace('https://', '') }}
+            </a>
+          </ng-template>
+          <ng-template aiesCellDef="actions" let-row>
+            <aies-action-menu
+              [items]="customerActions(row)"
+              [ariaLabel]="'Actions for ' + row.name"
+            />
+          </ng-template>
+        </aies-table>
+      </app-demo-section>
+
+      <app-demo-section
         title="Content stack"
         hint="Stacked title / subtitle / extra line — use in table cells or detail panels. The row grows to fit."
         [code]="contentStackCode"
@@ -330,6 +488,43 @@ export class TablePage {
     { key: 'destination', header: 'Destination' },
     { key: 'status', header: 'Status' },
   ];
+
+  protected readonly accountKind = signal<'user' | 'business'>('user');
+  protected readonly accountKinds = ['user', 'business'] as const;
+
+  protected readonly userColumns: TableColumn<DemoCustomer>[] = [
+    { key: 'createdAt', header: 'Date created', sortable: true },
+    { key: 'customer', header: 'Customer' },
+    { key: 'attempts', header: 'Attempts', sortable: true },
+    { key: 'identifier', header: 'Identifier' },
+    { key: 'status', header: 'Status', sortable: true },
+    { key: 'performedBy', header: 'Performed by' },
+    { key: 'actions', header: 'Action', width: '3.5rem' },
+  ];
+
+  protected readonly businessColumns: TableColumn<DemoCustomer>[] = [
+    { key: 'createdAt', header: 'Date created', sortable: true },
+    { key: 'business', header: 'Business' },
+    { key: 'attempts', header: 'Attempts', sortable: true },
+    { key: 'companyType', header: 'Company type' },
+    { key: 'incorpNo', header: 'Incorp no' },
+    { key: 'incorpDate', header: 'Incorp date' },
+    { key: 'website', header: 'Website' },
+    { key: 'status', header: 'Status', sortable: true },
+    { key: 'actions', header: 'Action', width: '3.5rem' },
+  ];
+
+  protected readonly customerColumns = computed(() =>
+    this.accountKind() === 'business' ? this.businessColumns : this.userColumns,
+  );
+
+  protected readonly customerRows = computed(() =>
+    this.accountKind() === 'business' ? BUSINESS_ROWS : USER_ROWS,
+  );
+
+  protected readonly customerTrackBy = (row: DemoCustomer) => row.id;
+
+  protected readonly customersCode = TABLE_CUSTOMERS;
 
   constructor() {
     this.syncFromUrl();
@@ -488,6 +683,30 @@ export class TablePage {
     );
   }
 
+  protected readonly customerActions = (row: DemoCustomer): AiesMenuItem[] => [
+    {
+      label: 'Open',
+      icon: 'eye',
+      onClick: () => this.lastRowAction.set(`Open · ${row.name}`),
+    },
+    {
+      label: 'Edit',
+      icon: 'edit',
+      onClick: () => this.lastRowAction.set(`Edit · ${row.name}`),
+    },
+  ];
+
+  protected kycStatusVariant(status: KycStatus): ChipVariant {
+    switch (status) {
+      case 'Approved':
+        return 'success';
+      case 'Pending':
+        return 'warning';
+      case 'Rejected':
+        return 'danger';
+    }
+  }
+
   protected statusVariant(status: DemoShipment['status']): ChipVariant {
     switch (status) {
       case 'Delivered':
@@ -506,6 +725,14 @@ export class TablePage {
       style: 'currency',
       currency: 'USD',
       maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  protected formatDate(value: Date): string {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     }).format(value);
   }
 

@@ -133,6 +133,9 @@ export {
   MODAL_SIZE_PANEL_CLASS,
   OVERLAY_DATA,
   type OverlayOpenConfig,
+  OverlayFooterDirective,
+  OverlayFrameComponent,
+  OverlayHeaderDirective,
   provideAiesUiOverlays,
 } from './lib/overlay';
 

@@ -337,3 +337,33 @@ import { ContentStackComponent } from '@aies/aies-ui';
 })
 export class PackagedByComponent {}
 `;
+
+export /**
+ *
+ */
+const TABLE_CUSTOMERS = `// Customer list: switch columns by account type (individual vs business).
+// User: date created, customer, attempts, identifier, status, performed by, action.
+// Business: date created, business, attempts, company type, incorp no, incorp date, website, status, action.
+
+protected readonly userColumns: TableColumn<CustomerRow>[] = [
+  { key: 'createdAt', header: 'Date created', sortable: true },
+  { key: 'customer', header: 'Customer' },
+  { key: 'attempts', header: 'Attempts', sortable: true },
+  { key: 'identifier', header: 'Identifier' },
+  { key: 'status', header: 'Status', sortable: true },
+  { key: 'performedBy', header: 'Performed by' },
+  { key: 'actions', header: 'Action', width: '3.5rem' },
+];
+
+protected readonly businessColumns: TableColumn<CustomerRow>[] = [
+  { key: 'createdAt', header: 'Date created', sortable: true },
+  { key: 'business', header: 'Business' },
+  { key: 'attempts', header: 'Attempts', sortable: true },
+  { key: 'companyType', header: 'Company type' },
+  { key: 'incorpNo', header: 'Incorp no' },
+  { key: 'incorpDate', header: 'Incorp date' },
+  { key: 'website', header: 'Website' },
+  { key: 'status', header: 'Status', sortable: true },
+  { key: 'actions', header: 'Action', width: '3.5rem' },
+];
+`;
