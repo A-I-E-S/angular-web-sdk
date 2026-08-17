@@ -24,6 +24,11 @@ export interface AiesNavItem {
   fragment?: string;
   /** When true, the item cannot be activated. */
   disabled?: boolean;
+  /**
+   * Non-link breadcrumb tone. When `false`, uses primary text (`text-ink`) instead
+   * of muted grey. Defaults to muted for group/segment labels without a link.
+   */
+  breadcrumbMuted?: boolean;
   /** Optional leading icon from `@aies/aies-icons`. */
   icon?: IconName;
 }

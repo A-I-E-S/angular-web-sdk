@@ -75,7 +75,12 @@ import type { AiesNavItem } from '../nav-item';
               </a>
             } @else {
               <span
-                class="truncate text-neutral-600 dark:text-neutral-400"
+                class="truncate"
+                [ngClass]="
+                  item.breadcrumbMuted === false
+                    ? 'text-ink dark:text-white'
+                    : 'text-neutral-600 dark:text-neutral-400'
+                "
                 [class.opacity-50]="item.disabled"
               >
                 @if (item.icon; as icon) {
