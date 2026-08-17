@@ -1,5 +1,6 @@
-import type { DocumentModel } from '@aies/aies-models';
+import type { DocumentModel, FileReadModel } from '@aies/aies-models';
 
+import { mapFileRead } from '../file/file.mapper';
 import {
   asBoolean,
   asNullableString,
@@ -11,6 +12,30 @@ import {
 
 /** Public document read base path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const DOCUMENT_READ_PATH = '/public/document/read';
+
+/**
+ * Map nested or legacy flat preview fields into {@link FileReadModel}.
+ * @param record - Document wire object.
+ */
+function mapDocumentFileRef(record: Record<string, unknown>): FileReadModel | null {
+  const nested = asRecord(record['file_ref'] ?? record['fileRef']);
+  if (nested !== null) {
+    return mapFileRead(nested);
+  }
+
+  const mime_type = asNullableString(record['mime_type'] ?? record['mimeType']);
+  const base_64 = asNullableString(record['base_64'] ?? record['base64']);
+  const url = asNullableString(record['url']);
+  if (mime_type === null && base_64 === null && url === null) {
+    return null;
+  }
+
+  return mapFileRead({
+    mime_type,
+    base_64,
+    url,
+  });
+}
 
 /**
  * Map a wire document into {@link DocumentModel} (snake_case preserved).
@@ -25,13 +50,11 @@ export function mapDocument(raw: unknown): DocumentModel {
     name: asString(record['name']),
     description: asNullableString(record['description']),
     type: asNullableString(record['type']),
-    mime_type: asNullableString(record['mime_type'] ?? record['mimeType']),
     active: asBoolean(record['active']),
     deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
     created_at: asNullableString(record['created_at'] ?? record['createdAt']),
     updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
-    url: asNullableString(record['url']),
-    base_64: asNullableString(record['base_64'] ?? record['base64']),
+    file_ref: mapDocumentFileRef(record),
   };
 }
 

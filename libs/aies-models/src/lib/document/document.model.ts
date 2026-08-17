@@ -5,11 +5,17 @@
  * Field names match the wire (snake_case).
  */
 
+import type { FileReadModel } from '../file/file.model';
+
 /**
  * Document record from `GET /public/document/read/{id|all}`.
  *
- * List rows are usually metadata only. `readById(id)` may also populate
- * `mime_type`, `url`, or `base_64` for image / file preview in App Settings.
+ * List rows are usually metadata only. `readById(id)` for App Settings /
+ * Products / Plans preview populates {@link DocumentModel.file_ref} with
+ * `mime_type` and `base_64` (bind `file_ref.base_64` in an `<img>` or PDF viewer).
+ *
+ * For entities that store a raw `file_ref` string (shipments, KYC, waybills),
+ * use {@link FileReadRequestModel} + `POST /file/read` instead.
  * Authenticated upload/delete use `api/document/*`.
  */
 export interface DocumentModel {
@@ -18,16 +24,13 @@ export interface DocumentModel {
   description: string | null;
   /** Document type / category label when present on the wire. */
   type: string | null;
-  mime_type: string | null;
   active: boolean;
   deleted_at: string | null;
   created_at: string | null;
   updated_at: string | null;
-  /** Signed URL when returned on single-record reads. */
-  url: string | null;
   /**
-   * Inline bytes as a data URI or raw base64 when returned on single reads.
-   * Can be large — avoid binding in list UIs.
+   * Nested preview payload on `readById` responses (`file_ref.base_64`).
+   * Null on list rows and when the wire omits preview bytes.
    */
-  base_64: string | null;
+  file_ref: FileReadModel | null;
 }

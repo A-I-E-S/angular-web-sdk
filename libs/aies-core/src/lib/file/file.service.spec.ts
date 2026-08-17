@@ -55,4 +55,16 @@ describe('FileService', () => {
       done();
     });
   });
+
+  it('readMultiple posts with multiple=yes', (done) => {
+    service.readMultiple('waybill-ref').subscribe((res) => {
+      expect(postMock).toHaveBeenCalledWith(
+        FILE_READ_PATH,
+        { ref: 'waybill-ref' },
+        { params: { multiple: 'yes' } },
+      );
+      expect(res.data?.[0]?.mime_type).toBe('application/pdf');
+      done();
+    });
+  });
 });

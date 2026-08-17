@@ -206,9 +206,11 @@ export {
 
 // File reads (POST /file/read — may require auth)
 export {
+  FILE_READ_MULTIPLE_PARAM,
   FILE_READ_PATH,
   FileService,
   mapFileRead,
+  mapFileReadList,
 } from './lib/file';
 
 // Products

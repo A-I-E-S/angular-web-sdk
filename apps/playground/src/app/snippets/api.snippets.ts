@@ -119,9 +119,9 @@ export class ServiceLoaderComponent {
 export /**
  *
  */
-const API_DOCUMENT = `// GET /public/document/read/{id?} — ResourceId: null | 'all' | number.
-// Public catalog — no auth required. App Settings Documents / Products / Plans.
-// readById(n) may return url / base_64 for image preview.
+const API_DOCUMENT = `// GET /public/document/read/{id?} — catalog preview by document id.
+// readById(n) → bind doc.file_ref.base_64 in <img> / PDF viewer.
+// For raw file_ref on shipments/KYC/waybills → FileService.read(ref).
 
 import { Component, inject, signal } from '@angular/core';
 import { DocumentService } from '@aies/aies-core';
@@ -133,9 +133,9 @@ import { firstValueFrom } from 'rxjs';
   standalone: true,
   template: \`
     @if (doc(); as d) {
-      <p>{{ d.name }} ({{ d.mime_type }})</p>
-      @if (d.url) {
-        <a [href]="d.url" target="_blank" rel="noopener">Preview</a>
+      <p>{{ d.name }}</p>
+      @if (d.file_ref?.base_64) {
+        <img [src]="d.file_ref.base_64" alt="" />
       }
     }
   \`,
@@ -730,8 +730,8 @@ export class ProductLoaderComponent implements OnInit {
 export /**
  *
  */
-const API_FILE = `// POST /file/read — body { ref }.
-// data is a single FileReadModel (not a list). Prefer url for downloads.
+const API_FILE = `// POST /file/read — body { ref } when a record stores file_ref.
+// data.mime_type + data.base_64 for preview. Waybills: readMultiple(ref).
 
 import { Component, inject, signal } from '@angular/core';
 import { FileService } from '@aies/aies-core';
@@ -744,7 +744,11 @@ import { firstValueFrom } from 'rxjs';
   template: \`
     @if (file(); as f) {
       <p>{{ f.mime_type }}</p>
-      <a [href]="f.url" target="_blank" rel="noopener">Open signed URL</a>
+      @if (f.base_64) {
+        <img [src]="f.base_64" alt="" />
+      } @else if (f.url) {
+        <a [href]="f.url" target="_blank" rel="noopener">Open signed URL</a>
+      }
     }
   \`,
 })

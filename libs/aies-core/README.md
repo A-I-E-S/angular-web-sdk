@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
 | Service | `ServiceService` (`readPage` / `readAll` / `readById`), `SERVICE_READ_PATH` (`/public/service/read`), mappers |
-| Document | `DocumentService` (`readPage` / `readAll` / `readById`), `DOCUMENT_READ_PATH` (`/public/document/read`), mappers |
+| Document | `DocumentService` (`readPage` / `readAll` / `readById`), `DOCUMENT_READ_PATH` (`/public/document/read`) — preview via `file_ref` on by-id |
 | Plan | `PlanService` (`readPage` / `readAll` / `readById`), `PLAN_READ_PATH` (`/public/plan/read`), mappers |
 | Currency | `CurrencyService` (`readPage` / `readAll` / `readById`, `create` / `update` / `remove`), `CURRENCY_*_PATH`, mappers |
 | Payment method | `PaymentMethodService` (`readPage` / `readAll` / `readById`, `update`), `PAYMENT_METHOD_READ_PATH` / `PAYMENT_METHOD_UPDATE_PATH`, mappers |
@@ -61,7 +61,7 @@ export const appConfig: ApplicationConfig = {
 | Product | `ProductService` (`readPage` / `readAll` / `readById`), `PRODUCT_READ_PATH`, mappers |
 | User | `UserService` (`me`, `changePassword`, `logoutFromAllSessions`), `USER_PATH`, `mapUser` (bare `/user` body; needs `AuthTokenService.set`) |
 | Notification | `NotificationService` (`readPage` / `readAll` / `readOne`), `NOTIFICATION_READ_PATH`, `mapNotification` / `mapNotificationInboxItem` |
-| File | `FileService`, `FILE_READ_PATH`, `mapFileRead` (`data` is a single object) |
+| File | `FileService` (`read` / `readMultiple` → `POST /file/read`), `FILE_READ_PATH`, `mapFileRead` / `mapFileReadList` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Filters | `FilterOptionsResolver` (`resolveField` lazy in drawer), `mergeFilterOptionLists`, warehouse/method mappers |
 | Browser | `copyToClipboard` |

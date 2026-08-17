@@ -313,7 +313,7 @@ export class ModelsPage {
         {
           id: 'document',
           title: 'Documents',
-          hint: 'Public document catalog — list metadata; by-id may include preview url / base_64.',
+          hint: 'Catalog by document id — bind readById preview as doc.file_ref.base_64. Raw file_ref strings → FileService.',
           apiFragment: 'document',
           apiLabel: 'DocumentService',
           models: [
@@ -321,19 +321,17 @@ export class ModelsPage {
               name: 'DocumentModel',
               packagePath: 'document',
               description:
-                'Document record from GET /public/document/read.',
+                'GET /public/document/read/{id} — preview bytes live on nested file_ref.',
               structure: `interface DocumentModel {
   id: number;
   name: string;
   description: string | null;
   type: string | null;
-  mime_type: string | null;
   active: boolean;
   deleted_at: string | null;
   created_at: string | null;
   updated_at: string | null;
-  url: string | null;
-  base_64: string | null;
+  file_ref: FileReadModel | null;
 }`,
             },
           ],

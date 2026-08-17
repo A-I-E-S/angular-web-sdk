@@ -335,14 +335,14 @@ export class ApiPage {
         {
           id: 'document',
           title: 'DocumentService',
-          hint: 'Public document catalog for App Settings Documents, Products, and Plans. readById may return url / base_64 for image preview.',
+          hint: 'Document catalog by numeric id — preview via readById → data.file_ref.base_64. For raw file_ref strings on records, use FileService.',
           path: `GET ${DOCUMENT_READ_PATH}/{id?}`,
           modelAnchor: 'document',
           modelLabel: 'DocumentModel',
           resourceCalls: {
             page: 'readPage({ page, order, search, from, to }) → DocumentModel[]',
             all: 'readAll() → DocumentModel[]',
-            byId: 'readById(n) → DocumentModel',
+            byId: 'readById(n) → DocumentModel (file_ref preview)',
           },
           code: API_DOCUMENT,
         },
@@ -510,11 +510,12 @@ export class ApiPage {
         {
           id: 'file',
           title: 'FileService',
-          hint: 'Resolve a storage ref to MIME type, optional base64, and a signed URL.',
-          path: `POST ${FILE_READ_PATH}`,
+          hint: 'Primary preview when a record stores file_ref — POST { ref }. Waybills: readMultiple(ref) → POST ?multiple=yes.',
+          path: `POST ${FILE_READ_PATH} · POST ${FILE_READ_PATH}?multiple=yes`,
           modelAnchor: 'file',
           modelLabel: 'FileReadModel',
-          returns: 'read(ref) → ApiResponseModel<FileReadModel>',
+          returns:
+            'read(ref) → FileReadModel · readMultiple(ref) → FileReadModel[]',
           code: API_FILE,
         },
       ],

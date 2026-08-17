@@ -10,21 +10,33 @@ import type {
 
 import { ApiClient } from '../http/api-client';
 import { asString } from '../http/wire';
-import { FILE_READ_PATH, mapFileRead } from './file.mapper';
+import {
+  FILE_READ_MULTIPLE_PARAM,
+  FILE_READ_PATH,
+  mapFileRead,
+  mapFileReadList,
+} from './file.mapper';
 
 /**
  * File utility reads (`POST /file/read`).
  *
- * Resolves a storage `ref` into MIME type, optional base64/data-URI payload,
- * and a signed URL. Response `data` is a single {@link FileReadModel}
- * (not a list — no pagination). Auth may be required depending on the document.
+ * Primary preview path when a record stores a `file_ref` string (shipments,
+ * tracking items, waybills, KYC, etc.). Body `{ ref }` → `data` with
+ * `mime_type` and `base_64` for `<img>` / PDF viewers.
+ *
+ * Document catalog previews use {@link DocumentService.readById} instead
+ * (`GET /public/document/read/{id}` → `data.file_ref.base_64`).
  *
  * @example
  * ```ts
  * const files = inject(FileService);
  *
- * files.read('2d98ea54-2652-4f24-b524-645ef34e257a').subscribe((res) => {
- *   if (res.success) console.log(res.data?.mime_type, res.data?.url);
+ * files.read(item.file_ref).subscribe((res) => {
+ *   if (res.success) console.log(res.data?.base_64);
+ * });
+ *
+ * files.readMultiple(waybillRef).subscribe((res) => {
+ *   console.log(res.data?.map((f) => f.mime_type));
  * });
  * ```
  */
@@ -33,13 +45,25 @@ export class FileService {
   private readonly api = inject(ApiClient);
 
   /**
-   * Resolve one file reference.
+   * Resolve one file reference (`POST /file/read`, body `{ ref }`).
    *
-   * @param ref - Document / storage UUID.
+   * @param ref - Storage / document UUID from `file_ref` on a record.
    * @returns Normalized envelope with mapped {@link FileReadModel}.
    */
   read(ref: string): Observable<ApiResponseModel<FileReadModel>> {
     return this.readByBody({ ref: asString(ref) });
+  }
+
+  /**
+   * Resolve multiple files for one ref (`POST /file/read?multiple=yes`).
+   *
+   * E-commerce waybill flows may return several pages in `data[]`.
+   *
+   * @param ref - Storage reference token.
+   * @returns Normalized envelope with mapped {@link FileReadModel}[].
+   */
+  readMultiple(ref: string): Observable<ApiResponseModel<FileReadModel[]>> {
+    return this.readByBodyMultiple({ ref: asString(ref) });
   }
 
   /**
@@ -59,6 +83,29 @@ export class FileService {
         map((res) => ({
           ...res,
           data: res.data == null ? null : mapFileRead(res.data),
+        })),
+      );
+  }
+
+  /**
+   * Multi-file variant of {@link readByBody}.
+   *
+   * @param body - Wire body (`{ ref }`).
+   * @returns Normalized envelope with mapped {@link FileReadModel}[].
+   */
+  readByBodyMultiple(
+    body: FileReadRequestModel,
+  ): Observable<ApiResponseModel<FileReadModel[]>> {
+    return this.api
+      .post<unknown, FileReadRequestModel>(
+        FILE_READ_PATH,
+        { ref: asString(body?.ref) },
+        { params: { multiple: FILE_READ_MULTIPLE_PARAM } },
+      )
+      .pipe(
+        map((res) => ({
+          ...res,
+          data: res.data == null ? null : mapFileReadList(res.data),
         })),
       );
   }

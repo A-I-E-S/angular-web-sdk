@@ -21,10 +21,12 @@ describe('DocumentService', () => {
         name: 'Fumigation Certificate',
         description: null,
         type: 'certificate',
-        mime_type: 'application/pdf',
         active: true,
-        url: null,
-        base_64: null,
+        file_ref: {
+          mime_type: 'application/pdf',
+          base_64: 'data:application/pdf;base64,abc',
+          url: '',
+        },
       },
     ],
     errors: null,
@@ -63,6 +65,7 @@ describe('DocumentService', () => {
         cacheTtlMs: 5 * 60_000,
       });
       expect(res.data?.id).toBe(7);
+      expect(res.data?.file_ref?.base_64).toContain('base64');
       done();
     });
   });

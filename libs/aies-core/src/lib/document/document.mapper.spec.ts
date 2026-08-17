@@ -4,25 +4,25 @@ import {
   mapDocumentList,
 } from './document.mapper';
 
-/** Abbreviated wire sample from GET /public/document/read. */
+/** Abbreviated wire sample from GET /public/document/read (list row). */
 const WIRE_DOCUMENT = {
   id: 7,
   name: 'Fumigation Certificate',
   description: 'Required for agricultural exports',
   type: 'certificate',
-  mime_type: 'application/pdf',
   active: true,
   deleted_at: null,
   created_at: '2024-03-01T10:00:00.000000Z',
   updated_at: '2024-03-01T10:00:00.000000Z',
-  url: null,
-  base_64: null,
 };
 
+/** By-id preview wire — nested file_ref (Products / Documents modal). */
 const WIRE_DOCUMENT_WITH_PREVIEW = {
   ...WIRE_DOCUMENT,
-  url: 'https://cdn.example.com/documents/7.pdf',
-  base_64: 'data:application/pdf;base64,abc',
+  file_ref: {
+    mime_type: 'application/pdf',
+    base_64: 'data:application/pdf;base64,abc',
+  },
 };
 
 describe('document mapper', () => {
@@ -30,19 +30,30 @@ describe('document mapper', () => {
     expect(DOCUMENT_READ_PATH).toBe('/public/document/read');
   });
 
-  it('maps a single document', () => {
+  it('maps a list document without preview', () => {
     const mapped = mapDocument(WIRE_DOCUMENT);
     expect(mapped.id).toBe(7);
     expect(mapped.name).toBe('Fumigation Certificate');
     expect(mapped.type).toBe('certificate');
-    expect(mapped.mime_type).toBe('application/pdf');
-    expect(mapped.url).toBeNull();
+    expect(mapped.file_ref).toBeNull();
   });
 
-  it('maps preview fields on single-record reads', () => {
+  it('maps nested file_ref on by-id preview responses', () => {
     const mapped = mapDocument(WIRE_DOCUMENT_WITH_PREVIEW);
-    expect(mapped.url).toBe('https://cdn.example.com/documents/7.pdf');
-    expect(mapped.base_64).toBe('data:application/pdf;base64,abc');
+    expect(mapped.file_ref?.mime_type).toBe('application/pdf');
+    expect(mapped.file_ref?.base_64).toBe('data:application/pdf;base64,abc');
+  });
+
+  it('maps legacy flat preview fields on the document root', () => {
+    const mapped = mapDocument({
+      ...WIRE_DOCUMENT,
+      mime_type: 'image/png',
+      base_64: 'data:image/png;base64,xyz',
+      url: 'https://cdn.example.com/doc.png',
+    });
+    expect(mapped.file_ref?.mime_type).toBe('image/png');
+    expect(mapped.file_ref?.base_64).toContain('png');
+    expect(mapped.file_ref?.url).toContain('doc.png');
   });
 
   it('maps a list payload', () => {

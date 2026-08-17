@@ -1,4 +1,4 @@
-import { FILE_READ_PATH,mapFileRead } from './file.mapper';
+import { FILE_READ_PATH, mapFileRead, mapFileReadList } from './file.mapper';
 
 const WIRE_PDF = {
   mime_type: 'application/pdf',
@@ -34,5 +34,11 @@ describe('file.mapper', () => {
 
   it('mapFileRead unwraps a one-element array if present', () => {
     expect(mapFileRead([WIRE_PDF]).mime_type).toBe('application/pdf');
+  });
+
+  it('mapFileReadList maps arrays and single objects', () => {
+    expect(mapFileReadList([WIRE_PDF, WIRE_PDF]).length).toBe(2);
+    expect(mapFileReadList(WIRE_PDF).length).toBe(1);
+    expect(mapFileReadList(null)).toEqual([]);
   });
 });

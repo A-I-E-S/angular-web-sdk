@@ -5,6 +5,9 @@ import { asRecord, asString } from '../http/wire';
 /** File read path (relative to {@link AiesSdkConfig.baseUrl}). */
 export const FILE_READ_PATH = '/file/read';
 
+/** Query flag for multi-file waybill reads (`POST /file/read?multiple=yes`). */
+export const FILE_READ_MULTIPLE_PARAM = 'yes';
+
 /**
  * Map wire `data` into {@link FileReadModel} (snake_case preserved).
  *
@@ -22,4 +25,22 @@ export function mapFileRead(raw: unknown): FileReadModel {
     base_64: asString(record['base_64'] ?? record['base64']),
     url: asString(record['url']),
   };
+}
+
+/**
+ * Map a list (or single object) payload into {@link FileReadModel}[].
+ *
+ * Used for `POST /file/read?multiple=yes` (e-commerce waybills).
+ *
+ * @param raw - Envelope `data` from multi-file reads.
+ * @returns Mapped file list (empty when `raw` is null/undefined).
+ */
+export function mapFileReadList(raw: unknown): FileReadModel[] {
+  if (Array.isArray(raw)) {
+    return raw.map((entry) => mapFileRead(entry));
+  }
+  if (raw == null) {
+    return [];
+  }
+  return [mapFileRead(raw)];
 }
