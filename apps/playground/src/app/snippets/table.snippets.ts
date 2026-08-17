@@ -15,7 +15,7 @@ const TABLE_LIST = `// Server-driven list: keep the table mounted; loading / emp
 // The actions column sticks to the right while the table scrolls horizontally.
 
 import { Component, computed, inject, signal } from '@angular/core';
-import { ApiClient } from '@aies/aies-core';
+import { ApiClient, downloadCsv } from '@aies/aies-core';
 import type { AsyncQueryStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
@@ -240,6 +240,19 @@ export class ShipmentListPageComponent {
 
   private delete(row: Shipment): void {
     /* confirm + API delete */
+  }
+
+  protected exportCsv(): void {
+    downloadCsv({
+      filename: 'shipments.csv',
+      headers: ['Reference', 'Status', 'Destination', 'Value (USD)'],
+      rows: this.rows().map((row) => [
+        row.reference,
+        row.status,
+        row.destination,
+        row.valueUsd,
+      ]),
+    });
   }
 
   protected formatUsd(value: number): string {

@@ -31,7 +31,7 @@ export class NotificationDrawerService {
         data,
         dismissible: true,
         panelClass: [
-          '!w-[min(100vw,28rem)]',
+          '!w-[min(100%,28rem)]',
           '!p-4',
           '!overflow-hidden',
           'sm:!p-5',

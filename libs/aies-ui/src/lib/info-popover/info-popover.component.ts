@@ -198,7 +198,7 @@ const PLACEMENT_POSITIONS: Record<InfoPopoverPlacement, ConnectedPosition[]> = {
           ></div>
         }
 
-        <div class="max-h-60 overflow-y-auto overscroll-contain">
+        <div class="aies-overlay-scroll max-h-60 overflow-y-auto overscroll-contain">
           <ng-content select="[aiesInfoPopoverContent]" />
         </div>
       </div>

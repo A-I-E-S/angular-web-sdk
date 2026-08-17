@@ -261,3 +261,10 @@ export { RouteOverlayService } from './lib/overlay/route-overlay.service';
 
 // Browser utilities
 export { copyToClipboard } from './lib/browser';
+export {
+  csvCell,
+  downloadCsv,
+  toCsvString,
+  type CsvCellValue,
+  type DownloadCsvOptions,
+} from './lib/browser';

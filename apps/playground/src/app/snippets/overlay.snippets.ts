@@ -7,6 +7,9 @@ const OVERLAY_MODAL = `// Centered modal via ModalService. Needs provideAiesUiOv
 // Built on Angular CDK Overlay (panels attach to body — not clipped by overflow).
 // Inject OVERLAY_DATA in the panel, close with AiesOverlayRef.close(result).
 // dismissible defaults to false — backdrop/Escape only work when you opt in.
+// Close X: put it in a shrink-0 header and scroll the body (host overflow-hidden
+// + aies-overlay-scroll). The pane reserves a scrollbar gutter so the track
+// cannot cover the button.
 
 // app.config.ts
 import { ApplicationConfig } from '@angular/core';

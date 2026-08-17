@@ -48,7 +48,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'block h-full w-full min-w-0',
+    class: 'block h-full w-full min-w-0 overflow-hidden',
   },
   imports: [AiesIconComponent, ButtonComponent],
   template: `
@@ -101,7 +101,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
 
       <div
         #scrollHost
-        class="flex min-h-0 flex-1 w-full flex-col overflow-y-auto py-3"
+        class="aies-overlay-scroll flex min-h-0 flex-1 w-full flex-col overflow-y-auto py-3"
       >
         @if (loadingInitial()) {
           <div

@@ -292,7 +292,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       (detach)="onOverlayDetach()"
     >
       <div
-        class="w-full rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto"
+        class="w-full rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto aies-overlay-scroll"
         role="listbox"
         tabindex="-1"
         [attr.aria-multiselectable]="multiple() || null"

@@ -33,14 +33,17 @@ type PreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'other';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AiesIconComponent, ButtonComponent],
+  host: {
+    class: 'flex min-h-0 w-full flex-col overflow-hidden',
+  },
   template: `
     <div
-      class="flex w-full flex-col gap-4"
+      class="flex min-h-0 w-full flex-1 flex-col"
       role="dialog"
       aria-modal="true"
       [attr.aria-labelledby]="titleId"
     >
-      <div class="flex items-start justify-between gap-3">
+      <div class="flex shrink-0 items-start justify-between gap-3 pb-4">
         <div class="min-w-0">
           <h2
             [id]="titleId"
@@ -68,6 +71,7 @@ type PreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'other';
         </button>
       </div>
 
+      <div class="aies-overlay-scroll min-h-0 flex-1 overflow-y-auto">
       @switch (kind()) {
         @case ('image') {
           <img
@@ -115,6 +119,7 @@ type PreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'other';
           </div>
         }
       }
+      </div>
     </div>
   `,
 })

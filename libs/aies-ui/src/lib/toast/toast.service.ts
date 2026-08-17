@@ -104,8 +104,8 @@ export class ToastService implements AiesHttpToastHandler {
       panelClass: [
         'aies-toast-panel',
         'pointer-events-none',
-        '!w-[min(100vw-2rem,24rem)]',
-        'max-w-[min(100vw-2rem,24rem)]',
+        '!w-[min(calc(100%-2rem),24rem)]',
+        'max-w-[min(calc(100%-2rem),24rem)]',
         '!max-h-[calc(100dvh-2rem)]',
       ],
     });

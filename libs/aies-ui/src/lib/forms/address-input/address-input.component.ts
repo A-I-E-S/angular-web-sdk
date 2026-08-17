@@ -148,7 +148,7 @@ const ADDRESS_PANEL_POSITIONS: ConnectedPosition[] = [
     >
       <div
         [id]="listboxId"
-        class="w-full rounded-md border border-border bg-white shadow-lg dark:border-white/15 dark:bg-ink-950 max-h-64 overflow-auto"
+        class="w-full rounded-md border border-border bg-white shadow-lg dark:border-white/15 dark:bg-ink-950 max-h-64 overflow-auto aies-overlay-scroll"
         role="listbox"
         tabindex="-1"
       >

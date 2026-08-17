@@ -135,12 +135,49 @@ function aiesOverlayStackPlugin({ addBase }) {
   });
 }
 
+/**
+ * Keep overlay scrollbars off close buttons and other end-aligned chrome.
+ *
+ * WHY: modal/drawer panes used to scroll themselves. Overlay (and some
+ * classic) scrollbars paint in the padding box and cover a top-right close
+ * control. The pane stays `overflow: hidden`; the hosted component scrolls
+ * with `scrollbar-gutter: stable` so the track is reserved even before
+ * content overflows. Dialogs that split header/body can set `overflow-hidden`
+ * on the host (a utility, so it wins this base rule) and put
+ * `.aies-overlay-scroll` on the body.
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function aiesOverlayScrollPlugin({ addBase }) {
+  addBase({
+    '.aies-modal-panel, .aies-drawer-panel': {
+      overflow: 'hidden',
+      overscrollBehavior: 'contain',
+    },
+    '.aies-modal-panel > *, .aies-drawer-panel > *': {
+      minHeight: 0,
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      overscrollBehavior: 'contain',
+      scrollbarGutter: 'stable',
+    },
+    '.aies-drawer-panel > *': {
+      height: '100%',
+    },
+    '.aies-overlay-scroll': {
+      overscrollBehavior: 'contain',
+      scrollbarGutter: 'stable',
+    },
+  });
+}
+
 module.exports = {
   darkMode: 'class',
   plugins: [
     aiesInteractiveCursorPlugin,
     aiesSpinPlugin,
     aiesOverlayStackPlugin,
+    aiesOverlayScrollPlugin,
     aiesAutofillPlugin,
   ],
   theme: {

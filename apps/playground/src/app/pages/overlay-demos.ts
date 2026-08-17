@@ -24,10 +24,13 @@ export interface DemoDrawerData {
   selector: 'app-demo-modal-panel',
   standalone: true,
   imports: [ButtonComponent, AiesIconComponent],
+  host: {
+    class: 'flex min-h-0 w-full flex-col overflow-hidden',
+  },
   template: `
-    <div class="flex flex-col gap-5">
-      <div class="flex items-start justify-between gap-3">
-        <div class="flex flex-col gap-1 min-w-0">
+    <div class="flex min-h-0 flex-1 flex-col">
+      <div class="flex shrink-0 items-start justify-between gap-3 pb-4">
+        <div class="flex min-w-0 flex-col gap-1">
           <p class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400">
             Modal
           </p>
@@ -51,6 +54,7 @@ export interface DemoDrawerData {
         </button>
       </div>
 
+      <div class="aies-overlay-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto">
       <label class="flex flex-col gap-1.5">
         <span class="text-caption font-medium text-neutral-600 dark:text-neutral-400">
           Note
@@ -76,6 +80,7 @@ export interface DemoDrawerData {
           Save
         </button>
       </div>
+      </div>
     </div>
   `,
 })
@@ -94,10 +99,13 @@ export class DemoModalPanel {
   selector: 'app-demo-drawer-panel',
   standalone: true,
   imports: [ButtonComponent, AiesIconComponent],
+  host: {
+    class: 'flex h-full min-h-0 flex-col overflow-hidden',
+  },
   template: `
-    <div class="flex h-full flex-col gap-5">
-      <div class="flex items-start justify-between gap-3">
-        <div class="flex flex-col gap-1 min-w-0">
+    <div class="flex h-full min-h-0 flex-col">
+      <div class="flex shrink-0 items-start justify-between gap-3 pb-4">
+        <div class="flex min-w-0 flex-col gap-1">
           <p class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400">
             Drawer
           </p>
@@ -120,7 +128,7 @@ export class DemoModalPanel {
         </button>
       </div>
 
-      <ul class="m-0 flex list-none flex-col gap-2 p-0">
+      <ul class="aies-overlay-scroll m-0 flex min-h-0 flex-1 list-none flex-col gap-2 overflow-y-auto p-0">
         @for (opt of options; track opt) {
           <li>
             <label

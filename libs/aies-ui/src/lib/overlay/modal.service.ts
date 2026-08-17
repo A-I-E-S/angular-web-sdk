@@ -84,8 +84,12 @@ export class ModalService implements OverlayOpener {
    * hosted component via {@link OVERLAY_DATA}; call
    * `inject(AiesOverlayRef).close(result)` to dismiss with a value.
    *
-   * Panel height is capped at `90vh` (scrolls inside). Width comes from
-   * {@link ModalOpenConfig.size} (`md` default).
+ * Panel height is capped at `90vh`. The pane itself does not scroll — the
+ * hosted component does, with a reserved scrollbar gutter so overlay
+ * scrollbars cannot cover a top-right close control. Width comes from
+ * {@link ModalOpenConfig.size} (`md` default). Prefer `100%` (overlay
+ * wrapper) over `100vw` so the panel never sits under the viewport
+ * scrollbar.
    *
    * @typeParam TData - Shape injected as {@link OVERLAY_DATA}.
    * @typeParam TResult - Value emitted by `afterClosed` when closed with a result.
@@ -164,10 +168,10 @@ export class ModalService implements OverlayOpener {
           'flex-col',
           'items-stretch',
           ...sizeClasses,
-          'overflow-x-hidden',
-          'overflow-y-auto',
+          'min-h-0',
           'will-change-transform',
           ...extraPanelClass,
+          '!overflow-hidden',
           // Always cap viewport usage — after extras so hosts cannot stretch full height.
           '!max-h-[90vh]',
         ],

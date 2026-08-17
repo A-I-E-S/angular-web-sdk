@@ -57,7 +57,7 @@ import { FilterQueryService } from './filter-query.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'block h-full',
+    class: 'block h-full min-h-0 overflow-hidden',
   },
   imports: [
     AiesIconComponent,
@@ -99,7 +99,9 @@ import { FilterQueryService } from './filter-query.service';
         </button>
       </div>
 
-      <div class="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-6 pb-5">
+      <div
+        class="aies-overlay-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-6 pb-5"
+      >
         @if (config.search; as search) {
           <aies-text-input
             [label]="search.label"

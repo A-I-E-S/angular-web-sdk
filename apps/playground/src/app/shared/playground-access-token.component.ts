@@ -102,7 +102,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
     >
       <div
         id="pg-access-token-panel"
-        class="w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-border bg-white shadow-xl outline-none dark:border-white/15 dark:bg-ink-950"
+        class="w-[min(22rem,calc(100dvw-2rem))] overflow-hidden rounded-xl border border-border bg-white shadow-xl outline-none dark:border-white/15 dark:bg-ink-950"
         role="dialog"
         aria-labelledby="pg-access-token-title"
         aria-describedby="pg-access-token-desc"

@@ -64,7 +64,7 @@ export const appConfig: ApplicationConfig = {
 | File | `FileService` (`read` / `readMultiple` → `POST /file/read`), `FILE_READ_PATH`, `mapFileRead` / `mapFileReadList` |
 | Overlay | `provideOverlayRoutes`, `RouteOverlayService`, `MODAL_SERVICE`, `DRAWER_SERVICE` |
 | Filters | `FilterOptionsResolver` (`resolveField` lazy in drawer), `mergeFilterOptionLists`, warehouse/method mappers |
-| Browser | `copyToClipboard` |
+| Browser | `copyToClipboard`, `downloadCsv` / `csvCell` (UTF-8 CSV download) |
 
 List-style GETs follow `ResourceId`: `null` (paginated), `'all'` (full dump), `number` (single).
 

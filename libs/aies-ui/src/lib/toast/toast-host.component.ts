@@ -17,7 +17,7 @@ import { ToastItemComponent } from './toast-item.component';
   imports: [ToastItemComponent, ButtonComponent],
   host: {
     class:
-      'pointer-events-auto block min-h-0 w-[min(100vw-2rem,24rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden overscroll-contain',
+      'aies-overlay-scroll pointer-events-auto block min-h-0 w-[min(calc(100%-2rem),24rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden overscroll-contain',
     role: 'region',
     'aria-label': 'Notifications',
   },
