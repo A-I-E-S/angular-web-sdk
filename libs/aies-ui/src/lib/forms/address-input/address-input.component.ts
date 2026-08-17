@@ -66,9 +66,10 @@ const ADDRESS_PANEL_POSITIONS: ConnectedPosition[] = [
 /**
  * Google Places address field with suggestion dropdown.
  *
- * Requires {@link provideGooglePlaces} at bootstrap for live predictions.
- * Form value is a structured {@link AddressPlace} (or `null`). Selecting a
- * suggestion also emits {@link placeSelected}.
+ * Requires {@link provideGooglePlaces} at bootstrap. Predictions come from
+ * Places API (New) REST (`places.googleapis.com`). Form value is a structured
+ * {@link AddressPlace} (or `null`). Selecting a suggestion also emits
+ * {@link placeSelected}. Typing emits {@link queryChange} with the visible text.
  *
  * @example
  * ```html
@@ -157,6 +158,12 @@ const ADDRESS_PANEL_POSITIONS: ConnectedPosition[] = [
             class="px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400"
           >
             Searching…
+          </div>
+        } @else if (apiError(); as err) {
+          <div
+            class="px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400"
+          >
+            {{ err }}
           </div>
         } @else if (predictions().length === 0) {
           <div
@@ -263,6 +270,11 @@ export class AddressInputComponent implements ControlValueAccessor {
   readonly placeSelected = output<AddressPlace>();
 
   /**
+   * Emits the visible query as the user types (including after a selection).
+   */
+  readonly queryChange = output<string>();
+
+  /**
    * Optional host disable (in addition to CVA `setDisabledState`).
    */
   readonly disabledInput = input(false, {
@@ -279,6 +291,7 @@ export class AddressInputComponent implements ControlValueAccessor {
   protected readonly open = signal(false);
   protected readonly loading = signal(false);
   protected readonly predictions = signal<AddressPrediction[]>([]);
+  protected readonly apiError = signal<string | null>(null);
   protected readonly activeIndex = signal(-1);
   protected readonly panelWidth = signal(this.minPanelWidth);
 
@@ -322,6 +335,7 @@ export class AddressInputComponent implements ControlValueAccessor {
           const trimmed = text.trim();
           if (!trimmed) {
             this.predictions.set([]);
+            this.apiError.set(null);
             this.loading.set(false);
             this.open.set(false);
             return [] as AddressPrediction[];
@@ -329,7 +343,19 @@ export class AddressInputComponent implements ControlValueAccessor {
           this.loading.set(true);
           this.open.set(true);
           try {
-            return await this.places.getPredictions(trimmed, this.countries());
+            const results = await this.places.getPredictions(
+              trimmed,
+              this.countries(),
+            );
+            this.apiError.set(null);
+            return results;
+          } catch (err) {
+            this.apiError.set(
+              err instanceof Error
+                ? err.message
+                : 'Could not load address suggestions.',
+            );
+            return [] as AddressPrediction[];
           } finally {
             this.loading.set(false);
           }
@@ -381,6 +407,7 @@ export class AddressInputComponent implements ControlValueAccessor {
   protected onInput(event: Event): void {
     const next = (event.target as HTMLInputElement).value;
     this.query.set(next);
+    this.queryChange.emit(next);
 
     if (this.value() !== null) {
       this.value.set(null);
@@ -463,6 +490,7 @@ export class AddressInputComponent implements ControlValueAccessor {
         return;
       }
       this.query.set(place.formattedAddress);
+      this.queryChange.emit(place.formattedAddress);
       this.value.set(place);
       this.onChange(place);
       this.placeSelected.emit(place);

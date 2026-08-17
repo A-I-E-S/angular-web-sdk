@@ -3,11 +3,11 @@
  */
 
 /**
- * Bootstrap config for loading the Google Maps JavaScript API (Places library).
+ * Bootstrap config for Places API (New) REST autocomplete.
  */
 export interface GooglePlacesConfig {
   /**
-   * Google Maps JavaScript API key with Places API enabled.
+   * API key with Places API (New) enabled. Sent as `X-Goog-Api-Key`.
    */
   apiKey: string;
 
@@ -17,7 +17,8 @@ export interface GooglePlacesConfig {
   language?: string;
 
   /**
-   * Optional region bias (ccTLD, e.g. `ng`, `gh`).
+   * Optional region restriction (ISO-3166-1 alpha-2, e.g. `ng`, `gh`)
+   * used when the field does not pass `countries`.
    */
   region?: string;
 }
@@ -45,6 +46,10 @@ export interface AddressPlace {
   route?: string;
   locality?: string;
   administrativeAreaLevel1?: string;
+  /**
+   * ISO-3166-2 subdivision code when Google provides one (`LA` for Lagos).
+   */
+  administrativeAreaLevel1Code?: string;
   country?: string;
   countryCode?: string;
   postalCode?: string;

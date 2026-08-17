@@ -7,10 +7,10 @@ import type { GooglePlacesConfig } from './address-input.types';
 import { GOOGLE_PLACES_CONFIG } from './google-places.token';
 
 /**
- * Registers Google Places for {@link AddressInputComponent}.
+ * Registers Places API (New) for {@link AddressInputComponent}.
  *
- * Provide once at bootstrap. Requires a Maps JavaScript API key with the
- * Places library enabled.
+ * Provide once at bootstrap. Requires an API key with Places API (New)
+ * enabled (REST `places.googleapis.com`, not the Maps JavaScript widget).
  *
  * @param config - API key and optional language / region.
  * @returns Environment providers for `app.config.ts`.

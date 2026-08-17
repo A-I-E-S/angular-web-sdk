@@ -52,7 +52,7 @@ export const appConfig: ApplicationConfig = {
 | Feedback | `LoadingState`, `ErrorState`, `EmptyState`, `AsyncState`, `ErrorIndicator`, `Alert`, `Chip`, `Toast` (`provideAiesToasts`) |
 | Filters | `FilterDrawerService`, `FilterQueryService` — hydrate/write list queries on the URL |
 | Overlay | `ModalService`, `DrawerService`, `ConfirmService`, `provideAiesUiOverlays` |
-| Forms | Text, select, address (Google Places), number, file upload, checkbox, radio, toggle, textarea, date, OTP — address needs `provideGooglePlaces({ apiKey })` |
+| Forms | Text, select, address (Places API New REST), number, file upload, checkbox, radio, toggle, textarea, date, OTP — address needs `provideGooglePlaces({ apiKey })` |
 | Navigation | `AppShell` (clock, notifications, avatar menu, page title + subtitle), `SideNav` (SDK logo), `ShippingModeSwitch`, `Breadcrumb`, `PageHeader`, `Tabs`, `Segment` |
 | Notifications | `NotificationDrawerService` — inbox drawer (via `DrawerService`) |
 | Data | `Table` (+ `aiesCellDef`), `Pagination`, `Stepper` |
