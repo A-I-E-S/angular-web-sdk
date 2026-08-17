@@ -30,8 +30,11 @@ export function provideLocalStorage(): EnvironmentProviders {
 /**
  * Binds {@link STORAGE_TOKEN} to {@link SessionStorageService}.
  *
- * Prefer this when SDK consumers (theme, shipping mode) should persist only
+ * Prefer this when SDK consumers (theme, auth token) should persist only
  * for the current tab rather than across sessions.
+ *
+ * Shipping mode always uses {@link SessionStorageService} directly and is
+ * unaffected by this override.
  *
  * @returns Environment providers wiring `STORAGE_TOKEN` → sessionStorage.
  *

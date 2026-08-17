@@ -11,9 +11,11 @@ import { AIES_SDK_CONFIG, type AiesSdkConfig } from './aies-sdk.config';
 /**
  * Registers SDK configuration and ensures browser storage is available.
  *
- * Also calls {@link provideLocalStorage} so theme / shipping-mode / mode-config
- * persistence works out of the box. When {@link AiesSdkConfig.loadModeConfig}
- * is not `false`, {@link provideModeConfig} runs on startup.
+ * Also calls {@link provideLocalStorage} so theme / mode-config / auth-token
+ * persistence works out of the box. {@link ShippingModeService} always uses
+ * {@link SessionStorageService} so each tab can hold its own STN/SFN mode.
+ * When {@link AiesSdkConfig.loadModeConfig} is not `false`, {@link provideModeConfig}
+ * runs on startup.
  *
  * @param config - API origin and optional timeout / default headers.
  * @returns Environment providers for `app.config.ts`.

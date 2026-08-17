@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AIES_SHIPPING_MODE_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
+import {
+  AIES_SHIPPING_MODE_KEY,
+  SessionStorageService,
+} from '@aies/aies-storage';
 
 import { ApiClient } from '../http/api-client';
 import { ShippingModeService } from './shipping-mode.service';
@@ -23,7 +26,7 @@ describe('ShippingModeService', () => {
     TestBed.configureTestingModule({
       providers: [
         ShippingModeService,
-        { provide: STORAGE_TOKEN, useValue: storage },
+        { provide: SessionStorageService, useValue: storage },
         { provide: ApiClient, useValue: { clearCache } },
       ],
     });
@@ -41,7 +44,7 @@ describe('ShippingModeService', () => {
     expect(service.mode()).toBe('sfn');
   });
 
-  it('setMode persists and clears the HTTP cache', () => {
+  it('setMode persists to session storage and clears the HTTP cache', () => {
     const service = createService('sfn');
     service.setMode('stn');
     expect(service.mode()).toBe('stn');

@@ -229,7 +229,7 @@ export /**
  *
  */
 const MODELS_SHIPPING_MODE = `// 'stn' | 'sfn' literals for theme + HTTP. Read/set via ShippingModeService —
-// ModeColorService and the mode interceptor follow along.
+// Persists in sessionStorage (per tab). ModeColorService and the interceptor follow along.
 
 import { Component, inject } from '@angular/core';
 import { ShippingModeService } from '@aies/aies-core';

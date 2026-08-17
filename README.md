@@ -9,7 +9,7 @@ under the `@aies` scope, published to GitHub Packages. Workspace name:
 | Package | Role |
 | --- | --- |
 | [`@aies/aies-models`](./libs/aies-models) | Shared `*Model` domain types (API envelope, countries, mode config, filters, async state) — no Angular runtime |
-| [`@aies/aies-storage`](./libs/aies-storage) | `StorageService` + local/session providers used by theme & shipping mode |
+| [`@aies/aies-storage`](./libs/aies-storage) | `StorageService` + local/session providers (theme uses local; shipping mode uses session per tab) |
 | [`@aies/aies-core`](./libs/aies-core) | `provideAiesSdk`, HTTP client, interceptors, shipping mode, overlay route wiring |
 | [`@aies/aies-theme`](./libs/aies-theme) | Tailwind preset, `ThemeService`, `ModeColorService` |
 | [`@aies/aies-icons`](./libs/aies-icons) | SVG sprite + typed `IconName` / `ICON_NAMES` + `<aies-icon>` |

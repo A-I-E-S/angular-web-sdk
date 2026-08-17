@@ -8,7 +8,7 @@
 /** Persisted UI theme preference (`'light' | 'dark'` or equivalent). */
 export const AIES_THEME_KEY = 'aies.theme';
 
-/** Persisted shipping mode (`'stn' | 'sfn'`). */
+/** Tab-scoped shipping mode (`'stn' | 'sfn'`) — {@link SessionStorageService}. */
 export const AIES_SHIPPING_MODE_KEY = 'aies.shippingMode';
 
 /** Cached public mode-config payload (mapped {@link ModeConfigDataModel}). */

@@ -5,6 +5,10 @@ Injectable browser storage for the AIES Web SDK. Provides a swappable
 `sessionStorage` implementations plus `provideLocalStorage()` /
 `provideSessionStorage()` helpers.
 
+Shipping mode (`ShippingModeService` in `@aies/aies-core`) always persists
+via `SessionStorageService` directly so each browser tab can use a different
+STN/SFN mode. Theme and auth token use `STORAGE_TOKEN` (localStorage by default).
+
 ## Usage
 
 ```ts

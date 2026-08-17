@@ -7,7 +7,10 @@ import {
 } from '@angular/core';
 
 import type { ShippingMode } from '@aies/aies-models';
-import { AIES_SHIPPING_MODE_KEY, STORAGE_TOKEN } from '@aies/aies-storage';
+import {
+  AIES_SHIPPING_MODE_KEY,
+  SessionStorageService,
+} from '@aies/aies-storage';
 
 import { ApiClient } from '../http/api-client';
 
@@ -16,10 +19,11 @@ const DEFAULT_MODE: ShippingMode = 'sfn';
 /**
  * Signal-based holder for the active {@link ShippingMode}.
  *
- * Persists through {@link STORAGE_TOKEN} under {@link AIES_SHIPPING_MODE_KEY}
- * so a refresh keeps STN/SFN context. Defaults to `'sfn'` when nothing is
- * stored or the stored value is not a known mode — preferring a safe outbound
- * default over failing open on corrupt storage.
+ * Persists through {@link SessionStorageService} under
+ * {@link AIES_SHIPPING_MODE_KEY} so each browser tab can hold its own STN/SFN
+ * context (refresh within the tab keeps the choice; other tabs are unaffected).
+ * Defaults to `'sfn'` when nothing is stored or the stored value is not a known
+ * mode — preferring a safe outbound default over failing open on corrupt storage.
  *
  * Changing mode clears {@link ApiClient}'s GET cache so `readAll` / by-id
  * dumps cannot cross STN↔SFN (cache keys omit the mode header). `ApiClient`
@@ -43,7 +47,7 @@ const DEFAULT_MODE: ShippingMode = 'sfn';
  */
 @Injectable({ providedIn: 'root' })
 export class ShippingModeService {
-  private readonly storage = inject(STORAGE_TOKEN);
+  private readonly storage = inject(SessionStorageService);
   private readonly injector = inject(Injector);
 
   private readonly _mode = signal<ShippingMode>(this.readInitialMode());
@@ -55,7 +59,7 @@ export class ShippingModeService {
   readonly mode: Signal<ShippingMode> = this._mode.asReadonly();
 
   /**
-   * Updates the active mode and persists it for subsequent sessions.
+   * Updates the active mode and persists it for the current tab.
    * No-ops when `mode` already matches the current value.
    *
    * @param mode - `'stn'` or `'sfn'`.
