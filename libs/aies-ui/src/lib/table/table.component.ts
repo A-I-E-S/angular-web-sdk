@@ -37,7 +37,8 @@ import { TableColumn, TableSortChange } from './table-column';
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
  * of data is changing (pagination / size): rows stay on screen and the built-in
- * pager shows a spinner; the body loader appears only when there are no rows
+ * pager shows a circular spinner beside the page controls; the body loader
+ * appears only when there are no rows
  * yet (first load). Toolbar and column headers stay mounted.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
@@ -45,8 +46,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
  * the host still owns refetch via {@link pageChange} / {@link sizeChange}. The
  * pager also writes `page` / `size` to the URL (same keys as filters). Rows
- * are never sliced client-side. While {@link loading} is true the pager shows
- * a loading spinner and is disabled.
+ * are never sliced client-side. While {@link loading} or {@link refreshing} is
+ * true and rows are on screen, the pager shows a circular spinner and is
+ * disabled — so a page change is visible when the toolbar is scrolled away.
  *
  * **Async body:** first load, empty results, and hard errors render inside the
  * grid (headers + toolbar stay). Bind {@link loading}, {@link error}, and
@@ -569,7 +571,8 @@ export class TableComponent<T = unknown> {
   );
 
   protected readonly paginationLoading = computed(
-    () => this.loading() && this.rowList().length > 0,
+    () =>
+      (this.loading() || this.refreshing()) && this.rowList().length > 0,
   );
 
   /** Top-left Refresh — only when rows are on screen (empty/error use in-body Retry). */

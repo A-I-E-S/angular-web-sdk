@@ -177,7 +177,9 @@ describe('PaginationComponent', () => {
     loadingFixture.detectChanges();
 
     const root = loadingFixture.nativeElement as HTMLElement;
-    expect(root.querySelector('.animate-spin')).not.toBeNull();
+    const spinner = root.querySelector('[role="status"] .animate-spin');
+    expect(spinner).not.toBeNull();
+    expect(root.textContent).toContain('Loading page');
     const nav = root.querySelector('nav[aria-label="Pagination"]') as HTMLElement;
     expect(nav?.getAttribute('aria-busy')).toBe('true');
 

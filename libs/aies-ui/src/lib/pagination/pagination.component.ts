@@ -15,6 +15,7 @@ import {
   type PaginationMetaModel,
   type PaginationPageSize,
 } from '@aies/aies-models';
+import { ModeColorService } from '@aies/aies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { FilterQueryService } from '../filters/filter-query.service';
@@ -92,24 +93,28 @@ type PageItem = number | 'ellipsis';
       aria-label="Pagination"
       [attr.aria-busy]="controlsDisabled() || null"
     >
-      <p
-        class="m-0 inline-flex items-center gap-2 text-body-sm text-neutral-600 dark:text-neutral-400"
-      >
-        @if (loading()) {
-          <aies-icon
-            name="spinner"
-            [size]="16"
-            class="shrink-0 animate-spin text-neutral-500 dark:text-neutral-400"
-            aria-hidden="true"
-          />
-          <span class="sr-only">Loading page</span>
-        }
+      <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
         Page {{ meta().current_page }} of {{ meta().total_pages }}
         <span class="text-neutral-400 dark:text-neutral-500">
           ({{ meta().total_items }} items)
         </span>
       </p>
       <div class="inline-flex flex-wrap items-center gap-2">
+        @if (loading()) {
+          <span
+            class="inline-flex size-8 shrink-0 items-center justify-center"
+            role="status"
+            aria-live="polite"
+          >
+            <aies-icon
+              name="spinner"
+              [size]="20"
+              [class]="'animate-spin ' + modeColor.classes().text"
+              aria-hidden="true"
+            />
+            <span class="sr-only">Loading page</span>
+          </span>
+        }
         <aies-select
           class="w-20 [&_button[aria-haspopup]]:min-w-0"
           size="sm"
@@ -178,6 +183,7 @@ type PageItem = number | 'ellipsis';
 })
 export class PaginationComponent {
   private readonly filterQuery = inject(FilterQueryService);
+  protected readonly modeColor = inject(ModeColorService);
   /**
    * Pagination slice from the latest list response.
    *
@@ -192,8 +198,8 @@ export class PaginationComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
 
   /**
-   * When true, shows a spinner beside the page summary and disables controls.
-   * Use while fetching the next page so rows can stay on screen.
+   * When true, shows a circular spinner beside the page controls and disables
+   * them. Use while fetching the next page so rows can stay on screen.
    */
   readonly loading = input(false, { transform: booleanAttribute });
 

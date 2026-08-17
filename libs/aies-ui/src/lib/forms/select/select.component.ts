@@ -452,7 +452,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected readonly affixClass = FORM_AFFIX_CLASS;
   /** Leading flag / avatar image in option rows and the single-select shell. */
   protected readonly optionPrefixImageClass =
-    'h-4 w-6 shrink-0 rounded-sm object-cover';
+    'size-4 shrink-0 rounded-full object-cover';
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
   protected readonly panelPositions = SELECT_PANEL_POSITIONS;
