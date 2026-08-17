@@ -153,4 +153,41 @@ describe('PaginationComponent', () => {
     ]);
     expect(root.textContent).toContain('…');
   });
+
+  it('shows a spinner and disables controls while loading', async () => {
+    @Component({
+      standalone: true,
+      imports: [PaginationComponent],
+      template: `
+        <aies-pagination [meta]="meta()" [loading]="true" />
+      `,
+    })
+    class LoadingHostComponent {
+      readonly meta = signal<PaginationMetaModel>({
+        current_page: 1,
+        per_page: 15,
+        total_items: 28,
+        total_pages: 2,
+        has_next_page: true,
+        has_previous_page: false,
+      });
+    }
+
+    const loadingFixture = TestBed.createComponent(LoadingHostComponent);
+    loadingFixture.detectChanges();
+
+    const root = loadingFixture.nativeElement as HTMLElement;
+    expect(root.querySelector('.animate-spin')).not.toBeNull();
+    const nav = root.querySelector('nav[aria-label="Pagination"]') as HTMLElement;
+    expect(nav?.getAttribute('aria-busy')).toBe('true');
+
+    const next = Array.from(
+      root.querySelectorAll('button[aies-button]'),
+    ).find((button) => button.textContent?.includes('Next')) as
+      | HTMLButtonElement
+      | undefined;
+    expect(next?.disabled).toBe(true);
+
+    loadingFixture.destroy();
+  });
 });

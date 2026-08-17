@@ -7,7 +7,8 @@ const TABLE_LIST = `// Server-driven list: keep the table mounted; loading / emp
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Hydrate page/size/filters from FilterQueryService when the URL has those queries.
 // Pager + Apply write the same keys back. Refetch on sortChange / pageChange / sizeChange.
-// Refresh → [refreshing] (rows stay, button spins). Page/size / first load → [loading] (body spinner).
+// Refresh → [refreshing] (rows stay, button spins). Page/size / first load → [loading]
+// (pager spinner when rows exist; body spinner on first load).
 // Empty and hard errors stay in-grid so Filters / Export / pager remain available.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit to size to content; set width (e.g. '3.5rem') to pin actions.

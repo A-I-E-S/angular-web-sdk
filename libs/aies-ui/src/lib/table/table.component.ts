@@ -36,17 +36,17 @@ import { TableColumn, TableSortChange } from './table-column';
  * Hidden while the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
- * of data is changing (pagination / size) so the **body** shows
- * {@link LoadingStateComponent} instead of stale rows. Toolbar, column headers,
- * and pager stay mounted.
+ * of data is changing (pagination / size): rows stay on screen and the built-in
+ * pager shows a spinner; the body loader appears only when there are no rows
+ * yet (first load). Toolbar and column headers stay mounted.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
  * the host still owns refetch via {@link pageChange} / {@link sizeChange}. The
  * pager also writes `page` / `size` to the URL (same keys as filters). Rows
- * are never sliced client-side. While {@link loading} is true the pager is
- * disabled.
+ * are never sliced client-side. While {@link loading} is true the pager shows
+ * a loading spinner and is disabled.
  *
  * **Async body:** first load, empty results, and hard errors render inside the
  * grid (headers + toolbar stay). Bind {@link loading}, {@link error}, and
@@ -384,7 +384,8 @@ import { TableColumn, TableSortChange } from './table-column';
       @if (meta(); as pager) {
         <aies-pagination
           [meta]="pager"
-          [disabled]="loading()"
+          [loading]="paginationLoading()"
+          [disabled]="loading() && !paginationLoading()"
           (pageChange)="pageChange.emit($event)"
           (sizeChange)="sizeChange.emit($event)"
         />
@@ -443,9 +444,10 @@ export class TableComponent<T = unknown> {
   readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
-   * Page of data is loading (first load, pagination, page size). Replaces the
-   * **body** with {@link LoadingStateComponent}. Toolbar, headers, and pager
-   * stay mounted. Distinct from {@link refreshing}.
+   * Page of data is loading (first load, pagination, page size). When rows are
+   * already on screen, the pager shows a spinner and rows stay visible; when
+   * there are no rows yet, the body shows {@link LoadingStateComponent}.
+   * Distinct from {@link refreshing}.
    */
   readonly loading = input(false, { transform: booleanAttribute });
 
@@ -553,7 +555,7 @@ export class TableComponent<T = unknown> {
 
   protected readonly bodyKind = computed(
     (): 'loading' | 'error' | 'empty' | 'rows' => {
-      if (this.loading()) {
+      if (this.loading() && this.rowList().length === 0) {
         return 'loading';
       }
       if (this.error()?.trim() && this.rowList().length === 0) {
@@ -564,6 +566,10 @@ export class TableComponent<T = unknown> {
       }
       return 'rows';
     },
+  );
+
+  protected readonly paginationLoading = computed(
+    () => this.loading() && this.rowList().length > 0,
   );
 
   /** Top-left Refresh — only when rows are on screen (empty/error use in-body Retry). */

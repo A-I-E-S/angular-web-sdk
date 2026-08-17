@@ -90,9 +90,20 @@ type PageItem = number | 'ellipsis';
     <nav
       class="flex flex-wrap items-center justify-between gap-3 py-2 text-body text-ink dark:text-white"
       aria-label="Pagination"
-      [attr.aria-busy]="disabled() || null"
+      [attr.aria-busy]="controlsDisabled() || null"
     >
-      <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
+      <p
+        class="m-0 inline-flex items-center gap-2 text-body-sm text-neutral-600 dark:text-neutral-400"
+      >
+        @if (loading()) {
+          <aies-icon
+            name="spinner"
+            [size]="16"
+            class="shrink-0 animate-spin text-neutral-500 dark:text-neutral-400"
+            aria-hidden="true"
+          />
+          <span class="sr-only">Loading page</span>
+        }
         Page {{ meta().current_page }} of {{ meta().total_pages }}
         <span class="text-neutral-400 dark:text-neutral-500">
           ({{ meta().total_items }} items)
@@ -103,7 +114,7 @@ type PageItem = number | 'ellipsis';
           class="w-20 [&_button[aria-haspopup]]:min-w-0"
           size="sm"
           [showTriggerIcon]="false"
-          [disabled]="disabled()"
+          [disabled]="controlsDisabled()"
           [options]="sizeOptions()"
           [selected]="selectedSizeOption()"
           (selectedChange)="onSizeSelect($event)"
@@ -120,7 +131,7 @@ type PageItem = number | 'ellipsis';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="disabled() || !meta().has_previous_page"
+          [disabled]="controlsDisabled() || !meta().has_previous_page"
           (click)="emitPage(meta().current_page - 1)"
         >
           Previous
@@ -140,7 +151,7 @@ type PageItem = number | 'ellipsis';
               size="sm"
               class="min-w-8"
               [variant]="item === meta().current_page ? 'primary' : 'secondary'"
-              [disabled]="disabled()"
+              [disabled]="controlsDisabled()"
               [attr.aria-label]="'Page ' + item"
               [attr.aria-current]="
                 item === meta().current_page ? 'page' : null
@@ -156,7 +167,7 @@ type PageItem = number | 'ellipsis';
           type="button"
           variant="secondary"
           size="sm"
-          [disabled]="disabled() || !meta().has_next_page"
+          [disabled]="controlsDisabled() || !meta().has_next_page"
           (click)="emitPage(meta().current_page + 1)"
         >
           Next
@@ -181,6 +192,12 @@ export class PaginationComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
 
   /**
+   * When true, shows a spinner beside the page summary and disables controls.
+   * Use while fetching the next page so rows can stay on screen.
+   */
+  readonly loading = input(false, { transform: booleanAttribute });
+
+  /**
    * Allowed row counts. Defaults to {@link PAGINATION_PAGE_SIZES}.
    */
   readonly pageSizes = input<readonly PaginationPageSize[]>(PAGINATION_PAGE_SIZES);
@@ -199,6 +216,10 @@ export class PaginationComponent {
    * Consumers should refetch at page 1 with this `size`.
    */
   readonly sizeChange = output<number>();
+
+  protected readonly controlsDisabled = computed(
+    () => this.disabled() || this.loading(),
+  );
 
   protected readonly sizeOptions = computed((): SelectOption<number>[] =>
     this.pageSizes().map((value) => ({ label: String(value), value })),
@@ -266,7 +287,7 @@ export class PaginationComponent {
    *   in the common case; still guard against no-ops).
    */
   protected emitPage(page: number): void {
-    if (this.disabled() || page === this.meta().current_page) {
+    if (this.controlsDisabled() || page === this.meta().current_page) {
       return;
     }
     void this.filterQuery.setPage(page);
@@ -279,7 +300,7 @@ export class PaginationComponent {
   protected onSizeSelect(
     next: SelectOption<number> | SelectOption<number>[] | null,
   ): void {
-    if (this.disabled() || next == null || Array.isArray(next)) {
+    if (this.controlsDisabled() || next == null || Array.isArray(next)) {
       return;
     }
     if (next.value === this.meta().per_page) {
