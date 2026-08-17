@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   input,
@@ -36,8 +37,18 @@ import { ButtonComponent } from '../button/button.component';
     >
       <aies-icon name="inbox" [size]="32" class="text-neutral-400" />
       <p class="m-0 text-body text-neutral-600 dark:text-neutral-400 max-w-md">{{ message() }}</p>
-      <button aies-button type="button" variant="secondary" (click)="retry.emit()">
-        <aies-icon name="refresh" [size]="16" />
+      <button
+        aies-button
+        type="button"
+        variant="secondary"
+        [disabled]="refreshing()"
+        (click)="retry.emit()"
+      >
+        <aies-icon
+          name="refresh"
+          [size]="16"
+          [class]="refreshing() ? 'animate-spin' : ''"
+        />
         Retry
       </button>
     </div>
@@ -48,6 +59,11 @@ export class EmptyStateComponent {
    * Empty-copy. Defaults to a generic phrase; override for filter-specific help.
    */
   readonly message = input('No results found.');
+
+  /**
+   * Background refetch in flight — spins the refresh icon and disables Retry.
+   */
+  readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
    * Emitted when the user activates Retry.

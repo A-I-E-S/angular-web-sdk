@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   input,
@@ -36,8 +37,18 @@ import { ButtonComponent } from '../button/button.component';
     >
       <aies-icon name="warning" [size]="32" class="text-danger" />
       <p class="m-0 text-body text-danger max-w-md">{{ message() }}</p>
-      <button aies-button type="button" variant="secondary" (click)="retry.emit()">
-        <aies-icon name="refresh" [size]="16" />
+      <button
+        aies-button
+        type="button"
+        variant="secondary"
+        [disabled]="refreshing()"
+        (click)="retry.emit()"
+      >
+        <aies-icon
+          name="refresh"
+          [size]="16"
+          [class]="refreshing() ? 'animate-spin' : ''"
+        />
         Retry
       </button>
     </div>
@@ -49,6 +60,11 @@ export class ErrorStateComponent {
    * red box without explanation.
    */
   readonly message = input.required<string>();
+
+  /**
+   * Background refetch in flight — spins the refresh icon and disables Retry.
+   */
+  readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
    * Emitted when the user activates Retry.

@@ -76,10 +76,18 @@ type AsyncView =
         <aies-loading-state message="Loading…" />
       }
       @case ('error') {
-        <aies-error-state [message]="errorMessage()" (retry)="retry.emit()" />
+        <aies-error-state
+          [message]="errorMessage()"
+          [refreshing]="state().isFetching"
+          (retry)="retry.emit()"
+        />
       }
       @case ('empty') {
-        <aies-empty-state [message]="emptyMessage()" (retry)="retry.emit()" />
+        <aies-empty-state
+          [message]="emptyMessage()"
+          [refreshing]="state().isFetching"
+          (retry)="retry.emit()"
+        />
       }
       @case ('content') {
         <div class="relative">

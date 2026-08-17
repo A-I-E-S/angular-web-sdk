@@ -33,6 +33,7 @@ import { TableColumn, TableSortChange } from './table-column';
  * template fall back to rendering `row[key]` as plain text.
  *
  * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
+ * Hidden while the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
  * of data is changing (pagination / size) so the **body** shows
@@ -129,7 +130,7 @@ import { TableColumn, TableSortChange } from './table-column';
       @if (showRefresh() || showFilter() || showExport()) {
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            @if (showRefresh()) {
+            @if (showToolbarRefresh()) {
               <button
                 aies-button
                 type="button"
@@ -270,6 +271,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   <td class="px-3 py-6" [attr.colspan]="colSpan()">
                     <aies-error-state
                       [message]="errorMessage()"
+                      [refreshing]="refreshing()"
                       (retry)="refreshClick.emit()"
                     />
                   </td>
@@ -280,6 +282,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   <td class="px-3 py-6" [attr.colspan]="colSpan()">
                     <aies-empty-state
                       [message]="emptyMessage()"
+                      [refreshing]="refreshing()"
                       (retry)="refreshClick.emit()"
                     />
                   </td>
@@ -423,8 +426,9 @@ export class TableComponent<T = unknown> {
   readonly sort = input<TableSortChange | null>(null);
 
   /**
-   * Show a Refresh button above the table (top-left). Host should refetch from
-   * {@link refreshClick}.
+   * Show a Refresh button above the table (top-left) once rows are on screen.
+   * Hidden during in-grid empty/error — those use Retry in the body. Host refetches
+   * from {@link refreshClick}.
    */
   readonly showRefresh = input(false, { transform: booleanAttribute });
 
@@ -560,6 +564,11 @@ export class TableComponent<T = unknown> {
       }
       return 'rows';
     },
+  );
+
+  /** Top-left Refresh — only when rows are on screen (empty/error use in-body Retry). */
+  protected readonly showToolbarRefresh = computed(
+    () => this.showRefresh() && this.bodyKind() === 'rows',
   );
 
   protected readonly visibleRowIds = computed(() =>
