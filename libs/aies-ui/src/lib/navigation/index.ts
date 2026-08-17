@@ -15,6 +15,7 @@ export {
   isCatalogRootRoute,
   isNestedChildRoute,
   normalizeNavPath,
+  resolveActiveSideNavItem,
   resolveCatalogRootLink,
   resolveContentBackTarget,
   resolveHeaderBackTarget,

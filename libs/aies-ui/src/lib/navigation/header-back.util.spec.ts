@@ -2,6 +2,7 @@ import {
   buildBreadcrumbsFromSideNav,
   isCatalogRootRoute,
   isNestedChildRoute,
+  resolveActiveSideNavItem,
   resolveCatalogRootLink,
   resolveContentBackTarget,
   resolveHeaderBackTarget,
@@ -178,5 +179,64 @@ describe('buildBreadcrumbsFromSideNav', () => {
       { id: 'components', label: 'Components' },
       { id: 'button', label: 'Button' },
     ]);
+  });
+});
+
+describe('resolveActiveSideNavItem', () => {
+  const adminNav: AiesSideNavItem[] = [
+    {
+      id: 'settings',
+      label: 'Settings',
+      children: [
+        {
+          id: 'settings-user',
+          label: 'User Settings',
+          routerLink: '/app/settings/user',
+        },
+        {
+          id: 'settings-app',
+          label: 'App Settings',
+          routerLink: '/app/settings/app',
+        },
+      ],
+    },
+    {
+      id: 'deliveries',
+      label: 'Deliveries',
+      children: [
+        {
+          id: 'deliveries-list',
+          label: 'Deliveries',
+          routerLink: '/app/deliveries',
+        },
+        {
+          id: 'deliveries-warehouse-arrivals',
+          label: 'Warehouse Arrivals',
+          routerLink: '/app/deliveries/warehouse-arrivals',
+        },
+      ],
+    },
+  ];
+
+  it('keeps the catalog item active on a nested child reload URL', () => {
+    expect(
+      resolveActiveSideNavItem(
+        '/app/settings/app/shipment-methods/product-restriction/12',
+        adminNav,
+      )?.id,
+    ).toBe('settings-app');
+  });
+
+  it('picks the longest matching sibling link', () => {
+    expect(
+      resolveActiveSideNavItem('/app/deliveries/warehouse-arrivals', adminNav)
+        ?.id,
+    ).toBe('deliveries-warehouse-arrivals');
+  });
+
+  it('matches a nested playground child under an overview link', () => {
+    expect(
+      resolveActiveSideNavItem('/components/navigation/documents', navItems)?.id,
+    ).toBe('navigation');
   });
 });

@@ -24,7 +24,8 @@ import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
 import { AIES_BRAND_LOGO_MINI_URL, AIES_BRAND_LOGO_URL } from '../../brand';
-import { isNavItemActive, navItemUrlTree } from '../nav-router.util';
+import { resolveActiveSideNavItem } from '../header-back.util';
+import { navItemUrlTree } from '../nav-router.util';
 import type { AiesSideNavItem } from './side-nav-item';
 
 const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
@@ -111,7 +112,10 @@ export class SideNavComponent {
     transform: booleanAttribute,
   });
 
-  /** Router active-match options for items with `routerLink`. */
+  /**
+   * Reserved for API compatibility. Active highlighting uses longest-prefix
+   * catalog matching ({@link resolveActiveSideNavItem}), same as breadcrumbs.
+   */
   readonly linkActiveOptions = input<IsActiveMatchOptions>(
     DEFAULT_LINK_ACTIVE,
   );
@@ -138,6 +142,11 @@ export class SideNavComponent {
 
   protected readonly hasOpenBranches = computed(
     () => this.openBranches().size > 0,
+  );
+
+  /** Longest-prefix catalog match for the current URL (incl. nested child routes). */
+  protected readonly matchedRoutedItem = computed(() =>
+    resolveActiveSideNavItem(this.url(), this.items()),
   );
 
   /** Ensures default-expanded seeding runs once per mount (after items arrive). */
@@ -174,16 +183,7 @@ export class SideNavComponent {
     });
 
     effect(() => {
-      this.url();
-      const options = this.linkActiveOptions();
-      const flat = this.flatten(this.items());
-      const routed = flat.filter((i) => i.routerLink != null);
-      if (routed.length === 0) {
-        return;
-      }
-      const match = routed.find((i) =>
-        isNavItemActive(this.router, i, options),
-      );
+      const match = this.matchedRoutedItem();
       if (match && this.activeId() !== match.id) {
         this.activeId.set(match.id);
       }
@@ -223,7 +223,7 @@ export class SideNavComponent {
    */
   protected isLeafActive(item: AiesSideNavItem): boolean {
     if (item.routerLink != null) {
-      return isNavItemActive(this.router, item, this.linkActiveOptions());
+      return this.matchedRoutedItem()?.id === item.id;
     }
     return this.activeId() === item.id;
   }

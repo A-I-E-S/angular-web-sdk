@@ -334,6 +334,104 @@ export class CountryPickerSetupComponent {
 export /**
  *
  */
+const MODELS_SERVICE = `// Services — GET /public/service/read/{id?} (ResourceId).
+
+import { Component, inject, signal } from '@angular/core';
+import { ServiceService } from '@aies/aies-core';
+import type { ServiceModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-service-setup',
+  standalone: true,
+  template: \`
+    <p>{{ services().length }} services</p>
+    @if (services()[0]; as first) {
+      <p>{{ first.name }}</p>
+    }
+  \`,
+})
+export class ServiceSetupComponent {
+  private readonly servicesApi = inject(ServiceService);
+  protected readonly services = signal<ServiceModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.servicesApi.readPage({ page: 1 }));
+    if (res.success && res.data) {
+      this.services.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_DOCUMENT = `// Documents — GET /public/document/read/{id?} (ResourceId).
+
+import { Component, inject, signal } from '@angular/core';
+import { DocumentService } from '@aies/aies-core';
+import type { DocumentModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-document-setup',
+  standalone: true,
+  template: \`
+    @if (doc(); as d) {
+      <p>{{ d.name }}</p>
+    }
+  \`,
+})
+export class DocumentSetupComponent {
+  private readonly documentsApi = inject(DocumentService);
+  protected readonly doc = signal<DocumentModel | null>(null);
+
+  async load(id: number): Promise<void> {
+    const res = await firstValueFrom(this.documentsApi.readById(id));
+    if (res.success && res.data) {
+      this.doc.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
+const MODELS_PLAN = `// Plans — GET /public/plan/read/{id?} (ResourceId).
+
+import { Component, inject, signal } from '@angular/core';
+import { PlanService } from '@aies/aies-core';
+import type { PlanModel } from '@aies/aies-models';
+import { firstValueFrom } from 'rxjs';
+
+@Component({
+  selector: 'app-plan-setup',
+  standalone: true,
+  template: \`
+    <p>{{ plans().length }} plans</p>
+    @if (plans()[0]; as first) {
+      <p>{{ first.name }} — {{ first.packages.length }} packages</p>
+    }
+  \`,
+})
+export class PlanSetupComponent {
+  private readonly plansApi = inject(PlanService);
+  protected readonly plans = signal<PlanModel[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    const res = await firstValueFrom(this.plansApi.readPage({ page: 1 }));
+    if (res.success && res.data) {
+      this.plans.set(res.data);
+    }
+  }
+}
+`;
+
+export /**
+ *
+ */
 const MODELS_CURRENCY = `// Currencies — GET /currency/read/{id?} (ResourceId).
 // readPage() → CurrencyModel[] · create / update / remove → envelope
 // Flags on GET are boolean; create/update accept boolean or "1"/"0".

@@ -244,6 +244,24 @@ export function resolveCatalogRootLink(
 }
 
 /**
+ * Side-nav item that owns the current URL — longest catalog prefix match.
+ *
+ * Matches nested child routes on cold load (same rules as
+ * {@link buildBreadcrumbsFromSideNav}), e.g. App Settings stays active on
+ * `/settings/app/shipment-methods/...`.
+ *
+ * @param url - Current router URL.
+ * @param navItems - Side-nav catalog.
+ * @returns Matched leaf item, or `null` when the URL is outside the catalog.
+ */
+export function resolveActiveSideNavItem(
+  url: string,
+  navItems: AiesSideNavItem[],
+): AiesSideNavItem | null {
+  return findSideNavMatch(normalizePath(url), navItems)?.item ?? null;
+}
+
+/**
  * Build a breadcrumb trail from the current URL and a side-nav catalog.
  *
  * Supports nested child routes under a matched nav item (e.g.

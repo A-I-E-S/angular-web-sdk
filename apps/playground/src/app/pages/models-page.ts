@@ -286,6 +286,107 @@ export class ModelsPage {
           ],
         },
         {
+          id: 'service',
+          title: 'Services',
+          hint: 'Public subscription/add-on catalog — App Settings Services board.',
+          apiFragment: 'service',
+          apiLabel: 'ServiceService',
+          models: [
+            {
+              name: 'ServiceModel',
+              packagePath: 'service',
+              description:
+                'Service catalog record (snake_case) from GET /public/service/read.',
+              structure: `interface ServiceModel {
+  id: number;
+  name: string;
+  description: string | null;
+  model: string;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}`,
+            },
+          ],
+        },
+        {
+          id: 'document',
+          title: 'Documents',
+          hint: 'Public document catalog — list metadata; by-id may include preview url / base_64.',
+          apiFragment: 'document',
+          apiLabel: 'DocumentService',
+          models: [
+            {
+              name: 'DocumentModel',
+              packagePath: 'document',
+              description:
+                'Document record from GET /public/document/read.',
+              structure: `interface DocumentModel {
+  id: number;
+  name: string;
+  description: string | null;
+  type: string | null;
+  mime_type: string | null;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  url: string | null;
+  base_64: string | null;
+}`,
+            },
+          ],
+        },
+        {
+          id: 'plan',
+          title: 'Plans',
+          hint: 'Public subscription plans with nested packages.',
+          apiFragment: 'plan',
+          apiLabel: 'PlanService',
+          models: [
+            {
+              name: 'PlanModel',
+              packagePath: 'plan',
+              description:
+                'Plan catalog record with nested PlanPackageModel rows.',
+              structure: `interface PlanModel {
+  id: number;
+  name: string;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  packages: PlanPackageModel[];
+}`,
+            },
+            {
+              name: 'PlanPackageModel',
+              packagePath: 'plan',
+              description:
+                'Line item under a plan — pricing tiers and linked company_service_id.',
+              structure: `interface PlanPackageModel {
+  id: number;
+  plan_id: number | null;
+  company_service_id: number | null;
+  name: string;
+  metrics: string | null;
+  volume: number | null;
+  discount: string | null;
+  model: string | null;
+  monthly: string | null;
+  quarterly: string | null;
+  biannually: string | null;
+  annually: string | null;
+  active: boolean;
+  deleted_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}`,
+            },
+          ],
+        },
+        {
           id: 'currency',
           title: 'Currencies',
           hint: 'App Settings currencies — rates, flags, nested processors, and create/update/delete bodies.',

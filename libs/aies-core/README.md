@@ -50,6 +50,9 @@ export const appConfig: ApplicationConfig = {
 | Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService` (`readPage` / `readAll` / `readById`), `COUNTRY_READ_PATH`, `mapCountry` / `mapCountryList` |
+| Service | `ServiceService` (`readPage` / `readAll` / `readById`), `SERVICE_READ_PATH` (`/public/service/read`), mappers |
+| Document | `DocumentService` (`readPage` / `readAll` / `readById`), `DOCUMENT_READ_PATH` (`/public/document/read`), mappers |
+| Plan | `PlanService` (`readPage` / `readAll` / `readById`), `PLAN_READ_PATH` (`/public/plan/read`), mappers |
 | Currency | `CurrencyService` (`readPage` / `readAll` / `readById`, `create` / `update` / `remove`), `CURRENCY_*_PATH`, mappers |
 | Payment method | `PaymentMethodService` (`readPage` / `readAll` / `readById`, `update`), `PAYMENT_METHOD_READ_PATH` / `PAYMENT_METHOD_UPDATE_PATH`, mappers |
 | Shipment method | `ShipmentMethodService` (`readPage` / `readAll` / `readById`), `SHIPMENT_METHOD_READ_PATH`, mappers |

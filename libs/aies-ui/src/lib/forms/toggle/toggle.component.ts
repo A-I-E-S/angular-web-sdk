@@ -73,9 +73,7 @@ let nextToggleId = 0;
         >
           <span
             class="pointer-events-none block size-3.5 shrink-0 rounded-full bg-white shadow transition-transform duration-200 ease-out"
-            [style.transform]="
-              value() ? 'translateX(1.125rem)' : 'translateX(0)'
-            "
+            [ngClass]="value() ? 'translate-x-4' : 'translate-x-0'"
           ></span>
         </button>
         <span class="text-body leading-5">{{ label() }}</span>

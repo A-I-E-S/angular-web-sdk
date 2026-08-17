@@ -16,6 +16,9 @@ suffix.
 
 - **api** — `ApiResponseModel`, `PaginationMetaModel`, `PaginationQueryParamsModel`, `ResourceId`, `ApiJsonValue`
 - **country** — `CountryModel`, `CountryStateModel` for public country utility reads
+- **service** — `ServiceModel` for `GET /public/service/read` (App Settings catalog)
+- **document** — `DocumentModel` for `GET /public/document/read` (catalog + optional preview fields on by-id)
+- **plan** — `PlanModel`, `PlanPackageModel` for `GET /public/plan/read`
 - **currency** — `CurrencyModel`, `CurrencyPaymentMethodModel` for `/currency/read`; `CurrencyCreateRequestModel` / `CurrencyUpdateRequestModel` / `CurrencyDeleteRequestModel` for App Settings writes
 - **payment-method** — `PaymentMethodModel`, `PaymentMethodCurrencyModel` for `/payment_method/read`; `PaymentMethodUpdateRequestModel` for App Settings active toggle (`PUT /payment_method/update`). No create/delete models.
 - **shipment-method** — `ShipmentMethodModel`, zone link/page models for carriers
@@ -39,8 +42,11 @@ import type {
   ApiResponseModel,
   CountryModel,
   CurrencyModel,
+  DocumentModel,
   ModeConfigDataModel,
   PaymentMethodModel,
+  PlanModel,
+  ServiceModel,
   ShipmentMethodModel,
   ShippingMode,
   WarehouseModel,

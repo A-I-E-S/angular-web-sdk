@@ -90,6 +90,31 @@ export {
   mapCountryState,
 } from './lib/country';
 
+// Public document catalog
+export {
+  DOCUMENT_READ_PATH,
+  DocumentService,
+  mapDocument,
+  mapDocumentList,
+} from './lib/document';
+
+// Public plan catalog
+export {
+  mapPlan,
+  mapPlanList,
+  mapPlanPackage,
+  PLAN_READ_PATH,
+  PlanService,
+} from './lib/plan';
+
+// Public service catalog
+export {
+  mapService,
+  mapServiceList,
+  SERVICE_READ_PATH,
+  ServiceService,
+} from './lib/service';
+
 // Currencies
 export {
   CURRENCY_CREATE_PATH,
