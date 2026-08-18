@@ -279,6 +279,13 @@ import {
 
         <aies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
         <aies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
+        <aies-toggle
+          label="Require customs hold"
+          hint="Waits for the API — the switch does not flip until the save succeeds."
+          [value]="customsHold()"
+          [loading]="customsHoldSaving()"
+          (valueChange)="saveCustomsHold($event)"
+        />
       </div>
 
       <aies-radio
@@ -295,6 +302,8 @@ export class ShipmentOptionsFormComponent {
   protected readonly terms = signal(false);
   protected readonly smsNotify = signal(true);
   protected readonly holdAtDepot = signal(false);
+  protected readonly customsHold = signal(false);
+  protected readonly customsHoldSaving = signal(false);
 
   protected readonly serviceLevels: RadioOption<string>[] = [
     { label: 'Economy', value: 'economy' },
@@ -302,6 +311,14 @@ export class ShipmentOptionsFormComponent {
     { label: 'Express', value: 'express' },
   ];
   protected readonly serviceLevel = signal<string | null>('standard');
+
+  protected saveCustomsHold(next: boolean): void {
+    this.customsHoldSaving.set(true);
+    window.setTimeout(() => {
+      this.customsHold.set(next);
+      this.customsHoldSaving.set(false);
+    }, 1200);
+  }
 }
 `;
 

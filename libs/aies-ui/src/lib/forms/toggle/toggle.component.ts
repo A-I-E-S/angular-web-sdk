@@ -7,20 +7,15 @@ import {
   forwardRef,
   inject,
   input,
-  model,
+  output,
   signal,
 } from '@angular/core';
-import {
-  type ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
+import { AiesIconComponent } from '@aies/aies-icons';
 import { ModeColorService } from '@aies/aies-theme';
 
-import {
-  FORM_ERROR_CLASS,
-  FORM_HINT_CLASS,
-} from '../form-field.classes';
+import { FORM_ERROR_CLASS, FORM_HINT_CLASS } from '../form-field.classes';
 
 let nextToggleId = 0;
 
@@ -32,16 +27,29 @@ let nextToggleId = 0;
  *
  * On-state fill follows {@link ModeColorService} (SFN green / STN orange).
  *
+ * The thumb follows {@link value} (or the CVA model). A click emits the next
+ * boolean and does not flip locally — so `[(value)]` stays instant while
+ * one-way `[value]` + `(valueChange)` waits for the parent to commit. Bind
+ * {@link loading} for API-backed switches: the control stays on the last
+ * committed value, shows a spinner, and ignores further clicks.
+ *
  * @example
  * ```html
  * <aies-toggle label="Notify on arrival" [(value)]="notify" />
+ *
+ * <aies-toggle
+ *   label="Active"
+ *   [value]="row.active"
+ *   [loading]="savingId() === row.id"
+ *   (valueChange)="saveActive(row, $event)"
+ * />
  * ```
  */
 @Component({
   selector: 'aies-toggle',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass],
+  imports: [AiesIconComponent, NgClass],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -54,27 +62,38 @@ let nextToggleId = 0;
       <label
         [attr.for]="controlId"
         class="inline-flex items-center gap-3 text-body text-ink dark:text-white"
-        [class.opacity-50]="disabled()"
-        [class.cursor-pointer]="!disabled()"
-        [class.cursor-not-allowed]="disabled()"
+        [class.opacity-50]="disabled() && !loading()"
+        [class.cursor-pointer]="!inactive()"
+        [class.cursor-not-allowed]="disabled() && !loading()"
+        [class.cursor-wait]="loading()"
       >
         <button
           [id]="controlId"
           type="button"
           role="switch"
-          class="inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-border p-0.5 box-border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-white/15"
+          class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-border p-0.5 box-border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-white/15"
           [ngClass]="trackClass()"
-          [attr.aria-checked]="value()"
+          [attr.aria-checked]="on()"
+          [attr.aria-busy]="loading() ? true : null"
           [attr.aria-invalid]="error() ? true : null"
           [attr.aria-describedby]="describedBy()"
-          [disabled]="disabled()"
+          [disabled]="inactive()"
           (click)="toggle()"
           (blur)="onBlur()"
         >
           <span
-            class="pointer-events-none block size-3.5 shrink-0 rounded-full bg-white shadow transition-transform duration-200 ease-out"
-            [ngClass]="value() ? 'translate-x-4' : 'translate-x-0'"
-          ></span>
+            class="pointer-events-none relative block size-3.5 shrink-0 rounded-full bg-white shadow transition-transform duration-200 ease-out"
+            [ngClass]="on() ? 'translate-x-4' : 'translate-x-0'"
+          >
+            @if (loading()) {
+              <aies-icon
+                name="spinner"
+                [size]="12"
+                class="absolute inset-0 m-auto animate-spin text-ink"
+                aria-hidden="true"
+              />
+            }
+          </span>
         </button>
         <span class="text-body leading-5">{{ label() }}</span>
       </label>
@@ -106,7 +125,19 @@ export class ToggleComponent implements ControlValueAccessor {
   readonly error = input<string | null>(null);
 
   /** On/off state (`[(value)]` + CVA). */
-  readonly value = model(false);
+  readonly value = input(false);
+
+  /** Emitted with the intended next state. The thumb flips when {@link value} changes. */
+  readonly valueChange = output<boolean>();
+
+  /**
+   * In-flight mutation. Keeps the last committed {@link value}, shows a
+   * spinner on the thumb, and treats the switch as non-interactive.
+   *
+   * Plain boolean (no `booleanAttribute`): `[loading]="saving()"` bindings
+   * must pass through `true` without attribute-string coercion.
+   */
+  readonly loading = input(false);
 
   /** Host disable flag (in addition to CVA). */
   readonly disabledInput = input(false, {
@@ -115,13 +146,26 @@ export class ToggleComponent implements ControlValueAccessor {
   });
 
   protected readonly cvaDisabled = signal(false);
+  /**
+   * Form-attached value. `undefined` until {@link writeValue} runs so
+   * template `[value]` stays the source of truth outside reactive forms.
+   */
+  private readonly cvaValue = signal<boolean | undefined>(undefined);
+
   protected readonly disabled = computed(
     () => this.disabledInput() || this.cvaDisabled(),
   );
+  protected readonly inactive = computed(
+    () => this.disabled() || this.loading(),
+  );
+  protected readonly on = computed(() => {
+    const fromCva = this.cvaValue();
+    return fromCva !== undefined ? fromCva : this.value();
+  });
 
   /** On → mode primary fill; off → neutral track. */
   protected readonly trackClass = computed(() =>
-    this.value()
+    this.on()
       ? this.modeColor.classes().bg
       : 'bg-neutral-300 dark:bg-neutral-600',
   );
@@ -141,7 +185,7 @@ export class ToggleComponent implements ControlValueAccessor {
 
   /** @param value - Form model; non-boolean coerces via `!!`. */
   writeValue(value: boolean | null): void {
-    this.value.set(!!value);
+    this.cvaValue.set(!!value);
   }
 
   /** @param fn - User toggle callback. */
@@ -160,12 +204,16 @@ export class ToggleComponent implements ControlValueAccessor {
   }
 
   protected toggle(): void {
-    if (this.disabled()) {
+    if (this.inactive()) {
       return;
     }
-    const next = !this.value();
-    this.value.set(next);
+    const next = !this.on();
     this.onChange(next);
+    this.valueChange.emit(next);
+    // Forms do not writeValue back after onChange — keep the thumb in sync.
+    if (this.cvaValue() !== undefined) {
+      this.cvaValue.set(next);
+    }
   }
 
   protected onBlur(): void {

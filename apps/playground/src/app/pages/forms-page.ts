@@ -79,7 +79,11 @@ import {
             placeholder="e.g. AWB-12345"
             [(value)]="tracking"
           />
-          <aies-text-input label="Reference" placeholder="Optional internal ref" [(value)]="reference">
+          <aies-text-input
+            label="Reference"
+            placeholder="Optional internal ref"
+            [(value)]="reference"
+          >
             <aies-icon prefix name="anchor" [size]="16" />
           </aies-text-input>
           <aies-text-input
@@ -87,7 +91,11 @@ import {
             error="Enter a valid email address"
             [(value)]="email"
           />
-          <aies-text-input label="Locked field" [disabled]="true" [(value)]="locked" />
+          <aies-text-input
+            label="Locked field"
+            [disabled]="true"
+            [(value)]="locked"
+          />
         </div>
       </app-demo-section>
 
@@ -120,11 +128,7 @@ import {
           <aies-number-input label="Declared value (USD)" [(value)]="amount">
             <span prefix>$</span>
           </aies-number-input>
-          <aies-number-input
-            label="Weight"
-            hint="Kilograms"
-            [(value)]="weight"
-          >
+          <aies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
             <span suffix>kg</span>
           </aies-number-input>
         </div>
@@ -189,7 +193,8 @@ import {
           </aies-address-input>
           <pre
             class="m-0 max-h-48 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
-          >{{ pickupAddress() | json }}</pre>
+            >{{ pickupAddress() | json }}</pre
+          >
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
             Last placeSelected:
             <span class="font-mono text-ink dark:text-white">{{
@@ -201,12 +206,15 @@ import {
 
       <app-demo-section
         title="Choice controls"
-        hint="Booleans and single-choice groups — checkbox, toggle, and radio with the same label / hint / error chrome."
+        hint="Booleans and single-choice groups — checkbox, toggle, and radio with the same label / hint / error chrome. Use [loading] on a toggle when the next value must wait on an API."
         [code]="choiceCode"
       >
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col gap-4">
-            <aies-checkbox label="Require signature on delivery" [(value)]="signature" />
+            <aies-checkbox
+              label="Require signature on delivery"
+              [(value)]="signature"
+            />
             <aies-checkbox
               label="Insure this shipment"
               hint="Adds 0.8% of declared value"
@@ -217,8 +225,18 @@ import {
               error="You must accept the terms"
               [(value)]="terms"
             />
-            <aies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
+            <aies-toggle
+              label="Notify consignee by SMS"
+              [(value)]="smsNotify"
+            />
             <aies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
+            <aies-toggle
+              label="Require customs hold"
+              hint="Waits for the API — the switch does not flip until the save succeeds."
+              [value]="customsHold()"
+              [loading]="customsHoldSaving()"
+              (valueChange)="saveCustomsHold($event)"
+            />
           </div>
           <aies-radio
             label="Service level"
@@ -276,7 +294,11 @@ import {
         [code]="dateFileCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
+          <aies-date-picker
+            label="Ready date"
+            hint="Local pickup day"
+            [(value)]="readyDate"
+          />
           <aies-date-picker
             label="Cutoff"
             error="Cutoff must be after ready date"
@@ -331,7 +353,9 @@ import {
         <dl class="m-0 grid gap-2 text-body-sm sm:grid-cols-2">
           <div>
             <dt class="text-neutral-600">Tracking</dt>
-            <dd class="m-0 font-medium text-ink dark:text-white">{{ tracking() || '—' }}</dd>
+            <dd class="m-0 font-medium text-ink dark:text-white">
+              {{ tracking() || '—' }}
+            </dd>
           </div>
           <div>
             <dt class="text-neutral-600">Amount</dt>
@@ -390,10 +414,17 @@ export class FormsPage {
   protected readonly warehouses = signal<SelectOption<string>[]>([
     { label: 'Lagos Hub', value: 'los', prefix: 'warehouse', suffix: 'globe' },
     { label: 'Accra Depot', value: 'acc', prefix: 'warehouse' },
-    { label: 'Johannesburg FC', value: 'jnb', prefix: 'warehouse', suffix: 'flag' },
+    {
+      label: 'Johannesburg FC',
+      value: 'jnb',
+      prefix: 'warehouse',
+      suffix: 'flag',
+    },
     { label: 'Cairo Gateway', value: 'cai', prefix: 'warehouse' },
   ]);
-  protected readonly selectedWarehouse = signal<SelectOption<string> | null>(null);
+  protected readonly selectedWarehouse = signal<SelectOption<string> | null>(
+    null,
+  );
   protected readonly tags = signal<SelectOption<string>[]>([
     { label: 'Fragile', value: 'fragile', prefix: 'warning' },
     { label: 'Priority', value: 'priority', prefix: 'alarm' },
@@ -406,13 +437,22 @@ export class FormsPage {
     { label: 'EXW', value: 'exw' },
     { label: 'FOB', value: 'fob' },
   ];
-  protected readonly selectedIncoterm = signal<SelectOption<string> | null>(null);
+  protected readonly selectedIncoterm = signal<SelectOption<string> | null>(
+    null,
+  );
   protected readonly carriers: SelectOption<string>[] = [
-    { label: 'DHL Express', value: 'dhl', prefix: 'airplane', suffix: 'check-circle' },
+    {
+      label: 'DHL Express',
+      value: 'dhl',
+      prefix: 'airplane',
+      suffix: 'check-circle',
+    },
     { label: 'FedEx', value: 'fedex', prefix: 'airplane' },
     { label: 'UPS', value: 'ups', prefix: 'airplane', suffix: 'globe' },
   ];
-  protected readonly selectedCarrier = signal<SelectOption<string> | null>(null);
+  protected readonly selectedCarrier = signal<SelectOption<string> | null>(
+    null,
+  );
   protected readonly pickupAddress = signal<AddressPlace | null>(null);
   protected readonly lastPlaceSelected = signal<AddressPlace | null>(null);
   protected readonly signature = signal(true);
@@ -420,6 +460,8 @@ export class FormsPage {
   protected readonly terms = signal(false);
   protected readonly smsNotify = signal(true);
   protected readonly holdAtDepot = signal(false);
+  protected readonly customsHold = signal(false);
+  protected readonly customsHoldSaving = signal(false);
   protected readonly serviceLevels: RadioOption<string>[] = [
     { label: 'Economy', value: 'economy' },
     { label: 'Standard', value: 'standard' },
@@ -470,6 +512,14 @@ export class FormsPage {
 
   protected onOtpResend(): void {
     this.otpResendCount.update((n) => n + 1);
+  }
+
+  protected saveCustomsHold(next: boolean): void {
+    this.customsHoldSaving.set(true);
+    window.setTimeout(() => {
+      this.customsHold.set(next);
+      this.customsHoldSaving.set(false);
+    }, 1200);
   }
 
   protected tagSummary(): string {
