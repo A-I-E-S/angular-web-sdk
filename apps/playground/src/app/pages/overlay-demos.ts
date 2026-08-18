@@ -67,7 +67,9 @@ export interface DemoDrawerData {
         />
       </label>
 
-      <div class="flex justify-end gap-2">
+      </div>
+
+      <div class="flex shrink-0 justify-end gap-2 border-t border-border pt-4 dark:border-white/10">
         <button aies-button type="button" variant="ghost" (click)="ref.close()">
           Cancel
         </button>
@@ -79,7 +81,6 @@ export interface DemoDrawerData {
         >
           Save
         </button>
-      </div>
       </div>
     </div>
   `,
