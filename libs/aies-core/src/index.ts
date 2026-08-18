@@ -76,6 +76,11 @@ export {
   createAiesQueryClientDefaults,
   provideAiesQueryDefaults,
 } from './lib/query/provide-aies-query-defaults';
+export {
+  listFetchKind,
+  type ListFetchKind,
+  type ListFetchReason,
+} from './lib/query/list-fetch-kind';
 
 // Mode config
 export {

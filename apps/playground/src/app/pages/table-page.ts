@@ -1,7 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
+import { ShippingModeService } from '@aies/aies-core';
 import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
@@ -420,6 +421,8 @@ export class TablePage {
   private readonly filterDrawer = inject(FilterDrawerService);
   private readonly filterQuery = inject(FilterQueryService);
   private readonly route = inject(ActivatedRoute);
+  private readonly shipping = inject(ShippingModeService);
+  private lastShippingMode = this.shipping.mode();
 
   protected readonly page = signal(1);
   protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE);
@@ -431,6 +434,7 @@ export class TablePage {
   protected readonly filterState = signal<FilterStateModel>(emptyFilterState());
   protected readonly refreshing = signal(false);
   protected readonly pageLoading = signal(false);
+  protected readonly modeLoading = signal(false);
 
   protected readonly listKinds = ['ready', 'loading', 'empty', 'error'] as const;
 
@@ -531,6 +535,14 @@ export class TablePage {
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe(() => {
       this.syncFromUrl();
     });
+    effect(() => {
+      const mode = this.shipping.mode();
+      if (mode === this.lastShippingMode) {
+        return;
+      }
+      this.lastShippingMode = mode;
+      untracked(() => this.onShippingModeChange());
+    });
   }
 
   protected readonly tableCode = TABLE_LIST;
@@ -539,7 +551,8 @@ export class TablePage {
 
   protected readonly sortedRows = computed(() => {
     const current = this.sort();
-    const rows = [...ALL_ROWS];
+    const mode = this.shipping.mode();
+    const rows = ALL_ROWS.filter((row) => row.mode === mode);
     if (!current) {
       return rows;
     }
@@ -577,6 +590,15 @@ export class TablePage {
   });
 
   protected readonly listState = computed((): AsyncQueryStateModel<DemoShipment[]> => {
+    if (this.modeLoading()) {
+      return {
+        data: undefined,
+        isLoading: true,
+        isFetching: true,
+        isError: false,
+        error: null,
+      };
+    }
     switch (this.listDemo()) {
       case 'loading':
         return {
@@ -634,7 +656,18 @@ export class TablePage {
     });
   }
 
-  /** Simulate a server page fetch: show table loading, then apply the change. */
+  /** STN↔SFN: drop current rows and show the body loader — data is for the other mode. */
+  private onShippingModeChange(): void {
+    if (this.modeLoading()) {
+      return;
+    }
+    this.modeLoading.set(true);
+    this.page.set(1);
+    this.listDemo.set('ready');
+    setTimeout(() => this.modeLoading.set(false), 500);
+  }
+
+  /** Simulate a server page fetch: keep rows, spin the pager, then apply the change. */
   private runPageLoad(apply: () => void): void {
     if (this.pageLoading()) {
       return;

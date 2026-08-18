@@ -38,8 +38,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
  * of data is changing (pagination / size): rows stay on screen and the built-in
  * pager shows a circular spinner beside the page controls; the body loader
- * appears only when there are no rows
- * yet (first load). Toolbar and column headers stay mounted.
+ * appears only when there are no rows yet (first load) or the host cleared
+ * rows for a shipping-mode switch (STN ↔ SFN). Toolbar and column headers stay
+ * mounted.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
@@ -446,10 +447,11 @@ export class TableComponent<T = unknown> {
   readonly refreshing = input(false, { transform: booleanAttribute });
 
   /**
-   * Page of data is loading (first load, pagination, page size). When rows are
-   * already on screen, the pager shows a spinner and rows stay visible; when
-   * there are no rows yet, the body shows {@link LoadingStateComponent}.
-   * Distinct from {@link refreshing}.
+   * Page of data is loading (first load, shipping-mode switch, pagination,
+   * page size). When rows are already on screen, the pager shows a spinner
+   * and rows stay visible; when there are no rows (first load or the host
+   * dropped STN/SFN rows after a mode switch), the body shows
+   * {@link LoadingStateComponent}. Distinct from {@link refreshing}.
    */
   readonly loading = input(false, { transform: booleanAttribute });
 

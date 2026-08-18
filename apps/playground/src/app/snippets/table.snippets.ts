@@ -7,15 +7,16 @@ const TABLE_LIST = `// Server-driven list: keep the table mounted; loading / emp
 // Toolbar: Refresh (left); Filters + Export (right). Pass [meta] for the built-in pager.
 // Hydrate page/size/filters from FilterQueryService when the URL has those queries.
 // Pager + Apply write the same keys back. Refetch on sortChange / pageChange / sizeChange.
-// Refresh → [refreshing] (rows stay, button spins). Page/size / first load → [loading]
-// (pager spinner when rows exist; body spinner on first load).
+// Refresh / tab focus → [refreshing] (rows stay). Page/size → pager spinner.
+// First load and STN↔SFN (listFetchKind reason 'mode') → clear rows + body loader.
 // Empty and hard errors stay in-grid so Filters / Export / pager remain available.
 // Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit to size to content; set width (e.g. '3.5rem') to pin actions.
 // The actions column sticks to the right while the table scrolls horizontally.
 
-import { Component, computed, inject, signal } from '@angular/core';
-import { ApiClient, downloadCsv } from '@aies/aies-core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ApiClient, downloadCsv, listFetchKind, ShippingModeService, type ListFetchReason } from '@aies/aies-core';
 import type { AsyncQueryStateModel, PaginationMetaModel } from '@aies/aies-models';
 import {
   ActionMenuComponent,
@@ -31,7 +32,7 @@ import {
   type TableColumn,
   type TableSortChange,
 } from '@aies/aies-ui';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, fromEvent } from 'rxjs';
 
 interface Shipment {
   reference: string;
@@ -63,13 +64,13 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
         [rowTrackBy]="rowTrackBy"
         [showRefresh]="true"
         [refreshing]="isRefreshing()"
-        [loading]="isPageLoading()"
+        [loading]="isLoading() || isPageLoading()"
         [error]="listError()"
         emptyMessage="No shipments match these filters."
         [showFilter]="true"
         [showExport]="true"
         (sortChange)="onSort($event)"
-        (refreshClick)="refetch({ soft: true })"
+        (refreshClick)="refetch({ reason: 'refresh' })"
         (filterClick)="openFilters()"
         (exportClick)="exportCsv()"
         (pageChange)="onPageChange($event)"
@@ -116,6 +117,7 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 })
 export class ShipmentListPageComponent {
   private readonly api = inject(ApiClient);
+  private readonly shipping = inject(ShippingModeService);
   private readonly filterQuery = inject(FilterQueryService);
   private readonly urlState = this.filterQuery.read(trackShipmentsFilterConfig);
 
@@ -176,16 +178,36 @@ export class ShipmentListPageComponent {
   }));
 
   constructor() {
-    this.refetch();
+    effect(() => {
+      this.shipping.mode();
+      untracked(() =>
+        void this.refetch({
+          reason: this.rows().length > 0 ? 'mode' : 'initial',
+        }),
+      );
+    });
+
+    fromEvent(document, 'visibilitychange')
+      .pipe(
+        filter(() => document.visibilityState === 'visible'),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => void this.refetch({ reason: 'focus' }));
   }
 
-  protected async refetch(opts?: { soft?: boolean; page?: boolean }): Promise<void> {
-    const soft = opts?.soft === true;
-    const page = opts?.page === true;
-    const hadData = this.rows().length > 0;
-    this.isLoading.set(!hadData && !soft && !page);
-    this.isRefreshing.set(soft);
-    this.isPageLoading.set(page);
+  protected async refetch(
+    opts: { reason: ListFetchReason } = { reason: 'initial' },
+  ): Promise<void> {
+    const kind = listFetchKind({
+      hasData: this.rows().length > 0,
+      reason: opts.reason,
+    });
+    this.isLoading.set(kind === 'loading');
+    this.isRefreshing.set(kind === 'refreshing');
+    this.isPageLoading.set(kind === 'pagination');
+    if (kind === 'loading') {
+      this.rows.set([]);
+    }
     this.fetchError.set(null);
     try {
       const currentSort = this.sort();
@@ -212,18 +234,18 @@ export class ShipmentListPageComponent {
   protected onSort(change: TableSortChange): void {
     this.sort.set(change);
     this.page.set(1);
-    void this.refetch({ page: true });
+    void this.refetch({ reason: 'page' });
   }
 
   protected onPageChange(next: number): void {
     this.page.set(next);
-    void this.refetch({ page: true });
+    void this.refetch({ reason: 'page' });
   }
 
   protected onSizeChange(next: number): void {
     this.size.set(next);
     this.page.set(1);
-    void this.refetch({ page: true });
+    void this.refetch({ reason: 'page' });
   }
 
   private open(row: Shipment): void {

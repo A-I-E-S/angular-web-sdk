@@ -29,6 +29,10 @@ const DEFAULT_MODE: ShippingMode = 'sfn';
  * dumps cannot cross STN↔SFN (cache keys omit the mode header). `ApiClient`
  * is resolved lazily via {@link Injector} to avoid a DI cycle.
  *
+ * List screens should drop in-memory rows and show a blocking loader until
+ * the new mode's page arrives — STN rows must not linger on SFN. Use
+ * `listFetchKind` with `reason: 'mode'`.
+ *
  * Provided in root; no explicit provider registration is required.
  * Pair with {@link shipmentModeInterceptor} so HTTP calls advertise the mode.
  *

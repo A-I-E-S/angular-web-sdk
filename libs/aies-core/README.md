@@ -47,7 +47,7 @@ export const appConfig: ApplicationConfig = {
 | Auth | `AuthService` (`forgot`), `isValidEmail`, `AuthTokenService` (`set` / `clear` / `get`) |
 | Shipping | `ShippingModeService` (tab-scoped via `sessionStorage`), `shipmentModeInterceptor`, per-request `ApiRequestOptions.shippingMode` / `withShippingMode` |
 | HTTP | `provideAiesHttpClient`, `ApiClient` (auto-tags `withToast` from config / `ApiRequestOptions.toast`; optional `shippingMode` per call; HTTP failures → `Error` with formatted `.message`), `withToast`, `withShippingMode`, `httpToastInterceptor`, `normalize` (lifts Laravel validation bags into `errors` + joined `message`), `formatApiErrorMessage` (used internally; rare for hosts), `fieldErrorsMap`, `authInterceptor` |
-| Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults` |
+| Query | `createAiesQueryClientDefaults`, `provideAiesQueryDefaults`, `listFetchKind` (body loader on first load / STN↔SFN; keep rows on focus / Refresh / pager) |
 | Mode | `ModeConfigService`, `provideModeConfig`, `MODE_CONFIG_PATH` |
 | Country | `CountryService`, `countryFlagUrl` / `mapCountrySelectOptions` (flagcdn.com), `COUNTRY_READ_PATH`, mappers |
 | Service | `ServiceService` (`readPage` / `readAll` / `readById`), `SERVICE_READ_PATH` (`/public/service/read`), mappers |
