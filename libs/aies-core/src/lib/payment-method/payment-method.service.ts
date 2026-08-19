@@ -92,6 +92,7 @@ export class PaymentMethodService {
   ): Observable<ApiResponseModel<PaymentMethodModel | PaymentMethodModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(PAYMENT_METHOD_READ_PATH, id), {
+        toast: false,
         params: buildResourceQueryParams(id, params),
         cacheTtlMs: resourceCacheTtlMs(id, PAYMENT_METHOD_CACHE_TTL_MS),
       })

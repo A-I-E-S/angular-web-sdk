@@ -68,6 +68,7 @@ export class ProductService {
   ): Observable<ApiResponseModel<ProductModel | ProductModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(PRODUCT_READ_PATH, id), {
+        toast: false,
         params: buildResourceQueryParams(id, params),
         cacheTtlMs: resourceCacheTtlMs(id, PRODUCT_CACHE_TTL_MS),
       })

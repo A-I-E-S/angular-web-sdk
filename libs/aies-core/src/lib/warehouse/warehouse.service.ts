@@ -72,6 +72,7 @@ export class WarehouseService {
   ): Observable<ApiResponseModel<WarehouseModel | WarehouseModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(WAREHOUSE_READ_PATH, id), {
+        toast: false,
         params: buildResourceQueryParams(id, params),
         cacheTtlMs: resourceCacheTtlMs(id, WAREHOUSE_CACHE_TTL_MS),
       })

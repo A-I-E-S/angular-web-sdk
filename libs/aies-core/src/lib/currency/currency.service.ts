@@ -87,6 +87,7 @@ export class CurrencyService {
   ): Observable<ApiResponseModel<CurrencyModel | CurrencyModel[]>> {
     return this.api
       .get<unknown>(buildResourcePath(CURRENCY_READ_PATH, id), {
+        toast: false,
         params: buildResourceQueryParams(id, params),
         cacheTtlMs: resourceCacheTtlMs(id, CURRENCY_CACHE_TTL_MS),
       })
