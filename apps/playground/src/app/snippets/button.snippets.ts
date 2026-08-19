@@ -36,6 +36,8 @@ export class ShipmentActionsComponent {
     'secondary',
     'ghost',
     'ghost-primary',
+    'ghost-danger',
+    'underline',
     'danger',
   ];
 
@@ -44,6 +46,8 @@ export class ShipmentActionsComponent {
     secondary: 'Save draft',
     ghost: 'Cancel',
     'ghost-primary': 'Add row',
+    'ghost-danger': 'Remove',
+    underline: 'Learn more',
     danger: 'Delete',
   };
 }`;

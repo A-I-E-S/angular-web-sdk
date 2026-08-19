@@ -33,6 +33,16 @@ export {
   type SelectOption,
   type SelectSize,
 } from './select';
+export {
+  SearchComboboxComponent,
+  type SearchComboboxBadge,
+  type SearchComboboxBadgeFn,
+  type SearchComboboxLabelFn,
+  type SearchComboboxMarkFn,
+  type SearchComboboxSearchFn,
+  type SearchComboboxSubtitleFn,
+  type SearchComboboxTrackFn,
+} from './search-combobox';
 export { TextInputComponent, type TextInputType } from './text-input';
 export { TextareaComponent } from './textarea';
 export { ToggleComponent } from './toggle';

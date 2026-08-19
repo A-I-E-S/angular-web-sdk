@@ -1,7 +1,8 @@
 /**
  * Presentational table with template-based cells.
  */
-export { type CellDefContext,CellDefDirective } from './cell-def.directive';
+export { type CellDefContext, CellDefDirective } from './cell-def.directive';
+export { HeaderCellDefDirective } from './header-cell-def.directive';
 export {
   type RowDetailDefContext,
   RowDetailDefDirective,

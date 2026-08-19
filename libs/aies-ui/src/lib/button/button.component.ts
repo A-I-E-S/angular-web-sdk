@@ -17,6 +17,7 @@ import { ModeColorService } from '@aies/aies-theme';
  * - `secondary` — outlined chrome for secondary actions
  * - `ghost` — neutral text-only for low-emphasis actions (Cancel, tertiary)
  * - `ghost-primary` — text-only mode accent (SFN green / STN orange)
+ * - `ghost-danger` — text-only destructive actions (Clear, Remove)
  * - `danger` — destructive confirmations and deletes
  */
 export type ButtonVariant =
@@ -24,6 +25,8 @@ export type ButtonVariant =
   | 'secondary'
   | 'ghost'
   | 'ghost-primary'
+  | 'ghost-danger'
+  | 'underline'
   | 'danger';
 
 /**
@@ -169,6 +172,12 @@ export class ButtonComponent {
     } else if (variant === 'ghost') {
       variantClass =
         'bg-transparent text-ink dark:text-white border-transparent hover:bg-background-welcome dark:hover:bg-white/10';
+    } else if (variant === 'ghost-danger') {
+      variantClass =
+        'bg-transparent text-danger border-transparent hover:bg-danger-subtle dark:hover:bg-danger/10';
+    } else if (variant === 'underline') {
+      variantClass =
+        'bg-transparent text-ink dark:text-white border-transparent underline underline-offset-2 hover:opacity-80 !px-0 !h-auto !min-h-0';
     } else {
       variantClass =
         'bg-danger text-white border-transparent hover:bg-danger-dark';

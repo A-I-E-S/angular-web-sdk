@@ -48,7 +48,7 @@ import {
       <app-demo-section
         title="Variants"
         hint="Pick the visual weight for the action. Primary and ghost-primary are mode-colored — flip STN/SFN in the sidebar to see them change."
-        badge="5"
+        badge="7"
         [code]="variantsCode"
       >
         <div class="flex flex-wrap items-end gap-6">
@@ -231,6 +231,8 @@ export class ButtonPage {
     'secondary',
     'ghost',
     'ghost-primary',
+    'ghost-danger',
+    'underline',
     'danger',
   ];
   protected readonly sizes: ButtonSize[] = ['sm', 'md', 'lg'];
@@ -239,6 +241,8 @@ export class ButtonPage {
     secondary: 'Save draft',
     ghost: 'Cancel',
     'ghost-primary': 'Add row',
+    'ghost-danger': 'Remove',
+    underline: 'Learn more',
     danger: 'Delete',
   };
 

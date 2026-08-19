@@ -162,6 +162,14 @@ export {
   provideGooglePlaces,
   RadioComponent,
   type RadioOption,
+  SearchComboboxComponent,
+  type SearchComboboxBadge,
+  type SearchComboboxBadgeFn,
+  type SearchComboboxLabelFn,
+  type SearchComboboxMarkFn,
+  type SearchComboboxSearchFn,
+  type SearchComboboxSubtitleFn,
+  type SearchComboboxTrackFn,
   SelectComponent,
   type SelectCreateConfig,
   type SelectOption,
@@ -233,6 +241,13 @@ export {
   type AvatarSize,
 } from './lib/avatar';
 
+// Image (loading / fallback frame)
+export {
+  ImageComponent,
+  type ImageFit,
+  type ImageShape,
+} from './lib/image';
+
 // Notifications drawer
 export {
   type AiesNotification,
@@ -247,6 +262,7 @@ export {
 export {
   type CellDefContext,
   CellDefDirective,
+  HeaderCellDefDirective,
   type RowDetailDefContext,
   RowDetailDefDirective,
   type TableColumn,

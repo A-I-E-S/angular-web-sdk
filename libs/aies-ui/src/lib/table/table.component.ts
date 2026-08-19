@@ -22,6 +22,7 @@ import { ErrorStateComponent } from '../feedback/error-state.component';
 import { LoadingStateComponent } from '../feedback/loading-state.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
+import { HeaderCellDefDirective } from './header-cell-def.directive';
 import { RowDetailDefDirective } from './row-detail-def.directive';
 import { TableColumn, TableSortChange } from './table-column';
 
@@ -239,7 +240,11 @@ import { TableColumn, TableSortChange } from './table-column';
                   [class]="headerCellClass(col)"
                   [style.width]="col.width ?? null"
                 >
-                  @if (col.sortable) {
+                  @if (headerTemplateFor(col.key); as headerTpl) {
+                    <ng-container
+                      [ngTemplateOutlet]="headerTpl"
+                    />
+                  } @else if (col.sortable) {
                     <button
                       type="button"
                       class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:text-white"
@@ -530,6 +535,9 @@ export class TableComponent<T = unknown> {
   /** Projected cell templates keyed by column. */
   private readonly cellDefs = contentChildren(CellDefDirective);
 
+  /** Projected header cell templates keyed by column. */
+  private readonly headerCellDefs = contentChildren(HeaderCellDefDirective);
+
   /** Projected label / value templates for expanded rows. */
   protected readonly rowDetailDefs = contentChildren(RowDetailDefDirective);
 
@@ -600,6 +608,15 @@ export class TableComponent<T = unknown> {
     return map;
   });
 
+  /** Lookup map rebuilt when projected header cell defs change. */
+  private readonly headerCellTemplateMap = computed(() => {
+    const map = new Map<string, TemplateRef<unknown>>();
+    for (const def of this.headerCellDefs()) {
+      map.set(def.aiesHeaderCellDef(), def.template);
+    }
+    return map;
+  });
+
   /**
    * Resolves the projected template for a column key, if any.
    *
@@ -608,6 +625,11 @@ export class TableComponent<T = unknown> {
    */
   protected templateFor(key: string): TemplateRef<unknown> | null {
     return this.cellTemplateMap().get(key) ?? null;
+  }
+
+  /** Resolves the projected header template for a column key, if any. */
+  protected headerTemplateFor(key: string): TemplateRef<unknown> | null {
+    return this.headerCellTemplateMap().get(key) ?? null;
   }
 
   /**
