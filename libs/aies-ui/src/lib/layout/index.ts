@@ -17,6 +17,10 @@ export { AppShellHeaderSlotDirective } from './app-shell-header-slot.directive';
 export {
   type HeaderGreeting,
   headerGreetingFirstName,
+  type HeaderGreetingPeriod,
+  headerGreetingPeriod,
+  type HeaderWeather,
+  type HeaderWeatherKind,
   pickHeaderGreeting,
 } from './header-greeting.util';
 export { PageHeaderComponent } from './page-header.component';

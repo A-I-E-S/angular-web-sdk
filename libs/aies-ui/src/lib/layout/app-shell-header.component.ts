@@ -20,7 +20,13 @@ import type { AiesMenuItem } from '../action-menu/menu-item';
 import { AvatarMenuComponent } from '../avatar';
 import type { AiesNotification, NotificationPageResult } from '../notifications';
 import { NotificationDrawerService } from '../notifications';
+import type { HeaderWeather } from './header-greeting.util';
 import { pickHeaderGreeting } from './header-greeting.util';
+import {
+  headerWeatherIcon,
+  headerWeatherLabel,
+  loadHeaderWeather,
+} from './header-weather';
 
 /** Header density — affects clock visibility in narrow layouts. */
 export type AppShellHeaderDensity = 'mobile' | 'tablet' | 'desktop';
@@ -44,8 +50,9 @@ export class AppShellHeaderStartDirective {}
 export class AppShellHeaderEndDirective {}
 
 /**
- * Product header bar for {@link AppShellComponent}: a short daily kicker plus
- * the given name, live clock, notification inbox drawer, and avatar menu.
+ * Product header bar for {@link AppShellComponent}: a short time-of-day kicker
+ * plus the given name, local weather, live clock, notification inbox drawer,
+ * and avatar menu.
  * Breadcrumbs and Back belong in the content column via
  * {@link AppShellContentHeaderComponent}.
  *
@@ -86,23 +93,51 @@ export class AppShellHeaderEndDirective {}
       </div>
 
       <div class="flex shrink-0 items-center gap-2 sm:gap-3">
-        @if (showClock()) {
+        @if (weather() || showClock()) {
           <div
-            class="flex items-baseline gap-2 pr-2 sm:border-r sm:border-border sm:pr-4 dark:sm:border-white/15"
-            aria-live="polite"
+            class="flex items-center gap-3 pr-2 sm:border-r sm:border-border sm:pr-4 dark:sm:border-white/15"
           >
-            <time
-              class="hidden text-caption text-neutral-500 sm:inline dark:text-neutral-400"
-              [dateTime]="nowIso()"
-            >
-              {{ now() | date: clockDateFormat() }}
-            </time>
-            <time
-              class="text-body-sm font-medium tabular-nums tracking-tight text-ink dark:text-white"
-              [dateTime]="nowIso()"
-            >
-              {{ now() | date: clockFormat() }}
-            </time>
+            @if (weather()) {
+              <div
+                class="flex items-center gap-1.5"
+                [attr.aria-label]="weatherAriaLabel()"
+              >
+                <aies-icon
+                  [name]="weatherIcon()"
+                  [size]="18"
+                  class="text-neutral-500 dark:text-neutral-400"
+                />
+                @if (weatherTemp(); as temp) {
+                  <span
+                    class="text-body-sm font-medium tabular-nums tracking-tight text-ink dark:text-white"
+                  >
+                    {{ temp }}°
+                  </span>
+                }
+                <span
+                  class="hidden text-caption text-neutral-500 sm:inline dark:text-neutral-400"
+                >
+                  {{ weatherPlace() }}
+                </span>
+              </div>
+            }
+
+            @if (showClock()) {
+              <div class="flex items-baseline gap-2" aria-live="polite">
+                <time
+                  class="hidden text-caption text-neutral-500 sm:inline dark:text-neutral-400"
+                  [dateTime]="nowIso()"
+                >
+                  {{ now() | date: clockDateFormat() }}
+                </time>
+                <time
+                  class="text-body-sm font-medium tabular-nums tracking-tight text-ink dark:text-white"
+                  [dateTime]="nowIso()"
+                >
+                  {{ now() | date: clockFormat() }}
+                </time>
+              </div>
+            }
           </div>
         }
 
@@ -111,11 +146,11 @@ export class AppShellHeaderEndDirective {}
         @if (showNotifications() || userName()) {
           <div
             class="flex items-center gap-2 sm:gap-3"
-            [class.border-l]="!showClock()"
-            [class.border-border]="!showClock()"
-            [class.pl-2]="!showClock()"
-            [class.sm:pl-3]="!showClock()"
-            [class.dark:border-white/15]="!showClock()"
+            [class.border-l]="!(weather() || showClock())"
+            [class.border-border]="!(weather() || showClock())"
+            [class.pl-2]="!(weather() || showClock())"
+            [class.sm:pl-3]="!(weather() || showClock())"
+            [class.dark:border-white/15]="!(weather() || showClock())"
           >
             @if (showNotifications()) {
               <button
@@ -162,7 +197,7 @@ export class AppShellHeaderComponent {
   readonly userName = input<string | null>(null);
 
   /**
-   * Given or full name used to pick a daily greeting (Claude-style variety).
+   * Given or full name used to pick a time-of-day greeting.
    */
   readonly greetingName = input<string | null>(null);
 
@@ -216,11 +251,49 @@ export class AppShellHeaderComponent {
 
   protected readonly now = signal(new Date());
 
+  protected readonly weather = signal<HeaderWeather | null>(null);
+
   protected readonly nowIso = computed(() => this.now().toISOString());
 
   protected readonly greeting = computed(() =>
-    pickHeaderGreeting(this.greetingName(), this.now()),
+    pickHeaderGreeting(this.greetingName(), this.now(), this.weather()),
   );
+
+  protected readonly weatherIcon = computed(() => {
+    const forecast = this.weather();
+    if (!forecast) {
+      return 'cloud-o';
+    }
+    return headerWeatherIcon(forecast.kind, this.now().getHours());
+  });
+
+  protected readonly weatherTemp = computed(() => {
+    const temp = this.weather()?.temperatureC;
+    if (temp === undefined || !Number.isFinite(temp)) {
+      return null;
+    }
+    return Math.round(temp);
+  });
+
+  protected readonly weatherPlace = computed(() => {
+    const forecast = this.weather();
+    if (!forecast) {
+      return '';
+    }
+    return forecast.city?.trim() || headerWeatherLabel(forecast.kind);
+  });
+
+  protected readonly weatherAriaLabel = computed(() => {
+    const forecast = this.weather();
+    if (!forecast) {
+      return 'Weather';
+    }
+    const condition = headerWeatherLabel(forecast.kind).toLowerCase();
+    const temp = this.weatherTemp();
+    const city = forecast.city?.trim();
+    const degrees = temp === null ? condition : `${temp} degrees, ${condition}`;
+    return city ? `Weather in ${city}: ${degrees}` : `Weather: ${degrees}`;
+  });
 
   protected readonly unreadCount = computed(
     () => (this.notifications() ?? []).filter((n) => !n.read).length,
@@ -240,8 +313,18 @@ export class AppShellHeaderComponent {
   });
 
   constructor() {
+    let active = true;
     const tick = setInterval(() => this.now.set(new Date()), 1_000);
-    this.destroyRef.onDestroy(() => clearInterval(tick));
+    this.destroyRef.onDestroy(() => {
+      active = false;
+      clearInterval(tick);
+    });
+
+    void loadHeaderWeather().then((forecast) => {
+      if (active && forecast) {
+        this.weather.set(forecast);
+      }
+    });
   }
 
   protected openNotifications(): void {

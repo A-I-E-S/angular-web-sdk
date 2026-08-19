@@ -210,6 +210,10 @@ export {
   type AppShellLayoutPreview,
   type HeaderGreeting,
   headerGreetingFirstName,
+  type HeaderGreetingPeriod,
+  headerGreetingPeriod,
+  type HeaderWeather,
+  type HeaderWeatherKind,
   PageHeaderComponent,
   pickHeaderGreeting,
 } from './lib/layout';
