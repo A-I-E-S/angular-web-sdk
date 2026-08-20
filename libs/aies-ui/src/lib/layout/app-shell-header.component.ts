@@ -272,7 +272,7 @@ export class AppShellHeaderComponent {
     if (temp === undefined || !Number.isFinite(temp)) {
       return null;
     }
-    return Math.round(temp);
+    return temp.toFixed(1);
   });
 
   protected readonly weatherPlace = computed(() => {
@@ -314,16 +314,28 @@ export class AppShellHeaderComponent {
 
   constructor() {
     let active = true;
-    const tick = setInterval(() => this.now.set(new Date()), 1_000);
+    const refreshWeather = (): void => {
+      void loadHeaderWeather().then((forecast) => {
+        if (active && forecast) {
+          this.weather.set(forecast);
+        }
+      });
+    };
+
+    refreshWeather();
+    const tick = setInterval(() => {
+      const next = new Date();
+      const hourChanged =
+        next.getHours() !== this.now().getHours() ||
+        next.getDate() !== this.now().getDate();
+      this.now.set(next);
+      if (hourChanged) {
+        refreshWeather();
+      }
+    }, 1_000);
     this.destroyRef.onDestroy(() => {
       active = false;
       clearInterval(tick);
-    });
-
-    void loadHeaderWeather().then((forecast) => {
-      if (active && forecast) {
-        this.weather.set(forecast);
-      }
     });
   }
 

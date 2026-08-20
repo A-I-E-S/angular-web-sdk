@@ -2,7 +2,7 @@ import type { IconName } from '@aies/aies-icons';
 
 import type { HeaderWeather, HeaderWeatherKind } from './header-greeting.util';
 
-const CACHE_KEY = 'aies-header-weather-v2';
+const CACHE_KEY = 'aies-header-weather-v3';
 const FETCH_MS = 4_000;
 const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json';
 
@@ -17,7 +17,7 @@ const WEATHER_LABELS: Record<HeaderWeatherKind, string> = {
 };
 
 interface CachedWeather {
-  day: string;
+  hour: string;
   kind: HeaderWeatherKind;
   temperatureC?: number;
   city?: string;
@@ -98,7 +98,7 @@ export function headerWeatherIcon(kind: HeaderWeatherKind, hour: number): IconNa
  * City-level forecast via IP geolocation + Open-Meteo (no API key).
  *
  * Fails closed: missing browser APIs, timeouts, and HTTP errors all return
- * `null` so the greeting can stay time-of-day only. Cached per calendar day
+ * `null` so the greeting can stay time-of-day only. Cached per local hour
  * in `sessionStorage`.
  *
  * @param fetchFn - Injected `fetch` for tests.
@@ -112,8 +112,8 @@ export async function loadHeaderWeather(
     return null;
   }
 
-  const day = calendarDayKey();
-  const cached = readCache(day);
+  const hour = calendarHourKey();
+  const cached = readCache(hour);
   if (cached) {
     return cached;
   }
@@ -144,7 +144,7 @@ export async function loadHeaderWeather(
     const temperatureC = asNumber(forecast?.current?.temperature_2m) ?? undefined;
     const city = asCity(geo?.city);
     const weather: HeaderWeather = { kind, temperatureC, city };
-    writeCache({ day, kind, temperatureC, city });
+    writeCache({ hour, kind, temperatureC, city });
     return weather;
   } catch {
     return null;
@@ -155,18 +155,18 @@ function defaultFetch(): typeof fetch | undefined {
   return typeof fetch === 'function' ? fetch.bind(globalThis) : undefined;
 }
 
-function calendarDayKey(now = new Date()): string {
-  return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+function calendarHourKey(now = new Date()): string {
+  return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
 }
 
-function readCache(day: string): HeaderWeather | null {
+function readCache(hour: string): HeaderWeather | null {
   try {
     const raw = sessionStorage.getItem(CACHE_KEY);
     if (!raw) {
       return null;
     }
     const parsed = JSON.parse(raw) as CachedWeather;
-    if (parsed.day !== day || !parsed.kind) {
+    if (parsed.hour !== hour || !parsed.kind) {
       return null;
     }
     return {

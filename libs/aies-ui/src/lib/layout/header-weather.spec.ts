@@ -59,7 +59,7 @@ describe('loadHeaderWeather', () => {
     expect(fetchFn).toHaveBeenCalledTimes(2);
   });
 
-  it('reuses the same-day session cache', async () => {
+  it('reuses the same-hour session cache', async () => {
     const fetchFn = jest.fn(async (url: string) => {
       if (String(url).includes('geojs')) {
         return jsonResponse({ latitude: 1, longitude: 2 });
@@ -72,6 +72,29 @@ describe('loadHeaderWeather', () => {
 
     expect(first).toEqual(second);
     expect(fetchFn).toHaveBeenCalledTimes(2);
+  });
+
+  it('fetches again when the cached hour no longer matches', async () => {
+    const fetchFn = jest.fn(async (url: string) => {
+      if (String(url).includes('geojs')) {
+        return jsonResponse({ latitude: 1, longitude: 2, city: 'Lagos' });
+      }
+      return jsonResponse({ current: { weather_code: 0, temperature_2m: 30.2 } });
+    });
+
+    await loadHeaderWeather(fetchFn as unknown as typeof fetch);
+    const cacheKey = Object.keys(sessionStorage).find((key) =>
+      key.startsWith('aies-header-weather'),
+    );
+    expect(cacheKey).toBeDefined();
+    const stored = JSON.parse(sessionStorage.getItem(cacheKey!) ?? '{}') as {
+      hour?: string;
+    };
+    stored.hour = '1999-0-1-0';
+    sessionStorage.setItem(cacheKey!, JSON.stringify(stored));
+
+    await loadHeaderWeather(fetchFn as unknown as typeof fetch);
+    expect(fetchFn).toHaveBeenCalledTimes(4);
   });
 });
 

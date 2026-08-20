@@ -682,7 +682,7 @@ export class TableComponent<T = unknown> {
    */
   protected headerCellClass(col: TableColumn<T>): string {
     return (
-      'border-b border-border whitespace-nowrap px-3 py-3.5 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      'border-b border-border whitespace-normal wrap-break-word px-3 py-3.5 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
       this.stickySurfaceClass(col, 'head')
     );
   }
@@ -703,9 +703,14 @@ export class TableComponent<T = unknown> {
     const prev = index > 0 ? this.rowList()[index - 1] : undefined;
     const afterExpanded =
       prev !== undefined && this.isRowExpanded(prev, index - 1);
+    const wrap =
+      col.key === 'actions'
+        ? 'whitespace-nowrap '
+        : 'whitespace-normal wrap-break-word ';
     return (
       rowLine +
-      'px-3 py-3.5 align-middle whitespace-nowrap ' +
+      'px-3 py-3.5 align-middle ' +
+      wrap +
       this.stickySurfaceClass(col, 'body', index, afterExpanded)
     );
   }
