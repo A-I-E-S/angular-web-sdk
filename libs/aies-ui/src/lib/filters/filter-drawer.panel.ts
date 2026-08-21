@@ -21,7 +21,6 @@ import type {
 import {
   cloneFilterState,
   resetFilterState,
-  resolveFilterTransport,
   toFilterParams,
 } from '@aies/aies-models';
 
@@ -83,9 +82,6 @@ import { FilterQueryService } from './filter-query.service';
           <h2 class="m-0 text-heading-3 text-ink dark:text-white">
             {{ title() }}
           </h2>
-          <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-            {{ config.id }} · {{ transport }}
-          </p>
         </div>
         <button
           aies-button
@@ -330,7 +326,6 @@ export class FilterDrawerPanel {
   private readonly filterQuery = inject(FilterQueryService);
 
   protected readonly config = this.data.config;
-  protected readonly transport = resolveFilterTransport(this.data.config);
   protected readonly title = computed(
     () => this.data.title ?? 'Filters',
   );
