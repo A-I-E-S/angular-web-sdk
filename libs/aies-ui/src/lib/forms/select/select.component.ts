@@ -498,6 +498,12 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   readonly retry = output<void>();
 
   /**
+   * Emitted as the user types in the searchable panel filter.
+   * Use for server-side option search; pair with {@link loading}.
+   */
+  readonly searchChange = output<string>();
+
+  /**
    * When true, options are loading — spinner on the trigger, panel, and hint row.
    * Blocks opening the panel until loading completes.
    */
@@ -948,8 +954,10 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   }
 
   protected onSearchInput(event: Event): void {
-    this.searchQuery.set((event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
     this.activeIndex.set(0);
+    this.searchChange.emit(value);
   }
 
   /**

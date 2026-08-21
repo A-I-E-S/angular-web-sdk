@@ -95,8 +95,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * </aies-table>
  * ```
  *
- * **Sticky actions:** a column with `key: 'actions'` stays pinned to the
- * right while the grid scrolls horizontally. Override with
+ * **Sticky columns:** a column with `key: 'actions'` stays pinned to the
+ * right while the grid scrolls horizontally. The expand trigger column pins
+ * to the left when rows are expandable. Override with
  * {@link TableColumn.sticky}.
  */
 @Component({
@@ -211,7 +212,10 @@ import { TableColumn, TableSortChange } from './table-column';
           >
             <tr>
               @if (isExpandable()) {
-                <th scope="col" class="w-10 border-b border-border px-2 py-3.5 dark:border-white/10">
+                <th
+                  scope="col"
+                  [class]="expandHeaderClass()"
+                >
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
@@ -300,7 +304,7 @@ import { TableColumn, TableSortChange } from './table-column';
             @for (row of rowList(); track rowId(row, $index); let i = $index) {
               <tr [class]="bodyRowClass(row, i)">
                 @if (isExpandable()) {
-                  <td class="w-10 border-b border-border px-2 py-3.5 align-middle dark:border-white/10">
+                  <td [class]="expandBodyClass(i)">
                     <button
                       type="button"
                       class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
@@ -676,6 +680,34 @@ export class TableComponent<T = unknown> {
   }
 
   /**
+   * Header classes for the expand/collapse trigger column (pinned left).
+   * @returns Header class list.
+   */
+  protected expandHeaderClass(): string {
+    return (
+      'w-10 border-b border-border px-2 py-3.5 dark:border-white/10 ' +
+      this.stickyPinClass('left', 'head')
+    );
+  }
+
+  /**
+   * Body classes for the expand/collapse trigger column (pinned left).
+   * Omits `border-b` like other sticky cells so the opaque fill does not
+   * double-paint the row divider.
+   * @param index - Index within {@link rows}.
+   * @returns Body cell class list.
+   */
+  protected expandBodyClass(index: number): string {
+    const prev = index > 0 ? this.rowList()[index - 1] : undefined;
+    const afterExpanded =
+      prev !== undefined && this.isRowExpanded(prev, index - 1);
+    return (
+      'w-10 px-2 py-3.5 align-middle ' +
+      this.stickyPinClass('left', 'body', index, afterExpanded)
+    );
+  }
+
+  /**
    * Header cell classes, including sticky pin when set.
    * @param col - Column definition.
    * @returns Header class list.
@@ -716,14 +748,42 @@ export class TableComponent<T = unknown> {
   }
 
   /**
-   * Sticky pin plus an opaque fill matching the table surface, so scrolled
-   * cells do not show through. Header uses the thead fill; body uses the
-   * grid fill (`bg-white` / `dark:bg-ink`).
-   * @param col - Column definition.
+   * Sticky pin utilities for a known edge (expand column or data column).
+   * @param edge - Left or right pin.
    * @param surface - Header vs body fill tokens.
    * @param index - Body row index; unused for the header.
    * @param afterExpanded - Previous row is expanded — skip the top shadow
-   *   divider so the action column stays flush under the detail panel.
+   *   divider so the sticky column stays flush under the detail panel.
+   * @returns Sticky utilities.
+   */
+  protected stickyPinClass(
+    edge: 'left' | 'right',
+    surface: 'head' | 'body',
+    index = 0,
+    afterExpanded = false,
+  ): string {
+    // Expand (left) sits above scrolling cells; actions (right) match.
+    // Header needs a higher z so it stays above sticky body cells.
+    const side =
+      edge === 'right' ? 'sticky right-0 z-[1]' : 'sticky left-0 z-[1]';
+    if (surface === 'head') {
+      return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
+    }
+    const rowDivider =
+      !afterExpanded && index > 0
+        ? 'shadow-[0_-1px_0_0_#c9d5e1] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
+        : '';
+    const fill = 'bg-white dark:bg-ink';
+    return `${side} ${fill} ${rowDivider}`;
+  }
+
+  /**
+   * Sticky pin plus an opaque fill matching the table surface, so scrolled
+   * cells do not show through.
+   * @param col - Column definition.
+   * @param surface - Header vs body fill tokens.
+   * @param index - Body row index; unused for the header.
+   * @param afterExpanded - Previous row is expanded — skip the top shadow.
    * @returns Sticky utilities, or empty when the column scrolls.
    */
   protected stickySurfaceClass(
@@ -736,22 +796,7 @@ export class TableComponent<T = unknown> {
     if (!edge) {
       return '';
     }
-    const side =
-      edge === 'right' ? 'sticky right-0 z-[1]' : 'sticky left-0 z-[1]';
-    if (surface === 'head') {
-      return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
-    }
-    // Top divider via box-shadow. Skip when the previous row is expanded so
-    // the action column stays flush under the detail panel.
-    const rowDivider =
-      !afterExpanded && index > 0
-        ? 'shadow-[0_-1px_0_0_#c9d5e1] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
-        : '';
-    // Always paint an opaque fill — without it, horizontally scrolled cells
-    // show through the sticky action trigger (including when the row is
-    // expanded). Hover fill is applied on `tr.aies-table-row:hover > td`.
-    const fill = 'bg-white dark:bg-ink';
-    return `${side} ${fill} ${rowDivider}`;
+    return this.stickyPinClass(edge, surface, index, afterExpanded);
   }
 
   /**

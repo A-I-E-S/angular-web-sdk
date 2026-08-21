@@ -21,7 +21,7 @@ export {
   SHIPPING_MODE_OVERRIDE,
   withShippingMode,
 } from './lib/shipping/shipping-mode.context';
-export { ShippingModeService } from './lib/shipping/shipping-mode.service';
+export { ShippingModeService, type ShippingModeChangeGuard } from './lib/shipping/shipping-mode.service';
 
 // HTTP
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';

@@ -72,19 +72,21 @@ export class AppShellHeaderEndDirective {}
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AiesIconComponent, AvatarMenuComponent, DatePipe],
   template: `
-    <div class="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6">
-      <div class="flex min-w-0 flex-1 items-center gap-3">
+    <div
+      class="flex min-w-0 items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3"
+    >
+      <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
         <ng-content select="[aiesAppShellHeaderStart]" />
 
         @if (greeting(); as hello) {
-          <div class="min-w-0 shrink-0">
+          <div class="min-w-0 overflow-hidden">
             <p
               class="m-0 truncate text-caption leading-none text-neutral-500 dark:text-neutral-400"
             >
               {{ hello.kicker }}
             </p>
             <p
-              class="m-0 mt-1 whitespace-nowrap text-body-lg font-semibold leading-none tracking-tight text-ink dark:text-white"
+              class="m-0 mt-1 truncate text-body font-semibold leading-none tracking-tight text-ink sm:text-body-lg dark:text-white"
             >
               {{ hello.name }}
             </p>
@@ -92,10 +94,10 @@ export class AppShellHeaderEndDirective {}
         }
       </div>
 
-      <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+      <div class="flex shrink-0 items-center gap-1.5 sm:gap-3">
         @if (weather() || showClock()) {
           <div
-            class="flex items-center gap-3 pr-2 sm:border-r sm:border-border sm:pr-4 dark:sm:border-white/15"
+            class="hidden items-center gap-3 pr-2 sm:flex sm:border-r sm:border-border sm:pr-4 dark:sm:border-white/15"
           >
             @if (weather()) {
               <div
@@ -115,7 +117,7 @@ export class AppShellHeaderEndDirective {}
                   </span>
                 }
                 <span
-                  class="hidden text-caption text-neutral-500 sm:inline dark:text-neutral-400"
+                  class="hidden text-caption text-neutral-500 md:inline dark:text-neutral-400"
                 >
                   {{ weatherPlace() }}
                 </span>
@@ -125,7 +127,7 @@ export class AppShellHeaderEndDirective {}
             @if (showClock()) {
               <div class="flex items-baseline gap-2" aria-live="polite">
                 <time
-                  class="hidden text-caption text-neutral-500 sm:inline dark:text-neutral-400"
+                  class="hidden text-caption text-neutral-500 md:inline dark:text-neutral-400"
                   [dateTime]="nowIso()"
                 >
                   {{ now() | date: clockDateFormat() }}
@@ -145,7 +147,7 @@ export class AppShellHeaderEndDirective {}
 
         @if (showNotifications() || userName()) {
           <div
-            class="flex items-center gap-2 sm:gap-3"
+            class="flex items-center gap-1.5 sm:gap-3"
             [class.border-l]="!(weather() || showClock())"
             [class.border-border]="!(weather() || showClock())"
             [class.pl-2]="!(weather() || showClock())"

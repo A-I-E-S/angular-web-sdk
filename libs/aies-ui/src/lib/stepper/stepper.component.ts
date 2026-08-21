@@ -1,20 +1,31 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterRenderEffect,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
+  ElementRef,
   inject,
   input,
   output,
+  signal,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 
 import { ModeColorService } from '@aies/aies-theme';
 
 import { StepDefDirective } from './step-def.directive';
 import { StepDefinition } from './step-definition';
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof matchMedia === 'function' &&
+    matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
 
 /**
  * Multi-step wizard for form flows (e.g. shipment creation).
@@ -23,127 +34,117 @@ import { StepDefinition } from './step-definition';
  * it does not display shipment delivery progress.
  *
  * Inputs: `steps`, `activeIndex`, and `linear` (default `true`). In linear
- * mode, navigating forward past a step whose `isValid === false` is blocked;
- * non-linear mode allows jumping to any step via its header. Emits
- * `activeIndexChange` so parents can use two-way binding.
+ * mode, header clicks only activate the current or a previous step; advance
+ * with Next. Non-linear mode allows jumping to any step via its header.
  *
- * Step *bodies* are projected with `<ng-template aiesStepDef="key">`.
- *
- * @example
- * ```ts
- * readonly steps = computed<StepDefinition[]>(() => [
- *   { key: 'route', label: 'Route', isValid: this.routeForm.valid },
- *   { key: 'cargo', label: 'Cargo', isValid: this.cargoForm.valid },
- *   { key: 'review', label: 'Review' },
- * ]);
- * readonly activeIndex = signal(0);
- * ```
- * ```html
- * <aies-stepper
- *   [steps]="steps()"
- *   [activeIndex]="activeIndex()"
- *   [linear]="true"
- *   (activeIndexChange)="activeIndex.set($event)"
- * >
- *   <ng-template aiesStepDef="route">
- *     <app-route-form [form]="routeForm" />
- *   </ng-template>
- *   <ng-template aiesStepDef="cargo">
- *     <app-cargo-form [form]="cargoForm" />
- *   </ng-template>
- *   <ng-template aiesStepDef="review">
- *     <app-shipment-review [draft]="draft()" />
- *   </ng-template>
- * </aies-stepper>
- *
- * <button aies-button type="button" variant="ghost"
- *   [disabled]="activeIndex() === 0"
- *   (click)="activeIndex.set(activeIndex() - 1)">
- *   Back
- * </button>
- * <button aies-button type="button"
- *   (click)="goNext()">
- *   Next
- * </button>
- * ```
- *
- * Linear blocking: if `route.isValid === false`, header-click / Next to
- * Cargo or Review is ignored until the route step becomes valid.
+ * When `animateSteps` is true (default), the step body fades/slides via the
+ * Web Animations API (skipped when the user prefers reduced motion).
  */
 @Component({
   selector: 'aies-stepper',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
+  host: { class: 'block min-w-0' },
+  styles: `
+    .aies-step-rail {
+      scrollbar-width: thin;
+    }
+    .aies-step-body {
+      min-width: 0;
+      overflow-x: hidden;
+    }
+    .aies-step-pane {
+      min-width: 0;
+      will-change: opacity, transform;
+    }
+  `,
   template: `
-    <div class="flex flex-col gap-6 text-ink dark:text-white">
-      <ol class="flex flex-wrap items-start gap-2 m-0 p-0 list-none" role="list">
-        @for (step of steps(); track step.key; let i = $index) {
-          <li class="flex items-center gap-2 min-w-0">
-            <button
-              type="button"
-              class="inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50"
-              [class]="
-                i === activeIndex()
-                  ? 'inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50 text-ink dark:text-white'
-                  : 'inline-flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50 text-neutral-500 dark:text-neutral-400'
-              "
-              [attr.aria-current]="i === activeIndex() ? 'step' : null"
-              [disabled]="!canActivate(i)"
-              (click)="onHeaderClick(i)"
-            >
-              <span
-                [class]="stepBadgeClass(i)"
-                aria-hidden="true"
-              >
-                @if (i < activeIndex()) {
-                  ✓
-                } @else {
-                  {{ i + 1 }}
-                }
-              </span>
-              <span class="text-body font-medium truncate">{{ step.label }}</span>
-            </button>
-            @if (i < steps().length - 1) {
-              <span
-                class="hidden sm:block h-px w-6 shrink-0 bg-border"
-                aria-hidden="true"
-              ></span>
-            }
-          </li>
-        }
-      </ol>
+    <div class="flex flex-col gap-5 text-ink dark:text-white">
+      <div class="flex flex-col gap-2">
+        <p
+          class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400"
+        >
+          Step {{ activeIndex() + 1 }} of {{ steps().length }}
+          <span
+            class="normal-case tracking-normal text-neutral-400 dark:text-neutral-500"
+          >
+            · {{ steps()[activeIndex()]?.label }}
+          </span>
+        </p>
 
-      <div class="min-w-0">
+        <div
+          class="h-1 w-full overflow-hidden rounded-full bg-background-welcome dark:bg-white/10"
+          aria-hidden="true"
+        >
+          <div
+            class="h-full rounded-full transition-[width] duration-300 ease-out"
+            [class]="modeColor.classes().bg"
+            [style.width.%]="progressPercent()"
+          ></div>
+        </div>
+
+        <ol
+          class="aies-step-rail m-0 flex list-none items-start gap-1 overflow-x-auto p-0 pb-1"
+          role="list"
+        >
+          @for (step of steps(); track step.key; let i = $index) {
+            <li class="flex min-w-0 shrink-0 items-center gap-1">
+              <button
+                type="button"
+                class="inline-flex max-w-38 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed"
+                [class]="headerButtonClass(i)"
+                [attr.aria-current]="i === activeIndex() ? 'step' : null"
+                [disabled]="!canActivate(i)"
+                (click)="onHeaderClick(i)"
+              >
+                <span [class]="stepBadgeClass(i)" aria-hidden="true">
+                  @if (i < activeIndex()) {
+                    ✓
+                  } @else {
+                    {{ i + 1 }}
+                  }
+                </span>
+                <span class="truncate text-body-sm font-medium">{{
+                  step.label
+                }}</span>
+              </button>
+              @if (i < steps().length - 1) {
+                <span
+                  class="hidden h-px w-4 shrink-0 bg-border sm:block dark:bg-white/15"
+                  aria-hidden="true"
+                ></span>
+              }
+            </li>
+          }
+        </ol>
+      </div>
+
+      <div class="aies-step-body">
         @if (activeTemplate(); as tpl) {
-          <ng-container
-            [ngTemplateOutlet]="tpl"
-            [ngTemplateOutletContext]="stepContext()"
-          />
+          <div #stepPane class="aies-step-pane">
+            <ng-container
+              [ngTemplateOutlet]="tpl"
+              [ngTemplateOutletContext]="stepContext()"
+            />
+          </div>
         }
       </div>
     </div>
   `,
 })
 export class StepperComponent {
-  private readonly modeColor = inject(ModeColorService);
+  protected readonly modeColor = inject(ModeColorService);
 
-  /** Ordered step definitions for the header. */
   readonly steps = input.required<StepDefinition[]>();
-
-  /** Zero-based index of the visible step. */
   readonly activeIndex = input.required<number>();
-
-  /**
-   * When true (default), forward jumps past an invalid step are blocked.
-   * When false, any header may be activated.
-   */
   readonly linear = input(true, { transform: booleanAttribute });
-
-  /** Emitted when a header (or programmatic next) would change the index. */
+  readonly animateSteps = input(true, { transform: booleanAttribute });
   readonly activeIndexChange = output<number>();
 
   private readonly stepDefs = contentChildren(StepDefDirective);
+  private readonly stepPane = viewChild<ElementRef<HTMLElement>>('stepPane');
+  private readonly animatedIndex = signal<number | null>(null);
 
   private readonly stepTemplateMap = computed(() => {
     const map = new Map<string, TemplateRef<unknown>>();
@@ -153,7 +154,6 @@ export class StepperComponent {
     return map;
   });
 
-  /** Template for the currently active step key, if registered. */
   protected readonly activeTemplate = computed(() => {
     const step = this.steps()[this.activeIndex()];
     if (!step) {
@@ -162,17 +162,67 @@ export class StepperComponent {
     return this.stepTemplateMap().get(step.key) ?? null;
   });
 
-  /** Context for the active step body (`let-key`). */
   protected readonly stepContext = computed(() => {
     const step = this.steps()[this.activeIndex()];
     return { $implicit: step?.key ?? '' };
   });
 
-  /**
-   * Badge chrome for step `index` (completed / active vs upcoming).
-   * @param index - Step index in {@link steps}.
-   * @returns Tailwind class string for the step badge.
-   */
+  protected readonly progressPercent = computed(() => {
+    const total = this.steps().length;
+    if (total <= 0) {
+      return 0;
+    }
+    return ((this.activeIndex() + 1) / total) * 100;
+  });
+
+  constructor() {
+    afterRenderEffect(() => {
+      if (!this.animateSteps()) {
+        return;
+      }
+      const index = this.activeIndex();
+      const el = this.stepPane()?.nativeElement;
+      if (!el) {
+        return;
+      }
+      const previous = this.animatedIndex();
+      if (previous === index) {
+        return;
+      }
+      this.animatedIndex.set(index);
+      if (previous === null || prefersReducedMotion()) {
+        return;
+      }
+      const forward = index > previous;
+      el.animate(
+        [
+          {
+            opacity: 0,
+            transform: `translateX(${forward ? '1rem' : '-1rem'})`,
+          },
+          { opacity: 1, transform: 'translateX(0)' },
+        ],
+        {
+          duration: 280,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'both',
+        },
+      );
+    });
+  }
+
+  protected headerButtonClass(index: number): string {
+    const active = index === this.activeIndex();
+    const past = index < this.activeIndex();
+    if (active) {
+      return 'bg-background-welcome text-ink dark:bg-white/10 dark:text-white';
+    }
+    if (past) {
+      return 'cursor-pointer text-ink hover:bg-background-welcome dark:text-white dark:hover:bg-white/10';
+    }
+    return 'opacity-40 text-neutral-500 dark:text-neutral-400';
+  }
+
   protected stepBadgeClass(index: number): string {
     const base =
       'inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-body-sm font-medium';
@@ -180,15 +230,9 @@ export class StepperComponent {
       const c = this.modeColor.classes();
       return `${base} ${c.border} ${c.bg} text-white`;
     }
-    return `${base} border-border bg-background-welcome dark:bg-ink-950 dark:border-white/20 text-neutral-600 dark:text-neutral-400`;
+    return `${base} border-border bg-white text-neutral-500 dark:border-white/20 dark:bg-ink-950 dark:text-neutral-400`;
   }
 
-  /**
-   * Whether the given index may become active under the current `linear` mode.
-   *
-   * @param index - Candidate step index.
-   * @returns True when navigation to `index` is allowed.
-   */
   protected canActivate(index: number): boolean {
     if (index === this.activeIndex()) {
       return true;
@@ -196,19 +240,9 @@ export class StepperComponent {
     if (!this.linear()) {
       return true;
     }
-    // Backward navigation is always allowed in linear mode.
-    if (index < this.activeIndex()) {
-      return true;
-    }
-    // Forward: every step from current through index-1 must not be explicitly invalid.
-    return this.forwardPathValid(index);
+    return index < this.activeIndex();
   }
 
-  /**
-   * Header click — emits only when {@link canActivate} allows the jump.
-   *
-   * @param index - Clicked step index.
-   */
   protected onHeaderClick(index: number): void {
     if (index === this.activeIndex()) {
       return;
@@ -217,22 +251,5 @@ export class StepperComponent {
       return;
     }
     this.activeIndexChange.emit(index);
-  }
-
-  /**
-   * True when every step in `[activeIndex, targetIndex)` has `isValid !== false`.
-   *
-   * @param targetIndex - Destination index (exclusive end of the validity scan).
-   * @returns False if any step on the path is explicitly invalid.
-   */
-  private forwardPathValid(targetIndex: number): boolean {
-    const steps = this.steps();
-    const from = this.activeIndex();
-    for (let i = from; i < targetIndex; i++) {
-      if (steps[i]?.isValid === false) {
-        return false;
-      }
-    }
-    return true;
   }
 }

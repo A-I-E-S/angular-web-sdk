@@ -136,12 +136,13 @@ export class ShippingModeSwitchComponent {
   );
 
   /**
-   * Persists the chosen mode through {@link ShippingModeService}.
+   * Requests a mode change through {@link ShippingModeService.requestModeChange}
+   * so feature guards (e.g. Create Shipment confirm) can run first.
    *
    * @param next - `'stn'` (to Nigeria) or `'sfn'` (from Nigeria).
    */
   protected select(next: ShippingMode): void {
-    this.shipping.setMode(next);
+    this.shipping.requestModeChange(next).subscribe();
   }
 
   /**

@@ -5,6 +5,8 @@ import {
   SessionStorageService,
 } from '@aies/aies-storage';
 
+import { of } from 'rxjs';
+
 import { ApiClient } from '../http/api-client';
 import { ShippingModeService } from './shipping-mode.service';
 
@@ -57,5 +59,26 @@ describe('ShippingModeService', () => {
     service.setMode('sfn');
     expect(storage.set).not.toHaveBeenCalled();
     expect(clearCache).not.toHaveBeenCalled();
+  });
+
+  it('requestModeChange applies when the guard allows', (done) => {
+    const service = createService('sfn');
+    service.registerModeChangeGuard(() => of(true));
+    service.requestModeChange('stn').subscribe((ok) => {
+      expect(ok).toBe(true);
+      expect(service.mode()).toBe('stn');
+      done();
+    });
+  });
+
+  it('requestModeChange keeps the current mode when the guard denies', (done) => {
+    const service = createService('sfn');
+    service.registerModeChangeGuard(() => of(false));
+    service.requestModeChange('stn').subscribe((ok) => {
+      expect(ok).toBe(false);
+      expect(service.mode()).toBe('sfn');
+      expect(storage.set).not.toHaveBeenCalled();
+      done();
+    });
   });
 });

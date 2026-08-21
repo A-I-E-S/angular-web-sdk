@@ -1,6 +1,8 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { of } from 'rxjs';
+
 import { ShippingModeService } from '@aies/aies-core';
 import type { ShippingMode } from '@aies/aies-models';
 
@@ -12,6 +14,14 @@ class FakeShippingModeService {
 
   setMode(mode: ShippingMode): void {
     this._mode.set(mode);
+  }
+
+  requestModeChange(mode: ShippingMode) {
+    if (mode !== this._mode()) {
+      this._mode.set(mode);
+      return of(true);
+    }
+    return of(false);
   }
 }
 
