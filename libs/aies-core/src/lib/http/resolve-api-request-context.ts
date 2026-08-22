@@ -20,8 +20,9 @@ import {
 export function resolveApiRequestContext(
   configMode: AiesSdkHttpToasts | undefined,
   options: ApiRequestOptions,
+  method?: string,
 ): HttpContext | undefined {
-  let context = resolveHttpToastContext(configMode, options.toast);
+  let context = resolveHttpToastContext(configMode, options.toast, method);
   const shippingMode = asShippingMode(options.shippingMode);
   if (shippingMode) {
     context = withShippingMode(shippingMode, context);

@@ -21,14 +21,22 @@ describe('resolveApiRequestContext', () => {
   });
 
   it('merges toast and shipping mode context', () => {
-    const context = resolveApiRequestContext('all', {
-      shippingMode: 'stn',
-      toast: { successMessage: 'Done' },
-    });
+    const context = resolveApiRequestContext(
+      'all',
+      {
+        shippingMode: 'stn',
+        toast: { successMessage: 'Done' },
+      },
+      'POST',
+    );
     expect(context?.get(SHIPPING_MODE_OVERRIDE)).toBe('stn');
     expect(context?.get(TOAST_HTTP_OPTIONS)).toEqual(
       expect.objectContaining({ success: true, error: true, successMessage: 'Done' }),
     );
+  });
+
+  it('keeps GET silent under errors config', () => {
+    expect(resolveApiRequestContext('errors', {}, 'GET')).toBeUndefined();
   });
 });
 

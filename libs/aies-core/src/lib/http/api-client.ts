@@ -70,8 +70,10 @@ export interface ApiRequestOptions {
   /**
    * HTTP toast tagging for this request (via {@link httpToastInterceptor}).
    *
-   * - Omitted — use {@link AiesSdkConfig.httpToasts} when set.
-   * - `false` — never toast this call (overrides config).
+   * - Omitted — use {@link AiesSdkConfig.httpToasts} when set (mutations only;
+   *   GET stays silent unless you opt in here).
+   * - `false` — never toast this call (overrides config). Prefer only for rare
+   *   cases that fully own error UI; mutations should usually toast.
    * - Partial flags — merge with config defaults (same shape as {@link withToast}).
    */
   toast?: Partial<ToastHttpOptions> | false;
@@ -408,8 +410,11 @@ export class ApiClient {
     this.cache.clear();
   }
 
-  private buildHttpContext(options: ApiRequestOptions): HttpContext | undefined {
-    return resolveApiRequestContext(this.config.httpToasts, options);
+  private buildHttpContext(
+    options: ApiRequestOptions,
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  ): HttpContext | undefined {
+    return resolveApiRequestContext(this.config.httpToasts, options, method);
   }
 
   private request<T>(
@@ -433,7 +438,7 @@ export class ApiClient {
       headers = headers.delete('Content-Type');
     }
     const params = this.buildParams(options.params);
-    const context = this.buildHttpContext(options);
+    const context = this.buildHttpContext(options, method);
     const cacheKey =
       method === 'GET' && options.cacheTtlMs != null
         ? `${method} ${url}?${params.toString()}`

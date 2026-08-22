@@ -7,10 +7,12 @@ import type { ToastHttpOptions } from '../http/toast-http.context';
  *
  * - `'off'` (default) — no automatic tagging; use {@link withToast} on raw
  *   HttpClient calls or {@link ApiRequestOptions.toast} per SDK call.
- * - `'errors'` — tag every SDK request with error toasts only (good for shells
- *   and playgrounds where background GET failures should surface).
- * - `'all'` — success + error toasts on every SDK request.
- * - Partial {@link ToastHttpOptions} — custom defaults merged per request.
+ * - `'errors'` — tag mutating SDK requests (POST / PUT / PATCH / DELETE) with
+ *   error toasts only. GET stays silent so list/detail screens own their empty
+ *   / error UI.
+ * - `'all'` — success + error toasts on mutating SDK requests (GET still silent
+ *   unless the call opts in).
+ * - Partial {@link ToastHttpOptions} — custom defaults merged per mutating request.
  */
 export type AiesSdkHttpToasts = 'off' | 'errors' | 'all' | Partial<ToastHttpOptions>;
 
@@ -68,9 +70,9 @@ export interface AiesSdkConfig {
   /**
    * Automatic {@link withToast} tagging for {@link ApiClient} HTTP calls.
    *
-   * Defaults to `'off'` so production apps opt in explicitly. The playground
-   * uses `'errors'` so catalog/auth failures surface without spamming success
-   * toasts on every background GET.
+   * Defaults to `'off'` so production apps opt in explicitly. Admin shells use
+   * `'errors'` so POST / PUT / PATCH / DELETE failures surface while GET list
+   * failures stay in-page.
    */
   httpToasts?: AiesSdkHttpToasts;
 }

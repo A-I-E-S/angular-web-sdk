@@ -6,26 +6,39 @@ import {
   withToast,
 } from './toast-http.context';
 
+export type HttpToastMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | string;
+
 /**
  * Resolve {@link HttpContext} toast flags for an {@link ApiClient} request.
  *
- * Precedence: per-request `toast: false` wins (no tag). Otherwise merge config
- * {@link AiesSdkHttpToasts} with per-request overrides.
+ * Precedence:
+ * 1. Per-request `toast: false` — never tag.
+ * 2. GET — silent by default (list/detail failures stay in-page). Opt in with
+ *    an explicit per-request toast object.
+ * 3. Otherwise merge config {@link AiesSdkHttpToasts} with per-request overrides
+ *    (POST / PUT / PATCH / DELETE toast errors when config is `'errors'`).
  *
  * @param configMode - From {@link AiesSdkConfig.httpToasts} (defaults to `'off'`).
  * @param perRequest - From {@link ApiRequestOptions.toast}.
+ * @param method - HTTP verb so GET stays quiet under `'errors'` / `'all'`.
  */
 export function resolveHttpToastContext(
   configMode: AiesSdkHttpToasts | undefined,
   perRequest: Partial<ToastHttpOptions> | false | undefined,
+  method?: HttpToastMethod,
 ): HttpContext | undefined {
   if (perRequest === false) {
     return undefined;
   }
 
-  const fromConfig = configToastDefaults(configMode);
+  const isGet = (method ?? '').toUpperCase() === 'GET';
+  if (isGet && perRequest == null) {
+    return undefined;
+  }
+
+  const fromConfig = isGet ? null : configToastDefaults(configMode);
   const merged = perRequest
-    ? { ...fromConfig, ...perRequest }
+    ? { ...(fromConfig ?? {}), ...perRequest }
     : fromConfig;
 
   if (!merged) {
