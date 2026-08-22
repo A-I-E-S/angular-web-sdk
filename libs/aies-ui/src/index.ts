@@ -46,6 +46,9 @@ export {
 export {
   CarrierLogoComponent,
   normalizeCarrierLogoSlug,
+  deliveryVendorOptionsForStoredValue,
+  deliveryVendorSelectOptions,
+  deliveryVendorSelected,
   type CarrierLogoSize,
   type CarrierLogoSlug,
 } from './lib/carrier';
