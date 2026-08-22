@@ -42,6 +42,14 @@ export {
   type ChipVariant,
 } from './lib/chip';
 
+// Carrier marks (delivery vendor logos)
+export {
+  CarrierLogoComponent,
+  normalizeCarrierLogoSlug,
+  type CarrierLogoSize,
+  type CarrierLogoSlug,
+} from './lib/carrier';
+
 // Content stack (title / subtitle / extra line)
 export { ContentStackComponent } from './lib/content-stack';
 
