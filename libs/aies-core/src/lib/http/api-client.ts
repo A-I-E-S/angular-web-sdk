@@ -102,7 +102,7 @@ type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
  * - HTTP failures rethrown as `Error` whose `.message` is already
  *   user-facing ({@link formatApiErrorMessage}) — consumers do not need to
  *   parse `HttpErrorResponse` bodies
- * - Exponential-backoff retry (max 3) for **GET only**
+ * - Exponential-backoff retry (max 1) for **GET only**
  * - Optional per-GET TTL cache via `cacheTtlMs`
  *
  * @example
@@ -478,7 +478,7 @@ export class ApiClient {
     if (method === 'GET') {
       req$ = req$.pipe(
         retry({
-          count: 3,
+          count: 1,
           delay: (err, retryCount) => {
             if (!isRetryableGetError(err)) {
               return throwError(() => err);
