@@ -682,6 +682,11 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
       return;
     }
 
+    // Without a modal host, only images can be shown (object URL in a new tab).
+    if (!item.isImage && !item.file.type.startsWith('image/')) {
+      return;
+    }
+
     const url = item.previewUrl ?? URL.createObjectURL(item.file);
     window.open(url, '_blank', 'noopener');
     if (!item.previewUrl) {

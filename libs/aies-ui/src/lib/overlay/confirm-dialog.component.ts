@@ -72,24 +72,45 @@ import { OVERLAY_DATA } from './overlay-data.token';
       </div>
 
       <div class="flex flex-wrap justify-end gap-2">
-        <button
-          aies-button
-          type="button"
-          variant="ghost"
-          [disabled]="loading()"
-          (click)="cancel()"
-        >
-          {{ cancelLabel() }}
-        </button>
-        <button
-          aies-button
-          type="button"
-          [variant]="options.danger ? 'danger' : 'primary'"
-          [loading]="loading()"
-          (click)="confirm()"
-        >
-          {{ confirmLabel() }}
-        </button>
+        @if (emphasizeCancel()) {
+          <button
+            aies-button
+            type="button"
+            variant="ghost"
+            [disabled]="loading()"
+            (click)="confirm()"
+          >
+            {{ confirmLabel() }}
+          </button>
+          <button
+            aies-button
+            type="button"
+            variant="primary"
+            [disabled]="loading()"
+            (click)="cancel()"
+          >
+            {{ cancelLabel() }}
+          </button>
+        } @else {
+          <button
+            aies-button
+            type="button"
+            variant="ghost"
+            [disabled]="loading()"
+            (click)="cancel()"
+          >
+            {{ cancelLabel() }}
+          </button>
+          <button
+            aies-button
+            type="button"
+            [variant]="options.danger ? 'danger' : 'primary'"
+            [loading]="loading()"
+            (click)="confirm()"
+          >
+            {{ confirmLabel() }}
+          </button>
+        }
       </div>
     </div>
   `,
@@ -120,6 +141,11 @@ export class ConfirmDialogComponent {
   /** Resolved cancel CTA label. */
   protected readonly cancelLabel = computed(
     () => this.options.cancelLabel ?? 'Cancel',
+  );
+
+  /** When true, cancel is primary and listed after confirm (safe choice last). */
+  protected readonly emphasizeCancel = computed(
+    () => this.options.emphasizeCancel === true,
   );
 
   /** Warning for destructive confirms; question mark otherwise. */

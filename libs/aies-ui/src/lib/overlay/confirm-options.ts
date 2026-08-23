@@ -27,6 +27,11 @@ export interface ConfirmOptions {
   /** Dismiss action label. Defaults to "Cancel". */
   cancelLabel?: string;
   /**
+   * When true, the cancel button uses the primary variant and appears after
+   * the confirm button so the safe/dismiss action is the obvious choice.
+   */
+  emphasizeCancel?: boolean;
+  /**
    * When true, the confirm button uses the danger variant so destructive
    * actions read as high-risk before the click.
    */

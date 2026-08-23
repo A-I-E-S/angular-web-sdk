@@ -19,14 +19,15 @@ export interface FilePreviewData {
   isImage: boolean;
 }
 
-type PreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'other';
+type PreviewKind = 'image' | 'unavailable';
 
 /**
  * Large-file preview modal for {@link FileUploadComponent}.
  *
- * Images, PDFs, and media render inline. Other types show metadata and an
- * open-in-new-tab action. Object URLs created here are revoked on destroy;
- * the list’s image `previewUrl` is left alone.
+ * Local image picks render inline. Other local file types (PDF, etc.) show a
+ * clear “can’t view” message — server-hosted previews use other modals.
+ * Object URLs created here are revoked on destroy; the list’s image
+ * `previewUrl` is left alone.
  */
 @Component({
   selector: 'aies-file-preview-dialog',
@@ -72,53 +73,26 @@ type PreviewKind = 'image' | 'pdf' | 'video' | 'audio' | 'other';
       </div>
 
       <div class="aies-overlay-scroll min-h-0 flex-1 overflow-y-auto">
-      @switch (kind()) {
-        @case ('image') {
+        @if (kind() === 'image') {
           <img
             [src]="src()"
             [alt]="data.file.name"
             class="max-h-[min(70vh,40rem)] w-full rounded-md object-contain bg-background-welcome ring-1 ring-border dark:bg-ink dark:ring-white/15"
           />
-        }
-        @case ('pdf') {
-          <iframe
-            [src]="src()"
-            [title]="data.file.name"
-            class="h-[min(70vh,40rem)] w-full rounded-md bg-white ring-1 ring-border dark:ring-white/15"
-          ></iframe>
-        }
-        @case ('video') {
-          <video
-            [src]="src()"
-            controls
-            class="max-h-[min(70vh,40rem)] w-full rounded-md bg-ink-950 ring-1 ring-border dark:ring-white/15"
-          ></video>
-        }
-        @case ('audio') {
-          <audio [src]="src()" controls class="w-full"></audio>
-        }
-        @default {
+        } @else {
           <div
             class="flex flex-col items-center gap-3 rounded-md bg-background-welcome px-6 py-10 text-center ring-1 ring-border dark:bg-white/5 dark:ring-white/15"
           >
-            <aies-icon name="file" [size]="32" class="text-neutral-500" />
-            <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-              No inline preview for this file type.
+            <aies-icon name="eye-slash" [size]="32" class="text-neutral-500" />
+            <p class="m-0 text-body font-medium text-ink dark:text-white">
+              Preview not available
             </p>
-            <a
-              aies-button
-              variant="secondary"
-              size="sm"
-              [href]="src()"
-              target="_blank"
-              rel="noopener"
-            >
-              <aies-icon name="external-link" [size]="16" />
-              Open file
-            </a>
+            <p class="m-0 max-w-sm text-body-sm text-neutral-600 dark:text-neutral-400">
+              You can’t view this file here. Only images can be previewed before
+              upload.
+            </p>
           </div>
         }
-      }
       </div>
     </div>
   `,
@@ -133,9 +107,10 @@ export class FilePreviewDialogComponent {
   private readonly ownedUrl: string | null;
 
   constructor() {
-    this.ownedUrl = this.data.previewUrl
-      ? null
-      : URL.createObjectURL(this.data.file);
+    this.ownedUrl =
+      this.data.isImage && !this.data.previewUrl
+        ? URL.createObjectURL(this.data.file)
+        : null;
     this.destroyRef.onDestroy(() => {
       if (this.ownedUrl) {
         URL.revokeObjectURL(this.ownedUrl);
@@ -148,22 +123,11 @@ export class FilePreviewDialogComponent {
   );
 
   protected readonly kind = computed((): PreviewKind => {
-    const file = this.data.file;
-    const type = (file.type || '').toLowerCase();
-    const name = file.name.toLowerCase();
+    const type = (this.data.file.type || '').toLowerCase();
     if (this.data.isImage || type.startsWith('image/')) {
       return 'image';
     }
-    if (type === 'application/pdf' || name.endsWith('.pdf')) {
-      return 'pdf';
-    }
-    if (type.startsWith('video/')) {
-      return 'video';
-    }
-    if (type.startsWith('audio/')) {
-      return 'audio';
-    }
-    return 'other';
+    return 'unavailable';
   });
 
   protected sizeLabel(): string {
