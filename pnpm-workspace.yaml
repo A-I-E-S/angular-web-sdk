@@ -6,3 +6,17 @@ allowBuilds:
   msgpackr-extract: true
   nx: true
   unrs-resolver: true
+
+overrides:
+  brace-expansion@>=4.0.0 <5.0.9: '>=5.0.9'
+
+# Dev-only transitive via @nx/webpack → less; no patched image-size on npm yet (>=2.0.3).
+audit:
+  ignore:
+    - GHSA-w3rx-r6r6-pgpr
+    - GHSA-5p2g-fcmc-qvqq
+
+auditConfig:
+  ignoreGhsas:
+    - GHSA-w3rx-r6r6-pgpr
+    - GHSA-5p2g-fcmc-qvqq

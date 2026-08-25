@@ -9,6 +9,7 @@
     "test": "nx run-many -t test",
     "build": "nx run-many -t build --projects=aies-models,aies-storage,aies-core,aies-theme,aies-icons,aies-ui",
     "docs:coverage": "node tools/check-doc-coverage.mjs",
+    "audit": "pnpm audit",
     "release": "nx release",
     "prepare": "husky"
   },

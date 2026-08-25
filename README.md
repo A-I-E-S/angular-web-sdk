@@ -116,6 +116,19 @@ pnpm dev
 pnpm build             # build the six libraries
 pnpm test
 pnpm lint
+pnpm audit             # dependency audit (see Security below)
 pnpm icons:build       # regenerate sprite + ICON_NAMES
 pnpm docs:coverage
 ```
+
+## Security
+
+`pnpm audit` is part of local/CI checks. Known exceptions live in
+[`pnpm-workspace.yaml`](./pnpm-workspace.yaml):
+
+| Issue | Mitigation |
+| --- | --- |
+| `brace-expansion` DoS (via Nx) | `overrides` pin `>=5.0.9` |
+| `image-size` DoS (via `@nx/webpack` → `less`) | Ignored until `image-size@2.0.3` is published or Nx allows `less@4.8+` (dev/build tooling only; not shipped in `@aies/*` packages) |
+
+Re-run `pnpm audit` after Nx or lockfile updates and drop ignores once upstream fixes land.
