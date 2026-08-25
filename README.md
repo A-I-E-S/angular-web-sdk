@@ -1,8 +1,8 @@
-# africanies-angular-sdk
+# @africanies/angular-sdk
 
 Private Angular SDK for AFRICANIES product UIs. Six independently versioned packages
-under the `@africanies` scope, published to GitHub Packages. Workspace name:
-**africanies-angular-sdk**.
+under the `@africanies` scope, published to GitHub Packages. Workspace package:
+**@africanies/angular-sdk**.
 
 ## Packages
 
@@ -146,6 +146,16 @@ pnpm docs:coverage
 | Issue | Mitigation |
 | --- | --- |
 | `brace-expansion` DoS (via Nx) | `overrides` pin `>=5.0.9` |
-| `image-size` DoS (via `@nx/webpack` → `less`) | Ignored until `image-size@2.0.3` is published or Nx allows `less@4.8+` (dev/build tooling only; not shipped in `/*` packages) |
+| `image-size` DoS (via `@nx/webpack` → `less`) | Ignored until `image-size@2.0.3` is published or Nx allows `less@4.8+` (dev/build tooling only; not shipped in `@africanies/*` packages) |
 
 Re-run `pnpm audit` after Nx or lockfile updates and drop ignores once upstream fixes land.
+
+## Contributors
+
+- [Ikechukwu](https://github.com/ikechukwukalu)
+- [Chinedu](https://github.com/SirG97)
+- [Armstrong](https://github.com/enginemoves)
+- [Adebowale](https://github.com/Princedebo01)
+- [Muhydeen](https://github.com/muhydeen95)
+- [Dotun](https://github.com/d8zzy)
+- [Busola](https://github.com/codearemo)
