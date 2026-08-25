@@ -356,7 +356,7 @@ import { TableColumn, TableSortChange } from './table-column';
                       [class.pointer-events-none]="!isRowExpanded(row, i)"
                     >
                       <div
-                        class="min-h-0 overflow-hidden bg-background-welcome/50 dark:bg-white/[0.03]"
+                        class="min-h-0 overflow-hidden border-t border-border/70 bg-neutral-50 dark:border-white/10 dark:bg-white/[0.05]"
                       >
                         <dl
                           class="m-0 grid gap-x-6 gap-y-3 px-3 py-3 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"

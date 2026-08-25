@@ -327,17 +327,31 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             />
             {{ loadingLabel() }}
           </div>
-        } @else if (showFreeTextRow()) {
-          <button
-            type="button"
-            [class]="freeTextClass()"
-            role="option"
-            [attr.aria-selected]="false"
-            (click)="onFreeTextClick($event)"
-            (mouseenter)="activeIndex.set(freeTextIndex())"
-          >
-            Add "{{ searchQuery().trim() }}"
-          </button>
+        } @else {
+          @if (create(); as createCfg) {
+            <button
+              type="button"
+              [class]="createRowClass()"
+              (click)="onCreateClick($event)"
+              (mouseenter)="activeIndex.set(createIndex())"
+            >
+              <aies-icon name="file-add" [size]="16" />
+              {{ createCfg.label }}
+            </button>
+          }
+
+          @if (showFreeTextRow()) {
+            <button
+              type="button"
+              [class]="freeTextClass()"
+              role="option"
+              [attr.aria-selected]="false"
+              (click)="onFreeTextClick($event)"
+              (mouseenter)="activeIndex.set(freeTextIndex())"
+            >
+              Add "{{ searchQuery().trim() }}"
+            </button>
+          }
         }
 
         @if (filteredOptions().length === 0 && !showFreeTextRow() && !loading()) {
@@ -391,17 +405,6 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           </div>
         }
 
-        @if (create(); as createCfg) {
-          <button
-            type="button"
-            [class]="createRowClass()"
-            (click)="onCreateClick($event)"
-            (mouseenter)="activeIndex.set(createIndex())"
-          >
-            <aies-icon name="file-add" [size]="16" />
-            {{ createCfg.label }}
-          </button>
-        }
       </div>
     </ng-template>
 
@@ -678,21 +681,18 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     );
   });
 
-  protected readonly freeTextIndex = computed(() =>
-    this.showFreeTextRow() ? 0 : -1,
-  );
+  protected readonly createIndex = computed(() => (this.create() ? 0 : -1));
 
-  protected readonly createIndex = computed(() => {
-    if (!this.create()) {
+  protected readonly freeTextIndex = computed(() => {
+    if (!this.showFreeTextRow()) {
       return -1;
     }
-    const free = this.showFreeTextRow() ? 1 : 0;
-    return free + this.filteredOptions().length;
+    return this.create() ? 1 : 0;
   });
 
   protected readonly navigableCount = computed(() => {
-    const free = this.showFreeTextRow() ? 1 : 0;
     const create = this.create() ? 1 : 0;
+    const free = this.showFreeTextRow() ? 1 : 0;
     return free + this.filteredOptions().length + create;
   });
 
@@ -794,7 +794,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   protected createRowClass(): string {
     const active = this.activeIndex() === this.createIndex();
     const colors = this.modeColor.classes();
-    const base = `flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-body ${colors.text} border-t border-border dark:border-white/10`;
+    const base = `flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-body ${colors.text}`;
     return active
       ? `${base} ${colors.soft}`
       : `${base} ${colors.softHover}`;
@@ -846,7 +846,9 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   }
 
   protected optionIndex(filteredIndex: number): number {
-    return (this.showFreeTextRow() ? 1 : 0) + filteredIndex;
+    return (
+      (this.create() ? 1 : 0) + (this.showFreeTextRow() ? 1 : 0) + filteredIndex
+    );
   }
 
   protected isSelected(opt: SelectOption<T>): boolean {
@@ -1039,7 +1041,8 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
       this.openCreateModal();
       return;
     }
-    const optIdx = idx - (this.showFreeTextRow() ? 1 : 0);
+    const optIdx =
+      idx - (this.create() ? 1 : 0) - (this.showFreeTextRow() ? 1 : 0);
     const opt = this.filteredOptions()[optIdx];
     if (opt) {
       this.selectOption(opt);

@@ -83,7 +83,7 @@ export class OverlayFooterDirective {}
       <ng-content select="[aiesOverlayHeader]" />
     </div>
     <div
-      class="aies-overlay-scroll min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
+      class="aies-overlay-scroll min-h-0 flex-1 overflow-x-clip overflow-y-auto px-[2px] -mx-[2px]"
     >
       <ng-content />
     </div>

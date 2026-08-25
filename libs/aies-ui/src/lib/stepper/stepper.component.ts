@@ -52,7 +52,10 @@ function prefersReducedMotion(): boolean {
     }
     .aies-step-body {
       min-width: 0;
-      overflow-x: hidden;
+      overflow-x: clip;
+      /* 2 px breathing room so focus-outline rings on edge fields are not clipped */
+      padding-inline: 2px;
+      margin-inline: -2px;
     }
     .aies-step-pane {
       min-width: 0;
