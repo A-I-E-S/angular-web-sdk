@@ -6,13 +6,13 @@ import {
 } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
-import { provideAiesHttpClient, provideAiesSdk } from '@aies/aies-core';
-import { ThemeService } from '@aies/aies-theme';
+import { provideAfricaniesHttpClient, provideAfricaniesSdk } from '@africanies/africanies-core';
+import { ThemeService } from '@africanies/africanies-theme';
 import {
-  provideAiesToasts,
-  provideAiesUiOverlays,
+  provideAfricaniesToasts,
+  provideAfricaniesUiOverlays,
   provideGooglePlaces,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { appRoutes } from './app.routes';
 
@@ -20,7 +20,7 @@ import { appRoutes } from './app.routes';
 const PLAYGROUND_API_BASE = 'https://test-api-export.africaniestest.com/api';
 
 /** localStorage key for a Maps JS API key (never commit a real key). */
-const GOOGLE_PLACES_API_KEY_STORAGE = 'aies.googlePlacesApiKey';
+const GOOGLE_PLACES_API_KEY_STORAGE = 'africanies.googlePlacesApiKey';
 
 /**
  * @returns Maps API key from localStorage, or empty string.
@@ -46,13 +46,13 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: 'enabled',
       }),
     ),
-    provideAiesSdk({
+    provideAfricaniesSdk({
       baseUrl: PLAYGROUND_API_BASE,
       httpToasts: 'errors',
     }),
-    provideAiesHttpClient(),
-    provideAiesUiOverlays(),
-    provideAiesToasts(),
+    provideAfricaniesHttpClient(),
+    provideAfricaniesUiOverlays(),
+    provideAfricaniesToasts(),
     provideGooglePlaces({ apiKey: playgroundGooglePlacesApiKey() }),
     provideAppInitializer(() => {
       // Apply stored / system theme before first paint of themed chrome.

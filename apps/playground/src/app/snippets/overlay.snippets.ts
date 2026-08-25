@@ -3,31 +3,31 @@
 export /**
  *
  */
-const OVERLAY_MODAL = `// Centered modal via ModalService. Needs provideAiesUiOverlays() in app.config.
+const OVERLAY_MODAL = `// Centered modal via ModalService. Needs provideAfricaniesUiOverlays() in app.config.
 // Built on Angular CDK Overlay (panels attach to body — not clipped by overflow).
-// Inject OVERLAY_DATA in the panel, close with AiesOverlayRef.close(result).
+// Inject OVERLAY_DATA in the panel, close with AfricaniesOverlayRef.close(result).
 // dismissible defaults to false — backdrop/Escape only work when you opt in.
 // Close X: put it in a shrink-0 header and scroll the body (host overflow-hidden
-// + aies-overlay-scroll). The pane reserves a scrollbar gutter so the track
+// + africanies-overlay-scroll). The pane reserves a scrollbar gutter so the track
 // cannot cover the button.
 
 // app.config.ts
 import { ApplicationConfig } from '@angular/core';
-import { provideAiesUiOverlays } from '@aies/aies-ui';
+import { provideAfricaniesUiOverlays } from '@africanies/africanies-ui';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAiesUiOverlays(),
+    provideAfricaniesUiOverlays(),
   ],
 };
 
 // --- Hosted panel ---
 import { Component, inject } from '@angular/core';
 import {
-  AiesOverlayRef,
+  AfricaniesOverlayRef,
   ButtonComponent,
   OVERLAY_DATA,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 export interface EditShipmentData {
   shipmentRef: string;
@@ -59,11 +59,11 @@ export interface EditShipmentResult {
       </label>
 
       <div class="flex justify-end gap-2">
-        <button aies-button type="button" variant="ghost" (click)="ref.close()">
+        <button africanies-button type="button" variant="ghost" (click)="ref.close()">
           Cancel
         </button>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           (click)="ref.close({ saved: true, note })"
@@ -76,24 +76,24 @@ export interface EditShipmentResult {
 })
 export class EditShipmentModalComponent {
   protected readonly data = inject<EditShipmentData>(OVERLAY_DATA);
-  protected readonly ref = inject(AiesOverlayRef<EditShipmentResult>);
+  protected readonly ref = inject(AfricaniesOverlayRef<EditShipmentResult>);
   protected note = '';
 }
 
 // --- Caller ---
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, ModalService } from '@aies/aies-ui';
+import { ButtonComponent, ModalService } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-open-modal-demo',
   standalone: true,
   imports: [ButtonComponent],
   template: \`
-    <button aies-button type="button" variant="primary" (click)="openLocked()">
+    <button africanies-button type="button" variant="primary" (click)="openLocked()">
       Edit shipment
     </button>
-    <button aies-button type="button" variant="secondary" (click)="openDismissible()">
+    <button africanies-button type="button" variant="secondary" (click)="openDismissible()">
       Quick look
     </button>
   \`,
@@ -135,17 +135,17 @@ export class OpenModalDemoComponent {
 export /**
  *
  */
-const OVERLAY_DRAWER = `// Right-edge drawer — same OVERLAY_DATA / AiesOverlayRef contract as modals.
+const OVERLAY_DRAWER = `// Right-edge drawer — same OVERLAY_DATA / AfricaniesOverlayRef contract as modals.
 // Good for filters and detail chrome. Default is locked; set dismissible: true for abandonable panels.
 
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  AiesOverlayRef,
+  AfricaniesOverlayRef,
   ButtonComponent,
   DrawerService,
   OVERLAY_DATA,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 export interface FiltersDrawerData {
   facet: string;
@@ -177,11 +177,11 @@ export interface FiltersDrawerResult {
       </ul>
 
       <div class="mt-auto flex justify-end gap-2 pt-4">
-        <button aies-button type="button" variant="ghost" (click)="ref.close()">
+        <button africanies-button type="button" variant="ghost" (click)="ref.close()">
           Cancel
         </button>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           (click)="ref.close({ applied: true })"
@@ -194,7 +194,7 @@ export interface FiltersDrawerResult {
 })
 export class FiltersDrawerComponent {
   protected readonly data = inject<FiltersDrawerData>(OVERLAY_DATA);
-  protected readonly ref = inject(AiesOverlayRef<FiltersDrawerResult>);
+  protected readonly ref = inject(AfricaniesOverlayRef<FiltersDrawerResult>);
   protected readonly options = ['In transit', 'Delivered', 'Pending', 'Exception'] as const;
 }
 
@@ -203,10 +203,10 @@ export class FiltersDrawerComponent {
   standalone: true,
   imports: [ButtonComponent],
   template: \`
-    <button aies-button type="button" variant="secondary" (click)="open(false)">
+    <button africanies-button type="button" variant="secondary" (click)="open(false)">
       Open (locked)
     </button>
-    <button aies-button type="button" variant="primary" (click)="open(true)">
+    <button africanies-button type="button" variant="primary" (click)="open(true)">
       Open (dismissible)
     </button>
   \`,
@@ -238,22 +238,22 @@ const OVERLAY_CONFIRM = `// One-liner confirm via ConfirmService — returns Obs
 
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ButtonComponent, ConfirmService } from '@aies/aies-ui';
+import { ButtonComponent, ConfirmService } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-confirm-demo',
   standalone: true,
   imports: [ButtonComponent],
   template: \`
-    <button aies-button type="button" variant="secondary" (click)="confirmNeutral()">
+    <button africanies-button type="button" variant="secondary" (click)="confirmNeutral()">
       Mark delivered
     </button>
 
-    <button aies-button type="button" variant="danger" (click)="confirmDestructive()">
+    <button africanies-button type="button" variant="danger" (click)="confirmDestructive()">
       Delete shipment
     </button>
 
-    <button aies-button type="button" variant="ghost" (click)="confirmDismissible()">
+    <button africanies-button type="button" variant="ghost" (click)="confirmDismissible()">
       Dismissible confirm
     </button>
   \`,

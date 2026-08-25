@@ -1,0 +1,148 @@
+import { inject, Injectable } from '@angular/core';
+
+import { catchError, map, Observable, of } from 'rxjs';
+
+import {
+  type ApiResponseModel,
+  NOTIFICATION_PAGE_SIZE,
+  type NotificationModel,
+  type ResourceId,
+} from '@africanies/africanies-models';
+
+import { ApiClient } from '../http/api-client';
+import {
+  buildResourcePath,
+  buildResourceQueryParams,
+  mapResourcePayload,
+  type ResourceQueryParams,
+} from '../http/resource-path';
+import { asString } from '../http/wire';
+import {
+  mapNotification,
+  mapNotificationList,
+  NOTIFICATION_READ_PATH,
+  NOTIFICATION_UPDATE_PATH,
+} from './notification.mapper';
+
+/**
+ * Authenticated user notifications (`GET /user/notifications/read/{id?}`).
+ *
+ * Uses the AFRICANIES {@link ResourceId} convention for paginated / full-list reads.
+ * Notification primary keys are UUID strings — use {@link readOne} for a single row.
+ *
+ * Requires an access token via {@link AuthTokenService.set}. Not cached — inbox
+ * data is auth-sensitive and changes frequently.
+ *
+ * @example
+ * ```ts
+ * const notifications = inject(NotificationService);
+ *
+ * notifications.readAll().subscribe((res) => {
+ *   console.log(res.data?.length);
+ * });
+ * ```
+ */
+@Injectable({ providedIn: 'root' })
+export class NotificationService {
+  private readonly api = inject(ApiClient);
+
+  /** Paginated inbox page — {@link ResourceId} `null`. */
+  read(
+    id?: null,
+    params?: ResourceQueryParams,
+  ): Observable<ApiResponseModel<NotificationModel[]>>;
+
+  /** Full inbox list — {@link ResourceId} `'all'`. */
+  read(
+    id: 'all',
+    params?: ResourceQueryParams,
+  ): Observable<ApiResponseModel<NotificationModel[]>>;
+
+  read(
+    id: ResourceId = null,
+    params?: ResourceQueryParams,
+  ): Observable<ApiResponseModel<NotificationModel[]>> {
+    const query: ResourceQueryParams | undefined =
+      id === null
+        ? { ...params, size: params?.size ?? NOTIFICATION_PAGE_SIZE }
+        : params;
+
+    return this.api
+      .get<unknown>(buildResourcePath(NOTIFICATION_READ_PATH, id), {
+        params: buildResourceQueryParams(id, query),
+      })
+      .pipe(
+        map((res) => ({
+          ...res,
+          data: mapResourcePayload(
+            id,
+            res?.data,
+            mapNotification,
+            mapNotificationList,
+          ) as NotificationModel[] | null,
+        })),
+        catchError(() =>
+          of({
+            success: false,
+            message: null,
+            data: [] as NotificationModel[],
+            errors: null,
+            pagination: null,
+            status_code: null,
+          }),
+        ),
+      );
+  }
+
+  /**
+   * Paginated page — alias for {@link read}(`null`, params).
+   * Size defaults to {@link NOTIFICATION_PAGE_SIZE} (`30`).
+   * @param params
+   */
+  readPage(
+    params?: ResourceQueryParams,
+  ): Observable<ApiResponseModel<NotificationModel[]>> {
+    return this.read(null, params);
+  }
+
+  /**
+   * Full list — alias for {@link read}(`'all'`).
+   * @param params
+   */
+  readAll(
+    params?: ResourceQueryParams,
+  ): Observable<ApiResponseModel<NotificationModel[]>> {
+    return this.read('all', params);
+  }
+
+  /**
+   * Single notification by UUID (`GET /user/notifications/read/{uuid}`).
+   * @param id
+   */
+  readOne(id: string): Observable<ApiResponseModel<NotificationModel>> {
+    const trimmed = asString(id).trim();
+    return this.api
+      .get<unknown>(`${NOTIFICATION_READ_PATH}/${encodeURIComponent(trimmed)}`)
+      .pipe(
+        map((res) => ({
+          ...res,
+          data:
+            res.data == null
+              ? null
+              : mapNotification(
+                  Array.isArray(res.data) ? res.data[0] : res.data,
+                ),
+        })),
+      );
+  }
+
+  /**
+   * Mark one or all notifications read (`PUT /user/notifications/update`).
+   *
+   * @param id - When set, marks that notification read; omit to mark all read.
+   */
+  markRead(id?: string): Observable<ApiResponseModel<unknown>> {
+    const body = id ? { id: asString(id) } : {};
+    return this.api.put<unknown, { id?: string }>(NOTIFICATION_UPDATE_PATH, body);
+  }
+}

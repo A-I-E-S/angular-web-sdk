@@ -1,11 +1,11 @@
 /**
- * Playground snippets — SDK HTTP services (@aies/aies-core).
+ * Playground snippets — SDK HTTP services (@africanies/africanies-core).
  */
 
 export /**
  *
  */
-const API_OVERVIEW = `// Domain services in @aies/aies-core own paths and mapping.
+const API_OVERVIEW = `// Domain services in @africanies/africanies-core own paths and mapping.
 // Apps call inject(CountryService) / CurrencyService / PaymentMethodService / ProductService / … — or ApiClient for custom routes.
 //
 // List GET convention (ResourceId) — built-in services AND custom calls:
@@ -24,17 +24,17 @@ const API_OVERVIEW = `// Domain services in @aies/aies-core own paths and mappin
 
 import { ApplicationConfig } from '@angular/core';
 import {
-  provideAiesSdk,
-  provideAiesHttpClient,
-} from '@aies/aies-core';
+  provideAfricaniesSdk,
+  provideAfricaniesHttpClient,
+} from '@africanies/africanies-core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAiesSdk({
+    provideAfricaniesSdk({
       baseUrl: 'https://test-api-export.africaniestest.com/api',
       // loadModeConfig: true by default → GET /public/mode/config on startup
     }),
-    provideAiesHttpClient(),
+    provideAfricaniesHttpClient(),
   ],
 };
 `;
@@ -46,15 +46,15 @@ const API_COUNTRY = `// GET /public/country/read/{id?} — ResourceId: null | 'a
 // Flag images: countryFlagUrl(iso2) or mapCountrySelectOptions(rows) → prefixImageUrl
 
 import { Component, inject, signal } from '@angular/core';
-import { CountryService, mapCountrySelectOptions } from '@aies/aies-core';
-import type { SelectOption } from '@aies/aies-ui';
+import { CountryService, mapCountrySelectOptions } from '@africanies/africanies-core';
+import type { SelectOption } from '@africanies/africanies-ui';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-country-loader',
   standalone: true,
   template: \`
-    <aies-select
+    <africanies-select
       label="Destination country"
       [options]="countryOptions()"
       searchable
@@ -88,8 +88,8 @@ const API_SERVICE = `// GET /public/service/read/{id?} — ResourceId: null | 'a
 // readPage({ page, order, search, size, from, to }) → ServiceModel[]
 
 import { Component, inject, signal } from '@angular/core';
-import { ServiceService } from '@aies/aies-core';
-import type { ServiceModel } from '@aies/aies-models';
+import { ServiceService } from '@africanies/africanies-core';
+import type { ServiceModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -125,8 +125,8 @@ const API_DOCUMENT = `// GET /public/document/read/{id?} — catalog preview by 
 // For raw file_ref on shipments/KYC/waybills → FileService.read(ref).
 
 import { Component, inject, signal } from '@angular/core';
-import { DocumentService } from '@aies/aies-core';
-import type { DocumentModel } from '@aies/aies-models';
+import { DocumentService } from '@africanies/africanies-core';
+import type { DocumentModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -162,8 +162,8 @@ const API_PLAN = `// GET /public/plan/read/{id?} — ResourceId: null | 'all' | 
 // readPage({ page, order, search, size, from, to }) → PlanModel[] (nested packages)
 
 import { Component, inject, signal } from '@angular/core';
-import { PlanService } from '@aies/aies-core';
-import type { PlanModel } from '@aies/aies-models';
+import { PlanService } from '@africanies/africanies-core';
+import type { PlanModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -200,8 +200,8 @@ const API_CURRENCY = `// GET /currency/read/{id?} — ResourceId: null | 'all' |
 // After each write: show res.message, then readPage again.
 
 import { Component, inject, signal } from '@angular/core';
-import { CurrencyService, PaymentMethodService } from '@aies/aies-core';
-import type { CurrencyModel, PaginationMetaModel } from '@aies/aies-models';
+import { CurrencyService, PaymentMethodService } from '@africanies/africanies-core';
+import type { CurrencyModel, PaginationMetaModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -275,8 +275,8 @@ const API_PAYMENT_METHOD = `// GET /payment_method/read/{id?} — ResourceId: nu
 // readById(4)          → single PaymentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
-import { PaymentMethodService } from '@aies/aies-core';
-import type { PaginationMetaModel, PaymentMethodModel } from '@aies/aies-models';
+import { PaymentMethodService } from '@africanies/africanies-core';
+import type { PaginationMetaModel, PaymentMethodModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -330,11 +330,11 @@ export class PaymentMethodLoaderComponent {
 export /**
  *
  */
-const API_MODE_CONFIG = `// GET /public/mode/config — usually loaded at bootstrap via provideAiesSdk.
+const API_MODE_CONFIG = `// GET /public/mode/config — usually loaded at bootstrap via provideAfricaniesSdk.
 // ModeConfigService hydrates storage; getRegionConfig(country) reads STN/SFN units.
 
 import { Component, inject } from '@angular/core';
-import { ModeConfigService } from '@aies/aies-core';
+import { ModeConfigService } from '@africanies/africanies-core';
 
 @Component({
   selector: 'app-region-units',
@@ -365,8 +365,8 @@ const API_SHIPMENT_METHOD = `// GET /shipment_method/read/{id?} — ResourceId: 
 // readPage() → paginated · readAll() → full · readById(n) → single ShipmentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
-import { ShipmentMethodService } from '@aies/aies-core';
-import type { ShipmentMethodModel } from '@aies/aies-models';
+import { ShipmentMethodService } from '@africanies/africanies-core';
+import type { ShipmentMethodModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -399,8 +399,8 @@ const API_WAREHOUSE = `// GET /warehouse/read/{id?} — ResourceId: null | 'all'
 // readPage() → paginated · readAll() → full · readById(n) → single WarehouseModel
 
 import { Component, inject, signal } from '@angular/core';
-import { WarehouseService } from '@aies/aies-core';
-import type { WarehouseModel } from '@aies/aies-models';
+import { WarehouseService } from '@africanies/africanies-core';
+import type { WarehouseModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -433,8 +433,8 @@ const API_ZONE = `// GET /zone/read/records/{id?} — ResourceId: null | 'all' |
 // readPage() → paginated · readAll() → full · readById(n) → single ZoneModel
 
 import { Component, inject, signal } from '@angular/core';
-import { ZoneService } from '@aies/aies-core';
-import type { ZoneModel } from '@aies/aies-models';
+import { ZoneService } from '@africanies/africanies-core';
+import type { ZoneModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -471,8 +471,8 @@ const API_AUTH = `// POST /auth/forgot/password — email-only, unauthenticated.
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService, isValidEmail } from '@aies/aies-core';
-import { ButtonComponent, TextInputComponent } from '@aies/aies-ui';
+import { AuthService, isValidEmail } from '@africanies/africanies-core';
+import { ButtonComponent, TextInputComponent } from '@africanies/africanies-ui';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -481,14 +481,14 @@ import { firstValueFrom } from 'rxjs';
   imports: [ButtonComponent, TextInputComponent, RouterLink],
   template: \`
     <p>We will send you a password reset link.</p>
-    <aies-text-input
+    <africanies-text-input
       type="email"
       label="Email"
       autocomplete="email"
       [(value)]="email"
     />
     <button
-      aies-button
+      africanies-button
       type="button"
       variant="primary"
       [loading]="sending()"
@@ -542,8 +542,8 @@ const API_USER = `// GET  /user — bare user object (no { success, data } wrapp
 // UserService.me() then sends Authorization: Bearer …
 
 import { Component, inject, signal } from '@angular/core';
-import { AuthTokenService, UserService } from '@aies/aies-core';
-import type { UserModel } from '@aies/aies-models';
+import { AuthTokenService, UserService } from '@africanies/africanies-core';
+import type { UserModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -592,17 +592,17 @@ import {
   AuthTokenService,
   mapNotificationInboxItem,
   NotificationService,
-} from '@aies/aies-core';
-import type { NotificationModel } from '@aies/aies-models';
-import { NOTIFICATION_PAGE_SIZE } from '@aies/aies-models';
-import type { AiesNotification, NotificationPageResult } from '@aies/aies-ui';
+} from '@africanies/africanies-core';
+import type { NotificationModel } from '@africanies/africanies-models';
+import { NOTIFICATION_PAGE_SIZE } from '@africanies/africanies-models';
+import type { AfricaniesNotification, NotificationPageResult } from '@africanies/africanies-ui';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-header-notifications',
   standalone: true,
   template: \`
-    <aies-app-shell-header
+    <africanies-app-shell-header
       title="Dashboard"
       [notifications]="notifications()"
       [onNotificationLoadPage]="loadNotificationPage"
@@ -615,7 +615,7 @@ export class HeaderNotificationsComponent {
   private readonly auth = inject(AuthTokenService);
   private readonly notificationsApi = inject(NotificationService);
 
-  protected readonly notifications = signal<AiesNotification[]>([]);
+  protected readonly notifications = signal<AfricaniesNotification[]>([]);
 
   protected loadNotificationPage = (page: number) =>
     this.notificationsApi
@@ -651,7 +651,7 @@ export class HeaderNotificationsComponent {
       .pipe(
         switchMap((token) => {
           if (!token) {
-            return of([] as AiesNotification[]);
+            return of([] as AfricaniesNotification[]);
           }
           return this.notificationsApi
             .readPage({
@@ -665,7 +665,7 @@ export class HeaderNotificationsComponent {
                 ? res.data.map((row) => this.toHeaderItem(row))
                 : [],
             ),
-            catchError(() => of([] as AiesNotification[])),
+            catchError(() => of([] as AfricaniesNotification[])),
           );
         }),
         takeUntilDestroyed(),
@@ -679,7 +679,7 @@ export class HeaderNotificationsComponent {
     );
   }
 
-  private toHeaderItem(row: NotificationModel): AiesNotification {
+  private toHeaderItem(row: NotificationModel): AfricaniesNotification {
     const item = mapNotificationInboxItem(row);
     return {
       id: item.id,
@@ -701,8 +701,8 @@ const API_PRODUCT = `// GET /product/read/{id?} — ResourceId: null | 'all' | n
 // readPage() → paginated · readAll() → full · readById(n) → single ProductModel
 
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ProductService } from '@aies/aies-core';
-import type { ProductModel } from '@aies/aies-models';
+import { ProductService } from '@africanies/africanies-core';
+import type { ProductModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -735,8 +735,8 @@ const API_FILE = `// POST /file/read — body { ref } when a record stores file_
 // data.mime_type + data.base_64 for preview. Waybills: readMultiple(ref).
 
 import { Component, inject, signal } from '@angular/core';
-import { FileService } from '@aies/aies-core';
-import type { FileReadModel } from '@aies/aies-models';
+import { FileService } from '@africanies/africanies-core';
+import type { FileReadModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({

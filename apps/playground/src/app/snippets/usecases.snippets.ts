@@ -1,14 +1,14 @@
 export /**
  *
  */
-const USECASE_SHIPMENT_BACK = `// No Back button or breadcrumbs to build. aies-app-shell shows both in the
+const USECASE_SHIPMENT_BACK = `// No Back button or breadcrumbs to build. africanies-app-shell shows both in the
 // content chrome. Back appears only on child routes (and still does after a
 // pasted / reloaded URL). Nested children under a parent is all the app needs.
 //
 // List filters + pagination live on the query string (FilterQueryService).
 // Open detail with queryParamsHandling: 'preserve' so Back restores page/filters.
 
-import { FilterQueryService, trackShipmentsFilterConfig } from '@aies/aies-ui';
+import { FilterQueryService, trackShipmentsFilterConfig } from '@africanies/africanies-ui';
 
 const routes: Route[] = [
   {
@@ -30,7 +30,7 @@ const routes: Route[] = [
   },
 ];
 
-// List page — seed from the URL, then let Apply / aies-pagination write back:
+// List page — seed from the URL, then let Apply / africanies-pagination write back:
 const filterQuery = inject(FilterQueryService);
 const config = trackShipmentsFilterConfig;
 const state = filterQuery.hasParams(config)
@@ -53,7 +53,7 @@ const USECASE_ONBOARDING_FORGOT = `// Forgot password is email-only. Login → /
 
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService, isValidEmail } from '@aies/aies-core';
+import { AuthService, isValidEmail } from '@africanies/africanies-core';
 import { firstValueFrom } from 'rxjs';
 
 const routes: Route[] = [
@@ -74,9 +74,9 @@ const routes: Route[] = [
   standalone: true,
   template: \`
     <p>We will send you a password reset link.</p>
-    <aies-text-input type="email" label="Email" [(value)]="email" />
+    <africanies-text-input type="email" label="Email" [(value)]="email" />
     <button
-      aies-button
+      africanies-button
       type="button"
       [disabled]="!canSubmit()"
       [loading]="sending()"

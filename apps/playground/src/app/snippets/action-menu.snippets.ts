@@ -8,7 +8,7 @@ const ACTION_MENU_DEFAULT = `// Default ellipsis trigger — good for table rows
 // Panel renders in a CDK overlay so it won't get clipped by overflow:hidden.
 
 import { Component, signal } from '@angular/core';
-import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+import { ActionMenuComponent, type AfricaniesMenuItem } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-row-actions-demo',
@@ -16,7 +16,7 @@ import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
   imports: [ActionMenuComponent],
   template: \`
     <div class="flex flex-wrap items-center gap-4">
-      <aies-action-menu [items]="items" ariaLabel="Shipment actions" />
+      <africanies-action-menu [items]="items" ariaLabel="Shipment actions" />
 
       <p class="m-0 text-body-sm">
         Last action:
@@ -28,7 +28,7 @@ import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
 export class ShipmentRowActionsDemoComponent {
   protected readonly lastAction = signal<string | null>(null);
 
-  protected readonly items: AiesMenuItem[] = [
+  protected readonly items: AfricaniesMenuItem[] = [
     {
       label: 'Open',
       icon: 'eye',
@@ -58,36 +58,36 @@ export class ShipmentRowActionsDemoComponent {
 export /**
  *
  */
-const ACTION_MENU_CUSTOM = `// Swap the ellipsis for your own trigger — project it inside and add aiesActionMenuTrigger.
+const ACTION_MENU_CUSTOM = `// Swap the ellipsis for your own trigger — project it inside and add africaniesActionMenuTrigger.
 
 import { Component } from '@angular/core';
 import {
   ActionMenuComponent,
   ActionMenuTriggerDirective,
   ButtonComponent,
-  type AiesMenuItem,
-} from '@aies/aies-ui';
+  type AfricaniesMenuItem,
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-toolbar-actions',
   standalone: true,
   imports: [ActionMenuComponent, ActionMenuTriggerDirective, ButtonComponent],
   template: \`
-    <aies-action-menu [items]="items" ariaLabel="Shipment actions">
+    <africanies-action-menu [items]="items" ariaLabel="Shipment actions">
       <button
         type="button"
-        aies-button
-        aiesActionMenuTrigger
+        africanies-button
+        africaniesActionMenuTrigger
         variant="secondary"
         size="sm"
       >
         Actions
       </button>
-    </aies-action-menu>
+    </africanies-action-menu>
   \`,
 })
 export class ShipmentToolbarActionsComponent {
-  protected readonly items: AiesMenuItem[] = [
+  protected readonly items: AfricaniesMenuItem[] = [
     {
       label: 'Open',
       icon: 'eye',
@@ -127,18 +127,18 @@ export /**
 const ACTION_MENU_VARIANTS = `// Item flags: danger for destructive, disabled when unavailable, dividerBefore to separate groups.
 
 import { Component } from '@angular/core';
-import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+import { ActionMenuComponent, type AfricaniesMenuItem } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-action-variants',
   standalone: true,
   imports: [ActionMenuComponent],
   template: \`
-    <aies-action-menu [items]="items" />
+    <africanies-action-menu [items]="items" />
   \`,
 })
 export class ShipmentActionVariantsComponent {
-  protected readonly items: AiesMenuItem[] = [
+  protected readonly items: AfricaniesMenuItem[] = [
     {
       label: 'Download PDF',
       icon: 'download',
@@ -174,21 +174,21 @@ export /**
 const ACTION_MENU_DISABLED = `// [disabled] locks the whole menu (won't open). Prefer this over an empty items array.
 
 import { Component, input } from '@angular/core';
-import { ActionMenuComponent, type AiesMenuItem } from '@aies/aies-ui';
+import { ActionMenuComponent, type AfricaniesMenuItem } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-action-menu-disabled',
   standalone: true,
   imports: [ActionMenuComponent],
   template: \`
-    <aies-action-menu [items]="items" [disabled]="menuDisabled()" />
+    <africanies-action-menu [items]="items" [disabled]="menuDisabled()" />
   \`,
 })
 export class ShipmentActionMenuDisabledComponent {
   // Parent passes true when the row is locked or the user lacks edit rights.
   readonly menuDisabled = input(false);
 
-  protected readonly items: AiesMenuItem[] = [
+  protected readonly items: AfricaniesMenuItem[] = [
     {
       label: 'Open',
       icon: 'eye',

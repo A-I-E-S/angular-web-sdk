@@ -2,10 +2,10 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import type { FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
+import type { FilterStateModel, PaginationMetaModel } from '@africanies/africanies-models';
 import {
   ActionMenuComponent,
-  type AiesMenuItem,
+  type AfricaniesMenuItem,
   CellDefDirective,
   ChipComponent,
   type ChipVariant,
@@ -17,7 +17,7 @@ import {
   TableComponent,
   toFilterParams,
   trackShipmentsFilterConfig,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../../shared/demo-section.component';
 import { PageHeaderComponent } from '../../shared/page-header.component';
@@ -46,7 +46,7 @@ const FILTER_CONFIG = trackShipmentsFilterConfig;
       <app-page-header
         eyebrow="Use cases"
         title="Back button and Breadcrumbs"
-        description="You do not implement Back or breadcrumbs — they ship with aies-app-shell. This list also hydrates filters and pagination from the URL, so a shared link (or Back from detail) reopens the same page and criteria."
+        description="You do not implement Back or breadcrumbs — they ship with africanies-app-shell. This list also hydrates filters and pagination from the URL, so a shared link (or Back from detail) reopens the same page and criteria."
       />
 
       <app-demo-section
@@ -55,7 +55,7 @@ const FILTER_CONFIG = trackShipmentsFilterConfig;
         badge="built-in"
         [code]="routeCode"
       >
-        <aies-table
+        <africanies-table
           [columns]="columns"
           [rows]="pageRows()"
           [meta]="meta()"
@@ -66,23 +66,23 @@ const FILTER_CONFIG = trackShipmentsFilterConfig;
           (pageChange)="onPageChange($event)"
           (sizeChange)="onSizeChange($event)"
         >
-          <ng-template aiesCellDef="reference" let-row>
+          <ng-template africaniesCellDef="reference" let-row>
             <span class="font-medium text-ink dark:text-white">{{
               row.reference
             }}</span>
           </ng-template>
-          <ng-template aiesCellDef="status" let-row>
-            <aies-chip [variant]="statusVariant(row.status)">
+          <ng-template africaniesCellDef="status" let-row>
+            <africanies-chip [variant]="statusVariant(row.status)">
               {{ row.status }}
-            </aies-chip>
+            </africanies-chip>
           </ng-template>
-          <ng-template aiesCellDef="actions" let-row>
-            <aies-action-menu
+          <ng-template africaniesCellDef="actions" let-row>
+            <africanies-action-menu
               [items]="rowActions(row)"
               [ariaLabel]="'Actions for ' + row.reference"
             />
           </ng-template>
-        </aies-table>
+        </africanies-table>
       </app-demo-section>
     </div>
   `,
@@ -189,7 +189,7 @@ export class ShipmentListPage {
     }
   }
 
-  protected rowActions(row: UsecaseShipment): AiesMenuItem[] {
+  protected rowActions(row: UsecaseShipment): AfricaniesMenuItem[] {
     return [
       {
         label: 'View details',

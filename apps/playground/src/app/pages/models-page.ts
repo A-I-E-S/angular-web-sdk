@@ -9,7 +9,7 @@ interface ModelEntry {
   name: string;
   packagePath: string;
   description: string;
-  /** TypeScript shape from `@aies/aies-models` (display-only). */
+  /** TypeScript shape from `@africanies/africanies-models` (display-only). */
   structure: string;
 }
 
@@ -31,7 +31,7 @@ interface ModelCategory {
 }
 
 /**
- * Shape catalog for `@aies/aies-models`.
+ * Shape catalog for `@africanies/africanies-models`.
  * How to call services lives on the SDK API page.
  */
 @Component({
@@ -43,12 +43,12 @@ interface ModelCategory {
       <app-page-header
         eyebrow="Foundation"
         title="Models"
-        description="TypeScript contracts from @aies/aies-models — field shapes only. Names end in *Model. For paths, ResourceId, and Show code usage, open Foundation → SDK API."
+        description="TypeScript contracts from @africanies/africanies-models — field shapes only. Names end in *Model. For paths, ResourceId, and Show code usage, open Foundation → SDK API."
       />
 
       <app-demo-section
         title="Import"
-        hint="Pull shapes from @aies/aies-models in any app or library. No providers required."
+        hint="Pull shapes from @africanies/africanies-models in any app or library. No providers required."
         [code]="importCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -217,7 +217,7 @@ export class ModelsPage {
         {
           id: 'async',
           title: 'Async query state',
-          hint: 'Snapshot for aies-async-state — loading, fetching, error, and data.',
+          hint: 'Snapshot for africanies-async-state — loading, fetching, error, and data.',
           models: [
             {
               name: 'AsyncQueryStateModel<T>',

@@ -4,9 +4,9 @@ import { RouterLink } from '@angular/router';
 import {
   ActionMenuComponent,
   ActionMenuTriggerDirective,
-  type AiesMenuItem,
+  type AfricaniesMenuItem,
   ButtonComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -47,7 +47,7 @@ import {
             >CDK</a
           >
           overlay so it is not clipped by table overflow. Default ellipsis
-          trigger, or point aiesActionMenuTrigger at your own control.
+          trigger, or point africaniesActionMenuTrigger at your own control.
         </p>
       </app-page-header>
 
@@ -57,7 +57,7 @@ import {
         [code]="defaultCode"
       >
         <div class="flex flex-wrap items-center gap-4">
-          <aies-action-menu [items]="demoItems" />
+          <africanies-action-menu [items]="demoItems" />
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
             Last action:
             <span class="font-medium text-ink dark:text-white">{{
@@ -69,20 +69,20 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="When ellipsis is not enough — attach aiesActionMenuTrigger to your own labeled button."
+        hint="When ellipsis is not enough — attach africaniesActionMenuTrigger to your own labeled button."
         [code]="customCode"
       >
-        <aies-action-menu [items]="demoItems" ariaLabel="Shipment actions">
+        <africanies-action-menu [items]="demoItems" ariaLabel="Shipment actions">
           <button
             type="button"
-            aies-button
-            aiesActionMenuTrigger
+            africanies-button
+            africaniesActionMenuTrigger
             variant="secondary"
             size="sm"
           >
             Actions
           </button>
-        </aies-action-menu>
+        </africanies-action-menu>
       </app-demo-section>
 
       <app-demo-section
@@ -90,7 +90,7 @@ import {
         hint="Mark destructive items with danger, disable unavailable ones, and use dividerBefore to separate groups."
         [code]="variantsCode"
       >
-        <aies-action-menu [items]="variantItems" />
+        <africanies-action-menu [items]="variantItems" />
       </app-demo-section>
 
       <app-demo-section
@@ -98,7 +98,7 @@ import {
         hint="Disable the whole menu when no actions apply (e.g. row locked or permissions missing)."
         [code]="disabledCode"
       >
-        <aies-action-menu [items]="demoItems" [disabled]="true" />
+        <africanies-action-menu [items]="demoItems" [disabled]="true" />
       </app-demo-section>
     </div>
   `,
@@ -106,7 +106,7 @@ import {
 export class ActionMenuPage {
   protected readonly lastAction = signal<string | null>(null);
 
-  protected readonly demoItems: AiesMenuItem[] = [
+  protected readonly demoItems: AfricaniesMenuItem[] = [
     {
       label: 'Open',
       icon: 'eye',
@@ -131,7 +131,7 @@ export class ActionMenuPage {
     },
   ];
 
-  protected readonly variantItems: AiesMenuItem[] = [
+  protected readonly variantItems: AfricaniesMenuItem[] = [
     {
       label: 'Download PDF',
       icon: 'download',

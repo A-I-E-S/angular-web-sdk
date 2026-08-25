@@ -1,14 +1,14 @@
 import { Component, computed, signal } from '@angular/core';
 
-import { AiesIconComponent } from '@aies/aies-icons';
-import type { AsyncQueryStateModel } from '@aies/aies-models';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+import type { AsyncQueryStateModel } from '@africanies/africanies-models';
 import {
   AsyncStateComponent,
   EmptyStateComponent,
   ErrorIndicatorComponent,
   ErrorStateComponent,
   LoadingStateComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -68,7 +68,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
     ErrorIndicatorComponent,
     EmptyStateComponent,
     AsyncStateComponent,
-    AiesIconComponent,
+    AfricaniesIconComponent,
     PageHeaderComponent,
     DemoSectionComponent,
   ],
@@ -93,7 +93,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             <div
               class="flex min-h-[10rem] items-center justify-center rounded-lg border border-dashed border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
             >
-              <aies-loading-state message="Loading shipments…" />
+              <africanies-loading-state message="Loading shipments…" />
             </div>
           </div>
           <div class="flex flex-col gap-2">
@@ -103,7 +103,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             <div
               class="flex min-h-[10rem] items-center rounded-lg border border-dashed border-border bg-background-welcome px-5 dark:border-white/10 dark:bg-ink-950"
             >
-              <aies-loading-state mode="inline" message="Refreshing rates…" />
+              <africanies-loading-state mode="inline" message="Refreshing rates…" />
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
           <div
             class="rounded-lg border border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
           >
-            <aies-error-state
+            <africanies-error-state
               message="Failed to load shipments."
               (retry)="onRetry('error-default')"
             />
@@ -126,7 +126,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
           <div
             class="rounded-lg border border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
           >
-            <aies-error-state
+            <africanies-error-state
               message="The rate service timed out after 30s. Check your network and try again."
               (retry)="onRetry('error-long')"
             />
@@ -144,7 +144,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             class="flex min-h-[8rem] flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
           >
             <div class="flex justify-end">
-              <aies-error-indicator
+              <africanies-error-indicator
                 class="max-w-[min(100%,20rem)]"
                 error="Connection lost — showing cached data"
                 retryText="Reconnect"
@@ -164,7 +164,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             class="flex min-h-[8rem] flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
           >
             <div class="flex justify-end">
-              <aies-error-indicator
+              <africanies-error-indicator
                 class="max-w-[min(100%,20rem)]"
                 error="Error fetching currencies"
                 (retry)="onRetry('error-indicator-currencies')"
@@ -179,7 +179,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             class="flex min-h-[8rem] flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950"
           >
             <div class="flex justify-end">
-              <aies-error-indicator
+              <africanies-error-indicator
                 class="max-w-[min(100%,20rem)]"
                 error="Failed to fetch the most recent data."
                 retryText="Refresh"
@@ -201,11 +201,11 @@ const SUCCESS_ROWS: DemoShipment[] = [
         [code]="emptyCode"
       >
         <div class="grid gap-4 md:grid-cols-2">
-          <aies-empty-state
+          <africanies-empty-state
             message="No shipments match your filters."
             (retry)="onRetry('empty')"
           />
-          <aies-empty-state
+          <africanies-empty-state
             message="You have not created any drafts yet."
             (retry)="onRetry('empty-drafts')"
           />
@@ -244,7 +244,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
         <div
           class="relative min-h-[16rem] overflow-hidden rounded-xl border border-border dark:border-white/10"
         >
-          <aies-async-state [state]="asyncState()" (retry)="setDemo('content')">
+          <africanies-async-state [state]="asyncState()" (retry)="setDemo('content')">
             <div class="bg-white dark:bg-ink-950">
               <div
                 class="flex items-center justify-between gap-3 border-b border-border px-5 py-3.5 dark:border-white/10"
@@ -253,7 +253,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
                   <span
                     class="inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-export/10 text-export dark:bg-export/15 dark:text-export-light"
                   >
-                    <aies-icon name="airplane" [size]="16" />
+                    <africanies-icon name="airplane" [size]="16" />
                   </span>
                   <div class="min-w-0">
                     <p class="m-0 text-body font-medium text-ink dark:text-white">
@@ -301,7 +301,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
                 }
               </ul>
             </div>
-          </aies-async-state>
+          </africanies-async-state>
         </div>
 
         @if (lastRetry()) {
@@ -309,7 +309,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
             class="mt-3 m-0 inline-flex items-center gap-1.5 text-caption text-neutral-600 dark:text-neutral-400"
             role="status"
           >
-            <aies-icon name="refresh" [size]="12" />
+            <africanies-icon name="refresh" [size]="12" />
             Last retry: {{ lastRetry() }}
           </p>
         }

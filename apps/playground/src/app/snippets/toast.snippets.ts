@@ -7,20 +7,20 @@ export /**
  */
 const TOAST_VARIANTS = `
 // Inject ToastService and fire away.
-// Toasts mount via CDK Overlay in the corner (provideAiesToasts() once).
+// Toasts mount via CDK Overlay in the corner (provideAfricaniesToasts() once).
 // Error stays until closed; warning ~8s; info/success ~4.5s. Hover pauses.
 
 import { Component, inject } from '@angular/core';
-import { ButtonComponent, ToastService } from '@aies/aies-ui';
+import { ButtonComponent, ToastService } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-toast-demo',
   standalone: true,
   imports: [ButtonComponent],
   template: \`
-    <button aies-button type="button" (click)="ok()">Saved</button>
-    <button aies-button type="button" variant="secondary" (click)="warn()">Warn</button>
-    <button aies-button type="button" variant="danger" (click)="fail()">Error</button>
+    <button africanies-button type="button" (click)="ok()">Saved</button>
+    <button africanies-button type="button" variant="secondary" (click)="warn()">Warn</button>
+    <button africanies-button type="button" variant="danger" (click)="fail()">Error</button>
   \`,
 })
 export class ToastDemoComponent {
@@ -56,11 +56,11 @@ export /**
  */
 const TOAST_HTTP = `
 // Wrap HttpClient calls with withToast(). Success + error on by default.
-// Needs provideAiesHttpClient() + provideAiesToasts() in app.config.
+// Needs provideAfricaniesHttpClient() + provideAfricaniesToasts() in app.config.
 
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { withToast } from '@aies/aies-core';
+import { withToast } from '@africanies/africanies-core';
 
 const http = inject(HttpClient);
 

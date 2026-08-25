@@ -2,11 +2,11 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
-import { ShippingModeService } from '@aies/aies-core';
-import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from '@aies/aies-models';
+import { ShippingModeService } from '@africanies/africanies-core';
+import type { AsyncQueryStateModel, FilterStateModel, PaginationMetaModel } from '@africanies/africanies-models';
 import {
   ActionMenuComponent,
-  type AiesMenuItem,
+  type AfricaniesMenuItem,
   ButtonComponent,
   CellDefDirective,
   ChipComponent,
@@ -23,7 +23,7 @@ import {
   type TableSortChange,
   toFilterParams,
   trackShipmentsFilterConfig,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -210,7 +210,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
         <div class="mb-4 flex flex-wrap gap-2">
           @for (kind of listKinds; track kind) {
             <button
-              aies-button
+              africanies-button
               type="button"
               size="sm"
               [variant]="listDemo() === kind ? 'primary' : 'secondary'"
@@ -221,7 +221,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
           }
         </div>
 
-        <aies-table
+        <africanies-table
             [columns]="columns"
             [rows]="listState().data ?? []"
             [meta]="meta()"
@@ -243,66 +243,66 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
             (sizeChange)="onSizeChange($event)"
             (rowExpandChange)="onRowExpand($event)"
           >
-            <ng-template aiesCellDef="reference" let-row>
+            <ng-template africaniesCellDef="reference" let-row>
               <div class="flex items-center gap-1">
                 <span class="font-medium text-ink dark:text-white">{{
                   row.reference
                 }}</span>
-                <aies-copy
+                <africanies-copy
                   [value]="row.reference"
                   [ariaLabel]="'Copy ' + row.reference"
                 />
               </div>
             </ng-template>
-            <ng-template aiesCellDef="status" let-row>
-              <aies-chip [variant]="statusVariant(row.status)">
+            <ng-template africaniesCellDef="status" let-row>
+              <africanies-chip [variant]="statusVariant(row.status)">
                 {{ row.status }}
-              </aies-chip>
+              </africanies-chip>
             </ng-template>
-            <ng-template aiesCellDef="mode" let-row>
-              <aies-chip
+            <ng-template africaniesCellDef="mode" let-row>
+              <africanies-chip
                 [variant]="row.mode === 'sfn' ? 'export' : 'import'"
               >
                 {{ row.mode.toUpperCase() }}
-              </aies-chip>
+              </africanies-chip>
             </ng-template>
-            <ng-template aiesCellDef="valueUsd" let-row>
+            <ng-template africaniesCellDef="valueUsd" let-row>
               <span class="tabular-nums text-body-sm text-ink dark:text-white">
                 {{ formatUsd(row.valueUsd) }}
               </span>
             </ng-template>
-            <ng-template aiesCellDef="packagedBy" let-row>
-              <aies-content-stack
+            <ng-template africaniesCellDef="packagedBy" let-row>
+              <africanies-content-stack
                 [title]="row.packagedBy.name"
                 [subtitle]="row.packagedBy.email"
                 [extraLine]="formatStamp(row.packagedBy.at)"
               />
             </ng-template>
-            <ng-template aiesCellDef="actions" let-row>
-              <aies-action-menu
+            <ng-template africaniesCellDef="actions" let-row>
+              <africanies-action-menu
                 [items]="rowActions(row)"
                 [ariaLabel]="'Actions for ' + row.reference"
               />
             </ng-template>
-            <ng-template aiesRowDetail="Destination" let-row>
+            <ng-template africaniesRowDetail="Destination" let-row>
               <span class="font-medium">{{ row.destination }}</span>
             </ng-template>
-            <ng-template aiesRowDetail="Declared value" let-row>
+            <ng-template africaniesRowDetail="Declared value" let-row>
               <span class="tabular-nums font-medium">{{
                 formatUsd(row.valueUsd)
               }}</span>
             </ng-template>
-            <ng-template aiesRowDetail="Mode" let-row>
-              <aies-chip [variant]="row.mode === 'sfn' ? 'export' : 'import'">
+            <ng-template africaniesRowDetail="Mode" let-row>
+              <africanies-chip [variant]="row.mode === 'sfn' ? 'export' : 'import'">
                 {{ row.mode === 'sfn' ? 'Export (SFN)' : 'Import (STN)' }}
-              </aies-chip>
+              </africanies-chip>
             </ng-template>
-            <ng-template aiesRowDetail="Status" let-row>
-              <aies-chip [variant]="statusVariant(row.status)">
+            <ng-template africaniesRowDetail="Status" let-row>
+              <africanies-chip [variant]="statusVariant(row.status)">
                 {{ row.status }}
-              </aies-chip>
+              </africanies-chip>
             </ng-template>
-          </aies-table>
+          </africanies-table>
         @if (lastRowAction()) {
           <p class="mt-3 m-0 text-caption text-neutral-600 dark:text-neutral-400">
             Last row action: {{ lastRowAction() }}
@@ -329,7 +329,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
         <div class="mb-4 flex flex-wrap gap-2">
           @for (kind of accountKinds; track kind) {
             <button
-              aies-button
+              africanies-button
               type="button"
               size="sm"
               [variant]="accountKind() === kind ? 'primary' : 'secondary'"
@@ -340,42 +340,42 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
           }
         </div>
 
-        <aies-table
+        <africanies-table
           [columns]="customerColumns()"
           [rows]="customerRows()"
           [rowTrackBy]="customerTrackBy"
         >
-          <ng-template aiesCellDef="createdAt" let-row>
+          <ng-template africaniesCellDef="createdAt" let-row>
             <span class="whitespace-nowrap text-body-sm tabular-nums">
               {{ formatDate(row.createdAt) }}
             </span>
           </ng-template>
-          <ng-template aiesCellDef="customer" let-row>
-            <aies-content-stack [title]="row.name" [subtitle]="row.email" />
+          <ng-template africaniesCellDef="customer" let-row>
+            <africanies-content-stack [title]="row.name" [subtitle]="row.email" />
           </ng-template>
-          <ng-template aiesCellDef="business" let-row>
-            <aies-content-stack [title]="row.name" [subtitle]="row.email" />
+          <ng-template africaniesCellDef="business" let-row>
+            <africanies-content-stack [title]="row.name" [subtitle]="row.email" />
           </ng-template>
-          <ng-template aiesCellDef="identifier" let-row>
+          <ng-template africaniesCellDef="identifier" let-row>
             <div class="flex items-center gap-1">
               <span class="font-medium tabular-nums">{{ row.identifier }}</span>
-              <aies-copy
+              <africanies-copy
                 [value]="row.identifier"
                 [ariaLabel]="'Copy ' + row.identifier"
               />
             </div>
           </ng-template>
-          <ng-template aiesCellDef="status" let-row>
-            <aies-chip [variant]="kycStatusVariant(row.status)">
+          <ng-template africaniesCellDef="status" let-row>
+            <africanies-chip [variant]="kycStatusVariant(row.status)">
               {{ row.status }}
-            </aies-chip>
+            </africanies-chip>
           </ng-template>
-          <ng-template aiesCellDef="incorpDate" let-row>
+          <ng-template africaniesCellDef="incorpDate" let-row>
             <span class="whitespace-nowrap text-body-sm tabular-nums">
               {{ formatDate(row.incorpDate) }}
             </span>
           </ng-template>
-          <ng-template aiesCellDef="website" let-row>
+          <ng-template africaniesCellDef="website" let-row>
             <a
               class="text-body-sm text-ink underline-offset-2 hover:underline dark:text-white"
               [href]="row.website"
@@ -385,13 +385,13 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
               {{ row.website.replace('https://', '') }}
             </a>
           </ng-template>
-          <ng-template aiesCellDef="actions" let-row>
-            <aies-action-menu
+          <ng-template africaniesCellDef="actions" let-row>
+            <africanies-action-menu
               [items]="customerActions(row)"
               [ariaLabel]="'Actions for ' + row.name"
             />
           </ng-template>
-        </aies-table>
+        </africanies-table>
       </app-demo-section>
 
       <app-demo-section
@@ -399,7 +399,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
         hint="Stacked title / subtitle / extra line — use in table cells or detail panels. The row grows to fit."
         [code]="contentStackCode"
       >
-        <aies-content-stack
+        <africanies-content-stack
           title="Oladotun Adedeji"
           subtitle="oladotun.a@africanies.com"
           extraLine="Aug 14, 2026, 2:04:22 PM"
@@ -412,7 +412,7 @@ const ALL_ROWS: DemoShipment[] = Array.from({ length: 28 }, (_, i) => {
         muted
         [code]="compactCode"
       >
-        <aies-table [columns]="compactColumns" [rows]="pageRows().slice(0, 3)" />
+        <africanies-table [columns]="compactColumns" [rows]="pageRows().slice(0, 3)" />
       </app-demo-section>
     </div>
   `,
@@ -450,7 +450,7 @@ export class TablePage {
     ).length;
   });
 
-  protected readonly rowActions = (row: DemoShipment): AiesMenuItem[] => [
+  protected readonly rowActions = (row: DemoShipment): AfricaniesMenuItem[] => [
     {
       label: 'Open',
       icon: 'eye',
@@ -716,7 +716,7 @@ export class TablePage {
     );
   }
 
-  protected readonly customerActions = (row: DemoCustomer): AiesMenuItem[] => [
+  protected readonly customerActions = (row: DemoCustomer): AfricaniesMenuItem[] => [
     {
       label: 'Open',
       icon: 'eye',

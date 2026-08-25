@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { map } from 'rxjs';
 
-import { ChipComponent, type ChipVariant } from '@aies/aies-ui';
+import { ChipComponent, type ChipVariant } from '@africanies/africanies-ui';
 
 import { findUsecaseShipment } from './shipment-data';
 
@@ -30,9 +30,9 @@ import { findUsecaseShipment } from './shipment-data';
               {{ row.route }}
             </p>
           </div>
-          <aies-chip [variant]="statusVariant(row.status)">
+          <africanies-chip [variant]="statusVariant(row.status)">
             {{ row.status }}
-          </aies-chip>
+          </africanies-chip>
         </div>
 
         <dl

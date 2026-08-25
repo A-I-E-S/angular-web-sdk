@@ -6,7 +6,7 @@ import {
   type StepDefinition,
   StepperComponent,
   TextInputComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -55,30 +55,30 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
           </span>
         </div>
 
-        <aies-stepper
+        <africanies-stepper
           [steps]="linearSteps()"
           [activeIndex]="linearIndex()"
           [linear]="true"
           (activeIndexChange)="linearIndex.set($event)"
         >
-          <ng-template aiesStepDef="route">
+          <ng-template africaniesStepDef="route">
             <div class="flex flex-col gap-4">
               <p class="m-0 text-body-sm text-neutral-600">
                 Origin and destination for this shipment.
               </p>
               <div class="grid gap-4 md:grid-cols-2">
-                <aies-text-input label="Origin city" [(value)]="origin" />
-                <aies-text-input label="Destination city" [(value)]="destination" />
+                <africanies-text-input label="Origin city" [(value)]="origin" />
+                <africanies-text-input label="Destination city" [(value)]="destination" />
               </div>
             </div>
           </ng-template>
-          <ng-template aiesStepDef="cargo">
+          <ng-template africaniesStepDef="cargo">
             <div class="flex flex-col gap-4">
               <p class="m-0 text-body-sm text-neutral-600">Describe what you are shipping.</p>
-              <aies-text-input label="Commodity" [(value)]="commodity" />
+              <africanies-text-input label="Commodity" [(value)]="commodity" />
             </div>
           </ng-template>
-          <ng-template aiesStepDef="review">
+          <ng-template africaniesStepDef="review">
             <div
               class="rounded-lg border border-border bg-background-welcome p-4 text-body-sm dark:border-white/10 dark:bg-ink-950"
             >
@@ -89,11 +89,11 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
               </ul>
             </div>
           </ng-template>
-        </aies-stepper>
+        </africanies-stepper>
 
         <div class="mt-5 flex gap-2">
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="ghost"
             [disabled]="linearIndex() === 0"
@@ -102,7 +102,7 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
             Back
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             [disabled]="linearIndex() >= linearSteps().length - 1 || !canGoNext()"
             (click)="linearIndex.set(linearIndex() + 1)"
@@ -118,22 +118,22 @@ import { STEPPER_FREE, STEPPER_LINEAR } from '../snippets';
         badge="free nav"
         [code]="freeCode"
       >
-        <aies-stepper
+        <africanies-stepper
           [steps]="freeSteps"
           [activeIndex]="freeIndex()"
           [linear]="false"
           (activeIndexChange)="freeIndex.set($event)"
         >
-          <ng-template aiesStepDef="account">
+          <ng-template africaniesStepDef="account">
             <p class="m-0 text-body text-ink dark:text-white">Account details step body.</p>
           </ng-template>
-          <ng-template aiesStepDef="billing">
+          <ng-template africaniesStepDef="billing">
             <p class="m-0 text-body text-ink dark:text-white">Billing step body.</p>
           </ng-template>
-          <ng-template aiesStepDef="confirm">
+          <ng-template africaniesStepDef="confirm">
             <p class="m-0 text-body text-ink dark:text-white">Confirmation step body.</p>
           </ng-template>
-        </aies-stepper>
+        </africanies-stepper>
       </app-demo-section>
     </div>
   `,

@@ -9,7 +9,7 @@ const NAV_BREADCRUMB = `// You own the items array — breadcrumb won't walk the
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { BreadcrumbComponent, type AiesNavItem } from '@aies/aies-ui';
+import { BreadcrumbComponent, type AfricaniesNavItem } from '@africanies/africanies-ui';
 import { filter, map, startWith } from 'rxjs';
 
 @Component({
@@ -17,7 +17,7 @@ import { filter, map, startWith } from 'rxjs';
   standalone: true,
   imports: [BreadcrumbComponent],
   template: \`
-    <aies-breadcrumb [items]="crumbs()" />
+    <africanies-breadcrumb [items]="crumbs()" />
   \`,
 })
 export class ShipmentDetailChromeComponent {
@@ -34,7 +34,7 @@ export class ShipmentDetailChromeComponent {
 
   protected readonly shipmentRef = signal('SFN-1042');
 
-  protected readonly crumbs = computed((): AiesNavItem[] => {
+  protected readonly crumbs = computed((): AfricaniesNavItem[] => {
     const ref = this.shipmentRef();
     const path = this.url().split('?')[0] ?? '';
     const section = path.includes('/documents')
@@ -57,20 +57,20 @@ export /**
  *
  */
 const NAV_ROUTED_TABS = `// URL-driven tabs + child routes. Active tab follows Router.isActive (survives refresh).
-// Put routerLink on each item, render <router-outlet /> below. Don't mix with aiesTabDef.
+// Put routerLink on each item, render <router-outlet /> below. Don't mix with africaniesTabDef.
 // keepScroll defaults to true — navigates with { scroll: 'manual' } so the page does not jump to the top.
 // Pass [keepScroll]="false" if you want the app's normal scrollPositionRestoration behaviour.
 
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TabsComponent, type AiesNavItem } from '@aies/aies-ui';
+import { TabsComponent, type AfricaniesNavItem } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-detail-tabs',
   standalone: true,
   imports: [TabsComponent, RouterOutlet],
   template: \`
-    <aies-tabs
+    <africanies-tabs
       [items]="routeTabs"
       [(activeId)]="routeTabId"
       ariaLabel="Shipment sections"
@@ -84,7 +84,7 @@ import { TabsComponent, type AiesNavItem } from '@aies/aies-ui';
 export class ShipmentDetailTabsComponent {
   protected readonly routeTabId = signal<string | null>(null);
 
-  protected readonly routeTabs: AiesNavItem[] = [
+  protected readonly routeTabs: AfricaniesNavItem[] = [
     {
       id: 'overview',
       label: 'Overview',
@@ -130,7 +130,7 @@ const NAV_SEGMENT = `// Pill switcher on one path — same routerLink, different
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { SegmentComponent, type AiesNavItem } from '@aies/aies-ui';
+import { SegmentComponent, type AfricaniesNavItem } from '@africanies/africanies-ui';
 import { map } from 'rxjs';
 
 @Component({
@@ -138,7 +138,7 @@ import { map } from 'rxjs';
   standalone: true,
   imports: [SegmentComponent],
   template: \`
-    <aies-segment
+    <africanies-segment
       [items]="densitySegments"
       [(activeId)]="densityId"
       ariaLabel="List density"
@@ -160,7 +160,7 @@ export class ShipmentListDensityComponent {
 
   protected readonly densityId = signal<string | null>(null);
 
-  protected readonly densitySegments: AiesNavItem[] = [
+  protected readonly densitySegments: AfricaniesNavItem[] = [
     {
       id: 'comfortable',
       label: 'Comfortable',
@@ -186,40 +186,40 @@ export class ShipmentListDensityComponent {
 export /**
  *
  */
-const NAV_LOCAL_TABS = `// In-page tabs — no router. Selection is [(activeId)] only; panels live in aiesTabDef.
-// Match template ids to AiesNavItem.id. Want bookmarkable tabs? Use routed tabs instead.
+const NAV_LOCAL_TABS = `// In-page tabs — no router. Selection is [(activeId)] only; panels live in africaniesTabDef.
+// Match template ids to AfricaniesNavItem.id. Want bookmarkable tabs? Use routed tabs instead.
 
 import { Component, signal } from '@angular/core';
-import { TabDefDirective, TabsComponent, type AiesNavItem } from '@aies/aies-ui';
+import { TabDefDirective, TabsComponent, type AfricaniesNavItem } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-editor-local-tabs',
   standalone: true,
   imports: [TabsComponent, TabDefDirective],
   template: \`
-    <aies-tabs
+    <africanies-tabs
       [items]="localTabs"
       [(activeId)]="localTabId"
       ariaLabel="Editor sections"
     >
-      <ng-template aiesTabDef="general">
+      <ng-template africaniesTabDef="general">
         <p class="m-0 text-body">General fields — not tied to the URL.</p>
       </ng-template>
 
-      <ng-template aiesTabDef="parties">
+      <ng-template africaniesTabDef="parties">
         <p class="m-0 text-body">Shipper and consignee — local panel only.</p>
       </ng-template>
 
-      <ng-template aiesTabDef="charges">
+      <ng-template africaniesTabDef="charges">
         <p class="m-0 text-body">Charges and duties — local panel only.</p>
       </ng-template>
-    </aies-tabs>
+    </africanies-tabs>
   \`,
 })
 export class ShipmentEditorLocalTabsComponent {
   protected readonly localTabId = signal('general');
 
-  protected readonly localTabs: AiesNavItem[] = [
+  protected readonly localTabs: AfricaniesNavItem[] = [
     { id: 'general', label: 'General', icon: 'edit' },
     { id: 'parties', label: 'Parties', icon: 'user' },
     { id: 'charges', label: 'Charges', icon: 'wallet' },
@@ -237,8 +237,8 @@ const NAV_SIDE = `// Ink-spine side nav — icons, nested children, collapse to 
 import { Component, signal } from '@angular/core';
 import {
   SideNavComponent,
-  type AiesSideNavItem,
-} from '@aies/aies-ui';
+  type AfricaniesSideNavItem,
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shell-nav',
@@ -246,13 +246,13 @@ import {
   imports: [SideNavComponent],
   template: \`
     <div class="h-[28rem] overflow-visible rounded-xl border border-border dark:border-white/10">
-      <aies-side-nav
+      <africanies-side-nav
         [items]="nav"
         [(collapsed)]="collapsed"
         [(activeId)]="activeId"
         ariaLabel="Portal"
       >
-      </aies-side-nav>
+      </africanies-side-nav>
     </div>
   \`,
 })
@@ -260,7 +260,7 @@ export class ShellNavComponent {
   protected readonly collapsed = signal(false);
   protected readonly activeId = signal('shipments');
 
-  protected readonly nav: AiesSideNavItem[] = [
+  protected readonly nav: AfricaniesSideNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     {
       id: 'shipments',
@@ -283,31 +283,31 @@ export /**
  */
 const NAV_APP_SHELL = `// Dedicated app shell — breadcrumbs + Back in the content column;
 // header holds clock, notifications, and avatar.
-// Needs provideAiesUiOverlays() for the notification drawer.
-// Back is built into aies-app-shell — nest child routes under a parent and it appears.
+// Needs provideAfricaniesUiOverlays() for the notification drawer.
+// Back is built into africanies-app-shell — nest child routes under a parent and it appears.
 // Log out: confirm → UserService.logoutFromAllSessions() → AuthTokenService.clear().
 
 import { Component, inject, signal } from '@angular/core';
 
 import { finalize } from 'rxjs';
 
-import { AuthTokenService, UserService } from '@aies/aies-core';
+import { AuthTokenService, UserService } from '@africanies/africanies-core';
 import {
   AppShellComponent,
   ConfirmService,
   SideNavComponent,
-  type AiesMenuItem,
-  type AiesNavItem,
-  type AiesNotification,
-  type AiesSideNavItem,
-} from '@aies/aies-ui';
+  type AfricaniesMenuItem,
+  type AfricaniesNavItem,
+  type AfricaniesNotification,
+  type AfricaniesSideNavItem,
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-product-shell',
   standalone: true,
   imports: [AppShellComponent, SideNavComponent],
   template: \`
-    <aies-app-shell
+    <africanies-app-shell
       contentWidth="5xl"
       [headerTitle]="pageTitle"
       [breadcrumbs]="crumbs"
@@ -316,16 +316,16 @@ import {
       [userMenuItems]="accountMenu"
       [notifications]="notifications"
     >
-      <aies-side-nav
+      <africanies-side-nav
         sidenav
         [items]="nav"
         [(collapsed)]="collapsed"
         [(activeId)]="activeId"
       >
-      </aies-side-nav>
+      </africanies-side-nav>
 
       <router-outlet />
-    </aies-app-shell>
+    </africanies-app-shell>
   \`,
 })
 export class ProductShellComponent {
@@ -337,13 +337,13 @@ export class ProductShellComponent {
   protected readonly activeId = signal('home');
   protected readonly pageTitle = 'STN-1042';
 
-  protected readonly crumbs: AiesNavItem[] = [
+  protected readonly crumbs: AfricaniesNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'shipments', label: 'Shipments' },
     { id: 'track', label: 'STN-1042' },
   ];
 
-  protected readonly accountMenu: AiesMenuItem[] = [
+  protected readonly accountMenu: AfricaniesMenuItem[] = [
     { label: 'Profile', icon: 'user', onClick: () => {} },
     { label: 'Settings', icon: 'cog', onClick: () => {} },
     {
@@ -355,7 +355,7 @@ export class ProductShellComponent {
     },
   ];
 
-  protected readonly notifications: AiesNotification[] = [
+  protected readonly notifications: AfricaniesNotification[] = [
     {
       id: 'n1',
       title: 'Shipment delivered',
@@ -363,7 +363,7 @@ export class ProductShellComponent {
     },
   ];
 
-  protected readonly nav: AiesSideNavItem[] = [
+  protected readonly nav: AfricaniesSideNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'shipments', label: 'Shipments', icon: 'truck' },
   ];

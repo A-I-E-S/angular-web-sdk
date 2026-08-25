@@ -7,7 +7,7 @@ export /**
  */
 const FILTERS_OPEN_APPLY = `
 // Open the drawer, await the list refetch, then commit state on success.
-// Host owns FilterStateModel; drawer edits a clone. Needs provideAiesUiOverlays().
+// Host owns FilterStateModel; drawer edits a clone. Needs provideAfricaniesUiOverlays().
 // Apply writes the query bag to the URL (page resets to 1). Seed from the URL
 // on first paint with FilterQueryService.read() when those queries are present.
 
@@ -19,14 +19,14 @@ import {
   emptyFilterState,
   trackShipmentsFilterConfig,
   type FilterStateModel,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-list-filters',
   standalone: true,
   imports: [ButtonComponent],
   template: \`
-    <button aies-button type="button" variant="secondary" (click)="openFilters()">
+    <button africanies-button type="button" variant="secondary" (click)="openFilters()">
       Filters
     </button>
   \`,
@@ -74,7 +74,7 @@ const FILTERS_CUSTOM_CONFIG = `
 import {
   FilterTransport,
   type ModuleFilterConfigModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 
 export const myOrdersFilterConfig: ModuleFilterConfigModel = {
   id: 'my-orders',
@@ -137,7 +137,7 @@ const FILTERS_AUTHOR_CONFIG = `
 // Full seed example (update-shipments) — field \`type\` picks the control.
 // See FILTERS_CUSTOM_CONFIG for a minimal custom module.
 
-import { FilterTransport, type ModuleFilterConfigModel } from '@aies/aies-models';
+import { FilterTransport, type ModuleFilterConfigModel } from '@africanies/africanies-models';
 
 export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
   id: 'update-shipments',
@@ -315,7 +315,7 @@ import {
   toFilterParams,
   trackShipmentsFilterConfig,
   type FilterStateModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 
 const state: FilterStateModel = {
   search: 'SFN-1042',
@@ -362,7 +362,7 @@ import {
   shipmentTrackingItemFilterConfig,
   toFilterParams,
   type FilterStateModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 
 const state: FilterStateModel = {
   search: 'AWB',
@@ -386,8 +386,8 @@ import {
   emptyFilterState,
   updateShipmentsFilterConfig,
   type FilterStateModel,
-} from '@aies/aies-models';
-import { FilterDrawerService } from '@aies/aies-ui';
+} from '@africanies/africanies-models';
+import { FilterDrawerService } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-update-shipment-filters',
@@ -426,7 +426,7 @@ export /**
 const FILTERS_HYDRATE = `
 // First paint: rebuild FilterStateModel from the URL so shared links restore filters.
 // FilterQueryService.read() is a no-op into empty state when those queries are absent.
-// Apply and aies-pagination write the same keys back (\`page\`, \`size\`, filters).
+// Apply and africanies-pagination write the same keys back (\`page\`, \`size\`, filters).
 
 import { inject, signal } from '@angular/core';
 import {
@@ -434,7 +434,7 @@ import {
   emptyFilterState,
   trackShipmentsFilterConfig,
   type FilterStateModel,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 export class ListPage {
   private readonly filterQuery = inject(FilterQueryService);

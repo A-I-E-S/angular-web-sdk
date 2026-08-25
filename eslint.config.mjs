@@ -7,7 +7,7 @@ export default [
   ...nx.configs['flat/typescript'],
   ...nx.configs['flat/javascript'],
   {
-    ignores: ['**/dist', '**/out-tsc', '**/icons.sprite.svg', 'libs/aies-icons/src/lib/icon-name.ts'],
+    ignores: ['**/dist', '**/out-tsc', '**/icons.sprite.svg', 'libs/africanies-icons/src/lib/icon-name.ts'],
   },
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
@@ -64,14 +64,14 @@ export default [
           fixToUnknown: false,
         },
       ],
-      // Angular → third-party → @aies/* → relative
+      // Angular → third-party → @africanies/* → relative
       'simple-import-sort/imports': [
         'error',
         {
           groups: [
             ['^@angular(/.*|$)'],
             ['^@?\\w'],
-            ['^@aies(/.*|$)'],
+            ['^@africanies(/.*|$)'],
             ['^\\.\\.(?!/?$)', '^\\.\\./?$', '^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
           ],
         },

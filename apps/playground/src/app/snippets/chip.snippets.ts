@@ -3,29 +3,29 @@
  */
 
 const CHIP_VARIANTS = `
-<aies-chip variant="neutral">Neutral</aies-chip>
-<aies-chip variant="success">Delivered</aies-chip>
-<aies-chip variant="warning">Pending</aies-chip>
-<aies-chip variant="danger">Exception</aies-chip>
-<aies-chip variant="export">SFN</aies-chip>
-<aies-chip variant="import">STN</aies-chip>
+<africanies-chip variant="neutral">Neutral</africanies-chip>
+<africanies-chip variant="success">Delivered</africanies-chip>
+<africanies-chip variant="warning">Pending</africanies-chip>
+<africanies-chip variant="danger">Exception</africanies-chip>
+<africanies-chip variant="export">SFN</africanies-chip>
+<africanies-chip variant="import">STN</africanies-chip>
 `.trim();
 
 const CHIP_ICON_REMOVE = `
-<aies-chip variant="warning" icon="clock">Pending</aies-chip>
+<africanies-chip variant="warning" icon="clock">Pending</africanies-chip>
 
-<aies-chip
+<africanies-chip
   variant="danger"
   [removable]="true"
   (removed)="clearFilter()"
 >
   Exception
-</aies-chip>
+</africanies-chip>
 `.trim();
 
 const CHIP_TABLE = `
-<ng-template aiesCellDef="status" let-row>
-  <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
+<ng-template africaniesCellDef="status" let-row>
+  <africanies-chip [variant]="statusVariant(row.status)">{{ row.status }}</africanies-chip>
 </ng-template>
 `.trim();
 

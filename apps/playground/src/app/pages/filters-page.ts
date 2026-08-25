@@ -9,7 +9,7 @@ import type {
   FilterParamsModel,
   FilterStateModel,
   ModuleFilterConfigModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 import {
   emptyFilterState,
   FILTER_CONFIGS,
@@ -20,8 +20,8 @@ import {
   trackShipmentsFilterConfig,
   updateShipmentsFilterConfig,
   usersFilterConfig,
-} from '@aies/aies-models';
-import { ButtonComponent, FilterDrawerService, FilterQueryService, ToastService } from '@aies/aies-ui';
+} from '@africanies/africanies-models';
+import { ButtonComponent, FilterDrawerService, FilterQueryService, ToastService } from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -77,7 +77,7 @@ interface DemoModule {
           <div class="flex flex-wrap gap-2">
             @for (mod of modules; track mod.id) {
               <button
-                aies-button
+                africanies-button
                 type="button"
                 [variant]="activeId() === mod.id ? 'primary' : 'secondary'"
                 size="sm"
@@ -90,7 +90,7 @@ interface DemoModule {
 
           <div class="flex flex-wrap items-center gap-3">
             <button
-              aies-button
+              africanies-button
               type="button"
               variant="primary"
               (click)="openFilters()"
@@ -98,7 +98,7 @@ interface DemoModule {
               Open filters
             </button>
             <button
-              aies-button
+              africanies-button
               type="button"
               variant="secondary"
               size="sm"
@@ -107,7 +107,7 @@ interface DemoModule {
               Open (demo Apply error)
             </button>
             <button
-              aies-button
+              africanies-button
               type="button"
               variant="ghost"
               size="sm"
@@ -229,7 +229,7 @@ interface DemoModule {
       >
         <div class="flex flex-col gap-3">
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="secondary"
             size="sm"
@@ -250,7 +250,7 @@ interface DemoModule {
         [code]="namedCode"
       >
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           (click)="openNamed()"
@@ -281,7 +281,7 @@ interface DemoModule {
         [code]="hydrateCode"
       >
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="secondary"
           size="sm"

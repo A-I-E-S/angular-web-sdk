@@ -7,10 +7,10 @@ export /**
  */
 const FEEDBACK_LOADING = `
 // Block for first load; inline for a quiet refresh in a toolbar or header.
-// Spinner color follows ModeColorService. Don’t drop this inside aies-table — use AsyncState.
+// Spinner color follows ModeColorService. Don’t drop this inside africanies-table — use AsyncState.
 
 import { Component } from '@angular/core';
-import { LoadingStateComponent } from '@aies/aies-ui';
+import { LoadingStateComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-loading-demo',
@@ -23,7 +23,7 @@ import { LoadingStateComponent } from '@aies/aies-ui';
         <div
           class="flex min-h-[10rem] items-center justify-center rounded-lg border border-dashed border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
         >
-          <aies-loading-state message="Loading shipments…" />
+          <africanies-loading-state message="Loading shipments…" />
         </div>
       </div>
 
@@ -32,7 +32,7 @@ import { LoadingStateComponent } from '@aies/aies-ui';
         <div
           class="flex min-h-[10rem] items-center rounded-lg border border-dashed border-border bg-background-welcome px-5 dark:border-white/10 dark:bg-ink-950"
         >
-          <aies-loading-state mode="inline" message="Refreshing rates…" />
+          <africanies-loading-state mode="inline" message="Refreshing rates…" />
         </div>
       </div>
     </div>
@@ -49,7 +49,7 @@ const FEEDBACK_ERROR = `
 // Section/page failures only; not field validation or a single missing row.
 
 import { Component, inject, signal } from '@angular/core';
-import { ErrorStateComponent } from '@aies/aies-ui';
+import { ErrorStateComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-error-demo',
@@ -59,7 +59,7 @@ import { ErrorStateComponent } from '@aies/aies-ui';
     <div
       class="rounded-lg border border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
     >
-      <aies-error-state
+      <africanies-error-state
         [message]="errorMessage()"
         (retry)="refetch()"
       />
@@ -86,14 +86,14 @@ const FEEDBACK_EMPTY = `
 // Prefer AsyncState on list pages — it picks EmptyState when data is [].
 
 import { Component, signal } from '@angular/core';
-import { EmptyStateComponent } from '@aies/aies-ui';
+import { EmptyStateComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-empty-demo',
   standalone: true,
   imports: [EmptyStateComponent],
   template: \`
-    <aies-empty-state
+    <africanies-empty-state
       [message]="message()"
       (retry)="resetFilters()"
     />
@@ -116,7 +116,7 @@ const FEEDBACK_ERROR_INDICATOR = `
 // AsyncState uses this automatically when data exists but refresh failed.
 
 import { Component, signal } from '@angular/core';
-import { ErrorIndicatorComponent } from '@aies/aies-ui';
+import { ErrorIndicatorComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-stale-data-panel',
@@ -125,7 +125,7 @@ import { ErrorIndicatorComponent } from '@aies/aies-ui';
   template: \`
     <div class="flex flex-col gap-3 rounded-xl border border-border p-4 dark:border-white/10">
       <div class="flex justify-end">
-        <aies-error-indicator
+        <africanies-error-indicator
           class="max-w-[min(100%,20rem)]"
           error="Failed to fetch the most recent data."
           retryText="Refresh"
@@ -162,12 +162,12 @@ const FEEDBACK_ASYNC = `
 // Background refetch keeps content on screen. Wire your own in-flight cue (e.g. table Refresh). One (retry) → refetch.
 
 import { Component, computed, inject, signal } from '@angular/core';
-import type { AsyncQueryStateModel } from '@aies/aies-models';
+import type { AsyncQueryStateModel } from '@africanies/africanies-models';
 import {
   AsyncStateComponent,
   TableComponent,
   type TableColumn,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 interface Shipment {
   id: string;
@@ -180,13 +180,13 @@ interface Shipment {
   standalone: true,
   imports: [AsyncStateComponent, TableComponent],
   template: \`
-    <aies-async-state [state]="state()" (retry)="refetch()">
-      <aies-table
+    <africanies-async-state [state]="state()" (retry)="refetch()">
+      <africanies-table
         [columns]="columns"
         [rows]="state().data ?? []"
         [refreshing]="state().isFetching"
       />
-    </aies-async-state>
+    </africanies-async-state>
   \`,
 })
 export class ShipmentListComponent {

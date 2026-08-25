@@ -9,16 +9,16 @@
 const { createRequire } = require('node:module');
 const path = require('node:path');
 
-// Resolve preset from the theme package root (same entry as @aies/aies-theme/tailwind-preset).
+// Resolve preset from the theme package root (same entry as @africanies/africanies-theme/tailwind-preset).
 const themeRequire = createRequire(
-  path.join(__dirname, '../../libs/aies-theme/package.json'),
+  path.join(__dirname, '../../libs/africanies-theme/package.json'),
 );
 
 module.exports = {
-  presets: [themeRequire('@aies/aies-theme/tailwind-preset')],
+  presets: [themeRequire('@africanies/africanies-theme/tailwind-preset')],
   content: [
     path.join(__dirname, 'src/**/*.{html,ts}'),
-    path.join(__dirname, '../../libs/aies-ui/src/**/*.{html,ts}'),
-    path.join(__dirname, '../../libs/aies-theme/src/**/*.{html,ts}'),
+    path.join(__dirname, '../../libs/africanies-ui/src/**/*.{html,ts}'),
+    path.join(__dirname, '../../libs/africanies-theme/src/**/*.{html,ts}'),
   ],
 };

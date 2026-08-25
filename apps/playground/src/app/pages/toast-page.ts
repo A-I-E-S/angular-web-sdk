@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { ButtonComponent, ToastService } from '@aies/aies-ui';
+import { ButtonComponent, ToastService } from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -35,7 +35,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
             >CDK</a
           >
           Overlay. Errors stay until dismissed; warnings linger longer; identical
-          messages collapse into one with a count. Enable with provideAiesToasts().
+          messages collapse into one with a count. Enable with provideAfricaniesToasts().
         </p>
       </app-page-header>
 
@@ -45,20 +45,20 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
         [code]="variantsCode"
       >
         <div class="flex flex-wrap gap-2">
-          <button aies-button type="button" variant="secondary" (click)="showInfo()">
+          <button africanies-button type="button" variant="secondary" (click)="showInfo()">
             Info
           </button>
-          <button aies-button type="button" (click)="showSuccess()">Success</button>
-          <button aies-button type="button" variant="secondary" (click)="showWarning()">
+          <button africanies-button type="button" (click)="showSuccess()">Success</button>
+          <button africanies-button type="button" variant="secondary" (click)="showWarning()">
             Warning
           </button>
-          <button aies-button type="button" variant="danger" (click)="showError()">
+          <button africanies-button type="button" variant="danger" (click)="showError()">
             Error
           </button>
-          <button aies-button type="button" variant="secondary" (click)="showManyErrors()">
+          <button africanies-button type="button" variant="secondary" (click)="showManyErrors()">
             Several errors
           </button>
-          <button aies-button type="button" variant="ghost" (click)="clearAll()">
+          <button africanies-button type="button" variant="ghost" (click)="clearAll()">
             Clear all
           </button>
         </div>
@@ -69,7 +69,7 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
         hint="When the same error fires repeatedly, toasts stack into one group with a count instead of flooding the corner."
         [code]="stackCode"
       >
-        <button aies-button type="button" variant="danger" (click)="spamError()">
+        <button africanies-button type="button" variant="danger" (click)="spamError()">
           Repeat same error
         </button>
       </app-demo-section>
@@ -80,14 +80,14 @@ import { TOAST_HTTP, TOAST_STACK, TOAST_VARIANTS } from '../snippets';
         [code]="httpCode"
       >
         <div class="flex flex-wrap gap-2">
-          <button aies-button type="button" (click)="simulateOk()">
+          <button africanies-button type="button" (click)="simulateOk()">
             As if success
           </button>
-          <button aies-button type="button" variant="danger" (click)="simulateFail()">
+          <button africanies-button type="button" variant="danger" (click)="simulateFail()">
             As if error
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="secondary"
             (click)="simulateSilentOk()"

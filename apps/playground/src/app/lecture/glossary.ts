@@ -9,7 +9,7 @@ export type GlossaryCategory =
   | 'Angular DI'
   | 'Angular routing'
   | 'Angular CDK'
-  | 'AIES SDK';
+  | 'AFRICANIES SDK';
 
 /**
  *
@@ -62,11 +62,11 @@ const GLOSSARY_CATEGORY_META: Record<
     description:
       'Low-level Angular utilities (overlays, portals, a11y) that UI libraries build on — not AWS CDK.',
   },
-  'AIES SDK': {
-    label: 'AIES SDK',
+  'AFRICANIES SDK': {
+    label: 'AFRICANIES SDK',
     expansion: 'Software Development Kit',
     description:
-      'Bootstrap helpers, overlay APIs, and injection tokens shipped with @aies/aies-ui.',
+      'Bootstrap helpers, overlay APIs, and injection tokens shipped with @africanies/africanies-ui.',
   },
 };
 
@@ -210,7 +210,7 @@ protected load(): void {
       'Call `inject(MyService)` in a component, directive, pipe, or `runInInjectionContext`. Replaces constructor injection for standalone components and keeps fields grouped near usage.\n\nPlayground snippets use it for SDK services (`FilterDrawerService`, `ToastService`, `ApiClient`, theme helpers, etc.).',
     example: `private readonly toast = inject(ToastService);
 private readonly api = inject(ApiClient);`,
-    seeAlso: ['standalone', 'provideAiesUiOverlays', 'DestroyRef'],
+    seeAlso: ['standalone', 'provideAfricaniesUiOverlays', 'DestroyRef'],
   },
   {
     id: 'HttpClient',
@@ -232,7 +232,7 @@ export const appConfig = {
     category: 'Angular DI',
     summary: 'Components that declare their own `imports` instead of an NgModule.',
     detail:
-      'Set `standalone: true` on `@Component` and list dependencies in `imports: [ButtonComponent, RouterLink, …]`.\n\nThe AIES SDK ships standalone components. NgModule facades (`AiesFormsModule`, etc.) still exist for one-import ergonomics, but tree-shaking favors direct standalone imports.',
+      'Set `standalone: true` on `@Component` and list dependencies in `imports: [ButtonComponent, RouterLink, …]`.\n\nThe AFRICANIES SDK ships standalone components. NgModule facades (`AfricaniesFormsModule`, etc.) still exist for one-import ergonomics, but tree-shaking favors direct standalone imports.',
     seeAlso: ['inject', 'input'],
   },
   {
@@ -259,7 +259,7 @@ export const appConfig = {
     category: 'Angular signals',
     summary: 'Two-way binding — `[(collapsed)]` on a signal model.',
     detail:
-      '`readonly collapsed = model(false)` exposes read via `collapsed()` and write via `collapsed.set(…)` / two-way binding from the parent.\n\nUsed in SDK components like `aies-side-nav` (`[(collapsed)]`, `[(activeId)]`) so hosts can sync rail state without separate input + output pairs.',
+      '`readonly collapsed = model(false)` exposes read via `collapsed()` and write via `collapsed.set(…)` / two-way binding from the parent.\n\nUsed in SDK components like `africanies-side-nav` (`[(collapsed)]`, `[(activeId)]`) so hosts can sync rail state without separate input + output pairs.',
     seeAlso: ['input', 'signal'],
   },
   {
@@ -292,7 +292,7 @@ protected focusFirstRow(): void {
     category: 'Angular forms',
     summary: 'Single reactive-form field — value, validators, and disabled state.',
     detail:
-      'From `@angular/forms`. `new FormControl("", { validators: [Validators.required] })` tracks one control. Bind in templates with `[formControl]` or group several controls in a `FormGroup`.\n\nAIES form components also work with signal `value` / `(valueChange)` for simpler cases without reactive forms.',
+      'From `@angular/forms`. `new FormControl("", { validators: [Validators.required] })` tracks one control. Bind in templates with `[formControl]` or group several controls in a `FormGroup`.\n\nAFRICANIES form components also work with signal `value` / `(valueChange)` for simpler cases without reactive forms.',
     example: `readonly email = new FormControl('', {
   nonNullable: true,
   validators: [Validators.email],
@@ -305,7 +305,7 @@ protected focusFirstRow(): void {
     category: 'Angular forms',
     summary: 'Interface that lets a custom input participate in reactive forms.',
     detail:
-      'Abbreviated CVA in Angular docs. Your component implements `writeValue`, `registerOnChange`, `registerOnTouched`, and optionally `setDisabledState` so Angular forms can read/write the value.\n\nEvery AIES form control (`aies-text-input`, `aies-select`, etc.) implements CVA — you can use `[formControl]` or two-way `[(value)]` interchangeably.',
+      'Abbreviated CVA in Angular docs. Your component implements `writeValue`, `registerOnChange`, `registerOnTouched`, and optionally `setDisabledState` so Angular forms can read/write the value.\n\nEvery AFRICANIES form control (`africanies-text-input`, `africanies-select`, etc.) implements CVA — you can use `[formControl]` or two-way `[(value)]` interchangeably.',
     seeAlso: ['FormControl', 'input', 'model'],
   },
   {
@@ -340,29 +340,29 @@ constructor() {
   {
     id: 'afterClosed',
     title: 'afterClosed()',
-    category: 'AIES SDK',
+    category: 'AFRICANIES SDK',
     summary: 'Observable that emits once when a modal/drawer/filter overlay closes.',
     detail:
-      'AIES overlay services (`ModalService`, `DrawerService`, `FilterDrawerService`) return a handle with `.afterClosed()` — an Observable of the result passed to `ref.close(result)`.\n\nSubscribe (with `takeUntilDestroyed`) or `await firstValueFrom(handle.afterClosed())` to continue flow after the user applies filters or saves a form.',
+      'AFRICANIES overlay services (`ModalService`, `DrawerService`, `FilterDrawerService`) return a handle with `.afterClosed()` — an Observable of the result passed to `ref.close(result)`.\n\nSubscribe (with `takeUntilDestroyed`) or `await firstValueFrom(handle.afterClosed())` to continue flow after the user applies filters or saves a form.',
     seeAlso: ['firstValueFrom', 'takeUntilDestroyed', 'OVERLAY_DATA'],
   },
   {
     id: 'OVERLAY_DATA',
     title: 'OVERLAY_DATA',
-    category: 'AIES SDK',
+    category: 'AFRICANIES SDK',
     summary: 'Injection token for data passed into a modal/drawer panel component.',
     detail:
-      'When opening a panel, pass `{ data: { … } }` in the config. Inside the panel component, `inject(OVERLAY_DATA)` retrieves that payload with full typing.\n\nPair with `inject(AiesOverlayRef)` to close the overlay and return a result.',
-    seeAlso: ['afterClosed', 'inject', 'provideAiesUiOverlays'],
+      'When opening a panel, pass `{ data: { … } }` in the config. Inside the panel component, `inject(OVERLAY_DATA)` retrieves that payload with full typing.\n\nPair with `inject(AfricaniesOverlayRef)` to close the overlay and return a result.',
+    seeAlso: ['afterClosed', 'inject', 'provideAfricaniesUiOverlays'],
   },
   {
-    id: 'AiesOverlayRef',
-    title: 'AiesOverlayRef',
-    category: 'AIES SDK',
+    id: 'AfricaniesOverlayRef',
+    title: 'AfricaniesOverlayRef',
+    category: 'AFRICANIES SDK',
     summary: 'Handle to close a modal/drawer and pass a result back to the caller.',
     detail:
-      'Inject inside a panel component opened by `ModalService` or `DrawerService`. Call `this.ref.close(result)` when the user saves or cancels — the opener receives `result` through `afterClosed()`.\n\nGeneric type parameter types the result: `AiesOverlayRef<EditShipmentResult>`.',
-    example: `protected readonly ref = inject(AiesOverlayRef<Shipment>);
+      'Inject inside a panel component opened by `ModalService` or `DrawerService`. Call `this.ref.close(result)` when the user saves or cancels — the opener receives `result` through `afterClosed()`.\n\nGeneric type parameter types the result: `AfricaniesOverlayRef<EditShipmentResult>`.',
+    example: `protected readonly ref = inject(AfricaniesOverlayRef<Shipment>);
 
 protected save(): void {
   this.ref.close(this.draft());
@@ -370,29 +370,29 @@ protected save(): void {
     seeAlso: ['OVERLAY_DATA', 'afterClosed', 'inject'],
   },
   {
-    id: 'provideAiesUiOverlays',
-    title: 'provideAiesUiOverlays()',
-    category: 'AIES SDK',
+    id: 'provideAfricaniesUiOverlays',
+    title: 'provideAfricaniesUiOverlays()',
+    category: 'AFRICANIES SDK',
     summary: 'Registers modal, drawer, and confirm services at app bootstrap.',
     detail:
       'Add to `ApplicationConfig.providers` once. Required before using `ModalService`, `DrawerService`, `ConfirmService`, or `FilterDrawerService`.\n\nAlso pulls in Angular CDK overlay infrastructure used for positioning and backdrop.',
     example: `export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideAiesUiOverlays(),
-    provideAiesToasts(),
+    provideAfricaniesUiOverlays(),
+    provideAfricaniesToasts(),
   ],
 };`,
     seeAlso: ['CDK', 'inject', 'afterClosed'],
   },
   {
-    id: 'provideAiesToasts',
-    title: 'provideAiesToasts()',
-    category: 'AIES SDK',
+    id: 'provideAfricaniesToasts',
+    title: 'provideAfricaniesToasts()',
+    category: 'AFRICANIES SDK',
     summary: 'Registers the toast stack host and ToastService.',
     detail:
       'Call once in `app.config.ts`. Then inject `ToastService` anywhere to show timed or persistent corner notifications.',
-    seeAlso: ['provideAiesUiOverlays', 'inject'],
+    seeAlso: ['provideAfricaniesUiOverlays', 'inject'],
   },
   {
     id: 'RouterLink',
@@ -400,7 +400,7 @@ protected save(): void {
     category: 'Angular routing',
     summary: 'Directive that navigates without full page reloads.',
     detail:
-      "Use on `<a routerLink=\"/path\">` or `[routerLink]=\"['/shipments', id]\"` with optional `queryParams`. SDK nav items accept `routerLink` so active state follows the URL. Routed `aies-tabs` / `aies-segment` navigate with `{ scroll: 'manual' }` by default (no jump to top); side nav and breadcrumb still use Angular `RouterLink`.",
+      "Use on `<a routerLink=\"/path\">` or `[routerLink]=\"['/shipments', id]\"` with optional `queryParams`. SDK nav items accept `routerLink` so active state follows the URL. Routed `africanies-tabs` / `africanies-segment` navigate with `{ scroll: 'manual' }` by default (no jump to top); side nav and breadcrumb still use Angular `RouterLink`.",
     seeAlso: ['toSignal', 'ActivatedRoute', 'standalone'],
   },
   {
@@ -435,14 +435,14 @@ protected readonly filters = toSignal(
     summary:
       'Angular Component Dev Kit — building blocks for overlays, portals, and accessibility (package @angular/cdk).',
     detail:
-      'Not related to AWS CDK. Google’s Angular CDK is a set of unstyled primitives that Material and other UI libraries use.\n\nIn this SDK, the important piece is **overlay**: menus, selects, toasts, tooltips, modals, and drawers attach panels to `document.body` so they are not clipped by parents with `overflow: hidden` (for example a table). You will see imports from `@angular/cdk/overlay` and `@angular/cdk/portal`, plus directives like `cdkConnectedOverlay`.\n\nConsuming apps should import CDK overlay styles once (`@import \'@angular/cdk/overlay-prebuilt.css\';`) — see the `@aies/aies-ui` README.',
+      'Not related to AWS CDK. Google’s Angular CDK is a set of unstyled primitives that Material and other UI libraries use.\n\nIn this SDK, the important piece is **overlay**: menus, selects, toasts, tooltips, modals, and drawers attach panels to `document.body` so they are not clipped by parents with `overflow: hidden` (for example a table). You will see imports from `@angular/cdk/overlay` and `@angular/cdk/portal`, plus directives like `cdkConnectedOverlay`.\n\nConsuming apps should import CDK overlay styles once (`@import \'@angular/cdk/overlay-prebuilt.css\';`) — see the `@africanies/africanies-ui` README.',
     example: `import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 
 // Toasts and service-driven overlays attach a portal to the overlay stack.
 const overlayRef = this.overlay.create({ … });
 overlayRef.attach(new ComponentPortal(ToastHostComponent));`,
-    seeAlso: ['provideAiesUiOverlays', 'afterClosed', 'inject'],
+    seeAlso: ['provideAfricaniesUiOverlays', 'afterClosed', 'inject'],
     links: [
       {
         label: 'Angular CDK overview',
@@ -485,7 +485,7 @@ const GLOSSARY_CATEGORIES: GlossaryCategory[] = [
   'Angular DI',
   'Angular routing',
   'Angular CDK',
-  'AIES SDK',
+  'AFRICANIES SDK',
 ];
 
 /**

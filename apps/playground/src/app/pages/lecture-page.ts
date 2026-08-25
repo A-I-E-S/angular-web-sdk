@@ -12,7 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fromEvent } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import {
   categoryFragmentId,
@@ -32,7 +32,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
 @Component({
   selector: 'app-lecture-page',
   standalone: true,
-  imports: [RouterLink, PageHeaderComponent, AiesIconComponent],
+  imports: [RouterLink, PageHeaderComponent, AfricaniesIconComponent],
   template: `
     <div class="pg-page-enter relative flex flex-col gap-10">
       <app-page-header
@@ -207,7 +207,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       [tabindex]="showScrollTop() ? 0 : -1"
       (click)="scrollToTop()"
     >
-      <aies-icon name="chevron-up" [size]="20" />
+      <africanies-icon name="chevron-up" [size]="20" />
     </button>
   `,
 })

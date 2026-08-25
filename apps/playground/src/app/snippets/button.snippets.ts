@@ -1,4 +1,4 @@
-// aies-button copy-paste examples.
+// africanies-button copy-paste examples.
 
 export /**
  *
@@ -11,7 +11,7 @@ import { Component } from '@angular/core';
 import {
   ButtonComponent,
   type ButtonVariant,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-actions',
@@ -22,7 +22,7 @@ import {
       @for (v of variants; track v) {
         <div class="flex flex-col gap-2">
           <span class="text-caption text-neutral-600">{{ v }}</span>
-          <button aies-button type="button" [variant]="v">
+          <button africanies-button type="button" [variant]="v">
             {{ labels[v] }}
           </button>
         </div>
@@ -61,7 +61,7 @@ import { Component } from '@angular/core';
 import {
   ButtonComponent,
   type ButtonSize,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-sizes',
@@ -72,7 +72,7 @@ import {
       @for (s of sizes; track s) {
         <div class="flex flex-col gap-2">
           <span class="text-caption text-neutral-600">size={{ s }}</span>
-          <button aies-button type="button" [size]="s">
+          <button africanies-button type="button" [size]="s">
             Continue
           </button>
         </div>
@@ -94,7 +94,7 @@ import {
   ButtonComponent,
   type ButtonSize,
   type ButtonVariant,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-matrix',
@@ -116,7 +116,7 @@ import {
             <td class="py-3 pr-4 text-body-sm text-neutral-600">{{ v }}</td>
             @for (s of sizes; track s) {
               <td class="py-3 pr-4">
-                <button aies-button type="button" [variant]="v" [size]="s">
+                <button africanies-button type="button" [variant]="v" [size]="s">
                   Action
                 </button>
               </td>
@@ -140,36 +140,36 @@ export class ButtonMatrixComponent {
 export /**
  *
  */
-const BUTTON_ICONS = `// Drop <aies-icon> inside the button — same focus ring as the label.
+const BUTTON_ICONS = `// Drop <africanies-icon> inside the button — same focus ring as the label.
 // Icon-only? Put aria-label on the host.
 
 import { Component } from '@angular/core';
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ButtonComponent } from '@aies/aies-ui';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-icons',
   standalone: true,
-  imports: [ButtonComponent, AiesIconComponent],
+  imports: [ButtonComponent, AfricaniesIconComponent],
   template: \`
     <div class="flex flex-wrap gap-3">
-      <button aies-button type="button" variant="primary">
-        <aies-icon name="airplane" [size]="16" />
+      <button africanies-button type="button" variant="primary">
+        <africanies-icon name="airplane" [size]="16" />
         Create shipment
       </button>
 
-      <button aies-button type="button" variant="secondary">
-        <aies-icon name="adjust" [size]="16" />
+      <button africanies-button type="button" variant="secondary">
+        <africanies-icon name="adjust" [size]="16" />
         Filters
       </button>
 
-      <button aies-button type="button" variant="ghost" size="sm">
-        <aies-icon name="warehouse" [size]="14" />
+      <button africanies-button type="button" variant="ghost" size="sm">
+        <africanies-icon name="warehouse" [size]="14" />
         Warehouse
       </button>
 
-      <button aies-button type="button" variant="danger" size="sm">
-        <aies-icon name="warning" [size]="14" />
+      <button africanies-button type="button" variant="danger" size="sm">
+        <africanies-icon name="warning" [size]="14" />
         Void
       </button>
     </div>
@@ -184,7 +184,7 @@ const BUTTON_LINKS = `// Same look on <a> — use routerLink for in-app, href fo
 
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-links',
@@ -192,15 +192,15 @@ import { ButtonComponent } from '@aies/aies-ui';
   imports: [ButtonComponent, RouterLink],
   template: \`
     <div class="flex flex-wrap gap-3">
-      <a aies-button routerLink="/shipments/new" variant="primary">
+      <a africanies-button routerLink="/shipments/new" variant="primary">
         Primary link
       </a>
 
-      <a aies-button routerLink="/drafts" variant="secondary" size="sm">
+      <a africanies-button routerLink="/drafts" variant="secondary" size="sm">
         Secondary link
       </a>
 
-      <a aies-button href="/help/getting-started" variant="ghost">
+      <a africanies-button href="/help/getting-started" variant="ghost">
         Ghost link
       </a>
     </div>
@@ -215,7 +215,7 @@ const BUTTON_DISABLED = `// [disabled] works on buttons and anchors (anchors get
 // Use this for unavailable actions — in-flight work belongs on [loading].
 
 import { Component, signal } from '@angular/core';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-disabled',
@@ -223,23 +223,23 @@ import { ButtonComponent } from '@aies/aies-ui';
   imports: [ButtonComponent],
   template: \`
     <div class="flex flex-wrap gap-3">
-      <button aies-button type="button" variant="primary" [disabled]="saving()">
+      <button africanies-button type="button" variant="primary" [disabled]="saving()">
         {{ saving() ? 'Saving…' : 'Save shipment' }}
       </button>
 
-      <button aies-button type="button" variant="secondary" disabled>
+      <button africanies-button type="button" variant="secondary" disabled>
         Secondary
       </button>
 
-      <button aies-button type="button" variant="ghost" disabled>
+      <button africanies-button type="button" variant="ghost" disabled>
         Ghost
       </button>
 
-      <button aies-button type="button" variant="danger" disabled>
+      <button africanies-button type="button" variant="danger" disabled>
         Danger
       </button>
 
-      <a aies-button href="/shipments" variant="ghost" [disabled]="saving()">
+      <a africanies-button href="/shipments" variant="ghost" [disabled]="saving()">
         Ghost link
       </a>
     </div>
@@ -256,7 +256,7 @@ const BUTTON_LOADING = `// Default loading state is the circular spinner. Label 
 // (invisible) so the button does not shrink while the request is in flight.
 
 import { Component, signal } from '@angular/core';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-button-loading',
@@ -265,7 +265,7 @@ import { ButtonComponent } from '@aies/aies-ui';
   template: \`
     <div class="flex flex-wrap items-center gap-3">
       <button
-        aies-button
+        africanies-button
         type="button"
         variant="primary"
         [loading]="saving()"
@@ -274,12 +274,12 @@ import { ButtonComponent } from '@aies/aies-ui';
         Save shipment
       </button>
 
-      <button aies-button type="button" variant="secondary" [loading]="true">
+      <button africanies-button type="button" variant="secondary" [loading]="true">
         Saving draft
       </button>
 
       <button
-        aies-button
+        africanies-button
         type="button"
         variant="danger"
         size="sm"
@@ -306,8 +306,8 @@ const BUTTON_CONTEXT = `// Typical toolbar: ghost cancel → secondary draft →
 // Toggle SFN/STN in the sidebar to see primary shift color.
 
 import { Component, inject, signal } from '@angular/core';
-import { ModeColorService } from '@aies/aies-theme';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ModeColorService } from '@africanies/africanies-theme';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-toolbar',
@@ -327,12 +327,12 @@ import { ButtonComponent } from '@aies/aies-ui';
       </div>
 
       <div class="flex flex-wrap gap-2">
-        <button aies-button type="button" variant="ghost" size="sm" (click)="cancel()">
+        <button africanies-button type="button" variant="ghost" size="sm" (click)="cancel()">
           Cancel
         </button>
 
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="secondary"
           size="sm"
@@ -343,7 +343,7 @@ import { ButtonComponent } from '@aies/aies-ui';
         </button>
 
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           size="sm"
@@ -385,7 +385,7 @@ const BUTTON_COPY = `// Clipboard control — icon flips to check on success.
 // Optional [announce]="true" also fires a toast when ToastService is provided.
 
 import { Component, signal } from '@angular/core';
-import { CopyButtonComponent } from '@aies/aies-ui';
+import { CopyButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-copy-demo',
@@ -396,8 +396,8 @@ import { CopyButtonComponent } from '@aies/aies-ui';
       <code class="rounded-md bg-border/60 px-2 py-1 font-mono text-caption">
         {{ reference() }}
       </code>
-      <aies-copy [value]="reference()" ariaLabel="Copy reference" />
-      <aies-copy
+      <africanies-copy [value]="reference()" ariaLabel="Copy reference" />
+      <africanies-copy
         [value]="snippet()"
         label="Copy snippet"
         [announce]="true"
@@ -407,6 +407,6 @@ import { CopyButtonComponent } from '@aies/aies-ui';
 })
 export class CopyDemoComponent {
   protected readonly reference = signal('SFN-1042');
-  protected readonly snippet = signal('<aies-icon name="airplane" />');
+  protected readonly snippet = signal('<africanies-icon name="airplane" />');
 }
 `;

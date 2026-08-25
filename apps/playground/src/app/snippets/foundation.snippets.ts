@@ -3,22 +3,22 @@
 export /**
  *
  */
-const TOKENS_SETUP = `// Point Tailwind at the aies-theme preset and scan @aies/aies-ui so its classes aren't purged.
+const TOKENS_SETUP = `// Point Tailwind at the africanies-theme preset and scan @africanies/africanies-ui so its classes aren't purged.
 // Don't re-declare token colors locally — extend the preset.
 
 // tailwind.config.js — monorepo paths (adjust __dirname to your app root)
 const path = require('node:path');
 
 module.exports = {
-  presets: [require('@aies/aies-theme/tailwind-preset')],
+  presets: [require('@africanies/africanies-theme/tailwind-preset')],
   content: [
     path.join(__dirname, 'src/**/*.{html,ts}'),
     // Required: scan the UI library so its literal Tailwind classes survive purge.
-    path.join(__dirname, '../../libs/aies-ui/src/**/*.{html,ts}'),
-    path.join(__dirname, '../../libs/aies-theme/src/**/*.{html,ts}'),
+    path.join(__dirname, '../../libs/africanies-ui/src/**/*.{html,ts}'),
+    path.join(__dirname, '../../libs/africanies-theme/src/**/*.{html,ts}'),
     // Published-app equivalent:
     // './src/**/*.{html,ts}',
-    // './node_modules/@aies/aies-ui/**/*.{js,mjs}',
+    // './node_modules/@africanies/africanies-ui/**/*.{js,mjs}',
   ],
 };
 `;
@@ -107,8 +107,8 @@ const TOKENS_MODE_ACCENTS = `// Primary chrome that follows SFN/STN. Bind [class
 // don't interpolate Tailwind token names yourself.
 
 import { Component, inject } from '@angular/core';
-import { ModeColorService } from '@aies/aies-theme';
-import { ButtonComponent } from '@aies/aies-ui';
+import { ModeColorService } from '@africanies/africanies-theme';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-mode-accent-demo',
@@ -117,7 +117,7 @@ import { ButtonComponent } from '@aies/aies-ui';
   template: \`
     @let colors = modeColor.classes();
 
-    <button aies-button type="button" [class]="colors.primary">
+    <button africanies-button type="button" [class]="colors.primary">
       Mode-aware primary CTA
     </button>
 
@@ -146,20 +146,20 @@ export class ModeAccentDemoComponent {
 export /**
  *
  */
-const ICONS_USAGE = `// Shared SVG sprite via <aies-icon>. Type dynamic names as IconName for autocomplete.
+const ICONS_USAGE = `// Shared SVG sprite via <africanies-icon>. Type dynamic names as IconName for autocomplete.
 
 import { Component } from '@angular/core';
-import { AiesIconComponent, type IconName } from '@aies/aies-icons';
+import { AfricaniesIconComponent, type IconName } from '@africanies/africanies-icons';
 
 @Component({
   selector: 'app-icon-demo',
   standalone: true,
-  imports: [AiesIconComponent],
+  imports: [AfricaniesIconComponent],
   template: \`
-    <aies-icon name="airplane" [size]="24" />
-    <aies-icon name="warehouse" [size]="24" />
-    <aies-icon name="warning" [size]="24" />
-    <aies-icon [name]="dynamicIcon" [size]="16" />
+    <africanies-icon name="airplane" [size]="24" />
+    <africanies-icon name="warehouse" [size]="24" />
+    <africanies-icon name="warning" [size]="24" />
+    <africanies-icon [name]="dynamicIcon" [size]="16" />
   \`,
 })
 export class IconDemoComponent {

@@ -5,10 +5,10 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import {
-  type AiesMenuItem,
-  type AiesNavItem,
-  type AiesNotification,
-  type AiesSideNavItem,
+  type AfricaniesMenuItem,
+  type AfricaniesNavItem,
+  type AfricaniesNotification,
+  type AfricaniesSideNavItem,
   BreadcrumbComponent,
   ConfirmService,
   SegmentComponent,
@@ -16,7 +16,7 @@ import {
   TabDefDirective,
   TabsComponent,
   ToastService,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -110,13 +110,13 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
         <div
           class="flex h-[28rem] overflow-visible rounded-xl border border-border dark:border-white/10"
         >
-          <aies-side-nav
+          <africanies-side-nav
             [items]="sideNav"
             [(collapsed)]="sideCollapsed"
             [(activeId)]="sideActiveId"
             ariaLabel="Demo portal"
           >
-          </aies-side-nav>
+          </africanies-side-nav>
           <div
             class="flex min-w-0 flex-1 flex-col justify-center gap-2 bg-background-welcome/60 p-6 dark:bg-ink-950/40"
           >
@@ -142,7 +142,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
         hint="Show where you are in the hierarchy and link back to parent pages. Crumbs follow the active child route here."
         [code]="breadcrumbCode"
       >
-        <aies-breadcrumb [items]="crumbs()" />
+        <africanies-breadcrumb [items]="crumbs()" />
       </app-demo-section>
 
       <app-demo-section
@@ -151,7 +151,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
         subtext="The page does not jump to the top when you switch tabs — navigation uses scroll: 'manual'. Pass [keepScroll]=&quot;false&quot; to use normal router scrolling."
         [code]="routedTabsCode"
       >
-        <aies-tabs
+        <africanies-tabs
           [items]="routeTabs"
           [(activeId)]="routeTabId"
           ariaLabel="Shipment sections"
@@ -167,7 +167,7 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
         subtext="Like routed tabs, switching keeps your scroll position instead of jumping to the top."
         [code]="segmentCode"
       >
-        <aies-segment
+        <africanies-segment
           [items]="densitySegments"
           [(activeId)]="densityId"
           ariaLabel="List density"
@@ -182,25 +182,25 @@ import { AppShellViewportPreviewComponent } from './viewport-preview.component';
 
       <app-demo-section
         title="Tabs (local)"
-        hint="In-page panels with no router — bind [(activeId)] and render bodies with aiesTabDef."
+        hint="In-page panels with no router — bind [(activeId)] and render bodies with africaniesTabDef."
         [code]="localTabsCode"
       >
-        <aies-tabs
+        <africanies-tabs
           [items]="localTabs"
           [(activeId)]="localTabId"
           ariaLabel="Local demo tabs"
         >
-          <ng-template aiesTabDef="alpha">
+          <ng-template africaniesTabDef="alpha">
             <p class="m-0 text-body text-neutral-600 dark:text-neutral-400">
               Local panel Alpha (not tied to the URL).
             </p>
           </ng-template>
-          <ng-template aiesTabDef="beta">
+          <ng-template africaniesTabDef="beta">
             <p class="m-0 text-body text-neutral-600 dark:text-neutral-400">
               Local panel Beta (not tied to the URL).
             </p>
           </ng-template>
-        </aies-tabs>
+        </africanies-tabs>
       </app-demo-section>
     </div>
   `,
@@ -225,13 +225,13 @@ export class NavigationPage {
   protected readonly sideCollapsed = signal(false);
   protected readonly sideActiveId = signal('track');
 
-  protected readonly shellBreadcrumbs: AiesNavItem[] = [
+  protected readonly shellBreadcrumbs: AfricaniesNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'shipments', label: 'Shipments' },
     { id: 'track', label: 'STN-1042' },
   ];
 
-  protected readonly userMenuItems: AiesMenuItem[] = [
+  protected readonly userMenuItems: AfricaniesMenuItem[] = [
     { label: 'Profile', icon: 'user', onClick: () => undefined },
     { label: 'Settings', icon: 'cog', onClick: () => undefined },
     {
@@ -243,7 +243,7 @@ export class NavigationPage {
     },
   ];
 
-  protected readonly shellNotifications: AiesNotification[] = [
+  protected readonly shellNotifications: AfricaniesNotification[] = [
     {
       id: 'n1',
       title: 'Shipment STN-1042 delivered',
@@ -258,7 +258,7 @@ export class NavigationPage {
     },
   ];
 
-  protected readonly sideNav: AiesSideNavItem[] = [
+  protected readonly sideNav: AfricaniesSideNavItem[] = [
     { id: 'home', label: 'Home', icon: 'home' },
     {
       id: 'shipments',
@@ -274,7 +274,7 @@ export class NavigationPage {
     { id: 'settings', label: 'Settings', icon: 'cog' },
   ];
 
-  protected readonly routeTabs: AiesNavItem[] = [
+  protected readonly routeTabs: AfricaniesNavItem[] = [
     {
       id: 'overview',
       label: 'Overview',
@@ -295,7 +295,7 @@ export class NavigationPage {
     },
   ];
 
-  protected readonly densitySegments: AiesNavItem[] = [
+  protected readonly densitySegments: AfricaniesNavItem[] = [
     {
       id: 'comfortable',
       label: 'Comfortable',
@@ -316,7 +316,7 @@ export class NavigationPage {
     },
   ];
 
-  protected readonly localTabs: AiesNavItem[] = [
+  protected readonly localTabs: AfricaniesNavItem[] = [
     { id: 'alpha', label: 'Alpha' },
     { id: 'beta', label: 'Beta' },
   ];
@@ -329,7 +329,7 @@ export class NavigationPage {
   protected readonly appShellCode = NAV_APP_SHELL;
 
   /** Breadcrumb trail derived from the current URL (consumer pattern). */
-  protected readonly crumbs = computed((): AiesNavItem[] => {
+  protected readonly crumbs = computed((): AfricaniesNavItem[] => {
     const path = this.url().split('?')[0] ?? '';
     const leaf =
       path.includes('/documents')

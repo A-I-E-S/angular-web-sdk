@@ -3,12 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
-import { AuthService, isValidEmail } from '@aies/aies-core';
+import { AuthService, isValidEmail } from '@africanies/africanies-core';
 import {
   AlertComponent,
   ButtonComponent,
   TextInputComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { playgroundErrorMessage } from './playground-notify';
 
@@ -32,7 +32,7 @@ import { playgroundErrorMessage } from './playground-notify';
       </p>
 
       @if (successMessage(); as ok) {
-        <aies-alert variant="success" [message]="ok" [dismissible]="false" />
+        <africanies-alert variant="success" [message]="ok" [dismissible]="false" />
         <a
           routerLink="/usecases/onboarding/login"
           class="cursor-pointer text-body-sm font-medium text-ink underline-offset-2 hover:underline dark:text-white"
@@ -41,10 +41,10 @@ import { playgroundErrorMessage } from './playground-notify';
         </a>
       } @else {
         @if (errorMessage(); as err) {
-          <aies-alert variant="danger" [message]="err" [dismissible]="false" />
+          <africanies-alert variant="danger" [message]="err" [dismissible]="false" />
         }
         <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
-          <aies-text-input
+          <africanies-text-input
             class="min-w-0 flex-1"
             type="email"
             label="Email"
@@ -53,7 +53,7 @@ import { playgroundErrorMessage } from './playground-notify';
             [(value)]="email"
           />
           <button
-            aies-button
+            africanies-button
             type="submit"
             variant="primary"
             size="sm"

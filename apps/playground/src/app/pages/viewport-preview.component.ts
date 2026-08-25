@@ -1,14 +1,14 @@
 import { Component, computed, effect, input, signal } from '@angular/core';
 
 import {
-  type AiesMenuItem,
-  type AiesNavItem,
-  type AiesNotification,
-  type AiesSideNavItem,
+  type AfricaniesMenuItem,
+  type AfricaniesNavItem,
+  type AfricaniesNotification,
+  type AfricaniesSideNavItem,
   AppShellComponent,
   type AppShellLayoutPreview,
   SideNavComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 /**
  * Single app shell preview at a fixed viewport width.
@@ -22,7 +22,7 @@ import {
       class="mx-auto overflow-hidden rounded-xl border border-border bg-white shadow-sm dark:border-white/10 dark:bg-ink"
       [class]="frameClass()"
     >
-      <aies-app-shell
+      <africanies-app-shell
         contentWidth="5xl"
         [layoutPreview]="layout()"
         [breadcrumbs]="breadcrumbs()"
@@ -30,7 +30,7 @@ import {
         [userMenuItems]="userMenuItems()"
         [notifications]="notifications()"
       >
-        <aies-side-nav
+        <africanies-side-nav
           sidenav
           [items]="sideNav()"
           [(collapsed)]="collapsed"
@@ -45,17 +45,17 @@ import {
             {{ contentHint() }}
           </p>
         </div>
-      </aies-app-shell>
+      </africanies-app-shell>
     </div>
   `,
 })
 export class AppShellViewportPreviewComponent {
   readonly layout = input.required<AppShellLayoutPreview>();
-  readonly sideNav = input.required<AiesSideNavItem[]>();
-  readonly breadcrumbs = input.required<AiesNavItem[]>();
+  readonly sideNav = input.required<AfricaniesSideNavItem[]>();
+  readonly breadcrumbs = input.required<AfricaniesNavItem[]>();
   readonly userName = input('Jane Doe');
-  readonly userMenuItems = input.required<AiesMenuItem[]>();
-  readonly notifications = input.required<AiesNotification[]>();
+  readonly userMenuItems = input.required<AfricaniesMenuItem[]>();
+  readonly notifications = input.required<AfricaniesNotification[]>();
 
   protected readonly collapsed = signal(false);
   protected readonly activeId = signal('track');

@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
 
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
-  AiesOverlayRef,
+  AfricaniesOverlayRef,
   ButtonComponent,
   OVERLAY_DATA,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 /** Payload for the playground sample modal. */
 export interface DemoModalData {
@@ -23,7 +23,7 @@ export interface DemoDrawerData {
 @Component({
   selector: 'app-demo-modal-panel',
   standalone: true,
-  imports: [ButtonComponent, AiesIconComponent],
+  imports: [ButtonComponent, AfricaniesIconComponent],
   host: {
     class: 'flex min-h-0 w-full flex-col overflow-hidden',
   },
@@ -39,22 +39,22 @@ export interface DemoDrawerData {
           </h2>
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
             Hosted via ModalService.open — inject OVERLAY_DATA and
-            AiesOverlayRef to close with a result.
+            AfricaniesOverlayRef to close with a result.
           </p>
         </div>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="ghost"
           size="sm"
           aria-label="Close"
           (click)="ref.close()"
         >
-          <aies-icon name="close" [size]="18" />
+          <africanies-icon name="close" [size]="18" />
         </button>
       </div>
 
-      <div class="aies-overlay-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto">
+      <div class="africanies-overlay-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto">
       <label class="flex flex-col gap-1.5">
         <span class="text-caption font-medium text-neutral-600 dark:text-neutral-400">
           Note
@@ -70,11 +70,11 @@ export interface DemoDrawerData {
       </div>
 
       <div class="flex shrink-0 justify-end gap-2 border-t border-border pt-4 dark:border-white/10">
-        <button aies-button type="button" variant="ghost" (click)="ref.close()">
+        <button africanies-button type="button" variant="ghost" (click)="ref.close()">
           Cancel
         </button>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           (click)="ref.close({ saved: true, note })"
@@ -88,7 +88,7 @@ export interface DemoDrawerData {
 export class DemoModalPanel {
   protected readonly data = inject<DemoModalData>(OVERLAY_DATA);
   protected readonly ref = inject(
-    AiesOverlayRef<{ saved: boolean; note: string }>,
+    AfricaniesOverlayRef<{ saved: boolean; note: string }>,
   );
   protected note = 'Ready for customs clearance';
 }
@@ -99,7 +99,7 @@ export class DemoModalPanel {
 @Component({
   selector: 'app-demo-drawer-panel',
   standalone: true,
-  imports: [ButtonComponent, AiesIconComponent],
+  imports: [ButtonComponent, AfricaniesIconComponent],
   host: {
     class: 'flex h-full min-h-0 flex-col overflow-hidden',
   },
@@ -118,18 +118,18 @@ export class DemoModalPanel {
           </p>
         </div>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="ghost"
           size="sm"
           aria-label="Close"
           (click)="ref.close()"
         >
-          <aies-icon name="close" [size]="18" />
+          <africanies-icon name="close" [size]="18" />
         </button>
       </div>
 
-      <ul class="aies-overlay-scroll m-0 flex min-h-0 flex-1 list-none flex-col gap-2 overflow-y-auto p-0">
+      <ul class="africanies-overlay-scroll m-0 flex min-h-0 flex-1 list-none flex-col gap-2 overflow-y-auto p-0">
         @for (opt of options; track opt) {
           <li>
             <label
@@ -143,11 +143,11 @@ export class DemoModalPanel {
       </ul>
 
       <div class="mt-auto flex justify-end gap-2 pt-4">
-        <button aies-button type="button" variant="ghost" (click)="ref.close()">
+        <button africanies-button type="button" variant="ghost" (click)="ref.close()">
           Cancel
         </button>
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="primary"
           (click)="ref.close({ applied: true })"
@@ -160,7 +160,7 @@ export class DemoModalPanel {
 })
 export class DemoDrawerPanel {
   protected readonly data = inject<DemoDrawerData>(OVERLAY_DATA);
-  protected readonly ref = inject(AiesOverlayRef<{ applied: boolean }>);
+  protected readonly ref = inject(AfricaniesOverlayRef<{ applied: boolean }>);
   protected readonly options = [
     'In transit',
     'Delivered',

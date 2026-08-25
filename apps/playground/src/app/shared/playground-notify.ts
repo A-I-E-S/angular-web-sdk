@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { formatApiErrorMessage } from '@aies/aies-core';
+import { formatApiErrorMessage } from '@africanies/africanies-core';
 
 /**
  * User-facing copy for playground HTTP / async failures.

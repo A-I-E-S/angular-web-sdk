@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ModeColorService } from '@aies/aies-theme';
-import { ButtonComponent } from '@aies/aies-ui';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+import { ModeColorService } from '@africanies/africanies-theme';
+import { ButtonComponent } from '@africanies/africanies-ui';
 
 interface CatalogCard {
   path: string;
@@ -37,7 +37,7 @@ interface CatalogCard {
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, AiesIconComponent],
+  imports: [RouterLink, ButtonComponent, AfricaniesIconComponent],
   template: `
     <div class="pg-page-enter flex flex-col gap-12">
       <section class="relative overflow-hidden rounded-2xl bg-ink-brand text-white">
@@ -50,16 +50,16 @@ interface CatalogCard {
               The shared UI toolkit for Import &amp; Export apps.
             </h1>
             <p class="m-0 max-w-lg text-body-lg text-white/75">
-              Owned by AIES for every product surface we ship. One Angular SDK —
+              Owned by AFRICANIES for every product surface we ship. One Angular SDK —
               components, icons, tokens, and API wiring — with Import (STN) and
               Export (SFN) modes built in so accents and behavior match production.
             </p>
             <div class="flex flex-wrap gap-3">
-              <a aies-button routerLink="/components/button" class="!no-underline">
+              <a africanies-button routerLink="/components/button" class="!no-underline">
                 Explore components
               </a>
               <a
-                aies-button
+                africanies-button
                 variant="secondary"
                 routerLink="/tokens"
                 class="!border-white/30 !bg-transparent !text-white !no-underline hover:!bg-white/10"
@@ -101,7 +101,7 @@ interface CatalogCard {
                   class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-welcome text-ink dark:bg-ink-950 dark:text-white"
                   [class]="modeColor.classes().bgSubtle"
                 >
-                  <aies-icon [name]="card.icon" [size]="20" />
+                  <africanies-icon [name]="card.icon" [size]="20" />
                 </span>
                 <span class="text-caption text-neutral-600">{{ card.group }}</span>
               </div>
@@ -242,7 +242,7 @@ export class HomePage {
     {
       path: '/models',
       title: 'Shared models',
-      blurb: 'Field shapes from @aies/aies-models — types only.',
+      blurb: 'Field shapes from @africanies/africanies-models — types only.',
       icon: 'code',
       group: 'Foundation',
     },

@@ -3,12 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
-import { AuthTokenService, UserService } from '@aies/aies-core';
+import { AuthTokenService, UserService } from '@africanies/africanies-core';
 import {
   AlertComponent,
   ButtonComponent,
   TextInputComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { PageHeaderComponent } from '../../shared/page-header.component';
 import { playgroundErrorMessage } from '../../shared/playground-notify';
@@ -40,33 +40,33 @@ import { playgroundErrorMessage } from '../../shared/playground-notify';
         (submit)="$event.preventDefault(); save()"
       >
         @if (errorMessage(); as err) {
-          <aies-alert variant="danger" [message]="err" [dismissible]="false" />
+          <africanies-alert variant="danger" [message]="err" [dismissible]="false" />
         }
         @if (successMessage(); as ok) {
-          <aies-alert variant="success" [message]="ok" [dismissible]="false" />
+          <africanies-alert variant="success" [message]="ok" [dismissible]="false" />
         }
 
         @if (!hasToken()) {
-          <aies-alert
+          <africanies-alert
             variant="warning"
             message="This call needs a bearer token. Paste one in API token, then retry."
             [dismissible]="false"
           />
         }
 
-        <aies-text-input
+        <africanies-text-input
           type="password"
           label="Current password"
           autocomplete="current-password"
           [(value)]="currentPassword"
         />
-        <aies-text-input
+        <africanies-text-input
           type="password"
           label="New password"
           autocomplete="new-password"
           [(value)]="password"
         />
-        <aies-text-input
+        <africanies-text-input
           type="password"
           label="Confirm new password"
           autocomplete="new-password"
@@ -74,7 +74,7 @@ import { playgroundErrorMessage } from '../../shared/playground-notify';
           [(value)]="confirmation"
         />
         <button
-          aies-button
+          africanies-button
           type="submit"
           variant="primary"
           [loading]="saving()"

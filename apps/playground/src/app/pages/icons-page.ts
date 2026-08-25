@@ -1,26 +1,26 @@
 import { Component, computed, inject, signal } from '@angular/core';
 
-import { copyToClipboard } from '@aies/aies-core';
-import { AiesIconComponent, ICON_NAMES, type IconName } from '@aies/aies-icons';
-import { ToastService } from '@aies/aies-ui';
+import { copyToClipboard } from '@africanies/africanies-core';
+import { AfricaniesIconComponent, ICON_NAMES, type IconName } from '@africanies/africanies-icons';
+import { ToastService } from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
 import { ICONS_USAGE } from '../snippets';
 
 /**
- * Icon sprite catalog — click a tile to copy an `<aies-icon>` usage snippet.
+ * Icon sprite catalog — click a tile to copy an `<africanies-icon>` usage snippet.
  */
 @Component({
   selector: 'app-icons-page',
   standalone: true,
-  imports: [AiesIconComponent, PageHeaderComponent, DemoSectionComponent],
+  imports: [AfricaniesIconComponent, PageHeaderComponent, DemoSectionComponent],
   template: `
     <div class="pg-page-enter flex flex-col gap-8">
       <app-page-header
         eyebrow="Foundation"
         title="Icons"
-        description="Browse every icon in the shared SVG sprite. Click a tile to copy an aies-icon usage snippet. Serve the sprite once in your app, then use typed IconName everywhere."
+        description="Browse every icon in the shared SVG sprite. Click a tile to copy an africanies-icon usage snippet. Serve the sprite once in your app, then use typed IconName everywhere."
       >
         <div actions class="flex flex-col items-stretch gap-2 sm:items-end">
           <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
@@ -31,7 +31,7 @@ import { ICONS_USAGE } from '../snippets';
 
       <app-demo-section
         title="Usage"
-        hint="Register the sprite in your app assets, then place aies-icon wherever you need a glyph. Prefer typed IconName — never free-string ids."
+        hint="Register the sprite in your app assets, then place africanies-icon wherever you need a glyph. Prefer typed IconName — never free-string ids."
         [code]="usageCode"
       >
         <div class="flex flex-wrap items-center gap-3 text-ink dark:text-white">
@@ -40,10 +40,10 @@ import { ICONS_USAGE } from '../snippets';
               type="button"
               class="inline-flex items-center justify-center rounded-lg border border-border bg-white p-2.5 transition hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
               [attr.aria-label]="'Copy snippet for ' + sample"
-              [title]="'Copy <aies-icon name=&quot;' + sample + '&quot; />'"
+              [title]="'Copy <africanies-icon name=&quot;' + sample + '&quot; />'"
               (click)="copySnippet(sample)"
             >
-              <aies-icon [name]="sample" [size]="24" />
+              <africanies-icon [name]="sample" [size]="24" />
             </button>
           }
           <span class="text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -79,13 +79,13 @@ import { ICONS_USAGE } from '../snippets';
             type="button"
             class="group flex flex-col items-center gap-2.5 rounded-xl border border-border bg-white px-2 py-3.5 text-ink transition duration-150 hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-sm dark:border-white/10 dark:bg-ink dark:text-white dark:hover:border-white/25"
             [attr.aria-label]="'Copy snippet for ' + name"
-            [title]="'Copy <aies-icon name=&quot;' + name + '&quot; />'"
+            [title]="'Copy <africanies-icon name=&quot;' + name + '&quot; />'"
             (click)="copySnippet(name)"
           >
             <span
               class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-background-welcome text-ink transition group-hover:scale-105 dark:bg-ink-950 dark:text-white"
             >
-              <aies-icon [name]="name" [size]="22" />
+              <africanies-icon [name]="name" [size]="22" />
             </span>
             <span class="w-full truncate text-center text-caption">{{ name }}</span>
           </button>
@@ -120,12 +120,12 @@ export class IconsPage {
   });
 
   /**
-   * Build a paste-ready `<aies-icon>` usage line for the given registry id.
+   * Build a paste-ready `<africanies-icon>` usage line for the given registry id.
    * @param name - Icon slug.
    * @returns HTML snippet string.
    */
   protected iconSnippet(name: IconName): string {
-    return `<aies-icon name="${name}" />`;
+    return `<africanies-icon name="${name}" />`;
   }
 
   /**

@@ -24,7 +24,7 @@ import {
   USER_PATH,
   WAREHOUSE_READ_PATH,
   ZONE_READ_PATH,
-} from '@aies/aies-core';
+} from '@africanies/africanies-core';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -81,7 +81,7 @@ interface ApiServiceGroup {
 }
 
 /**
- * How-to catalog for `@aies/aies-core` HTTP services.
+ * How-to catalog for `@africanies/africanies-core` HTTP services.
  * Field shapes live on the Models page.
  */
 @Component({
@@ -103,7 +103,7 @@ interface ApiServiceGroup {
 
       <app-demo-section
         title="Bootstrap"
-        hint="Wire the SDK once: provideAiesSdk (base URL) and provideAiesHttpClient (interceptors). Relative paths resolve against baseUrl."
+        hint="Wire the SDK once: provideAfricaniesSdk (base URL) and provideAfricaniesHttpClient (interceptors). Relative paths resolve against baseUrl."
         [code]="overviewCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -181,7 +181,7 @@ interface ApiServiceGroup {
             <code class="font-mono">30</code>). Notifications default to
             <code class="font-mono">30</code>.
             Bind <code class="font-mono">res.pagination</code> to
-            <code class="font-mono">aies-pagination</code>. Shapes:
+            <code class="font-mono">africanies-pagination</code>. Shapes:
             <a
               class="font-medium text-ink underline-offset-2 hover:underline dark:text-white"
               routerLink="/models"

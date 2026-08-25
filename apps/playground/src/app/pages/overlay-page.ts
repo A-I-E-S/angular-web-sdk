@@ -6,7 +6,7 @@ import {
   ConfirmService,
   DrawerService,
   ModalService,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -22,7 +22,7 @@ import {
 
 /**
  * Playground demos for ModalService, DrawerService, and ConfirmService.
- * Requires provideAiesUiOverlays() (already in playground app.config).
+ * Requires provideAfricaniesUiOverlays() (already in playground app.config).
  */
 @Component({
   selector: 'app-overlay-page',
@@ -60,13 +60,13 @@ import {
         [code]="modalCode"
       >
         <div class="flex flex-wrap items-center gap-3">
-          <button aies-button type="button" variant="primary" (click)="openModal(false)">
+          <button africanies-button type="button" variant="primary" (click)="openModal(false)">
             Open (locked)
           </button>
-          <button aies-button type="button" variant="secondary" (click)="openModal(true)">
+          <button africanies-button type="button" variant="secondary" (click)="openModal(true)">
             Open (dismissible)
           </button>
-          <button aies-button type="button" variant="ghost" (click)="openWideModal()">
+          <button africanies-button type="button" variant="ghost" (click)="openWideModal()">
             Open (size: lg)
           </button>
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -85,10 +85,10 @@ import {
         [code]="drawerCode"
       >
         <div class="flex flex-wrap items-center gap-3">
-          <button aies-button type="button" variant="secondary" (click)="openDrawer(false)">
+          <button africanies-button type="button" variant="secondary" (click)="openDrawer(false)">
             Open (locked)
           </button>
-          <button aies-button type="button" (click)="openDrawer(true)">
+          <button africanies-button type="button" (click)="openDrawer(true)">
             Open (dismissible)
           </button>
           <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -107,14 +107,14 @@ import {
         [code]="confirmCode"
       >
         <div class="flex flex-wrap gap-3">
-          <button aies-button type="button" (click)="openConfirm(false)">
+          <button africanies-button type="button" (click)="openConfirm(false)">
             Neutral confirm
           </button>
-          <button aies-button type="button" variant="danger" (click)="openConfirm(true)">
+          <button africanies-button type="button" variant="danger" (click)="openConfirm(true)">
             Destructive confirm
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="ghost"
             (click)="openConfirm(false, true)"

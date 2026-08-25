@@ -1,5 +1,5 @@
 /**
- * Playground snippets — form controls (@aies/aies-ui).
+ * Playground snippets — form controls (@africanies/africanies-ui).
  */
 
 export /**
@@ -10,33 +10,33 @@ const FORMS_TEXT = `
 // Prefix/suffix slots use attribute selectors (prefix, suffix).
 
 import { Component, signal } from '@angular/core';
-import { AiesIconComponent } from '@aies/aies-icons';
-import { TextInputComponent } from '@aies/aies-ui';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+import { TextInputComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-reference-form',
   standalone: true,
-  imports: [TextInputComponent, AiesIconComponent],
+  imports: [TextInputComponent, AfricaniesIconComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
-      <aies-text-input
+      <africanies-text-input
         label="Tracking number"
         hint="As printed on the airway bill"
         placeholder="e.g. AWB-12345"
         [(value)]="tracking"
       />
 
-      <aies-text-input label="Reference" placeholder="Optional internal ref" [(value)]="reference">
-        <aies-icon prefix name="anchor" [size]="16" />
-      </aies-text-input>
+      <africanies-text-input label="Reference" placeholder="Optional internal ref" [(value)]="reference">
+        <africanies-icon prefix name="anchor" [size]="16" />
+      </africanies-text-input>
 
-      <aies-text-input
+      <africanies-text-input
         label="Consignee email"
         error="Enter a valid email address"
         [(value)]="email"
       />
 
-      <aies-text-input label="Locked field" [disabled]="true" [(value)]="locked" />
+      <africanies-text-input label="Locked field" [disabled]="true" [(value)]="locked" />
     </div>
   \`,
 })
@@ -55,7 +55,7 @@ const FORMS_TEXTAREA = `
 // Same label / hint / error pattern as text inputs, just multi-line.
 
 import { Component, signal } from '@angular/core';
-import { TextareaComponent } from '@aies/aies-ui';
+import { TextareaComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-instructions-form',
@@ -63,14 +63,14 @@ import { TextareaComponent } from '@aies/aies-ui';
   imports: [TextareaComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
-      <aies-textarea
+      <africanies-textarea
         label="Special instructions"
         hint="Visible to warehouse staff"
         placeholder="Fragile — keep upright"
         [(value)]="instructions"
       />
 
-      <aies-textarea
+      <africanies-textarea
         label="Notes"
         error="Notes cannot exceed 500 characters"
         [(value)]="notesError"
@@ -93,7 +93,7 @@ const FORMS_NUMBER = `
 
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { NumberInputComponent } from '@aies/aies-ui';
+import { NumberInputComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-value-form',
@@ -101,13 +101,13 @@ import { NumberInputComponent } from '@aies/aies-ui';
   imports: [DecimalPipe, NumberInputComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
-      <aies-number-input label="Declared value (USD)" [(value)]="amount">
+      <africanies-number-input label="Declared value (USD)" [(value)]="amount">
         <span prefix>$</span>
-      </aies-number-input>
+      </africanies-number-input>
 
-      <aies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
+      <africanies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
         <span suffix>kg</span>
-      </aies-number-input>
+      </africanies-number-input>
     </div>
 
     <p class="text-body-sm">
@@ -127,15 +127,15 @@ export /**
  */
 const FORMS_SELECT = `
 // Single/multi select binds [(selected)]. [searchable] for long lists.
-// allowFreeText = inline tags; [create] opens a modal (needs provideAiesUiOverlays()).
+// allowFreeText = inline tags; [create] opens a modal (needs provideAfricaniesUiOverlays()).
 
 import { Component, signal } from '@angular/core';
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   SelectComponent,
   type SelectCreateConfig,
   type SelectOption,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 // Example modal close payload — your modal component returns this shape.
 interface WarehouseCreateResult {
@@ -146,19 +146,19 @@ interface WarehouseCreateResult {
 @Component({
   selector: 'app-shipment-routing-form',
   standalone: true,
-  imports: [SelectComponent, AiesIconComponent],
+  imports: [SelectComponent, AfricaniesIconComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
-      <aies-select
+      <africanies-select
         label="Warehouse"
         [options]="warehouses()"
         [searchable]="true"
         [(selected)]="selectedWarehouse"
       >
-        <aies-icon prefix name="warehouse" [size]="16" />
-      </aies-select>
+        <africanies-icon prefix name="warehouse" [size]="16" />
+      </africanies-select>
 
-      <aies-select
+      <africanies-select
         label="Tags"
         [searchable]="true"
         [allowFreeText]="true"
@@ -168,24 +168,24 @@ interface WarehouseCreateResult {
         [(selected)]="selectedTags"
       />
 
-      <aies-select
+      <africanies-select
         label="Incoterm"
         hint="Plain list — searchable off"
         [options]="incoterms"
         [(selected)]="selectedIncoterm"
       />
 
-      <aies-select
+      <africanies-select
         label="Carrier"
-        hint="Create opens a modal — requires provideAiesUiOverlays()"
+        hint="Create opens a modal — requires provideAfricaniesUiOverlays()"
         [options]="carriers()"
         [searchable]="true"
         [create]="warehouseCreate"
         [(options)]="carriers"
         [(selected)]="selectedCarrier"
       >
-        <aies-icon prefix name="airplane" [size]="16" />
-      </aies-select>
+        <africanies-icon prefix name="airplane" [size]="16" />
+      </africanies-select>
     </div>
   \`,
 })
@@ -235,10 +235,10 @@ export class WarehouseCreateModalComponent {}
 
 // app.config.ts — required once per app when any select uses [create]:
 //
-// import { provideAiesUiOverlays } from '@aies/aies-ui';
+// import { provideAfricaniesUiOverlays } from '@africanies/africanies-ui';
 //
 // export const appConfig: ApplicationConfig = {
-//   providers: [provideAiesUiOverlays(), /* … */],
+//   providers: [provideAfricaniesUiOverlays(), /* … */],
 // };
 `;
 
@@ -254,7 +254,7 @@ import {
   RadioComponent,
   ToggleComponent,
   type RadioOption,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-options-form',
@@ -263,23 +263,23 @@ import {
   template: \`
     <div class="grid gap-6 md:grid-cols-2">
       <div class="flex flex-col gap-4">
-        <aies-checkbox label="Require signature on delivery" [(value)]="signature" />
+        <africanies-checkbox label="Require signature on delivery" [(value)]="signature" />
 
-        <aies-checkbox
+        <africanies-checkbox
           label="Insure this shipment"
           hint="Adds 0.8% of declared value"
           [(value)]="insured"
         />
 
-        <aies-checkbox
+        <africanies-checkbox
           label="Accept terms"
           error="You must accept the terms"
           [(value)]="terms"
         />
 
-        <aies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
-        <aies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
-        <aies-toggle
+        <africanies-toggle label="Notify consignee by SMS" [(value)]="smsNotify" />
+        <africanies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
+        <africanies-toggle
           label="Require customs hold"
           hint="Waits for the API — the switch does not flip until the save succeeds."
           [value]="customsHold()"
@@ -288,7 +288,7 @@ import {
         />
       </div>
 
-      <aies-radio
+      <africanies-radio
         label="Service level"
         [options]="serviceLevels"
         [(value)]="serviceLevel"
@@ -329,7 +329,7 @@ const FORMS_DATE_FILE = `
 // Date picker emits YYYY-MM-DD (string | null). Keep that ISO string as-is.
 
 import { Component, signal } from '@angular/core';
-import { DatePickerComponent } from '@aies/aies-ui';
+import { DatePickerComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-schedule-form',
@@ -337,8 +337,8 @@ import { DatePickerComponent } from '@aies/aies-ui';
   imports: [DatePickerComponent],
   template: \`
     <div class="grid gap-5 md:grid-cols-2">
-      <aies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
-      <aies-date-picker
+      <africanies-date-picker label="Ready date" hint="Local pickup day" [(value)]="readyDate" />
+      <africanies-date-picker
         label="Cutoff"
         error="Cutoff must be after ready date"
         [(value)]="cutoffDate"
@@ -360,12 +360,12 @@ const FORMS_ADDRESS = `
 // [(value)] is AddressPlace | null; (placeSelected) fires when a suggestion is chosen.
 
 import { Component, signal } from '@angular/core';
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   AddressInputComponent,
   type AddressPlace,
   provideGooglePlaces,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 // app.config.ts
 export const appConfig = {
@@ -377,9 +377,9 @@ export const appConfig = {
 @Component({
   selector: 'app-pickup-address-form',
   standalone: true,
-  imports: [AddressInputComponent, AiesIconComponent],
+  imports: [AddressInputComponent, AfricaniesIconComponent],
   template: \`
-    <aies-address-input
+    <africanies-address-input
       label="Pickup address"
       hint="Start typing — pick a Google suggestion"
       placeholder="Street, city, or landmark"
@@ -387,8 +387,8 @@ export const appConfig = {
       [(value)]="pickup"
       (placeSelected)="onPlace($event)"
     >
-      <aies-icon prefix name="map-marker" [size]="16" />
-    </aies-address-input>
+      <africanies-icon prefix name="map-marker" [size]="16" />
+    </africanies-address-input>
 
     <pre>{{ pickup() | json }}</pre>
   \`,
@@ -414,14 +414,14 @@ import { Component, signal } from '@angular/core';
 import {
   FileUploadComponent,
   type FileUploadResult,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-kyc-upload-form',
   standalone: true,
   imports: [FileUploadComponent],
   template: \`
-    <aies-file-upload
+    <africanies-file-upload
       variant="dropzone"
       label="Identity document"
       accept="image/*,.pdf"
@@ -449,14 +449,14 @@ const FORMS_OTP = `
 // variant="masked" hides each digit (PIN-style); the model is still the real code.
 
 import { Component, signal } from '@angular/core';
-import { OtpInputComponent } from '@aies/aies-ui';
+import { OtpInputComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-verify-otp-form',
   standalone: true,
   imports: [OtpInputComponent],
   template: \`
-    <aies-otp-input
+    <africanies-otp-input
       label="Verification code"
       hint="Enter the 6-digit code we sent"
       [resendCooldown]="60"
@@ -465,7 +465,7 @@ import { OtpInputComponent } from '@aies/aies-ui';
       (resend)="sendAgain()"
     />
 
-    <aies-otp-input
+    <africanies-otp-input
       label="Transaction PIN"
       variant="masked"
       [length]="4"
@@ -505,7 +505,7 @@ const FORMS_LIVE_VALUES = `
 
 import { DecimalPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { type FileUploadResult, type SelectOption } from '@aies/aies-ui';
+import { type FileUploadResult, type SelectOption } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-shipment-summary',

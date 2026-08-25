@@ -1,7 +1,7 @@
 import { DecimalPipe, JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
 
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   AddressInputComponent,
   type AddressPlace,
@@ -18,7 +18,7 @@ import {
   TextareaComponent,
   TextInputComponent,
   ToggleComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -55,7 +55,7 @@ import {
     RadioComponent,
     ToggleComponent,
     DatePickerComponent,
-    AiesIconComponent,
+    AfricaniesIconComponent,
     PageHeaderComponent,
     DemoSectionComponent,
   ],
@@ -73,25 +73,25 @@ import {
         [code]="textCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-text-input
+          <africanies-text-input
             label="Tracking number"
             hint="As printed on the airway bill"
             placeholder="e.g. AWB-12345"
             [(value)]="tracking"
           />
-          <aies-text-input
+          <africanies-text-input
             label="Reference"
             placeholder="Optional internal ref"
             [(value)]="reference"
           >
-            <aies-icon prefix name="anchor" [size]="16" />
-          </aies-text-input>
-          <aies-text-input
+            <africanies-icon prefix name="anchor" [size]="16" />
+          </africanies-text-input>
+          <africanies-text-input
             label="Consignee email"
             error="Enter a valid email address"
             [(value)]="email"
           />
-          <aies-text-input
+          <africanies-text-input
             label="Locked field"
             [disabled]="true"
             [(value)]="locked"
@@ -105,13 +105,13 @@ import {
         [code]="textareaCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-textarea
+          <africanies-textarea
             label="Special instructions"
             hint="Visible to warehouse staff"
             placeholder="Fragile — keep upright"
             [(value)]="instructions"
           />
-          <aies-textarea
+          <africanies-textarea
             label="Notes"
             error="Notes cannot exceed 500 characters"
             [(value)]="notesError"
@@ -125,12 +125,12 @@ import {
         [code]="numberCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-number-input label="Declared value (USD)" [(value)]="amount">
+          <africanies-number-input label="Declared value (USD)" [(value)]="amount">
             <span prefix>$</span>
-          </aies-number-input>
-          <aies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
+          </africanies-number-input>
+          <africanies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
             <span suffix>kg</span>
-          </aies-number-input>
+          </africanies-number-input>
         </div>
       </app-demo-section>
 
@@ -141,15 +141,15 @@ import {
         [code]="selectCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-select
+          <africanies-select
             label="Warehouse"
             [options]="warehouses()"
             [searchable]="true"
             [(selected)]="selectedWarehouse"
           >
-            <aies-icon prefix name="warehouse" [size]="16" />
-          </aies-select>
-          <aies-select
+            <africanies-icon prefix name="warehouse" [size]="16" />
+          </africanies-select>
+          <africanies-select
             label="Tags"
             [searchable]="true"
             [allowFreeText]="true"
@@ -158,30 +158,30 @@ import {
             [(options)]="tags"
             [(selected)]="selectedTags"
           />
-          <aies-select
+          <africanies-select
             label="Incoterm"
             hint="Plain list — searchable off"
             [options]="incoterms"
             [(selected)]="selectedIncoterm"
           />
-          <aies-select
+          <africanies-select
             label="Carrier (with error)"
             error="Select a carrier to continue"
             [options]="carriers"
             [(selected)]="selectedCarrier"
           >
-            <aies-icon prefix name="airplane" [size]="16" />
-          </aies-select>
+            <africanies-icon prefix name="airplane" [size]="16" />
+          </africanies-select>
         </div>
       </app-demo-section>
 
       <app-demo-section
         title="Address input"
-        hint="Pickup/delivery address with Google Places suggestions. Set localStorage key aies.googlePlacesApiKey then reload for live results."
+        hint="Pickup/delivery address with Google Places suggestions. Set localStorage key africanies.googlePlacesApiKey then reload for live results."
         [code]="addressCode"
       >
         <div class="flex flex-col gap-4">
-          <aies-address-input
+          <africanies-address-input
             label="Pickup address"
             hint="Start typing — pick a suggestion to fill structured place details"
             placeholder="Street, city, or landmark"
@@ -189,8 +189,8 @@ import {
             [(value)]="pickupAddress"
             (placeSelected)="onPlaceSelected($event)"
           >
-            <aies-icon prefix name="map-marker" [size]="16" />
-          </aies-address-input>
+            <africanies-icon prefix name="map-marker" [size]="16" />
+          </africanies-address-input>
           <pre
             class="m-0 max-h-48 overflow-auto rounded-lg border border-border bg-background-welcome p-3 font-mono text-caption dark:border-white/10 dark:bg-ink-950"
             >{{ pickupAddress() | json }}</pre
@@ -211,26 +211,26 @@ import {
       >
         <div class="grid gap-6 md:grid-cols-2">
           <div class="flex flex-col gap-4">
-            <aies-checkbox
+            <africanies-checkbox
               label="Require signature on delivery"
               [(value)]="signature"
             />
-            <aies-checkbox
+            <africanies-checkbox
               label="Insure this shipment"
               hint="Adds 0.8% of declared value"
               [(value)]="insured"
             />
-            <aies-checkbox
+            <africanies-checkbox
               label="Accept terms"
               error="You must accept the terms"
               [(value)]="terms"
             />
-            <aies-toggle
+            <africanies-toggle
               label="Notify consignee by SMS"
               [(value)]="smsNotify"
             />
-            <aies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
-            <aies-toggle
+            <africanies-toggle label="Hold at depot" [(value)]="holdAtDepot" />
+            <africanies-toggle
               label="Require customs hold"
               hint="Waits for the API — the switch does not flip until the save succeeds."
               [value]="customsHold()"
@@ -238,7 +238,7 @@ import {
               (valueChange)="saveCustomsHold($event)"
             />
           </div>
-          <aies-radio
+          <africanies-radio
             label="Service level"
             [options]="serviceLevels"
             [(value)]="serviceLevel"
@@ -253,7 +253,7 @@ import {
         [code]="otpCode"
       >
         <div class="flex flex-col gap-6">
-          <aies-otp-input
+          <africanies-otp-input
             label="Verification code"
             hint="Enter the 6-digit code we sent"
             [resendCooldown]="10"
@@ -261,14 +261,14 @@ import {
             (completed)="onOtpCompleted($event)"
             (resend)="onOtpResend()"
           />
-          <aies-otp-input
+          <africanies-otp-input
             label="4-digit PIN"
             variant="masked"
             [length]="4"
             [showResend]="false"
             [(value)]="otpPin"
           />
-          <aies-otp-input
+          <africanies-otp-input
             label="Code with error"
             error="Invalid or expired code"
             [resendCooldown]="0"
@@ -294,12 +294,12 @@ import {
         [code]="dateFileCode"
       >
         <div class="grid gap-5 md:grid-cols-2">
-          <aies-date-picker
+          <africanies-date-picker
             label="Ready date"
             hint="Local pickup day"
             [(value)]="readyDate"
           />
-          <aies-date-picker
+          <africanies-date-picker
             label="Cutoff"
             error="Cutoff must be after ready date"
             [(value)]="cutoffDate"
@@ -314,7 +314,7 @@ import {
         subtext="dropzone, button, or compact. Drag files onto any of them. accept filters types and labels the chips. Images preview; other files get an icon + extension. View opens a larger look at the file."
       >
         <div class="flex flex-col gap-8">
-          <aies-file-upload
+          <africanies-file-upload
             label="Dropzone · multi · images & PDF"
             hint="Drag files here, or use Camera"
             accept="image/*,.pdf"
@@ -324,7 +324,7 @@ import {
             (filesSelected)="onFiles($event)"
           />
           <div class="grid gap-6 md:grid-cols-2">
-            <aies-file-upload
+            <africanies-file-upload
               label="Button · single image"
               accept="image/*"
               variant="button"
@@ -332,7 +332,7 @@ import {
               [multiple]="false"
               (filesSelected)="onButtonFiles($event)"
             />
-            <aies-file-upload
+            <africanies-file-upload
               label="Compact · docs"
               accept=".pdf,.doc,.docx,.xlsx"
               variant="compact"

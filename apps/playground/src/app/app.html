@@ -1,11 +1,11 @@
-<aies-app-shell
+<africanies-app-shell
   contentWidth="90"
   [headerTitle]="pageTitle()"
   [breadcrumbs]="crumbs()"
   [catalogNav]="navItems"
 >
-  <div aiesAppShellHeader>
-    <aies-app-shell-header
+  <div africaniesAppShellHeader>
+    <africanies-app-shell-header
       [userName]="displayName()"
       [greetingName]="greetingName()"
       [userMenuItems]="accountMenu"
@@ -14,7 +14,7 @@
       [onNotificationMarkAllRead]="markAllNotificationsRead"
       [onNotificationLoadPage]="loadNotificationPage"
     >
-      <div aiesAppShellHeaderEnd class="flex flex-wrap items-center justify-end gap-2">
+      <div africaniesAppShellHeaderEnd class="flex flex-wrap items-center justify-end gap-2">
         <app-playground-access-token />
 
         <div
@@ -23,7 +23,7 @@
           aria-label="Import or export mode"
         >
           <button
-            aies-button
+            africanies-button
             type="button"
             size="sm"
             [variant]="shippingMode() === 'stn' ? 'primary' : 'ghost'"
@@ -32,7 +32,7 @@
             Import
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             size="sm"
             [variant]="shippingMode() === 'sfn' ? 'primary' : 'ghost'"
@@ -43,7 +43,7 @@
         </div>
 
         <button
-          aies-button
+          africanies-button
           type="button"
           variant="secondary"
           size="sm"
@@ -52,14 +52,14 @@
             'Switch to ' + (themeMode() === 'light' ? 'dark' : 'light') + ' theme'
           "
         >
-          <aies-icon [name]="themeMode() === 'light' ? 'adjust' : 'alarm'" [size]="14" />
+          <africanies-icon [name]="themeMode() === 'light' ? 'adjust' : 'alarm'" [size]="14" />
           {{ themeMode() === 'light' ? 'Dark' : 'Light' }}
         </button>
       </div>
-    </aies-app-shell-header>
+    </africanies-app-shell-header>
   </div>
 
-  <aies-side-nav
+  <africanies-side-nav
     sidenav
     ariaLabel="Catalog"
     [items]="navItems"
@@ -68,4 +68,4 @@
   />
 
   <router-outlet />
-</aies-app-shell>
+</africanies-app-shell>

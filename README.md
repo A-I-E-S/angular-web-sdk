@@ -1,35 +1,52 @@
-# aies-web-sdk
+# africanies-web-sdk
 
-Private Angular SDK for AIES product UIs. Six independently versioned packages
-under the `@aies` scope, published to GitHub Packages. Workspace name:
-**aies-web-sdk**.
+Private Angular SDK for AFRICANIES product UIs. Six independently versioned packages
+under the `@africanies` scope, published to GitHub Packages. Workspace name:
+**africanies-web-sdk**.
 
 ## Packages
 
 | Package | Role |
 | --- | --- |
-| [`@aies/aies-models`](./libs/aies-models) | Shared `*Model` domain types (API envelope, countries, mode config, filters, async state) — no Angular runtime |
-| [`@aies/aies-storage`](./libs/aies-storage) | `StorageService` + local/session providers (theme uses local; shipping mode uses session per tab) |
-| [`@aies/aies-core`](./libs/aies-core) | `provideAiesSdk`, HTTP client, interceptors, shipping mode, overlay route wiring |
-| [`@aies/aies-theme`](./libs/aies-theme) | Tailwind preset, `ThemeService`, `ModeColorService` |
-| [`@aies/aies-icons`](./libs/aies-icons) | SVG sprite + typed `IconName` / `ICON_NAMES` + `<aies-icon>` |
-| [`@aies/aies-ui`](./libs/aies-ui) | Buttons, feedback, forms, table, pagination, stepper, overlays |
+| [`@africanies/africanies-models`](./libs/africanies-models) | Shared `*Model` domain types (API envelope, countries, mode config, filters, async state) — no Angular runtime |
+| [`@africanies/africanies-storage`](./libs/africanies-storage) | `StorageService` + local/session providers (theme uses local; shipping mode uses session per tab) |
+| [`@africanies/africanies-core`](./libs/africanies-core) | `provideAfricaniesSdk`, HTTP client, interceptors, shipping mode, overlay route wiring |
+| [`@africanies/africanies-theme`](./libs/africanies-theme) | Tailwind preset, `ThemeService`, `ModeColorService` |
+| [`@africanies/africanies-icons`](./libs/africanies-icons) | SVG sprite + typed `IconName` / `ICON_NAMES` + `<africanies-icon>` |
+| [`@africanies/africanies-ui`](./libs/africanies-ui) | Buttons, feedback, forms, table, pagination, stepper, overlays |
 
 ## Install (consuming app)
 
 1. Add an `.npmrc` (see [docs/consumer.npmrc.template](./docs/consumer.npmrc.template)):
 
 ```ini
-@aies:registry=https://npm.pkg.github.com
+@africanies:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
 ```
 
 2. Install what you need:
 
 ```bash
-npm install @aies/aies-core @aies/aies-models @aies/aies-storage \
-  @aies/aies-theme @aies/aies-icons @aies/aies-ui
+npm install @africanies/africanies-core @africanies/africanies-models @africanies/africanies-storage \
+  @africanies/africanies-theme @africanies/africanies-icons @africanies/africanies-ui
 ```
+
+### Migrating from `@aies/*`
+
+If a consuming app still references the old scope, update in one pass:
+
+| Before | After |
+| --- | --- |
+| `@aies:registry` in `.npmrc` | `@africanies:registry` |
+| `@aies/aies-core` (etc.) | `@africanies/africanies-core` (etc.) |
+| `provideAiesSdk` | `provideAfricaniesSdk` |
+| `provideAiesHttpClient` | `provideAfricaniesHttpClient` |
+| `provideAiesUiOverlays` | `provideAfricaniesUiOverlays` |
+| `provideAiesToasts` | `provideAfricaniesToasts` |
+| `<aies-button>` / `aiesCellDef` | `<africanies-button>` / `africaniesCellDef` |
+| Storage keys `aies.theme`, `aies.accessToken`, … | `africanies.theme`, `africanies.accessToken`, … |
+
+Republish from this repo under the `@africanies` scope on GitHub Packages before pointing production apps at the new names.
 
 ## Quickstart
 
@@ -37,10 +54,10 @@ Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
 
 | Provider / setup | What it does |
 | --- | --- |
-| `provideAiesSdk({ baseUrl })` | **Required.** Sets the API base URL (and optional timeout/headers) used by all SDK HTTP services. |
-| `provideAiesHttpClient()` | **Required for API calls.** Registers Angular `HttpClient` plus SDK interceptors: shipping mode header, bearer token from `AuthTokenService`, and optional HTTP toasts. |
-| `provideAiesUiOverlays()` | Enables modal / drawer / confirm overlay services used by UI components (filters, dialogs, etc.). |
-| `provideAiesToasts()` | **Optional.** Mounts the toast UI and connects it to HTTP. Then mark individual requests with `withToast()` to show success/error toasts. Without this, `withToast()` is a no-op. |
+| `provideAfricaniesSdk({ baseUrl })` | **Required.** Sets the API base URL (and optional timeout/headers) used by all SDK HTTP services. |
+| `provideAfricaniesHttpClient()` | **Required for API calls.** Registers Angular `HttpClient` plus SDK interceptors: shipping mode header, bearer token from `AuthTokenService`, and optional HTTP toasts. |
+| `provideAfricaniesUiOverlays()` | Enables modal / drawer / confirm overlay services used by UI components (filters, dialogs, etc.). |
+| `provideAfricaniesToasts()` | **Optional.** Mounts the toast UI and connects it to HTTP. Then mark individual requests with `withToast()` to show success/error toasts. Without this, `withToast()` is a no-op. |
 | `inject(ThemeService)` in an app initializer | Applies light/dark theme class early so the first paint matches the stored preference. |
 | `AuthTokenService.set(access_token)` | **After login** (in your app code, not usually in `app.config`). Saves the token so SDK requests send `Authorization: Bearer …`. On logout, call `UserService.logoutFromAllSessions()` while the token is still set, then `.clear()`. Use `AuthService.forgot(email)` for the email-only reset-link POST. If `user.default_password`, send the user to change password via `UserService.changePassword`. |
 
@@ -48,25 +65,25 @@ Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
 // app.config.ts
 import { ApplicationConfig, inject, provideAppInitializer } from '@angular/core';
 import {
-  provideAiesSdk,
-  provideAiesHttpClient,
-} from '@aies/aies-core';
-import { provideAiesUiOverlays, provideAiesToasts } from '@aies/aies-ui';
-import { ThemeService } from '@aies/aies-theme';
+  provideAfricaniesSdk,
+  provideAfricaniesHttpClient,
+} from '@africanies/africanies-core';
+import { provideAfricaniesUiOverlays, provideAfricaniesToasts } from '@africanies/africanies-ui';
+import { ThemeService } from '@africanies/africanies-theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     // 1) Where API calls go
-    provideAiesSdk({ baseUrl: 'https://api.example.com' }),
+    provideAfricaniesSdk({ baseUrl: 'https://api.example.com' }),
 
     // 2) HttpClient + SDK interceptors (mode, auth token, toast hook)
-    provideAiesHttpClient(),
+    provideAfricaniesHttpClient(),
 
     // 3) Modal / drawer / confirm overlays
-    provideAiesUiOverlays(),
+    provideAfricaniesUiOverlays(),
 
     // 4) Toast stack + HTTP → toast bridge (use withToast() per request)
-    provideAiesToasts(),
+    provideAfricaniesToasts(),
 
     // 5) Apply saved light/dark theme before first render
     provideAppInitializer(() => {
@@ -85,16 +102,16 @@ export const appConfig: ApplicationConfig = {
 ```js
 // tailwind.config.js — preset ships as .cjs (ESM package)
 module.exports = {
-  presets: [require('@aies/aies-theme/tailwind-preset')],
+  presets: [require('@africanies/africanies-theme/tailwind-preset')],
   content: [
     './src/**/*.{html,ts}',
-    './node_modules/@aies/aies-ui/**/*.{js,mjs}',
+    './node_modules/@africanies/africanies-ui/**/*.{js,mjs}',
   ],
 };
 ```
 
-Serve the icon sprite from `node_modules/@aies/aies-icons/assets/icons.sprite.svg`
-(see `@aies/aies-icons` README). Theme details: [`libs/aies-theme/THEME.md`](./libs/aies-theme/THEME.md).
+Serve the icon sprite from `node_modules/@africanies/africanies-icons/assets/icons.sprite.svg`
+(see `@africanies/africanies-icons` README). Theme details: [`libs/africanies-theme/THEME.md`](./libs/africanies-theme/THEME.md).
 
 ## Playground
 
@@ -108,7 +125,7 @@ pnpm dev
 ## Docs
 
 - [Contributing & release](./CONTRIBUTING.md)
-- Per-library READMEs under `libs/aies-*` (playground at `pnpm dev` for live examples)
+- Per-library READMEs under `libs/africanies-*` (playground at `pnpm dev` for live examples)
 
 ## Workspace scripts
 
@@ -129,6 +146,6 @@ pnpm docs:coverage
 | Issue | Mitigation |
 | --- | --- |
 | `brace-expansion` DoS (via Nx) | `overrides` pin `>=5.0.9` |
-| `image-size` DoS (via `@nx/webpack` → `less`) | Ignored until `image-size@2.0.3` is published or Nx allows `less@4.8+` (dev/build tooling only; not shipped in `@aies/*` packages) |
+| `image-size` DoS (via `@nx/webpack` → `less`) | Ignored until `image-size@2.0.3` is published or Nx allows `less@4.8+` (dev/build tooling only; not shipped in `/*` packages) |
 
 Re-run `pnpm audit` after Nx or lockfile updates and drop ignores once upstream fixes land.

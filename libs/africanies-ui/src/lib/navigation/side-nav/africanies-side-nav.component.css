@@ -1,0 +1,25 @@
+@keyframes africanies-side-nav-badge-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0.9;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.4);
+    opacity: 0;
+  }
+}
+
+.africanies-side-nav-badge-ping {
+  animation: africanies-side-nav-badge-pulse 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .africanies-side-nav-badge-ping {
+    animation: none;
+    opacity: 0.5;
+  }
+}

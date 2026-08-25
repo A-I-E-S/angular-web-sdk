@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
 
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   ButtonComponent,
   type ButtonSize,
   type ButtonVariant,
   CopyButtonComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -32,7 +32,7 @@ import {
   imports: [
     ButtonComponent,
     CopyButtonComponent,
-    AiesIconComponent,
+    AfricaniesIconComponent,
     PageHeaderComponent,
     DemoSectionComponent,
     VariantLabelComponent,
@@ -42,7 +42,7 @@ import {
       <app-page-header
         eyebrow="Components"
         title="Button"
-        description="Primary CTAs, secondary actions, and ghost/danger controls. Use the aies-button attribute on a native button or anchor. Primary and ghost-primary follow shipping mode — Export (SFN) green or Import (STN) orange."
+        description="Primary CTAs, secondary actions, and ghost/danger controls. Use the africanies-button attribute on a native button or anchor. Primary and ghost-primary follow shipping mode — Export (SFN) green or Import (STN) orange."
       />
 
       <app-demo-section
@@ -54,7 +54,7 @@ import {
         <div class="flex flex-wrap items-end gap-6">
           @for (v of variants; track v) {
             <app-variant-label [label]="v">
-              <button aies-button type="button" [variant]="v">{{ labels[v] }}</button>
+              <button africanies-button type="button" [variant]="v">{{ labels[v] }}</button>
             </app-variant-label>
           }
         </div>
@@ -68,7 +68,7 @@ import {
         <div class="flex flex-wrap items-end gap-6">
           @for (s of sizes; track s) {
             <app-variant-label [label]="'size=' + s">
-              <button aies-button type="button" [size]="s">Continue</button>
+              <button africanies-button type="button" [size]="s">Continue</button>
             </app-variant-label>
           }
         </div>
@@ -91,7 +91,7 @@ import {
                   <td class="py-3 pr-4 text-body-sm text-neutral-600">{{ v }}</td>
                   @for (s of sizes; track s) {
                     <td class="py-3 pr-4">
-                      <button aies-button type="button" [variant]="v" [size]="s">
+                      <button africanies-button type="button" [variant]="v" [size]="s">
                         Action
                       </button>
                     </td>
@@ -105,24 +105,24 @@ import {
 
       <app-demo-section
         title="With icons"
-        hint="Place an aies-icon inside the button for create, filter, and similar actions."
+        hint="Place an africanies-icon inside the button for create, filter, and similar actions."
         [code]="iconsCode"
       >
         <div class="flex flex-wrap gap-3">
-          <button aies-button type="button" variant="primary">
-            <aies-icon name="airplane" [size]="16" />
+          <button africanies-button type="button" variant="primary">
+            <africanies-icon name="airplane" [size]="16" />
             Create shipment
           </button>
-          <button aies-button type="button" variant="secondary">
-            <aies-icon name="adjust" [size]="16" />
+          <button africanies-button type="button" variant="secondary">
+            <africanies-icon name="adjust" [size]="16" />
             Filters
           </button>
-          <button aies-button type="button" variant="ghost" size="sm">
-            <aies-icon name="warehouse" [size]="14" />
+          <button africanies-button type="button" variant="ghost" size="sm">
+            <africanies-icon name="warehouse" [size]="14" />
             Warehouse
           </button>
-          <button aies-button type="button" variant="danger" size="sm">
-            <aies-icon name="warning" [size]="14" />
+          <button africanies-button type="button" variant="danger" size="sm">
+            <africanies-icon name="warning" [size]="14" />
             Void
           </button>
         </div>
@@ -134,9 +134,9 @@ import {
         [code]="linksCode"
       >
         <div class="flex flex-wrap gap-3">
-          <a aies-button href="#primary" variant="primary">Primary link</a>
-          <a aies-button href="#secondary" variant="secondary" size="sm">Secondary link</a>
-          <a aies-button href="#ghost" variant="ghost">Ghost link</a>
+          <a africanies-button href="#primary" variant="primary">Primary link</a>
+          <a africanies-button href="#secondary" variant="secondary" size="sm">Secondary link</a>
+          <a africanies-button href="#ghost" variant="ghost">Ghost link</a>
         </div>
       </app-demo-section>
 
@@ -147,7 +147,7 @@ import {
       >
         <div class="flex flex-wrap items-center gap-3">
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="primary"
             [loading]="saving()"
@@ -155,11 +155,11 @@ import {
           >
             Save shipment
           </button>
-          <button aies-button type="button" variant="secondary" [loading]="true">
+          <button africanies-button type="button" variant="secondary" [loading]="true">
             Saving draft
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="danger"
             size="sm"
@@ -176,16 +176,16 @@ import {
         [code]="disabledCode"
       >
         <div class="flex flex-wrap gap-3">
-          <button aies-button type="button" variant="primary" disabled>Primary</button>
-          <button aies-button type="button" variant="secondary" disabled>Secondary</button>
-          <button aies-button type="button" variant="ghost" disabled>Ghost</button>
-          <button aies-button type="button" variant="danger" disabled>Danger</button>
+          <button africanies-button type="button" variant="primary" disabled>Primary</button>
+          <button africanies-button type="button" variant="secondary" disabled>Secondary</button>
+          <button africanies-button type="button" variant="ghost" disabled>Ghost</button>
+          <button africanies-button type="button" variant="danger" disabled>Danger</button>
         </div>
       </app-demo-section>
 
       <app-demo-section
         title="Copy to clipboard"
-        hint="aies-copy for IDs, tracking numbers, and snippets. Icon-only or labeled; shows a check briefly after a successful copy."
+        hint="africanies-copy for IDs, tracking numbers, and snippets. Icon-only or labeled; shows a check briefly after a successful copy."
         [code]="copyCode"
       >
         <div class="flex flex-wrap items-center gap-4">
@@ -194,8 +194,8 @@ import {
           >
             {{ copyReference }}
           </code>
-          <aies-copy [value]="copyReference" ariaLabel="Copy reference" />
-          <aies-copy
+          <africanies-copy [value]="copyReference" ariaLabel="Copy reference" />
+          <africanies-copy
             [value]="copySnippet"
             label="Copy snippet"
             [announce]="true"
@@ -216,9 +216,9 @@ import {
             <p class="m-0 text-caption text-neutral-600">Draft · Lagos → London</p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button aies-button type="button" variant="ghost" size="sm">Cancel</button>
-            <button aies-button type="button" variant="secondary" size="sm">Save draft</button>
-            <button aies-button type="button" variant="primary" size="sm">Submit</button>
+            <button africanies-button type="button" variant="ghost" size="sm">Cancel</button>
+            <button africanies-button type="button" variant="secondary" size="sm">Save draft</button>
+            <button africanies-button type="button" variant="primary" size="sm">Submit</button>
           </div>
         </div>
       </app-demo-section>
@@ -257,7 +257,7 @@ export class ButtonPage {
   protected readonly copyCode = BUTTON_COPY;
 
   protected readonly copyReference = 'SFN-1042';
-  protected readonly copySnippet = '<aies-icon name="airplane" />';
+  protected readonly copySnippet = '<africanies-icon name="airplane" />';
   protected readonly saving = signal(false);
 
   protected save(): void {

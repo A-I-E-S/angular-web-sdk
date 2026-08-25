@@ -32,17 +32,17 @@ interface TokenSwatch {
       <app-page-header
         eyebrow="Foundation"
         title="Design tokens"
-        description="Color and type from the Tailwind preset (@aies/aies-theme). Use these classes so product UIs match. Flip STN/SFN in the sidebar to see Import/Export accents. Open Show code for setup notes."
+        description="Color and type from the Tailwind preset (@africanies/africanies-theme). Use these classes so product UIs match. Flip STN/SFN in the sidebar to see Import/Export accents. Open Show code for setup notes."
       />
 
       <app-demo-section
         title="Tailwind setup"
-        hint="One-time consumer setup: extend the AIES preset and scan @aies/aies-ui so JIT does not purge library classes."
+        hint="One-time consumer setup: extend the AFRICANIES preset and scan @africanies/africanies-ui so JIT does not purge library classes."
         [code]="setupCode"
       >
         <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-          Extend the AIES theme preset and scan both your app sources and the
-          published <span class="pg-code">@aies/aies-ui</span> bundle so JIT
+          Extend the AFRICANIES theme preset and scan both your app sources and the
+          published <span class="pg-code">@africanies/africanies-ui</span> bundle so JIT
           keeps classes used inside the library.
         </p>
       </app-demo-section>

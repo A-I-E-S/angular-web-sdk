@@ -23,13 +23,13 @@
           },
           {
             "glob": "**/*",
-            "input": "libs/aies-icons/src/assets",
-            "output": "assets/aies-icons"
+            "input": "libs/africanies-icons/src/assets",
+            "output": "assets/africanies-icons"
           },
           {
             "glob": "**/*",
-            "input": "libs/aies-ui/src/assets",
-            "output": "assets/aies-ui"
+            "input": "libs/africanies-ui/src/assets",
+            "output": "assets/africanies-ui"
           }
         ],
         "styles": [

@@ -10,8 +10,8 @@
  *
  * Inputs:  <repo>/svg/*.svg
  * Outputs:
- *   - libs/aies-icons/src/assets/icons.sprite.svg
- *   - libs/aies-icons/src/lib/icon-name.ts
+ *   - libs/africanies-icons/src/assets/icons.sprite.svg
+ *   - libs/africanies-icons/src/lib/icon-name.ts
  *
  * Run: npm run icons:build
  */
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, '..');
 const svgDir = join(repoRoot, 'svg');
-const outDir = join(repoRoot, 'libs/aies-icons/src');
+const outDir = join(repoRoot, 'libs/africanies-icons/src');
 const spritePath = join(outDir, 'assets/icons.sprite.svg');
 const typePath = join(outDir, 'lib/icon-name.ts');
 

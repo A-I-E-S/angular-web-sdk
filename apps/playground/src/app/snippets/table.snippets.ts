@@ -10,14 +10,14 @@ const TABLE_LIST = `// Server-driven list: keep the table mounted; loading / emp
 // Refresh / tab focus → [refreshing] (rows stay). Page/size → pager spinner.
 // First load and STN↔SFN (listFetchKind reason 'mode') → clear rows + body loader.
 // Empty and hard errors stay in-grid so Filters / Export / pager remain available.
-// Expandable rows: aiesRowDetail="Label" let-row for label / component value pairs.
+// Expandable rows: africaniesRowDetail="Label" let-row for label / component value pairs.
 // Column width: omit to size to content; set width (e.g. '3.5rem') to pin actions.
 // The actions column sticks to the right while the table scrolls horizontally.
 
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ApiClient, downloadCsv, listFetchKind, ShippingModeService, type ListFetchReason } from '@aies/aies-core';
-import type { AsyncQueryStateModel, PaginationMetaModel } from '@aies/aies-models';
+import { ApiClient, downloadCsv, listFetchKind, ShippingModeService, type ListFetchReason } from '@africanies/africanies-core';
+import type { AsyncQueryStateModel, PaginationMetaModel } from '@africanies/africanies-models';
 import {
   ActionMenuComponent,
   CellDefDirective,
@@ -28,10 +28,10 @@ import {
   RowDetailDefDirective,
   TableComponent,
   trackShipmentsFilterConfig,
-  type AiesMenuItem,
+  type AfricaniesMenuItem,
   type TableColumn,
   type TableSortChange,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 import { filter, firstValueFrom, fromEvent } from 'rxjs';
 
 interface Shipment {
@@ -56,7 +56,7 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
     CopyButtonComponent,
   ],
   template: \`
-    <aies-table
+    <africanies-table
         [columns]="columns"
         [rows]="rows()"
         [meta]="meta()"
@@ -76,43 +76,43 @@ const PAGE_SIZE = DEFAULT_PAGE_SIZE;
         (pageChange)="onPageChange($event)"
         (sizeChange)="onSizeChange($event)"
       >
-        <ng-template aiesCellDef="reference" let-row>
+        <ng-template africaniesCellDef="reference" let-row>
           <div class="flex items-center gap-1">
             <span class="font-medium">{{ row.reference }}</span>
-            <aies-copy
+            <africanies-copy
               [value]="row.reference"
               [ariaLabel]="'Copy ' + row.reference"
             />
           </div>
         </ng-template>
 
-        <ng-template aiesCellDef="status" let-row>
-          <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
+        <ng-template africaniesCellDef="status" let-row>
+          <africanies-chip [variant]="statusVariant(row.status)">{{ row.status }}</africanies-chip>
         </ng-template>
 
-        <ng-template aiesCellDef="valueUsd" let-row>
+        <ng-template africaniesCellDef="valueUsd" let-row>
           <span class="tabular-nums">{{ formatUsd(row.valueUsd) }}</span>
         </ng-template>
 
-        <ng-template aiesCellDef="actions" let-row>
-          <aies-action-menu
+        <ng-template africaniesCellDef="actions" let-row>
+          <africanies-action-menu
             [items]="rowActions(row)"
             [ariaLabel]="'Actions for ' + row.reference"
           />
         </ng-template>
 
-        <ng-template aiesRowDetail="Destination" let-row>
+        <ng-template africaniesRowDetail="Destination" let-row>
           <span class="font-medium">{{ row.destination }}</span>
         </ng-template>
 
-        <ng-template aiesRowDetail="Declared value" let-row>
+        <ng-template africaniesRowDetail="Declared value" let-row>
           <span class="tabular-nums">{{ formatUsd(row.valueUsd) }}</span>
         </ng-template>
 
-        <ng-template aiesRowDetail="Status" let-row>
-          <aies-chip [variant]="statusVariant(row.status)">{{ row.status }}</aies-chip>
+        <ng-template africaniesRowDetail="Status" let-row>
+          <africanies-chip [variant]="statusVariant(row.status)">{{ row.status }}</africanies-chip>
         </ng-template>
-      </aies-table>
+      </africanies-table>
   \`,
 })
 export class ShipmentListPageComponent {
@@ -142,7 +142,7 @@ export class ShipmentListPageComponent {
 
   protected readonly rowTrackBy = (row: Shipment) => row.reference;
 
-  protected rowActions(row: Shipment): AiesMenuItem[] {
+  protected rowActions(row: Shipment): AfricaniesMenuItem[] {
     return [
       {
         label: 'Open',
@@ -301,11 +301,11 @@ export class ShipmentListPageComponent {
 export /**
  *
  */
-const TABLE_COMPACT = `// Plain text columns only — no aiesCellDef needed; cells render String(row[key]).
+const TABLE_COMPACT = `// Plain text columns only — no africaniesCellDef needed; cells render String(row[key]).
 // Fine for small previews; skip AsyncState/pagination if the set is static.
 
 import { Component } from '@angular/core';
-import { TableComponent, type TableColumn } from '@aies/aies-ui';
+import { TableComponent, type TableColumn } from '@africanies/africanies-ui';
 
 interface Shipment {
   reference: string;
@@ -318,7 +318,7 @@ interface Shipment {
   standalone: true,
   imports: [TableComponent],
   template: \`
-    <aies-table [columns]="columns" [rows]="rows" />
+    <africanies-table [columns]="columns" [rows]="rows" />
   \`,
 })
 export class ShipmentCompactPreviewComponent {
@@ -343,14 +343,14 @@ const TABLE_CONTENT_STACK = `// Stacked title / subtitle / extra line. Drop into
 // The table row grows to fit — no extra layout work.
 
 import { Component } from '@angular/core';
-import { ContentStackComponent } from '@aies/aies-ui';
+import { ContentStackComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-packaged-by',
   standalone: true,
   imports: [ContentStackComponent],
   template: \`
-    <aies-content-stack
+    <africanies-content-stack
       title="Oladotun Adedeji"
       subtitle="oladotun.a@africanies.com"
       extraLine="Aug 14, 2026, 2:04:22 PM"

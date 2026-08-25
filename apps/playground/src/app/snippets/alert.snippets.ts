@@ -10,7 +10,7 @@ const ALERT_VARIANTS = `
 // Parent owns visibility. Not a toast, and not for full-page fetch failures.
 
 import { Component, signal } from '@angular/core';
-import { AlertComponent, ButtonComponent, type AlertVariant } from '@aies/aies-ui';
+import { AlertComponent, ButtonComponent, type AlertVariant } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-alert-demo',
@@ -19,7 +19,7 @@ import { AlertComponent, ButtonComponent, type AlertVariant } from '@aies/aies-u
   template: \`
     <div class="flex flex-col gap-3">
       @for (v of variants; track v) {
-        <aies-alert
+        <africanies-alert
           [variant]="v"
           [title]="titles[v]"
           [message]="messages[v]"
@@ -55,7 +55,7 @@ const ALERT_DISMISSIBLE = `
 // Set [dismissible]="false" when the notice has to stay.
 
 import { Component, signal } from '@angular/core';
-import { AlertComponent, ButtonComponent } from '@aies/aies-ui';
+import { AlertComponent, ButtonComponent } from '@africanies/africanies-ui';
 
 @Component({
   selector: 'app-alert-dismiss-demo',
@@ -63,14 +63,14 @@ import { AlertComponent, ButtonComponent } from '@aies/aies-ui';
   imports: [AlertComponent, ButtonComponent],
   template: \`
     @if (showBanner()) {
-      <aies-alert
+      <africanies-alert
         variant="warning"
         title="Rates outdated"
         message="Refresh to pull the latest carrier rates before quoting."
         (dismissed)="showBanner.set(false)"
       >
         <button
-          aies-button
+          africanies-button
           type="button"
           size="sm"
           class="mt-2"
@@ -78,15 +78,15 @@ import { AlertComponent, ButtonComponent } from '@aies/aies-ui';
         >
           Refresh rates
         </button>
-      </aies-alert>
+      </africanies-alert>
     } @else {
-      <button aies-button type="button" variant="secondary" size="sm" (click)="showBanner.set(true)">
+      <button africanies-button type="button" variant="secondary" size="sm" (click)="showBanner.set(true)">
         Show banner again
       </button>
     }
 
     <!-- Permanent notice — no close control -->
-    <aies-alert
+    <africanies-alert
       class="mt-4 block"
       variant="info"
       message="This environment is connected to the staging API."

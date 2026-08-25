@@ -11,14 +11,14 @@ import {
   signal,
 } from '@angular/core';
 
-import { AIES_SDK_CONFIG, AuthTokenService } from '@aies/aies-core';
-import { AiesIconComponent } from '@aies/aies-icons';
+import { AFRICANIES_SDK_CONFIG, AuthTokenService } from '@africanies/africanies-core';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   AlertComponent,
   ButtonComponent,
   TextareaComponent,
   ToastService,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 /** Same end-aligned placement as {@link ActionMenuComponent}. */
 const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
@@ -52,14 +52,14 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
     AlertComponent,
     ButtonComponent,
     TextareaComponent,
-    AiesIconComponent,
+    AfricaniesIconComponent,
     CdkOverlayOrigin,
     CdkConnectedOverlay,
   ],
   template: `
     <span class="inline-flex" cdkOverlayOrigin #triggerOrigin="cdkOverlayOrigin">
       <button
-        aies-button
+        africanies-button
         type="button"
         variant="secondary"
         size="sm"
@@ -78,7 +78,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
           aria-hidden="true"
         ></span>
         {{ hasToken() ? 'Connected' : 'API token' }}
-        <aies-icon
+        <africanies-icon
           name="chevron-down"
           [size]="12"
           class="shrink-0 text-neutral-500 transition-transform duration-200 dark:text-neutral-400"
@@ -116,7 +116,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
             <div
               class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background-welcome text-ink dark:bg-white/10 dark:text-white"
             >
-              <aies-icon name="key" [size]="16" />
+              <africanies-icon name="key" [size]="16" />
             </div>
             <div class="min-w-0">
               <h2
@@ -134,7 +134,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
             </div>
           </div>
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="ghost"
             size="sm"
@@ -142,20 +142,20 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
             aria-label="Close"
             (click)="closePanel()"
           >
-            <aies-icon name="close" [size]="16" />
+            <africanies-icon name="close" [size]="16" />
           </button>
         </div>
 
         <div class="flex flex-col gap-4 p-4">
           @if (hasToken()) {
-            <aies-alert
+            <africanies-alert
               variant="success"
               title="Token active"
               [message]="connectedMessage()"
               [dismissible]="false"
             />
           } @else {
-            <aies-alert
+            <africanies-alert
               variant="warning"
               title="Not connected"
               message="Live SDK calls (filter catalogs, user profile, …) need a bearer token from the test API."
@@ -164,9 +164,9 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
           }
 
           <div id="pg-access-token-desc" class="flex flex-col gap-3">
-            <aies-textarea
+            <africanies-textarea
               label="Access token"
-              hint="Paste access_token from login/register. Stored in localStorage as aies.accessToken."
+              hint="Paste access_token from login/register. Stored in localStorage as africanies.accessToken."
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
               [rows]="3"
               [(value)]="draft"
@@ -184,7 +184,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
           class="flex items-center justify-between gap-2 border-t border-border bg-background-welcome px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]"
         >
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="ghost"
             size="sm"
@@ -194,7 +194,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
             Clear token
           </button>
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="primary"
             size="sm"
@@ -210,7 +210,7 @@ const TOKEN_PANEL_POSITIONS: ConnectedPosition[] = [
 })
 export class PlaygroundAccessTokenComponent {
   private readonly auth = inject(AuthTokenService);
-  private readonly sdkConfig = inject(AIES_SDK_CONFIG);
+  private readonly sdkConfig = inject(AFRICANIES_SDK_CONFIG);
   private readonly toast = inject(ToastService);
 
   protected readonly panelPositions = TOKEN_PANEL_POSITIONS;

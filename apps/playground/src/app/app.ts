@@ -15,19 +15,19 @@ import {
   NotificationService,
   ShippingModeService,
   UserService,
-} from '@aies/aies-core';
-import { AiesIconComponent } from '@aies/aies-icons';
+} from '@africanies/africanies-core';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import {
   NOTIFICATION_PAGE_SIZE,
   type NotificationModel,
   type ShippingMode,
   type UserModel,
-} from '@aies/aies-models';
-import { ThemeService } from '@aies/aies-theme';
+} from '@africanies/africanies-models';
+import { ThemeService } from '@africanies/africanies-theme';
 import {
-  type AiesMenuItem,
-  type AiesNotification,
-  type AiesSideNavItem,
+  type AfricaniesMenuItem,
+  type AfricaniesNotification,
+  type AfricaniesSideNavItem,
   AppShellComponent,
   AppShellHeaderComponent,
   AppShellHeaderEndDirective,
@@ -38,7 +38,7 @@ import {
   type NotificationPageResult,
   SideNavComponent,
   ToastService,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { PlaygroundAccessTokenComponent } from './shared/playground-access-token.component';
 
@@ -55,7 +55,7 @@ import { PlaygroundAccessTokenComponent } from './shared/playground-access-token
     AppShellHeaderEndDirective,
     SideNavComponent,
     ButtonComponent,
-    AiesIconComponent,
+    AfricaniesIconComponent,
     PlaygroundAccessTokenComponent,
   ],
   templateUrl: './app.html',
@@ -74,7 +74,7 @@ export class App {
   protected readonly themeMode = this.theme.theme;
   protected readonly shippingMode = this.shipping.mode;
   protected readonly navCollapsed = signal(false);
-  protected readonly notifications = signal<AiesNotification[]>([]);
+  protected readonly notifications = signal<AfricaniesNotification[]>([]);
   protected readonly profile = signal<UserModel | null>(null);
 
   protected readonly greetingName = computed(
@@ -90,7 +90,7 @@ export class App {
       .pipe(
         switchMap((token) => {
           if (!token) {
-            return of([] as AiesNotification[]);
+            return of([] as AfricaniesNotification[]);
           }
           return this.notificationsApi
             .readPage({
@@ -104,7 +104,7 @@ export class App {
                 ? this.mapNotificationRows(res.data)
                 : [],
             ),
-            catchError(() => of([] as AiesNotification[])),
+            catchError(() => of([] as AfricaniesNotification[])),
           );
         }),
         takeUntilDestroyed(),
@@ -160,7 +160,7 @@ export class App {
       }),
     );
 
-  private mapNotificationRows(rows: NotificationModel[]): AiesNotification[] {
+  private mapNotificationRows(rows: NotificationModel[]): AfricaniesNotification[] {
     return rows.map((row) => {
       const item = mapNotificationInboxItem(row);
       return {
@@ -172,7 +172,7 @@ export class App {
         link: item.link,
         externalLink: item.external_link,
         image: item.image,
-      } satisfies AiesNotification;
+      } satisfies AfricaniesNotification;
     });
   }
 
@@ -205,7 +205,7 @@ export class App {
     return trail[trail.length - 1]?.label ?? 'Playground';
   });
 
-  protected readonly accountMenu: AiesMenuItem[] = [
+  protected readonly accountMenu: AfricaniesMenuItem[] = [
     {
       label: 'Profile',
       icon: 'user',
@@ -225,7 +225,7 @@ export class App {
     },
   ];
 
-  protected readonly navItems: AiesSideNavItem[] = [
+  protected readonly navItems: AfricaniesSideNavItem[] = [
     { id: 'overview', label: 'Overview', icon: 'home', routerLink: '/overview' },
     {
       id: 'components',

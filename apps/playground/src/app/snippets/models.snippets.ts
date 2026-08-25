@@ -1,4 +1,4 @@
-// @aies/aies-models copy-paste examples.
+// @africanies/africanies-models copy-paste examples.
 
 export /**
  *
@@ -16,7 +16,7 @@ import type {
   ResourceId,
   ShippingMode,
   ModeConfigDataModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 `;
 
 export /**
@@ -26,8 +26,8 @@ const MODELS_API_RESPONSE = `// Canonical ApiClient envelope. Fields are T | nul
 // res.success === false is a failure even on HTTP 200; pagination may be null on detail GETs.
 
 import { inject } from '@angular/core';
-import { ApiClient } from '@aies/aies-core';
-import type { ApiErrorDetailModel, ApiResponseModel } from '@aies/aies-models';
+import { ApiClient } from '@africanies/africanies-core';
+import type { ApiErrorDetailModel, ApiResponseModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 interface Shipment {
@@ -69,20 +69,20 @@ const MODELS_PAGINATION = `// ResourceId list GET convention (all list-style end
 //   null  → paginated   api.getResourcePage('shipments', { page, size })
 //   'all' → full dump   api.getResourceAll('shipments')
 //   42    → one record  api.getResourceById('shipments', 42)
-// Bind res.pagination to aies-pagination [meta] on paginated calls.
+// Bind res.pagination to africanies-pagination [meta] on paginated calls.
 
 import { Component, inject, signal } from '@angular/core';
-import { ApiClient } from '@aies/aies-core';
+import { ApiClient } from '@africanies/africanies-core';
 import type {
   ApiResponseModel,
   PaginationMetaModel,
   PaginationQueryParamsModel,
   ResourceId,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 import {
   DEFAULT_PAGE_SIZE,
   PaginationComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 import { firstValueFrom } from 'rxjs';
 
 interface Shipment {
@@ -95,7 +95,7 @@ interface Shipment {
   imports: [PaginationComponent],
   template: \`
     @if (meta(); as pager) {
-      <aies-pagination
+      <africanies-pagination
         [meta]="pager"
         (pageChange)="onPageChange($event)"
         (sizeChange)="onSizeChange($event)"
@@ -149,13 +149,13 @@ export class ShipmentListComponent {
 export /**
  *
  */
-const MODELS_ASYNC_STATE = `// Map fetch signals into AsyncQueryStateModel for aies-async-state.
+const MODELS_ASYNC_STATE = `// Map fetch signals into AsyncQueryStateModel for africanies-async-state.
 // isLoading = first paint; isFetching = background refresh. Keep data undefined until first success.
 
 import { Component, computed, inject, signal } from '@angular/core';
-import { ApiClient } from '@aies/aies-core';
-import type { AsyncQueryStateModel } from '@aies/aies-models';
-import { AsyncStateComponent } from '@aies/aies-ui';
+import { ApiClient } from '@africanies/africanies-core';
+import type { AsyncQueryStateModel } from '@africanies/africanies-models';
+import { AsyncStateComponent } from '@africanies/africanies-ui';
 import { firstValueFrom } from 'rxjs';
 
 interface Shipment {
@@ -167,11 +167,11 @@ interface Shipment {
   standalone: true,
   imports: [AsyncStateComponent],
   template: \`
-    <aies-async-state [state]="listState()" (retry)="refetch()">
+    <africanies-async-state [state]="listState()" (retry)="refetch()">
       @for (row of listState().data ?? []; track row.reference) {
         <p>{{ row.reference }}</p>
       }
-    </aies-async-state>
+    </africanies-async-state>
   \`,
 })
 export class ShipmentAsyncListComponent {
@@ -233,8 +233,8 @@ const MODELS_SHIPPING_MODE = `// 'stn' | 'sfn' literals for theme + HTTP. Read/s
 // One-off API call in the other mode? Pass shippingMode — tab mode stays unchanged.
 
 import { Component, inject } from '@angular/core';
-import { ApiClient, ShippingModeService } from '@aies/aies-core';
-import type { ShippingMode } from '@aies/aies-models';
+import { ApiClient, ShippingModeService } from '@africanies/africanies-core';
+import type { ShippingMode } from '@africanies/africanies-models';
 
 @Component({
   selector: 'app-mode-switcher',
@@ -269,11 +269,11 @@ export class ModeSwitcherComponent {
 export /**
  *
  */
-const MODELS_MODE_CONFIG = `// Region currency/units from ModeConfigService — loads with provideAiesSdk.
+const MODELS_MODE_CONFIG = `// Region currency/units from ModeConfigService — loads with provideAfricaniesSdk.
 // Call getRegionConfig(countryCode); don't hard-code maps in feature code.
 
 import { Component, inject } from '@angular/core';
-import { ModeConfigService, ShippingModeService } from '@aies/aies-core';
+import { ModeConfigService, ShippingModeService } from '@africanies/africanies-core';
 
 @Component({
   selector: 'app-shipment-summary',
@@ -299,7 +299,7 @@ export class ShipmentSummaryComponent {
 }
 
 // app.config.ts
-// provideAiesSdk({
+// provideAfricaniesSdk({
 //   baseUrl: 'https://test-api-export.africaniestest.com/api',
 //   // loadModeConfig: true by default — GET /public/mode/config on startup
 // }),
@@ -312,8 +312,8 @@ const MODELS_COUNTRY = `// Countries — GET /public/country/read/{id?} (Resourc
 // readPage() → CountryModel[] · readAll() → CountryModel[] · readById(n) → CountryModel
 
 import { Component, inject, signal } from '@angular/core';
-import { CountryService } from '@aies/aies-core';
-import type { CountryModel } from '@aies/aies-models';
+import { CountryService } from '@africanies/africanies-core';
+import type { CountryModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -346,8 +346,8 @@ export /**
 const MODELS_SERVICE = `// Services — GET /public/service/read/{id?} (ResourceId).
 
 import { Component, inject, signal } from '@angular/core';
-import { ServiceService } from '@aies/aies-core';
-import type { ServiceModel } from '@aies/aies-models';
+import { ServiceService } from '@africanies/africanies-core';
+import type { ServiceModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -379,8 +379,8 @@ export /**
 const MODELS_DOCUMENT = `// Documents — GET /public/document/read/{id?} (ResourceId).
 
 import { Component, inject, signal } from '@angular/core';
-import { DocumentService } from '@aies/aies-core';
-import type { DocumentModel } from '@aies/aies-models';
+import { DocumentService } from '@africanies/africanies-core';
+import type { DocumentModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -411,8 +411,8 @@ export /**
 const MODELS_PLAN = `// Plans — GET /public/plan/read/{id?} (ResourceId).
 
 import { Component, inject, signal } from '@angular/core';
-import { PlanService } from '@aies/aies-core';
-import type { PlanModel } from '@aies/aies-models';
+import { PlanService } from '@africanies/africanies-core';
+import type { PlanModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -446,8 +446,8 @@ const MODELS_CURRENCY = `// Currencies — GET /currency/read/{id?} (ResourceId)
 // Flags on GET are boolean; create/update accept boolean or "1"/"0".
 
 import { Component, inject, signal } from '@angular/core';
-import { CurrencyService } from '@aies/aies-core';
-import type { CurrencyModel } from '@aies/aies-models';
+import { CurrencyService } from '@africanies/africanies-core';
+import type { CurrencyModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -486,11 +486,11 @@ const MODELS_PAYMENT_METHOD = `// Payment methods — GET /payment_method/read/{
 // readAll() → PaymentMethodModel[] · readById(n) → PaymentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
-import { PaymentMethodService } from '@aies/aies-core';
+import { PaymentMethodService } from '@africanies/africanies-core';
 import type {
   PaymentMethodModel,
   PaymentMethodUpdateRequestModel,
-} from '@aies/aies-models';
+} from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -539,8 +539,8 @@ const MODELS_SHIPMENT_METHOD = `// Carriers — GET /shipment_method/read/{id?} 
 // readPage() · readAll() · readById(n) → single ShipmentMethodModel
 
 import { Component, inject, signal } from '@angular/core';
-import { ShipmentMethodService } from '@aies/aies-core';
-import type { ShipmentMethodModel } from '@aies/aies-models';
+import { ShipmentMethodService } from '@africanies/africanies-core';
+import type { ShipmentMethodModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -572,8 +572,8 @@ export /**
 const MODELS_WAREHOUSE = `// Warehouses — GET /warehouse/read/{id?} (ResourceId). Nested country reuses CountryModel.
 
 import { Component, inject, signal } from '@angular/core';
-import { WarehouseService } from '@aies/aies-core';
-import type { WarehouseModel } from '@aies/aies-models';
+import { WarehouseService } from '@africanies/africanies-core';
+import type { WarehouseModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -605,8 +605,8 @@ export /**
 const MODELS_ZONE = `// Zones — GET /zone/read/records/{id?} (ResourceId).
 
 import { Component, inject, signal } from '@angular/core';
-import { ZoneService } from '@aies/aies-core';
-import type { ZoneModel } from '@aies/aies-models';
+import { ZoneService } from '@africanies/africanies-core';
+import type { ZoneModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -638,8 +638,8 @@ export /**
 const MODELS_USER = `// Current user — bare GET /user (no envelope). UserService.me() → UserModel (snake_case).
 
 import { Component, inject, signal } from '@angular/core';
-import { UserService } from '@aies/aies-core';
-import type { UserModel } from '@aies/aies-models';
+import { UserService } from '@africanies/africanies-core';
+import type { UserModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -670,8 +670,8 @@ export /**
 const MODELS_PRODUCT = `// Products — GET /product/read/{id?} (ResourceId).
 
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ProductService } from '@aies/aies-core';
-import type { ProductModel } from '@aies/aies-models';
+import { ProductService } from '@africanies/africanies-core';
+import type { ProductModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -704,8 +704,8 @@ const MODELS_FILE = `// File read — POST /file/read with { ref }.
 // data is a single FileReadModel (not a list / not paginated).
 
 import { Component, inject, signal } from '@angular/core';
-import { FileService } from '@aies/aies-core';
-import type { FileReadModel } from '@aies/aies-models';
+import { FileService } from '@africanies/africanies-core';
+import type { FileReadModel } from '@africanies/africanies-models';
 import { firstValueFrom } from 'rxjs';
 
 @Component({

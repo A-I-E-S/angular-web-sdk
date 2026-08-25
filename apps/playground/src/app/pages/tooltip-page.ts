@@ -6,7 +6,7 @@ import {
   TextInputComponent,
   TooltipComponent,
   TooltipTriggerDirective,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -47,7 +47,7 @@ import {
             >CDK</a
           >
           connected overlay (same pattern as select / action menu). Default info
-          icon, or mark your own element with aiesTooltipTrigger. Opens on hover,
+          icon, or mark your own element with africaniesTooltipTrigger. Opens on hover,
           focus, and click/tap.
         </p>
       </app-page-header>
@@ -61,13 +61,13 @@ import {
         <div class="flex flex-wrap items-center gap-6">
           <div class="inline-flex items-center gap-1.5 text-body text-ink dark:text-white">
             Insured
-            <aies-tooltip
+            <africanies-tooltip
               text="Coverage against loss or damage while the shipment is in transit."
             />
           </div>
           <div class="inline-flex items-center gap-1.5 text-body text-ink dark:text-white">
             API request
-            <aies-tooltip
+            <africanies-tooltip
               text="Created through the public shipping API rather than the portal UI."
               icon="question-circle"
               ariaLabel="About API request"
@@ -78,21 +78,21 @@ import {
 
       <app-demo-section
         title="Custom trigger"
-        hint="When you need a text link or button instead of the info icon, put aiesTooltipTrigger on that control."
+        hint="When you need a text link or button instead of the info icon, put africaniesTooltipTrigger on that control."
         subtext="Use a focusable trigger (button or link) so keyboard users can open it."
         [code]="customTriggerCode"
       >
-        <aies-tooltip text="Required when the declared value exceeds $2,000.">
+        <africanies-tooltip text="Required when the declared value exceeds $2,000.">
           <button
             type="button"
-            aies-button
-            aiesTooltipTrigger
+            africanies-button
+            africaniesTooltipTrigger
             variant="ghost"
             size="sm"
           >
             Why is this required?
           </button>
-        </aies-tooltip>
+        </africanies-tooltip>
       </app-demo-section>
 
       <app-demo-section
@@ -102,10 +102,10 @@ import {
         [code]="placementCode"
       >
         <div class="flex flex-wrap items-center gap-8 py-6">
-          <aies-tooltip text="Opens above when possible." placement="top" />
-          <aies-tooltip text="Opens below when possible." placement="bottom" />
-          <aies-tooltip text="Opens to the left." placement="left" />
-          <aies-tooltip text="Opens to the right." placement="right" />
+          <africanies-tooltip text="Opens above when possible." placement="top" />
+          <africanies-tooltip text="Opens below when possible." placement="bottom" />
+          <africanies-tooltip text="Opens to the left." placement="left" />
+          <africanies-tooltip text="Opens to the right." placement="right" />
         </div>
       </app-demo-section>
 
@@ -120,13 +120,13 @@ import {
             <span class="text-body-sm font-medium text-ink dark:text-white">
               Tracking number
             </span>
-            <aies-tooltip
+            <africanies-tooltip
               text="Carrier AWB or internal shipment reference used on the warehouse floor."
               icon="question-circle"
               ariaLabel="About tracking number"
             />
           </div>
-          <aies-text-input
+          <africanies-text-input
             label=""
             placeholder="SFN-…"
             [value]="tracking()"

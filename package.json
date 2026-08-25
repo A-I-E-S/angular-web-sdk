@@ -1,5 +1,5 @@
 {
-  "name": "@aies/aies-web-sdk",
+  "name": "@africanies/africanies-web-sdk",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -7,7 +7,7 @@
     "icons:build": "node tools/build-icon-sprite.mjs",
     "lint": "nx run-many -t lint",
     "test": "nx run-many -t test",
-    "build": "nx run-many -t build --projects=aies-models,aies-storage,aies-core,aies-theme,aies-icons,aies-ui",
+    "build": "nx run-many -t build --projects=africanies-models,africanies-storage,africanies-core,africanies-theme,africanies-icons,africanies-ui",
     "docs:coverage": "node tools/check-doc-coverage.mjs",
     "audit": "pnpm audit",
     "release": "nx release",

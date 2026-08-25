@@ -67,7 +67,7 @@
     }
   },
   "release": {
-    "projects": ["aies-models", "aies-storage", "aies-core", "aies-theme", "aies-icons", "aies-ui"],
+    "projects": ["africanies-models", "africanies-storage", "africanies-core", "africanies-theme", "africanies-icons", "africanies-ui"],
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true,
@@ -75,7 +75,7 @@
     },
     "version": {
       "conventionalCommits": true,
-      "preVersionCommand": "npx nx run-many -t build --projects=aies-models,aies-storage,aies-core,aies-theme,aies-icons,aies-ui"
+      "preVersionCommand": "npx nx run-many -t build --projects=africanies-models,africanies-storage,africanies-core,africanies-theme,africanies-icons,africanies-ui"
     }
   }
 }

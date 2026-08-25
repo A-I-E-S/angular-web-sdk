@@ -10,8 +10,8 @@ import {
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
-import { AiesIconComponent } from '@aies/aies-icons';
-import { ButtonComponent, CopyButtonComponent } from '@aies/aies-ui';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+import { ButtonComponent, CopyButtonComponent } from '@africanies/africanies-ui';
 
 import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
 
@@ -23,7 +23,7 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
 @Component({
   selector: 'app-demo-section',
   standalone: true,
-  imports: [ButtonComponent, AiesIconComponent, CopyButtonComponent],
+  imports: [ButtonComponent, AfricaniesIconComponent, CopyButtonComponent],
   template: `
     <section
       class="flex flex-col gap-4"
@@ -51,7 +51,7 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
 
         @if (hasCode()) {
           <button
-            aies-button
+            africanies-button
             type="button"
             variant="ghost"
             size="sm"
@@ -59,7 +59,7 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
             [attr.aria-expanded]="codeOpen()"
             (click)="toggleCode()"
           >
-            <aies-icon [name]="codeOpen() ? 'close' : 'code'" [size]="14" />
+            <africanies-icon [name]="codeOpen() ? 'close' : 'code'" [size]="14" />
             {{ codeOpen() ? 'Hide code' : 'Show code' }}
           </button>
         }
@@ -86,7 +86,7 @@ import { highlightSnippetWithGlossary } from '../lecture/link-glossary-terms';
               Implementation
               <span class="ml-2 normal-case tracking-normal text-white/35">TypeScript</span>
             </span>
-            <aies-copy
+            <africanies-copy
               [value]="code()!"
               label="Copy"
               buttonClass="!text-white/80 hover:!bg-white/10 hover:!text-white"

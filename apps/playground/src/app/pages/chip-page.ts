@@ -4,7 +4,7 @@ import {
   ChipComponent,
   type ChipSize,
   type ChipVariant,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -33,7 +33,7 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
       >
         <div class="flex flex-wrap items-center gap-2">
           @for (v of variants; track v) {
-            <aies-chip [variant]="v">{{ labels[v] }}</aies-chip>
+            <africanies-chip [variant]="v">{{ labels[v] }}</africanies-chip>
           }
         </div>
       </app-demo-section>
@@ -46,21 +46,21 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
         <div class="flex flex-col gap-4">
           <div class="flex flex-wrap items-center gap-2">
             @for (s of sizes; track s) {
-              <aies-chip variant="export" [size]="s">Size {{ s }}</aies-chip>
-              <aies-chip variant="import" [size]="s">Size {{ s }}</aies-chip>
+              <africanies-chip variant="export" [size]="s">Size {{ s }}</africanies-chip>
+              <africanies-chip variant="import" [size]="s">Size {{ s }}</africanies-chip>
             }
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <aies-chip variant="warning" icon="clock">Pending review</aies-chip>
-            <aies-chip variant="success" icon="check-circle">Verified</aies-chip>
+            <africanies-chip variant="warning" icon="clock">Pending review</africanies-chip>
+            <africanies-chip variant="success" icon="check-circle">Verified</africanies-chip>
             @for (tag of removableTags(); track tag) {
-              <aies-chip
+              <africanies-chip
                 [variant]="tag.variant"
                 [removable]="true"
                 (removed)="removeTag(tag.id)"
               >
                 {{ tag.label }}
-              </aies-chip>
+              </africanies-chip>
             }
             @if (removableTags().length === 0) {
               <button
@@ -81,10 +81,10 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
         [code]="tableCode"
       >
         <div class="flex flex-wrap items-center gap-2">
-          <aies-chip variant="success">Delivered</aies-chip>
-          <aies-chip variant="import">In transit</aies-chip>
-          <aies-chip variant="warning">Pending</aies-chip>
-          <aies-chip variant="danger">Exception</aies-chip>
+          <africanies-chip variant="success">Delivered</africanies-chip>
+          <africanies-chip variant="import">In transit</africanies-chip>
+          <africanies-chip variant="warning">Pending</africanies-chip>
+          <africanies-chip variant="danger">Exception</africanies-chip>
         </div>
       </app-demo-section>
     </div>

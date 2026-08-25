@@ -3,12 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
 
-import { AuthService, isValidEmail } from '@aies/aies-core';
+import { AuthService, isValidEmail } from '@africanies/africanies-core';
 import {
   AlertComponent,
   ButtonComponent,
   TextInputComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../../shared/demo-section.component';
 import { PageHeaderComponent } from '../../shared/page-header.component';
@@ -45,7 +45,7 @@ import { USECASE_ONBOARDING_FORGOT } from '../../snippets';
       >
         @if (successMessage(); as ok) {
           <div class="flex flex-col gap-4">
-            <aies-alert variant="success" [message]="ok" [dismissible]="false" />
+            <africanies-alert variant="success" [message]="ok" [dismissible]="false" />
             <a
               routerLink="/usecases/onboarding/login"
               class="cursor-pointer text-body-sm font-medium text-ink underline-offset-2 hover:underline dark:text-white"
@@ -59,9 +59,9 @@ import { USECASE_ONBOARDING_FORGOT } from '../../snippets';
             (submit)="$event.preventDefault(); forgot()"
           >
             @if (errorMessage(); as err) {
-              <aies-alert variant="danger" [message]="err" [dismissible]="false" />
+              <africanies-alert variant="danger" [message]="err" [dismissible]="false" />
             }
-            <aies-text-input
+            <africanies-text-input
               type="email"
               label="Email"
               hint="We will send you a password reset link."
@@ -69,7 +69,7 @@ import { USECASE_ONBOARDING_FORGOT } from '../../snippets';
               [(value)]="email"
             />
             <button
-              aies-button
+              africanies-button
               type="submit"
               variant="primary"
               [loading]="sending()"

@@ -4,7 +4,7 @@ import {
   AlertComponent,
   type AlertVariant,
   ButtonComponent,
-} from '@aies/aies-ui';
+} from '@africanies/africanies-ui';
 
 import { DemoSectionComponent } from '../shared/demo-section.component';
 import { PageHeaderComponent } from '../shared/page-header.component';
@@ -38,7 +38,7 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
       >
         <div class="flex flex-col gap-3">
           @for (v of variants; track v) {
-            <aies-alert
+            <africanies-alert
               [variant]="v"
               [title]="titles[v]"
               [message]="messages[v]"
@@ -55,14 +55,14 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
       >
         <div class="flex flex-col gap-4">
           @if (showBanner()) {
-            <aies-alert
+            <africanies-alert
               variant="warning"
               title="Rates outdated"
               message="Refresh to pull the latest carrier rates before quoting."
               (dismissed)="showBanner.set(false)"
             >
               <button
-                aies-button
+                africanies-button
                 type="button"
                 size="sm"
                 class="mt-2"
@@ -70,10 +70,10 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
               >
                 Refresh rates
               </button>
-            </aies-alert>
+            </africanies-alert>
           } @else {
             <button
-              aies-button
+              africanies-button
               type="button"
               variant="secondary"
               size="sm"
@@ -83,7 +83,7 @@ import { ALERT_DISMISSIBLE, ALERT_VARIANTS } from '../snippets';
             </button>
           }
 
-          <aies-alert
+          <africanies-alert
             variant="info"
             message="This environment is connected to the staging API."
             [dismissible]="false"

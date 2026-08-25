@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { ButtonComponent, TextInputComponent } from '@aies/aies-ui';
+import { ButtonComponent, TextInputComponent } from '@africanies/africanies-ui';
 
 import { PageHeaderComponent } from '../../shared/page-header.component';
 
@@ -30,13 +30,13 @@ import { PageHeaderComponent } from '../../shared/page-header.component';
         class="flex flex-col gap-4 rounded-xl border border-border bg-white p-6 dark:border-white/10 dark:bg-ink"
         (submit)="$event.preventDefault()"
       >
-        <aies-text-input
+        <africanies-text-input
           type="email"
           label="Email"
           autocomplete="email"
           [(value)]="email"
         />
-        <aies-text-input
+        <africanies-text-input
           type="password"
           label="Password"
           autocomplete="current-password"
@@ -50,7 +50,7 @@ import { PageHeaderComponent } from '../../shared/page-header.component';
             Forgot Password?
           </a>
         </div>
-        <button aies-button type="submit" variant="primary">Sign in</button>
+        <button africanies-button type="submit" variant="primary">Sign in</button>
         <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
           After a real login, if
           <code class="font-mono">user.default_password</code>

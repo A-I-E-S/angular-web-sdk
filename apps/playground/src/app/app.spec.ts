@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { provideAiesHttpClient, provideAiesSdk } from '@aies/aies-core';
-import { provideAiesUiOverlays } from '@aies/aies-ui';
+import { provideAfricaniesHttpClient, provideAfricaniesSdk } from '@africanies/africanies-core';
+import { provideAfricaniesUiOverlays } from '@africanies/africanies-ui';
 
 import { App } from './app';
 import { appRoutes } from './app.routes';
@@ -13,9 +13,9 @@ describe('App', () => {
       imports: [App],
       providers: [
         provideRouter(appRoutes),
-        provideAiesSdk({ baseUrl: 'https://example.invalid' }),
-        provideAiesHttpClient(),
-        provideAiesUiOverlays(),
+        provideAfricaniesSdk({ baseUrl: 'https://example.invalid' }),
+        provideAfricaniesHttpClient(),
+        provideAfricaniesUiOverlays(),
       ],
     }).compileComponents();
   });
@@ -24,7 +24,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('aies-app-shell')).toBeTruthy();
+    expect(compiled.querySelector('africanies-app-shell')).toBeTruthy();
     expect(compiled.textContent).toContain('Playground');
     expect(compiled.textContent).toContain('Import');
     expect(compiled.textContent).toContain('Export');

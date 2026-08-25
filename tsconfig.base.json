@@ -15,12 +15,12 @@
     "skipDefaultLibCheck": true,
     "strict": false,
     "paths": {
-      "@aies/aies-models": ["./libs/aies-models/src/index.ts"],
-      "@aies/aies-storage": ["./libs/aies-storage/src/index.ts"],
-      "@aies/aies-core": ["./libs/aies-core/src/index.ts"],
-      "@aies/aies-theme": ["./libs/aies-theme/src/index.ts"],
-      "@aies/aies-icons": ["./libs/aies-icons/src/index.ts"],
-      "@aies/aies-ui": ["./libs/aies-ui/src/index.ts"]
+      "@africanies/africanies-models": ["./libs/africanies-models/src/index.ts"],
+      "@africanies/africanies-storage": ["./libs/africanies-storage/src/index.ts"],
+      "@africanies/africanies-core": ["./libs/africanies-core/src/index.ts"],
+      "@africanies/africanies-theme": ["./libs/africanies-theme/src/index.ts"],
+      "@africanies/africanies-icons": ["./libs/africanies-icons/src/index.ts"],
+      "@africanies/africanies-ui": ["./libs/africanies-ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
