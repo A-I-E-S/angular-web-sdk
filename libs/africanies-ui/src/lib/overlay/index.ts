@@ -9,8 +9,8 @@ export { ConfirmService } from './confirm.service';
 export { ConfirmDialogComponent } from './confirm-dialog.component';
 export type { ConfirmOptions, ConfirmWork } from './confirm-options';
 export { DrawerService } from './drawer.service';
-export { ModalService, type ModalOpenConfig } from './modal.service';
-export { type ModalSize, MODAL_SIZE_PANEL_CLASS } from './modal-size';
+export { type ModalOpenConfig,ModalService } from './modal.service';
+export { MODAL_SIZE_PANEL_CLASS,type ModalSize } from './modal-size';
 export type { OverlayOpenConfig } from './overlay-attach';
 export { OVERLAY_DATA } from './overlay-data.token';
 export {

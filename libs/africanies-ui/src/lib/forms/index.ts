@@ -28,21 +28,21 @@ export { NumberInputComponent } from './number-input';
 export { OtpInputComponent, type OtpInputVariant } from './otp-input';
 export { RadioComponent, type RadioOption } from './radio';
 export {
-  SelectComponent,
-  type SelectCreateConfig,
-  type SelectOption,
-  type SelectSize,
-} from './select';
-export {
-  SearchComboboxComponent,
   type SearchComboboxBadge,
   type SearchComboboxBadgeFn,
+  SearchComboboxComponent,
   type SearchComboboxLabelFn,
   type SearchComboboxMarkFn,
   type SearchComboboxSearchFn,
   type SearchComboboxSubtitleFn,
   type SearchComboboxTrackFn,
 } from './search-combobox';
+export {
+  SelectComponent,
+  type SelectCreateConfig,
+  type SelectOption,
+  type SelectSize,
+} from './select';
 export { TextInputComponent, type TextInputType } from './text-input';
 export { TextareaComponent } from './textarea';
 export { ToggleComponent } from './toggle';

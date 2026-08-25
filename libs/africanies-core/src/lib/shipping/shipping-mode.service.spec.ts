@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
+import { of } from 'rxjs';
+
 import {
   AFRICANIES_SHIPPING_MODE_KEY,
   SessionStorageService,
 } from '@africanies/africanies-storage';
-
-import { of } from 'rxjs';
 
 import { ApiClient } from '../http/api-client';
 import { ShippingModeService } from './shipping-mode.service';

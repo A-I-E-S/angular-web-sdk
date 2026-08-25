@@ -1,12 +1,12 @@
 import type { HttpContext } from '@angular/common/http';
 
 import type { AfricaniesSdkHttpToasts } from '../config/africanies-sdk.config';
-import type { ApiRequestOptions } from './api-client';
-import { resolveHttpToastContext } from './resolve-http-toast-context';
 import {
   asShippingMode,
   withShippingMode,
 } from '../shipping/shipping-mode.context';
+import type { ApiRequestOptions } from './api-client';
+import { resolveHttpToastContext } from './resolve-http-toast-context';
 
 /**
  * Build {@link HttpContext} for an {@link ApiClient} request.
@@ -16,6 +16,7 @@ import {
  *
  * @param configMode - From {@link AfricaniesSdkConfig.httpToasts}.
  * @param options - Per-request {@link ApiClient} options.
+ * @param method
  */
 export function resolveApiRequestContext(
   configMode: AfricaniesSdkHttpToasts | undefined,

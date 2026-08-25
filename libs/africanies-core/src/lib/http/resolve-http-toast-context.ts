@@ -6,6 +6,9 @@ import {
   withToast,
 } from './toast-http.context';
 
+/**
+ *
+ */
 export type HttpToastMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | string;
 
 /**

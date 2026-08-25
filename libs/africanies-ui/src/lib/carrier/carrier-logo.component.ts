@@ -8,6 +8,9 @@ import {
 /** Known inbound / last-mile carrier slugs with bundled SVG marks. */
 export type CarrierLogoSlug = 'dhl';
 
+/**
+ *
+ */
 export type CarrierLogoSize = 'sm' | 'md';
 
 /**

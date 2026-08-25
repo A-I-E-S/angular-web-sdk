@@ -1,9 +1,9 @@
+import { SHIPPING_MODE_OVERRIDE } from '../shipping/shipping-mode.context';
 import type { ApiRequestOptions } from './api-client';
 import {
   resolveApiRequestContext,
   resolveRequestShippingMode,
 } from './resolve-api-request-context';
-import { SHIPPING_MODE_OVERRIDE } from '../shipping/shipping-mode.context';
 import { TOAST_HTTP_OPTIONS } from './toast-http.context';
 
 describe('resolveApiRequestContext', () => {

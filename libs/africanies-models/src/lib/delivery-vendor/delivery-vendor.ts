@@ -2,7 +2,10 @@
  * Hardcoded inbound delivery vendor slugs — same values as legacy portal forms (no API).
  */
 
-export const DELIVERY_VENDORS = [
+export /**
+ *
+ */
+const DELIVERY_VENDORS = [
   { id: 'amazon', name: 'Amazon' },
   { id: 'dhl', name: 'DHL' },
   { id: 'fedex', name: 'FedEx' },
@@ -11,6 +14,9 @@ export const DELIVERY_VENDORS = [
   { id: 'others', name: 'Others' },
 ] as const;
 
+/**
+ *
+ */
 export type DeliveryVendorId = (typeof DELIVERY_VENDORS)[number]['id'];
 
 /** Export box editor only — not used on inbound receive/edit forms. */
@@ -19,6 +25,9 @@ export const EXPORT_DELIVERY_VENDORS = [
   { id: 'walk-in', name: 'Walk-In' },
 ] as const;
 
+/**
+ *
+ */
 export type ExportDeliveryVendorId =
   (typeof EXPORT_DELIVERY_VENDORS)[number]['id'];
 
@@ -38,10 +47,18 @@ const VENDOR_LABELS = Object.fromEntries(
   DELIVERY_VENDORS.map((row) => [row.id, row.name]),
 ) as Record<DeliveryVendorId, string>;
 
+/**
+ *
+ * @param value
+ */
 export function normalizeDeliveryVendor(value: string): string {
   return value.trim().toLowerCase();
 }
 
+/**
+ *
+ * @param value
+ */
 export function isKnownDeliveryVendor(
   value: string | null | undefined,
 ): boolean {
@@ -52,7 +69,10 @@ export function isKnownDeliveryVendor(
   return DELIVERY_VENDORS.some((vendor) => vendor.id === normalized);
 }
 
-/** Lowercase known ids; keep raw string for legacy/custom stored values. */
+/**
+ * Lowercase known ids; keep raw string for legacy/custom stored values.
+ * @param value
+ */
 export function normalizeDeliveryVendorForForm(
   value: string | null | undefined,
 ): string {
@@ -67,6 +87,10 @@ export function normalizeDeliveryVendorForForm(
   return raw;
 }
 
+/**
+ *
+ * @param value
+ */
 export function deliveryVendorLabel(value: string): string {
   const normalized = normalizeDeliveryVendor(value);
   if (!normalized || normalized === 'others') {

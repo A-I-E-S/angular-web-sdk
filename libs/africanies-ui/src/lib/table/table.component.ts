@@ -634,7 +634,10 @@ export class TableComponent<T = unknown> {
     return this.cellTemplateMap().get(key) ?? null;
   }
 
-  /** Resolves the projected header template for a column key, if any. */
+  /**
+   * Resolves the projected header template for a column key, if any.
+   * @param key
+   */
   protected headerTemplateFor(key: string): TemplateRef<unknown> | null {
     return this.headerCellTemplateMap().get(key) ?? null;
   }

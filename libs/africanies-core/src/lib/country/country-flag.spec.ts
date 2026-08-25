@@ -1,6 +1,6 @@
 import {
-  countryFlagUrl,
   COUNTRY_FLAG_CDN_BASE,
+  countryFlagUrl,
   mapCountrySelectOptions,
 } from './country-flag';
 

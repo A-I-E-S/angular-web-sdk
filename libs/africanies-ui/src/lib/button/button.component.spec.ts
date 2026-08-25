@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import type { ShippingMode } from '@africanies/africanies-models';
 import { ShippingModeService } from '@africanies/africanies-core';
+import type { ShippingMode } from '@africanies/africanies-models';
 
 import {
   ButtonComponent,

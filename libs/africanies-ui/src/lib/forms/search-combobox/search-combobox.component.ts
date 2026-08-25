@@ -25,8 +25,7 @@ import {
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
 
-import { AfricaniesIconComponent } from '@africanies/africanies-icons';
-import { Subject, of, timer } from 'rxjs';
+import { of, Subject, timer } from 'rxjs';
 import {
   catchError,
   debounce,
@@ -35,6 +34,13 @@ import {
   tap,
 } from 'rxjs/operators';
 
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
+
+import { ChipComponent } from '../../chip/chip.component';
+import {
+  TooltipComponent,
+  TooltipTriggerDirective,
+} from '../../tooltip';
 import {
   FORM_AFFIX_CLASS,
   FORM_CONTROL_INNER_CLASS,
@@ -45,7 +51,6 @@ import {
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
-import { ChipComponent } from '../../chip/chip.component';
 import type {
   SearchComboboxBadgeFn,
   SearchComboboxLabelFn,
@@ -54,10 +59,6 @@ import type {
   SearchComboboxSubtitleFn,
   SearchComboboxTrackFn,
 } from './search-combobox.types';
-import {
-  TooltipComponent,
-  TooltipTriggerDirective,
-} from '../../tooltip';
 
 let nextSearchComboboxId = 0;
 

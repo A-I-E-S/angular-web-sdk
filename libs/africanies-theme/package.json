@@ -4,8 +4,8 @@
   "peerDependencies": {
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",
-    "@africanies/africanies-core": "0.0.1",
-    "@africanies/africanies-storage": "0.0.1"
+    "@africanies/africanies-core": "^0.0.2",
+    "@africanies/africanies-storage": "^0.0.1"
   },
   "sideEffects": false,
   "publishConfig": {

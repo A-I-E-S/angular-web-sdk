@@ -45,12 +45,12 @@ export {
 // Carrier marks (delivery vendor logos)
 export {
   CarrierLogoComponent,
-  normalizeCarrierLogoSlug,
-  deliveryVendorOptionsForStoredValue,
-  deliveryVendorSelectOptions,
-  deliveryVendorSelected,
   type CarrierLogoSize,
   type CarrierLogoSlug,
+  deliveryVendorOptionsForStoredValue,
+  deliveryVendorSelected,
+  deliveryVendorSelectOptions,
+  normalizeCarrierLogoSlug,
 } from './lib/carrier';
 
 // Content stack (title / subtitle / extra line)
@@ -138,15 +138,15 @@ export {
   ConfirmService,
   type ConfirmWork,
   DrawerService,
+  MODAL_SIZE_PANEL_CLASS,
   type ModalOpenConfig,
   ModalService,
   type ModalSize,
-  MODAL_SIZE_PANEL_CLASS,
   OVERLAY_DATA,
-  type OverlayOpenConfig,
   OverlayFooterDirective,
   OverlayFrameComponent,
   OverlayHeaderDirective,
+  type OverlayOpenConfig,
   provideAfricaniesUiOverlays,
 } from './lib/overlay';
 
@@ -173,9 +173,9 @@ export {
   provideGooglePlaces,
   RadioComponent,
   type RadioOption,
-  SearchComboboxComponent,
   type SearchComboboxBadge,
   type SearchComboboxBadgeFn,
+  SearchComboboxComponent,
   type SearchComboboxLabelFn,
   type SearchComboboxMarkFn,
   type SearchComboboxSearchFn,
@@ -309,9 +309,9 @@ export {
   AfricaniesActionsModule,
   AfricaniesFeedbackModule,
   AfricaniesFormsModule,
+  AfricaniesInfoPopoverModule,
   AfricaniesNavigationModule,
   AfricaniesStepperModule,
   AfricaniesTableModule,
   AfricaniesTooltipModule,
-  AfricaniesInfoPopoverModule,
 } from './lib/modules';

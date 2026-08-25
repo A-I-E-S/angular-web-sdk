@@ -1,5 +1,6 @@
-import type { IconName } from '@africanies/africanies-icons';
 import type { Observable } from 'rxjs';
+
+import type { IconName } from '@africanies/africanies-icons';
 
 import type { ChipVariant } from '../../chip/chip.component';
 
@@ -19,6 +20,9 @@ export interface SearchComboboxBadge {
   icon?: IconName;
 }
 
+/**
+ *
+ */
 export type SearchComboboxBadgeFn<T> = (
   item: T,
 ) => SearchComboboxBadge | null | undefined;

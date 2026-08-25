@@ -21,7 +21,7 @@ export {
   SHIPPING_MODE_OVERRIDE,
   withShippingMode,
 } from './lib/shipping/shipping-mode.context';
-export { ShippingModeService, type ShippingModeChangeGuard } from './lib/shipping/shipping-mode.service';
+export { type ShippingModeChangeGuard,ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';
@@ -72,15 +72,15 @@ export {
 
 // Query defaults (plain object — no @tanstack dependency)
 export {
+  type ListFetchKind,
+  listFetchKind,
+  type ListFetchReason,
+} from './lib/query/list-fetch-kind';
+export {
   type AfricaniesQueryClientDefaults,
   createAfricaniesQueryClientDefaults,
   provideAfricaniesQueryDefaults,
 } from './lib/query/provide-africanies-query-defaults';
-export {
-  listFetchKind,
-  type ListFetchKind,
-  type ListFetchReason,
-} from './lib/query/list-fetch-kind';
 
 // Mode config
 export {
@@ -94,15 +94,15 @@ export { provideModeConfig } from './lib/mode/provide-mode-config';
 // Country utility
 export {
   COUNTRY_FLAG_CDN_BASE,
-  countryFlagUrl,
+  COUNTRY_READ_PATH,
   type CountryFlagFormat,
+  countryFlagUrl,
   type CountryFlagUrlOptions,
   type CountrySelectOption,
-  mapCountrySelectOptions,
-  COUNTRY_READ_PATH,
   CountryService,
   mapCountry,
   mapCountryList,
+  mapCountrySelectOptions,
   mapCountryState,
 } from './lib/country';
 
@@ -268,8 +268,8 @@ export { RouteOverlayService } from './lib/overlay/route-overlay.service';
 export { copyToClipboard } from './lib/browser';
 export {
   csvCell,
-  downloadCsv,
-  toCsvString,
   type CsvCellValue,
+  downloadCsv,
   type DownloadCsvOptions,
+  toCsvString,
 } from './lib/browser';

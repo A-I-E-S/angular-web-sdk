@@ -4,8 +4,8 @@
 export { copyToClipboard } from './copy-to-clipboard';
 export {
   csvCell,
-  downloadCsv,
-  toCsvString,
   type CsvCellValue,
+  downloadCsv,
   type DownloadCsvOptions,
+  toCsvString,
 } from './download-csv';

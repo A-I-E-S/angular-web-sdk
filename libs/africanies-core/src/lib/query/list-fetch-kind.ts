@@ -30,6 +30,7 @@ export type ListFetchKind = 'loading' | 'pagination' | 'refreshing';
  * Body loading only when there is no initial data or the shipping mode
  * switched. Page/size keeps rows. Tab focus and Refresh keep rows.
  *
+ * @param options
  * @param options.hasData - Rows from the *current* mode are already on screen.
  * @param options.reason - What triggered this fetch.
  * @returns Kind to map onto `loading` / `pageLoading` / `refreshing`.

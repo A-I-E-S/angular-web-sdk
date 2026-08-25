@@ -1,13 +1,17 @@
 import {
   DELIVERY_VENDORS,
-  EXPORT_DELIVERY_VENDORS,
   deliveryVendorLabel,
+  EXPORT_DELIVERY_VENDORS,
   isKnownDeliveryVendor,
   normalizeDeliveryVendorForForm,
 } from '@africanies/africanies-models';
 
 import type { SelectOption } from '../forms/select/select.types';
 
+/**
+ *
+ * @param includeWalkIn
+ */
 export function deliveryVendorSelectOptions(
   includeWalkIn = false,
 ): SelectOption<string>[] {
@@ -15,6 +19,11 @@ export function deliveryVendorSelectOptions(
   return rows.map((row) => ({ value: row.id, label: row.name }));
 }
 
+/**
+ *
+ * @param storedValue
+ * @param baseOptions
+ */
 export function deliveryVendorOptionsForStoredValue(
   storedValue: string,
   baseOptions: readonly SelectOption<string>[] = deliveryVendorSelectOptions(),
@@ -26,6 +35,11 @@ export function deliveryVendorOptionsForStoredValue(
   return [{ label: 'Others', value: normalized }, ...baseOptions];
 }
 
+/**
+ *
+ * @param storedValue
+ * @param baseOptions
+ */
 export function deliveryVendorSelected(
   storedValue: string,
   baseOptions: readonly SelectOption<string>[] = deliveryVendorSelectOptions(),

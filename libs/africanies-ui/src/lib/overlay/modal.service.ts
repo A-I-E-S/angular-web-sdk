@@ -3,11 +3,11 @@ import { inject, Injectable, Injector, type Type } from '@angular/core';
 
 import type { OverlayHandle, OverlayOpener } from '@africanies/africanies-core';
 
+import { MODAL_SIZE_PANEL_CLASS, type ModalSize } from './modal-size';
 import {
   attachOverlayContent,
   type OverlayOpenConfig,
 } from './overlay-attach';
-import { MODAL_SIZE_PANEL_CLASS, type ModalSize } from './modal-size';
 
 /**
  * Open options for {@link ModalService} (shared overlay flags + width size).

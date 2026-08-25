@@ -967,6 +967,7 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
    * arrows run {@link onPanelKeydown} twice (input then listbox) and the
    * second pass toggles the first option — deselecting an existing chip
    * right after a free-text add.
+   * @param event
    */
   protected onSearchKeydown(event: KeyboardEvent): void {
     event.stopPropagation();

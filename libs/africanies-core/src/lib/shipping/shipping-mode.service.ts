@@ -6,13 +6,14 @@ import {
   signal,
 } from '@angular/core';
 
+import { Observable, of } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+
 import type { ShippingMode } from '@africanies/africanies-models';
 import {
   AFRICANIES_SHIPPING_MODE_KEY,
   SessionStorageService,
 } from '@africanies/africanies-storage';
-import { Observable, of } from 'rxjs';
-import { map, take, tap } from 'rxjs/operators';
 
 import { ApiClient } from '../http/api-client';
 
@@ -78,6 +79,7 @@ export class ShippingModeService {
   /**
    * Register a single guard for shell mode switches. Pass `null` to clear
    * (e.g. on feature destroy). Only one guard is active at a time.
+   * @param guard
    */
   registerModeChangeGuard(guard: ShippingModeChangeGuard | null): void {
     this.modeChangeGuard = guard;

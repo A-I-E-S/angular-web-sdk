@@ -1,11 +1,11 @@
 export {
   CarrierLogoComponent,
-  normalizeCarrierLogoSlug,
   type CarrierLogoSize,
   type CarrierLogoSlug,
+  normalizeCarrierLogoSlug,
 } from './carrier-logo.component';
 export {
   deliveryVendorOptionsForStoredValue,
-  deliveryVendorSelectOptions,
   deliveryVendorSelected,
+  deliveryVendorSelectOptions,
 } from './delivery-vendor-select';

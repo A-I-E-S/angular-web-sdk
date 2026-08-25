@@ -667,7 +667,10 @@ export class TablePage {
     setTimeout(() => this.modeLoading.set(false), 500);
   }
 
-  /** Simulate a server page fetch: keep rows, spin the pager, then apply the change. */
+  /**
+   * Simulate a server page fetch: keep rows, spin the pager, then apply the change.
+   * @param apply
+   */
   private runPageLoad(apply: () => void): void {
     if (this.pageLoading()) {
       return;
