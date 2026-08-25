@@ -7,7 +7,7 @@ route-driven overlay registration.
 ## Install peers
 
 ```bash
-# Published from GitHub Packages (@africanies scope)
+# Published on npm (@africanies scope)
 npm install @africanies/africanies-core @africanies/africanies-models @africanies/africanies-storage
 ```
 

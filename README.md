@@ -1,7 +1,7 @@
 # @africanies/angular-web-sdk
 
 Private Angular SDK for AFRICANIES product UIs. Six independently versioned packages
-under the `@africanies` scope, published to GitHub Packages. Workspace package:
+under the `@africanies` scope, published to [npm](https://www.npmjs.com/org/africanies). Workspace package:
 **@africanies/angular-web-sdk**.
 
 ## Packages
@@ -17,14 +17,7 @@ under the `@africanies` scope, published to GitHub Packages. Workspace package:
 
 ## Install (consuming app)
 
-1. Add an `.npmrc` (see [docs/consumer.npmrc.template](./docs/consumer.npmrc.template)):
-
-```ini
-@africanies:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
-```
-
-2. Install what you need:
+Install what you need from the public npm registry (no custom `.npmrc` required):
 
 ```bash
 npm install @africanies/africanies-core @africanies/africanies-models @africanies/africanies-storage \
@@ -37,7 +30,7 @@ If a consuming app still references the old scope, update in one pass:
 
 | Before | After |
 | --- | --- |
-| `@aies:registry` in `.npmrc` | `@africanies:registry` |
+| GitHub Packages `.npmrc` lines | Remove — packages install from npmjs.org |
 | `@aies/aies-core` (etc.) | `@africanies/africanies-core` (etc.) |
 | `provideAiesSdk` | `provideAfricaniesSdk` |
 | `provideAiesHttpClient` | `provideAfricaniesHttpClient` |
@@ -46,7 +39,7 @@ If a consuming app still references the old scope, update in one pass:
 | `<aies-button>` / `aiesCellDef` | `<africanies-button>` / `africaniesCellDef` |
 | Storage keys `aies.theme`, `aies.accessToken`, … | `africanies.theme`, `africanies.accessToken`, … |
 
-Republish from this repo under the `@africanies` scope on GitHub Packages before pointing production apps at the new names.
+Publish current versions from this repo to npm (`nx release publish`; see [CONTRIBUTING](./CONTRIBUTING.md)) before pointing production apps at the new names.
 
 ## Quickstart
 
