@@ -1,6 +1,6 @@
 # @africanies/angular-web-sdk
 
-Private Angular SDK for AFRICANIES product UIs. Six independently versioned packages
+Official Angular SDK for AFRICANIES product UIs. Six independently versioned packages
 under the `@africanies` scope, published to [npm](https://www.npmjs.com/org/africanies). Workspace package:
 **@africanies/angular-web-sdk**.
 
