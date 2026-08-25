@@ -1,6 +1,7 @@
 {
   "name": "@africanies/angular-web-sdk",
   "version": "0.1.2",
+  "packageManager": "pnpm@11.24.0",
   "license": "MIT",
   "contributors": [
     {
@@ -34,6 +35,7 @@
   ],
   "scripts": {
     "dev": "nx serve playground",
+    "demo:build": "nx build playground --configuration=production --base-href=/angular-web-sdk/",
     "icons:build": "node tools/build-icon-sprite.mjs",
     "lint": "nx run-many -t lint",
     "test": "nx run-many -t test",

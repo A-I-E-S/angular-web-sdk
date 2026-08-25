@@ -4,11 +4,21 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import {
+  provideRouter,
+  withHashLocation,
+  withInMemoryScrolling,
+} from '@angular/router';
 
-import { provideAfricaniesHttpClient, provideAfricaniesSdk } from '@africanies/africanies-core';
+import {
+  provideAfricaniesHttpClient,
+  provideAfricaniesSdk,
+} from '@africanies/africanies-core';
+import { AFRICANIES_ICON_SPRITE_URL } from '@africanies/africanies-icons';
 import { ThemeService } from '@africanies/africanies-theme';
 import {
+  AFRICANIES_BRAND_LOGO_MINI_URL,
+  AFRICANIES_BRAND_LOGO_URL,
   provideAfricaniesToasts,
   provideAfricaniesUiOverlays,
   provideGooglePlaces,
@@ -27,7 +37,9 @@ const GOOGLE_PLACES_API_KEY_STORAGE = 'africanies.googlePlacesApiKey';
  */
 function playgroundGooglePlacesApiKey(): string {
   try {
-    return globalThis.localStorage?.getItem(GOOGLE_PLACES_API_KEY_STORAGE) ?? '';
+    return (
+      globalThis.localStorage?.getItem(GOOGLE_PLACES_API_KEY_STORAGE) ?? ''
+    );
   } catch {
     return '';
   }
@@ -41,11 +53,24 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(
       appRoutes,
+      withHashLocation(),
       withInMemoryScrolling({
         anchorScrolling: 'enabled',
         scrollPositionRestoration: 'enabled',
       }),
     ),
+    {
+      provide: AFRICANIES_ICON_SPRITE_URL,
+      useValue: 'assets/africanies-icons/icons.sprite.svg',
+    },
+    {
+      provide: AFRICANIES_BRAND_LOGO_URL,
+      useValue: 'assets/africanies-ui/brand/africanies-logo.png',
+    },
+    {
+      provide: AFRICANIES_BRAND_LOGO_MINI_URL,
+      useValue: 'assets/africanies-ui/brand/africanies-logo-mini.png',
+    },
     provideAfricaniesSdk({
       baseUrl: PLAYGROUND_API_BASE,
       httpToasts: 'errors',

@@ -4,6 +4,8 @@ Official Angular SDK for AFRICANIES product UIs. Six independently versioned pac
 under the `@africanies` scope, published to [npm](https://www.npmjs.com/org/africanies). Workspace package:
 **@africanies/angular-web-sdk**.
 
+[View the live component and SDK demo](https://a-i-e-s.github.io/angular-web-sdk/)
+
 ## Packages
 
 | Package | Role |
@@ -108,15 +110,25 @@ Serve the icon sprite from `node_modules/@africanies/africanies-icons/assets/ico
 
 ## Playground
 
-Local catalog of the components and tokens:
+Browse the hosted catalog of components, tokens, models, API examples, and common
+product flows:
+
+- [Open the live demo](https://a-i-e-s.github.io/angular-web-sdk/)
+
+Run the same catalog locally:
 
 ```bash
 pnpm dev
 # or: pnpm exec nx serve playground
 ```
 
+The hosted demo is built automatically from `main`. Its examples use the test API;
+authenticated examples require a user-supplied access token, and no credentials are
+stored in the repository.
+
 ## Docs
 
+- [Live component and SDK demo](https://a-i-e-s.github.io/angular-web-sdk/)
 - [Contributing & release](./CONTRIBUTING.md)
 - Per-library READMEs under `libs/africanies-*` (playground at `pnpm dev` for live examples)
 
