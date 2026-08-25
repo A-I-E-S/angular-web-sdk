@@ -10,22 +10,25 @@ import {
 import { ButtonComponent } from '../button/button.component';
 
 /**
- * Compact top-right error pill for non-blocking failures while stale data stays
- * visible — distinct from {@link ErrorStateComponent} (full-section blocking).
+ * Compact error pill for non-blocking failures while stale data stays visible —
+ * distinct from {@link ErrorStateComponent} (full-section blocking).
  *
- * Parent owns placement (`class="absolute top-3 right-3 …"` or a flex row).
+ * Parent owns placement — typically a flex row above the content
+ * (`class="flex justify-end"` with `max-w-[min(100%,20rem)]` on the indicator).
  * Renders nothing when {@link error} is null, undefined, or whitespace-only.
  *
  * @example
  * ```html
- * <div class="relative">
- *   <aies-error-indicator
- *     class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
- *     error="Failed to fetch the most recent data."
- *     retryText="Refresh"
- *     [refreshing]="isRefreshing()"
- *     (retry)="refetch()"
- *   />
+ * <div class="flex flex-col gap-3">
+ *   <div class="flex justify-end">
+ *     <aies-error-indicator
+ *       class="max-w-[min(100%,20rem)]"
+ *       error="Failed to fetch the most recent data."
+ *       retryText="Refresh"
+ *       [refreshing]="isRefreshing()"
+ *       (retry)="refetch()"
+ *     />
+ *   </div>
  *   <aies-table [rows]="rows()" />
  * </div>
  * ```

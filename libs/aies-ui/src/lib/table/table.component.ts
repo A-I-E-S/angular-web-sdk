@@ -55,7 +55,7 @@ import { TableColumn, TableSortChange } from './table-column';
  * **Async body:** first load, empty results, and hard errors render inside the
  * grid (headers + toolbar stay). Bind {@link loading}, {@link error}, and
  * {@link emptyMessage}. Empty/error Retry emits {@link refreshClick}. A stale
- * error (rows still on screen) shows {@link ErrorIndicatorComponent} over the
+ * error (rows still on screen) shows {@link ErrorIndicatorComponent} above the
  * grid. Do not wrap list tables in {@link AsyncStateComponent} — that tears
  * down Filters / Export / pager.
  *
@@ -192,18 +192,21 @@ import { TableColumn, TableSortChange } from './table-column';
         </div>
       }
 
-      <div
-        class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
-      >
-        @if (staleError(); as staleMessage) {
+      @if (staleError(); as staleMessage) {
+        <div class="flex justify-end">
           <aies-error-indicator
-            class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
+            class="max-w-[min(100%,20rem)]"
             [error]="staleMessage"
             retryText="Refresh"
             [refreshing]="refreshing()"
             (retry)="refreshClick.emit()"
           />
-        }
+        </div>
+      }
+
+      <div
+        class="min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
+      >
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
@@ -469,7 +472,7 @@ export class TableComponent<T = unknown> {
 
   /**
    * Hard fetch failure. Empty rows → {@link ErrorStateComponent} in the body.
-   * Rows still present → {@link ErrorIndicatorComponent} over the grid.
+   * Rows still present → {@link ErrorIndicatorComponent} above the grid.
    * Retry emits {@link refreshClick}.
    */
   readonly error = input<string | null>(null);

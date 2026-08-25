@@ -112,7 +112,7 @@ export /**
  *
  */
 const FEEDBACK_ERROR_INDICATOR = `
-// Non-blocking top-right pill — stale data stays visible underneath.
+// Non-blocking retry pill — stale data stays visible underneath.
 // AsyncState uses this automatically when data exists but refresh failed.
 
 import { Component, signal } from '@angular/core';
@@ -123,15 +123,17 @@ import { ErrorIndicatorComponent } from '@aies/aies-ui';
   standalone: true,
   imports: [ErrorIndicatorComponent],
   template: \`
-    <div class="relative min-h-[12rem] rounded-xl border border-border p-4 dark:border-white/10">
-      <aies-error-indicator
-        class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
-        error="Failed to fetch the most recent data."
-        retryText="Refresh"
-        [refreshing]="isRefreshing()"
-        [refreshingText]="isRefreshing() ? 'Refreshing...' : 'Refresh'"
-        (retry)="refetch()"
-      />
+    <div class="flex flex-col gap-3 rounded-xl border border-border p-4 dark:border-white/10">
+      <div class="flex justify-end">
+        <aies-error-indicator
+          class="max-w-[min(100%,20rem)]"
+          error="Failed to fetch the most recent data."
+          retryText="Refresh"
+          [refreshing]="isRefreshing()"
+          [refreshingText]="isRefreshing() ? 'Refreshing...' : 'Refresh'"
+          (retry)="refetch()"
+        />
+      </div>
 
       <!-- Existing table / cards stay mounted -->
       <ng-content />

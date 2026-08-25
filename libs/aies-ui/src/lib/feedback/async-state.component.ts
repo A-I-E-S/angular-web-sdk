@@ -90,17 +90,19 @@ type AsyncView =
         />
       }
       @case ('content') {
-        <div class="relative">
+        <div class="flex flex-col gap-3">
           @if (contentBadges(); as badges) {
             @if (badges.staleError) {
-              <aies-error-indicator
-                class="absolute top-3 right-3 z-10 max-w-[min(100%-1.5rem,20rem)]"
-                [error]="staleErrorCopy()"
-                retryText="Refresh"
-                [refreshingText]="staleRefreshingText()"
-                [refreshing]="badges.fetching"
-                (retry)="retry.emit()"
-              />
+              <div class="flex justify-end">
+                <aies-error-indicator
+                  class="max-w-[min(100%,20rem)]"
+                  [error]="staleErrorCopy()"
+                  retryText="Refresh"
+                  [refreshingText]="staleRefreshingText()"
+                  [refreshing]="badges.fetching"
+                  (retry)="retry.emit()"
+                />
+              </div>
             }
           }
           <ng-content />
