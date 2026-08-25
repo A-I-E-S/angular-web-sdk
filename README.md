@@ -1,8 +1,8 @@
-# africanies-web-sdk
+# africanies-angular-sdk
 
 Private Angular SDK for AFRICANIES product UIs. Six independently versioned packages
 under the `@africanies` scope, published to GitHub Packages. Workspace name:
-**africanies-web-sdk**.
+**africanies-angular-sdk**.
 
 ## Packages
 

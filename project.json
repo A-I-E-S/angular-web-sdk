@@ -1,5 +1,5 @@
 {
-  "name": "@africanies/africanies-web-sdk",
+  "name": "@africanies/africanies-angular-sdk",
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "targets": {
     "local-registry": {
