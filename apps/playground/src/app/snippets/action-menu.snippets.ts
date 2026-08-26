@@ -32,6 +32,7 @@ export class ShipmentRowActionsDemoComponent {
     {
       label: 'Open',
       icon: 'eye',
+      routerLink: ['/shipments', '1'],
       onClick: () => this.lastAction.set('Open'),
     },
     {

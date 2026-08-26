@@ -10,14 +10,21 @@ import {
   computed,
   contentChild,
   ElementRef,
+  inject,
   input,
   signal,
   viewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import {
+  isModifiedClick,
+  navigateNavItem,
+  navItemHref,
+} from '../navigation/navigate-nav-item';
 import { ActionMenuTriggerDirective } from './action-menu-trigger.directive';
 import type { AfricaniesMenuItem } from './menu-item';
 
@@ -53,6 +60,9 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
  * clipped by table `overflow`. Default trigger is a ghost ellipsis button;
  * project a custom control with {@link ActionMenuTriggerDirective}.
  *
+ * Items with {@link AfricaniesMenuItem.routerLink} render as anchors so users
+ * can right-click / modified-click to open in a new tab.
+ *
  * @example
  * ```html
  * <!-- Default icon trigger (table row) -->
@@ -68,7 +78,12 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
  * ```ts
  * rowActions(row: Shipment): AfricaniesMenuItem[] {
  *   return [
- *     { label: 'Open', icon: 'eye', onClick: () => this.open(row) },
+ *     {
+ *       label: 'Open',
+ *       icon: 'eye',
+ *       routerLink: ['/shipments', row.id],
+ *       onClick: () => this.open(row),
+ *     },
  *     { label: 'Edit', icon: 'edit', onClick: () => this.edit(row) },
  *     {
  *       label: 'Delete',
@@ -156,26 +171,49 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
               role="separator"
             ></div>
           }
-          <button
-            type="button"
-            role="menuitem"
-            [id]="itemDomId(i)"
-            [class]="itemClass(item, i)"
-            [disabled]="!!item.disabled"
-            (click)="selectItem(item)"
-            (mouseenter)="activeIndex.set(i)"
-          >
-            @if (item.icon; as icon) {
-              <africanies-icon [name]="icon" [size]="16" class="shrink-0" />
-            }
-            <span class="min-w-0 flex-1 truncate text-left">{{ item.label }}</span>
-          </button>
+          @if (item.routerLink !== null && item.routerLink !== undefined) {
+            <a
+              role="menuitem"
+              [id]="itemDomId(i)"
+              [class]="itemClass(item, i)"
+              [attr.href]="item.disabled ? null : hrefFor(item)"
+              [attr.aria-disabled]="item.disabled ? true : null"
+              (click)="onRoutedItemClick($event, item)"
+              (mouseenter)="activeIndex.set(i)"
+            >
+              @if (item.icon; as icon) {
+                <africanies-icon [name]="icon" [size]="16" class="shrink-0" />
+              }
+              <span class="min-w-0 flex-1 truncate text-left">{{
+                item.label
+              }}</span>
+            </a>
+          } @else {
+            <button
+              type="button"
+              role="menuitem"
+              [id]="itemDomId(i)"
+              [class]="itemClass(item, i)"
+              [disabled]="!!item.disabled"
+              (click)="selectItem(item)"
+              (mouseenter)="activeIndex.set(i)"
+            >
+              @if (item.icon; as icon) {
+                <africanies-icon [name]="icon" [size]="16" class="shrink-0" />
+              }
+              <span class="min-w-0 flex-1 truncate text-left">{{
+                item.label
+              }}</span>
+            </button>
+          }
         }
       </div>
     </ng-template>
   `,
 })
 export class ActionMenuComponent {
+  private readonly router = inject(Router);
+
   protected readonly panelPositions = MENU_PANEL_POSITIONS;
 
   private readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
@@ -206,7 +244,7 @@ export class ActionMenuComponent {
   protected itemClass(item: AfricaniesMenuItem, index: number): string {
     const active = this.activeIndex() === index;
     const base =
-      'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-body-sm transition-colors ' +
+      'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-body-sm no-underline transition-colors ' +
       'disabled:cursor-not-allowed disabled:opacity-50 ' +
       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink';
     if (item.danger) {
@@ -223,6 +261,10 @@ export class ActionMenuComponent {
         ? 'bg-background-welcome dark:bg-white/10'
         : 'hover:bg-background-welcome dark:hover:bg-white/10')
     );
+  }
+
+  protected hrefFor(item: AfricaniesMenuItem): string | null {
+    return navItemHref(this.router, item);
   }
 
   protected onTriggerClick(event: MouseEvent): void {
@@ -304,11 +346,36 @@ export class ActionMenuComponent {
     this.open.set(false);
   }
 
+  /**
+   * Primary click on a routed item: in-app activate via {@link onClick} or
+   * router. Modified clicks keep native link behaviour (new tab).
+   */
+  protected onRoutedItemClick(event: MouseEvent, item: AfricaniesMenuItem): void {
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (isModifiedClick(event)) {
+      this.close();
+      return;
+    }
+    event.preventDefault();
+    this.activateItem(item);
+  }
+
   protected selectItem(item: AfricaniesMenuItem): void {
     if (item.disabled) {
       return;
     }
-    item.onClick();
+    this.activateItem(item);
+  }
+
+  private activateItem(item: AfricaniesMenuItem): void {
+    if (item.onClick) {
+      item.onClick();
+    } else if (item.routerLink != null) {
+      void navigateNavItem(this.router, item, false);
+    }
     this.close();
   }
 
