@@ -76,6 +76,21 @@ describe('payment-method.mapper', () => {
     );
   });
 
+  it('unwraps paginated nested currencies', () => {
+    const mapped = mapPaymentMethod({
+      id: 4,
+      name: 'Squad',
+      model: 'App\\Models\\Squad',
+      currencies: {
+        current_page: 1,
+        data: WIRE_SQUAD.currencies,
+        total: 1,
+      },
+    });
+    expect(mapped.currencies).toHaveLength(1);
+    expect(mapped.currencies[0]?.id).toBe(5);
+  });
+
   it('toPaymentMethodFlag01 serializes booleans and wire flags', () => {
     expect(toPaymentMethodFlag01(true)).toBe('1');
     expect(toPaymentMethodFlag01(false)).toBe('0');

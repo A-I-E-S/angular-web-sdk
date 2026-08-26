@@ -15,7 +15,6 @@ import {
   asNumber,
   asRecord,
   asString,
-  mapArray,
   mapList,
   toFlag01,
 } from '../http/wire';
@@ -101,7 +100,7 @@ export function mapPaymentMethod(raw: unknown): PaymentMethodModel {
     deleted_at: asNullableString(record['deleted_at'] ?? record['deletedAt']),
     created_at: asNullableString(record['created_at'] ?? record['createdAt']),
     updated_at: asNullableString(record['updated_at'] ?? record['updatedAt']),
-    currencies: mapArray(record['currencies'], mapPaymentMethodCurrency),
+    currencies: mapList(record['currencies'], mapPaymentMethodCurrency),
   };
 }
 
