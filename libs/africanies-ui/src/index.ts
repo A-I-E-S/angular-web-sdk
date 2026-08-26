@@ -32,6 +32,12 @@ export {
   type LoadingStateMode,
 } from './lib/feedback';
 
+// Accordion (expandable bordered panels)
+export {
+  AccordionComponent,
+  type AccordionSize,
+} from './lib/accordion';
+
 // Alert (inline banners — distinct from ErrorState / Toast)
 export { AlertComponent, type AlertVariant } from './lib/alert';
 

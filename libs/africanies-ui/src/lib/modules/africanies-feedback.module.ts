@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 
+import { AccordionComponent } from '../accordion';
 import { AlertComponent } from '../alert';
 import { ChipComponent } from '../chip';
 import {
@@ -11,6 +12,7 @@ import {
 } from '../feedback';
 
 const FEEDBACK = [
+  AccordionComponent,
   LoadingStateComponent,
   ErrorStateComponent,
   ErrorIndicatorComponent,
@@ -21,7 +23,7 @@ const FEEDBACK = [
 ] as const;
 
 /**
- * Async feedback states, inline alert, and status chips.
+ * Async feedback states, accordion panels, inline alert, and status chips.
  *
  * Toast stays out of this module — register {@link provideAfricaniesToasts} instead.
  *
