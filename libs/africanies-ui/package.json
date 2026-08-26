@@ -8,10 +8,10 @@
     "@angular/forms": "^22.0.0",
     "@angular/router": "^22.0.0",
     "rxjs": "^7.8.0",
-    "@africanies/africanies-models": "^0.0.2",
-    "@africanies/africanies-icons": "^0.0.1",
-    "@africanies/africanies-core": "^0.0.2",
-    "@africanies/africanies-theme": "^0.0.1"
+    "@africanies/africanies-models": ">=0.0.2 <0.1.0",
+    "@africanies/africanies-icons": ">=0.0.1 <0.1.0",
+    "@africanies/africanies-core": ">=0.0.2 <0.1.0",
+    "@africanies/africanies-theme": ">=0.0.1 <0.1.0"
   },
   "sideEffects": false,
   "publishConfig": {
