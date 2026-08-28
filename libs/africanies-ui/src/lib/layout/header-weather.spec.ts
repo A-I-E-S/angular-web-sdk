@@ -24,9 +24,34 @@ describe('mapWmoWeatherCode', () => {
 
 describe('loadHeaderWeather', () => {
   const originalFetch = globalThis.fetch;
+  const originalGeolocation = navigator.geolocation;
+
+  beforeEach(() => {
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        getCurrentPosition: (
+          _success: PositionCallback,
+          error?: PositionErrorCallback,
+        ) => {
+          error?.({
+            code: 1,
+            message: 'denied',
+            PERMISSION_DENIED: 1,
+            POSITION_UNAVAILABLE: 2,
+            TIMEOUT: 3,
+          } as GeolocationPositionError);
+        },
+      },
+    });
+  });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: originalGeolocation,
+    });
     sessionStorage.clear();
   });
 
@@ -41,28 +66,60 @@ describe('loadHeaderWeather', () => {
     ).resolves.toBeNull();
   });
 
-  it('reads Open-Meteo after IP geolocation', async () => {
+  it('reads Open-Meteo after IP geolocation and reverse-geocodes the city', async () => {
     const fetchFn = jest.fn(async (url: string) => {
       if (String(url).includes('geojs')) {
-        return jsonResponse({ latitude: '6.45', longitude: '3.39', city: 'Lagos' });
+        return jsonResponse({
+          latitude: '9.0765',
+          longitude: '7.3986',
+          city: 'Lagos',
+        });
+      }
+      if (String(url).includes('bigdatacloud')) {
+        return jsonResponse({ city: 'Abuja', locality: 'Abuja' });
       }
       return jsonResponse({
         current: { weather_code: 61, temperature_2m: 27.4 },
       });
     });
 
-    await expect(loadHeaderWeather(fetchFn as unknown as typeof fetch)).resolves.toEqual({
+    await expect(
+      loadHeaderWeather(fetchFn as unknown as typeof fetch),
+    ).resolves.toEqual({
       kind: 'rain',
       temperatureC: 27.4,
+      city: 'Abuja',
+    });
+    expect(fetchFn).toHaveBeenCalledTimes(3);
+  });
+
+  it('falls back to the IP city when reverse geocode is empty', async () => {
+    const fetchFn = jest.fn(async (url: string) => {
+      if (String(url).includes('geojs')) {
+        return jsonResponse({ latitude: 1, longitude: 2, city: 'Lagos' });
+      }
+      if (String(url).includes('bigdatacloud')) {
+        return jsonResponse({});
+      }
+      return jsonResponse({ current: { weather_code: 0, temperature_2m: 30 } });
+    });
+
+    await expect(
+      loadHeaderWeather(fetchFn as unknown as typeof fetch),
+    ).resolves.toEqual({
+      kind: 'clear',
+      temperatureC: 30,
       city: 'Lagos',
     });
-    expect(fetchFn).toHaveBeenCalledTimes(2);
   });
 
   it('reuses the same-hour session cache', async () => {
     const fetchFn = jest.fn(async (url: string) => {
       if (String(url).includes('geojs')) {
         return jsonResponse({ latitude: 1, longitude: 2 });
+      }
+      if (String(url).includes('bigdatacloud')) {
+        return jsonResponse({ city: 'Accra' });
       }
       return jsonResponse({ current: { weather_code: 0, temperature_2m: 30 } });
     });
@@ -71,13 +128,16 @@ describe('loadHeaderWeather', () => {
     const second = await loadHeaderWeather(fetchFn as unknown as typeof fetch);
 
     expect(first).toEqual(second);
-    expect(fetchFn).toHaveBeenCalledTimes(2);
+    expect(fetchFn).toHaveBeenCalledTimes(3);
   });
 
   it('fetches again when the cached hour no longer matches', async () => {
     const fetchFn = jest.fn(async (url: string) => {
       if (String(url).includes('geojs')) {
         return jsonResponse({ latitude: 1, longitude: 2, city: 'Lagos' });
+      }
+      if (String(url).includes('bigdatacloud')) {
+        return jsonResponse({ city: 'Lagos' });
       }
       return jsonResponse({ current: { weather_code: 0, temperature_2m: 30.2 } });
     });
@@ -94,7 +154,52 @@ describe('loadHeaderWeather', () => {
     sessionStorage.setItem(cacheKey!, JSON.stringify(stored));
 
     await loadHeaderWeather(fetchFn as unknown as typeof fetch);
-    expect(fetchFn).toHaveBeenCalledTimes(4);
+    expect(fetchFn).toHaveBeenCalledTimes(6);
+  });
+
+  it('uses browser coordinates when geolocation succeeds', async () => {
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        getCurrentPosition: (success: PositionCallback) => {
+          success({
+            coords: {
+              latitude: 9.0765,
+              longitude: 7.3986,
+              accuracy: 10,
+              altitude: null,
+              altitudeAccuracy: null,
+              heading: null,
+              speed: null,
+              toJSON: () => ({}),
+            },
+            timestamp: Date.now(),
+            toJSON: () => ({}),
+          } as GeolocationPosition);
+        },
+      },
+    });
+
+    const fetchFn = jest.fn(async (url: string) => {
+      if (String(url).includes('bigdatacloud')) {
+        return jsonResponse({ city: 'Abuja' });
+      }
+      if (String(url).includes('geojs')) {
+        throw new Error('should not call IP geo');
+      }
+      return jsonResponse({ current: { weather_code: 0, temperature_2m: 31 } });
+    });
+
+    await expect(
+      loadHeaderWeather(fetchFn as unknown as typeof fetch),
+    ).resolves.toEqual({
+      kind: 'clear',
+      temperatureC: 31,
+      city: 'Abuja',
+    });
+    expect(
+      fetchFn.mock.calls.some((call) => String(call[0]).includes('geojs')),
+    ).toBe(false);
   });
 });
 

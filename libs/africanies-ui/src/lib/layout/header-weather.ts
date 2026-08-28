@@ -2,9 +2,15 @@ import type { IconName } from '@africanies/africanies-icons';
 
 import type { HeaderWeather, HeaderWeatherKind } from './header-greeting.util';
 
-const CACHE_KEY = 'africanies-header-weather-v3';
+/** Bump when cache shape or city resolution strategy changes. */
+const CACHE_KEY = 'africanies-header-weather-v4';
 const FETCH_MS = 4_000;
+const BROWSER_GEO_MS = 3_500;
+/** IP fallback — city string is often wrong (e.g. NG IPs labelled Lagos). */
 const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json';
+/** Client reverse-geocode so the label matches the forecast coordinates. */
+const REVERSE_GEO_URL =
+  'https://api.bigdatacloud.net/data/reverse-geocode-client';
 
 const WEATHER_LABELS: Record<HeaderWeatherKind, string> = {
   clear: 'Clear',
@@ -29,11 +35,22 @@ interface GeoJsPayload {
   longitude?: string | number;
 }
 
+interface ReverseGeoPayload {
+  city?: string;
+  locality?: string;
+  principalSubdivision?: string;
+}
+
 interface OpenMeteoPayload {
   current?: {
     weather_code?: number;
     temperature_2m?: number;
   };
+}
+
+interface Coordinates {
+  latitude: number;
+  longitude: number;
 }
 
 /**
@@ -95,7 +112,12 @@ export function headerWeatherIcon(kind: HeaderWeatherKind, hour: number): IconNa
 }
 
 /**
- * City-level forecast via IP geolocation + Open-Meteo (no API key).
+ * City-level forecast via browser / IP geolocation + Open-Meteo (no API key).
+ *
+ * Coordinates prefer the browser Geolocation API (accurate for travellers;
+ * may prompt once). Otherwise IP geo is used. The city label is reverse-
+ * geocoded from those coordinates — IP `city` strings are often wrong for
+ * Nigeria (many networks resolve as Lagos).
  *
  * Fails closed: missing browser APIs, timeouts, and HTTP errors all return
  * `null` so the greeting can stay time-of-day only. Cached per local hour
@@ -119,16 +141,14 @@ export async function loadHeaderWeather(
   }
 
   try {
-    const geo = (await fetchJson(run, GEO_URL)) as GeoJsPayload | null;
-    const latitude = asNumber(geo?.latitude);
-    const longitude = asNumber(geo?.longitude);
-    if (latitude === null || longitude === null) {
+    const coords = await resolveCoordinates(run);
+    if (!coords) {
       return null;
     }
 
     const forecastUrl =
       `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${latitude}&longitude=${longitude}` +
+      `?latitude=${coords.latitude}&longitude=${coords.longitude}` +
       `&current=weather_code,temperature_2m`;
     const forecast = (await fetchJson(run, forecastUrl)) as OpenMeteoPayload | null;
     const code = asNumber(forecast?.current?.weather_code);
@@ -142,7 +162,9 @@ export async function loadHeaderWeather(
     }
 
     const temperatureC = asNumber(forecast?.current?.temperature_2m) ?? undefined;
-    const city = asCity(geo?.city);
+    const city =
+      (await reverseGeocodeCity(run, coords.latitude, coords.longitude)) ??
+      coords.fallbackCity;
     const weather: HeaderWeather = { kind, temperatureC, city };
     writeCache({ hour, kind, temperatureC, city });
     return weather;
@@ -185,6 +207,80 @@ function writeCache(value: CachedWeather): void {
   } catch {
     // Private mode / quota — greeting still works without cache.
   }
+}
+
+/**
+ * Prefer device coordinates when available (may prompt once); otherwise fall
+ * back to IP geo. IP city labels for Nigeria are often wrong — reverse
+ * geocoding from these coordinates still depends on accurate lat/lon.
+ */
+async function resolveCoordinates(
+  fetchFn: typeof fetch,
+): Promise<(Coordinates & { fallbackCity?: string }) | null> {
+  const browser = await tryBrowserGeolocation();
+  if (browser) {
+    return browser;
+  }
+
+  const geo = (await fetchJson(fetchFn, GEO_URL)) as GeoJsPayload | null;
+  const latitude = asNumber(geo?.latitude);
+  const longitude = asNumber(geo?.longitude);
+  if (latitude === null || longitude === null) {
+    return null;
+  }
+  return {
+    latitude,
+    longitude,
+    fallbackCity: asCity(geo?.city),
+  };
+}
+
+async function tryBrowserGeolocation(): Promise<Coordinates | null> {
+  if (
+    typeof navigator === 'undefined' ||
+    typeof navigator.geolocation?.getCurrentPosition !== 'function'
+  ) {
+    return null;
+  }
+
+  return await new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(null), BROWSER_GEO_MS);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        clearTimeout(timer);
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(null);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 600_000,
+        timeout: BROWSER_GEO_MS,
+      },
+    );
+  });
+}
+
+async function reverseGeocodeCity(
+  fetchFn: typeof fetch,
+  latitude: number,
+  longitude: number,
+): Promise<string | undefined> {
+  const url =
+    `${REVERSE_GEO_URL}?latitude=${encodeURIComponent(String(latitude))}` +
+    `&longitude=${encodeURIComponent(String(longitude))}` +
+    `&localityLanguage=en`;
+  const payload = (await fetchJson(fetchFn, url)) as ReverseGeoPayload | null;
+  return (
+    asCity(payload?.city) ??
+    asCity(payload?.locality) ??
+    asCity(payload?.principalSubdivision)
+  );
 }
 
 function asNumber(value: unknown): number | null {
