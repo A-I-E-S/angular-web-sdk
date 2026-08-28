@@ -165,14 +165,25 @@ const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/tokens-page').then((m) => m.TokensPage),
   },
+  // Temporarily blocked — restore loadComponent routes when re-enabling.
   {
     path: 'models',
-    loadComponent: () =>
-      import('./pages/models-page').then((m) => m.ModelsPage),
+    pathMatch: 'full',
+    redirectTo: 'overview',
   },
   {
     path: 'api',
-    loadComponent: () =>
-      import('./pages/api-page').then((m) => m.ApiPage),
+    pathMatch: 'full',
+    redirectTo: 'overview',
   },
+  // {
+  //   path: 'models',
+  //   loadComponent: () =>
+  //     import('./pages/models-page').then((m) => m.ModelsPage),
+  // },
+  // {
+  //   path: 'api',
+  //   loadComponent: () =>
+  //     import('./pages/api-page').then((m) => m.ApiPage),
+  // },
 ];

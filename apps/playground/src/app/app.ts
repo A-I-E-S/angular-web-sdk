@@ -287,8 +287,8 @@ export class App {
       children: [
         { id: 'icons', label: 'Icons', routerLink: '/icons' },
         { id: 'tokens', label: 'Tokens', routerLink: '/tokens' },
-        { id: 'models', label: 'Models', routerLink: '/models' },
-        { id: 'api', label: 'SDK API', routerLink: '/api' },
+        // { id: 'models', label: 'Models', routerLink: '/models' },
+        // { id: 'api', label: 'SDK API', routerLink: '/api' },
       ],
     },
     {
