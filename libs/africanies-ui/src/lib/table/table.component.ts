@@ -5,6 +5,7 @@ import {
   Component,
   computed,
   contentChildren,
+  inject,
   input,
   numberAttribute,
   output,
@@ -14,6 +15,7 @@ import {
 
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import type { PaginationMetaModel } from '@africanies/africanies-models';
+import { ModeColorService } from '@africanies/africanies-theme';
 
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from '../feedback/empty-state.component';
@@ -98,7 +100,8 @@ import { TableColumn, TableSortChange } from './table-column';
  * **Sticky columns:** a column with `key: 'actions'` stays pinned to the
  * right while the grid scrolls horizontally. The expand trigger column pins
  * to the left when rows are expandable. Override with
- * {@link TableColumn.sticky}.
+ * {@link TableColumn.sticky}. Sticky columns use a slightly thicker bottom
+ * border (and opaque fill) so dividers stay visible while scrolling.
  */
 @Component({
   selector: 'africanies-table',
@@ -210,9 +213,7 @@ import { TableColumn, TableSortChange } from './table-column';
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
         >
-          <thead
-            class="border-b border-border bg-background-welcome dark:border-white/10 dark:bg-ink-950"
-          >
+          <thead [class]="headerRowClass()">
             <tr>
               @if (isExpandable()) {
                 <th
@@ -276,14 +277,14 @@ import { TableColumn, TableSortChange } from './table-column';
             @switch (bodyKind()) {
               @case ('loading') {
                 <tr>
-                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                  <td class="px-[1.125rem] py-6" [attr.colspan]="colSpan()">
                     <africanies-loading-state [message]="loadingLabel()" />
                   </td>
                 </tr>
               }
               @case ('error') {
                 <tr>
-                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                  <td class="px-[1.125rem] py-6" [attr.colspan]="colSpan()">
                     <africanies-error-state
                       [message]="errorMessage()"
                       [refreshing]="refreshing()"
@@ -294,7 +295,7 @@ import { TableColumn, TableSortChange } from './table-column';
               }
               @case ('empty') {
                 <tr>
-                  <td class="px-3 py-6" [attr.colspan]="colSpan()">
+                  <td class="px-[1.125rem] py-6" [attr.colspan]="colSpan()">
                     <africanies-empty-state
                       [message]="emptyMessage()"
                       [refreshing]="refreshing()"
@@ -362,7 +363,7 @@ import { TableColumn, TableSortChange } from './table-column';
                         class="min-h-0 overflow-hidden border-t border-border/70 bg-neutral-50 dark:border-white/10 dark:bg-white/[0.05]"
                       >
                         <dl
-                          class="m-0 grid gap-x-6 gap-y-3 px-3 py-3 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
+                          class="m-0 grid gap-x-6 gap-y-3 px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
                           [class.opacity-0]="!isRowExpanded(row, i)"
                           [class.opacity-100]="isRowExpanded(row, i)"
                         >
@@ -409,6 +410,8 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
+  protected readonly modeColor = inject(ModeColorService);
+
   /**
    * When false, hides row expansion even if {@link RowDetailDefDirective}
    * templates are projected. Defaults to true.
@@ -653,6 +656,23 @@ export class TableComponent<T = unknown> {
   }
 
   /**
+   * Header row chrome. Soft fill lives on each `th` ({@link headerSoftClass})
+   * so sticky columns do not double-tint and paint over neighbor labels.
+   * @returns Header row class list.
+   */
+  protected headerRowClass(): string {
+    return 'border-b border-border dark:border-white/10';
+  }
+
+  /**
+   * Opaque mode soft fill for header cells (sticky-safe in dark mode).
+   * @returns Soft solid background utilities.
+   */
+  protected headerSoftClass(): string {
+    return this.modeColor.classes().softSolid;
+  }
+
+  /**
    * Body row classes — row marker for hover styles, plus hide cell borders on
    * the last / expanded row.
    * @param row - Current row.
@@ -662,7 +682,7 @@ export class TableComponent<T = unknown> {
   protected bodyRowClass(row: T, index: number): string {
     if (this.isExpandable() && this.isRowExpanded(row, index)) {
       // Only the bottom edge — keep the top divider so the row still
-      // separates from the row above.
+      // separates from the row above. Detail panel owns the separator.
       return 'africanies-table-row group [&>td]:border-b-0';
     }
     return 'africanies-table-row group last:[&>td]:border-b-0';
@@ -691,25 +711,31 @@ export class TableComponent<T = unknown> {
    */
   protected expandHeaderClass(): string {
     return (
-      'w-10 border-b border-border px-2 py-3.5 dark:border-white/10 ' +
+      'w-10 border-b-[1.5px] border-border px-2 py-4 dark:border-white/10 ' +
+      this.headerSoftClass() +
+      ' ' +
       this.stickyPinClass('left', 'head')
     );
   }
 
   /**
    * Body classes for the expand/collapse trigger column (pinned left).
-   * Omits `border-b` like other sticky cells so the opaque fill does not
-   * double-paint the row divider.
+   * Uses a slightly thicker bottom border than scrolling cells so the
+   * sticky fill still reads a clear divider (no top-shadow fallback).
    * @param index - Index within {@link rows}.
    * @returns Body cell class list.
    */
   protected expandBodyClass(index: number): string {
-    const prev = index > 0 ? this.rowList()[index - 1] : undefined;
-    const afterExpanded =
-      prev !== undefined && this.isRowExpanded(prev, index - 1);
+    const row = this.rowList()[index];
+    const expanded =
+      row !== undefined && this.isRowExpanded(row, index);
+    const border = expanded
+      ? ''
+      : 'border-b-[1.5px] border-border dark:border-white/10 ';
     return (
-      'w-10 px-2 py-3.5 align-middle ' +
-      this.stickyPinClass('left', 'body', index, afterExpanded)
+      'w-10 px-2 py-4 align-middle ' +
+      border +
+      this.stickyPinClass('left', 'body')
     );
   }
 
@@ -719,37 +745,46 @@ export class TableComponent<T = unknown> {
    * @returns Header class list.
    */
   protected headerCellClass(col: TableColumn<T>): string {
+    const sticky = this.stickyEdge(col);
+    const border = sticky
+      ? 'border-b-[1.5px] '
+      : 'border-b ';
     return (
-      'border-b border-border whitespace-normal wrap-break-word px-3 py-3.5 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      border +
+      'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      this.headerSoftClass() +
+      ' ' +
       this.stickySurfaceClass(col, 'head')
     );
   }
 
   /**
    * Body cell classes, including sticky pin when set.
-   * Sticky cells omit `border-b`: their opaque fill sits in a higher stacking
-   * context, so a bottom border plus the next row's top shadow paint on the
-   * same pixel and read brighter (especially in dark mode).
+   * Sticky expand/actions columns use a 1.5px bottom border; scrolling cells
+   * stay at 1px. Expanded rows drop the bottom border (see {@link bodyRowClass}).
    * @param col - Column definition.
    * @param index - Index within {@link rows}.
    * @returns Body cell class list.
    */
   protected bodyCellClass(col: TableColumn<T>, index: number): string {
-    const rowLine = this.stickyEdge(col)
+    const row = this.rowList()[index];
+    const expanded =
+      row !== undefined && this.isRowExpanded(row, index);
+    const sticky = this.stickyEdge(col);
+    const rowLine = expanded
       ? ''
-      : 'border-b border-border dark:border-white/10 ';
-    const prev = index > 0 ? this.rowList()[index - 1] : undefined;
-    const afterExpanded =
-      prev !== undefined && this.isRowExpanded(prev, index - 1);
+      : sticky
+        ? 'border-b-[1.5px] border-border dark:border-white/10 '
+        : 'border-b border-border dark:border-white/10 ';
     const wrap =
       col.key === 'actions'
         ? 'whitespace-nowrap '
         : 'whitespace-normal wrap-break-word ';
     return (
       rowLine +
-      'px-3 py-3.5 align-middle ' +
+      'px-[1.125rem] py-4 align-middle ' +
       wrap +
-      this.stickySurfaceClass(col, 'body', index, afterExpanded)
+      this.stickySurfaceClass(col, 'body')
     );
   }
 
@@ -757,30 +792,22 @@ export class TableComponent<T = unknown> {
    * Sticky pin utilities for a known edge (expand column or data column).
    * @param edge - Left or right pin.
    * @param surface - Header vs body fill tokens.
-   * @param index - Body row index; unused for the header.
-   * @param afterExpanded - Previous row is expanded — skip the top shadow
-   *   divider so the sticky column stays flush under the detail panel.
    * @returns Sticky utilities.
    */
   protected stickyPinClass(
     edge: 'left' | 'right',
     surface: 'head' | 'body',
-    index = 0,
-    afterExpanded = false,
   ): string {
     // Expand (left) sits above scrolling cells; actions (right) match.
     // Header needs a higher z so it stays above sticky body cells.
     const side =
       edge === 'right' ? 'sticky right-0 z-[1]' : 'sticky left-0 z-[1]';
     if (surface === 'head') {
-      return `${side} z-[2] bg-background-welcome dark:bg-ink-950`;
+      // Fill comes from {@link headerSoftClass} on the cell — do not re-tint.
+      return `${side} z-[2]`;
     }
-    const rowDivider =
-      !afterExpanded && index > 0
-        ? 'shadow-[0_-1px_0_0_#c9d5e1] dark:shadow-[0_-1px_0_0_rgba(255,255,255,0.1)]'
-        : '';
     const fill = 'bg-white dark:bg-ink';
-    return `${side} ${fill} ${rowDivider}`;
+    return `${side} ${fill}`;
   }
 
   /**
@@ -788,21 +815,17 @@ export class TableComponent<T = unknown> {
    * cells do not show through.
    * @param col - Column definition.
    * @param surface - Header vs body fill tokens.
-   * @param index - Body row index; unused for the header.
-   * @param afterExpanded - Previous row is expanded — skip the top shadow.
    * @returns Sticky utilities, or empty when the column scrolls.
    */
   protected stickySurfaceClass(
     col: TableColumn<T>,
     surface: 'head' | 'body',
-    index = 0,
-    afterExpanded = false,
   ): string {
     const edge = this.stickyEdge(col);
     if (!edge) {
       return '';
     }
-    return this.stickyPinClass(edge, surface, index, afterExpanded);
+    return this.stickyPinClass(edge, surface);
   }
 
   /**

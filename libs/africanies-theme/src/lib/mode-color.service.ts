@@ -29,8 +29,15 @@ export interface ModeColorClasses {
   ghostPrimary: string;
   /**
    * Soft highlight for selected / active rows (works in dark mode).
+   * Dark uses a translucent tint — fine over solid surfaces, not for
+   * sticky overlays (see {@link softSolid}).
    */
   soft: string;
+  /**
+   * Opaque soft fill — same tint as {@link soft}, but dark mode mixes into
+   * ink so scrolled content cannot show through (sticky table headers/cells).
+   */
+  softSolid: string;
   /**
    * Soft hover highlight for menus and lists.
    */
@@ -74,6 +81,8 @@ export class ModeColorService {
         ghostPrimary:
           'bg-transparent text-export border-transparent hover:bg-export-subtle dark:hover:bg-export/15',
         soft: 'bg-export-subtle dark:bg-export/15',
+        softSolid:
+          'bg-export-subtle dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
         softHover: 'hover:bg-export-subtle dark:hover:bg-export/15',
       };
     }
@@ -87,6 +96,8 @@ export class ModeColorService {
       ghostPrimary:
         'bg-transparent text-import border-transparent hover:bg-import-subtle dark:hover:bg-import/15',
       soft: 'bg-import-subtle dark:bg-import/15',
+      softSolid:
+        'bg-import-subtle dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]',
       softHover: 'hover:bg-import-subtle dark:hover:bg-import/15',
     };
   });
