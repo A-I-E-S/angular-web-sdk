@@ -69,6 +69,11 @@ function africaniesInteractiveCursorPlugin({ addBase }) {
  * (`white` / `ink-950`) and `-webkit-text-fill-color` keeps body text on
  * `ink` / white. `.dark` matches `ThemeService` (`class` on `<html>`).
  *
+ * WHY one selector per `addBase` key: joining autofill selectors with commas
+ * under a single `.dark ${list}` key only scopes the first selector — the rest
+ * leak into light mode. WHY no `color` in the long transition: delaying color
+ * freezes text when the user toggles light/dark.
+ *
  * @param {import('tailwindcss/types/config').PluginAPI} api
  */
 function africaniesAutofillPlugin({ addBase }) {
@@ -81,21 +86,24 @@ function africaniesAutofillPlugin({ addBase }) {
     'textarea:-webkit-autofill:hover',
     'textarea:-webkit-autofill:focus',
     'textarea:-webkit-autofill:active',
-  ].join(', ');
+  ];
 
-  addBase({
-    [autofillSelectors]: {
+  /** @type {Record<string, Record<string, string>>} */
+  const rules = {};
+  for (const selector of autofillSelectors) {
+    rules[selector] = {
       WebkitTextFillColor: '#212529',
       caretColor: '#212529',
       boxShadow: '0 0 0 1000px #ffffff inset',
       transition: 'background-color 99999s ease-in-out 0s',
-    },
-    [`.dark ${autofillSelectors}`]: {
+    };
+    rules[`.dark ${selector}`] = {
       WebkitTextFillColor: '#ffffff',
       caretColor: '#ffffff',
       boxShadow: '0 0 0 1000px #272729 inset',
-    },
-  });
+    };
+  }
+  addBase(rules);
 }
 
 /**
@@ -191,95 +199,41 @@ module.exports = {
           brand: '#1c2b3f',
           950: '#272729',
         },
-        /*
-         * Cool slate ramp — one hue family end to end.
-         *
-         * WHY the full scale is declared: `extend` merges with Tailwind's
-         * defaults, so previously only 300/400/600 were cool blue-greys while
-         * 50/100/200/500/700/800/900 fell through to Tailwind's *pure* greys
-         * (zero saturation). Mixing two hue families is what made light mode
-         * read as muddy. 300/400/600 keep their exact values because dark mode
-         * renders body copy with them.
-         */
         neutral: {
-          50: '#f7f9fc',
-          100: '#eef2f7',
-          200: '#dfe6ee',
           300: '#c9d5e1',
           400: '#a9b5cb',
-          500: '#8593a8',
           600: '#667185',
-          700: '#4d586b',
-          800: '#3a4557',
-          900: '#252d3a',
-        },
-        /*
-         * Light-mode surfaces. Dark mode keeps using `ink` / `ink-950`, which
-         * already separate card from canvas by a clear step; light mode needs
-         * the same treatment (white cards lifting off a tinted canvas).
-         */
-        surface: {
-          DEFAULT: '#ffffff',
-          muted: '#f7f9fc',
-          sunken: '#eef2f7',
         },
         border: {
-          // Three weights so hairline dividers, card edges, and field borders
-          // are no longer all the same line.
-          subtle: '#e4eaf1',
+          // Light chrome on white — match form field borders (`neutral-300`).
+          // Previous `#f0f2f5` was too close to white and washed out.
           DEFAULT: '#c9d5e1',
-          strong: '#a9b5cb',
         },
         background: {
-          // Page canvas and subtle hover share this token. Was `#f9fafb`,
-          // only ~2% off white — cards never read as cards and
-          // `hover:bg-background-welcome` was invisible.
-          welcome: '#f1f5f9',
+          welcome: '#f9fafb',
         },
-        /*
-         * Brand accents keep their exact hex — `DEFAULT` and `light` are what
-         * dark mode paints. `ink` variants are the light-mode text/icon colors:
-         * `text-export` on white is only 2.5:1, well under WCAG AA.
-         */
         export: {
           DEFAULT: '#1cbd5d',
           light: '#24dc6d',
-          ink: '#0b7a3d', // 5.4:1 on white
-          subtle: '#e6f6ed',
+          subtle: '#e4fff3',
           tint: '#f2fff8',
         },
         import: {
           DEFAULT: '#f08829',
           light: '#ffa95b',
-          ink: '#9a5410', // 5.8:1 on white
-          // Was `#fffcef` — 99% white, so STN surfaces looked untinted while
-          // the SFN equivalent was clearly green.
-          subtle: '#fdf3e8',
+          subtle: '#fffcef',
         },
         danger: {
           DEFAULT: '#ff001c',
           dark: '#b41433',
           strong: '#C00B19',
-          ink: '#b3121f', // 6.9:1 on white
-          subtle: '#fdecec',
+          subtle: '#FFF2F2',
         },
         warning: {
           DEFAULT: '#DBB316',
           dark: '#EF8833',
-          ink: '#8a6d0b', // 4.9:1 on white
-          subtle: '#fdf3d9',
+          subtle: '#FFF6E6',
         },
-      },
-      /*
-       * Cool-tinted elevation. Neutral-black shadows go grey against the
-       * slate canvas; biasing the shadow toward the ink hue keeps depth clean.
-       */
-      boxShadow: {
-        card: '0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.06)',
-        raised:
-          '0 4px 8px -2px rgb(16 24 40 / 0.08), 0 2px 4px -2px rgb(16 24 40 / 0.04)',
-        overlay:
-          '0 12px 24px -6px rgb(16 24 40 / 0.12), 0 4px 8px -4px rgb(16 24 40 / 0.06)',
       },
       fontFamily: {
         sans: ['Arial', 'sans-serif'],
