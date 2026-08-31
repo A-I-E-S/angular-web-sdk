@@ -11,11 +11,9 @@ import {
   map,
   Observable,
   of,
-  retry,
   tap,
   throwError,
   timeout,
-  timer,
 } from 'rxjs';
 
 import {
@@ -30,7 +28,6 @@ import { AFRICANIES_SDK_CONFIG } from '../config/africanies-sdk.config';
 import { ShippingModeService } from '../shipping/shipping-mode.service';
 import { formatApiErrorMessage } from './api-error-message';
 import { HttpResponseCache } from './http-cache';
-import { isRetryableGetError } from './is-retryable-get-error';
 import { normalize } from './normalize';
 import {
   resolveApiRequestContext,
@@ -102,7 +99,8 @@ type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
  * - HTTP failures rethrown as `Error` whose `.message` is already
  *   user-facing ({@link formatApiErrorMessage}) — consumers do not need to
  *   parse `HttpErrorResponse` bodies
- * - Exponential-backoff retry (max 1) for **GET only**
+ * - **No automatic retry** — fail fast so UIs can show Select / table /
+ *   error-state Retry instead of a stuck loading spinner
  * - Optional per-GET TTL cache via `cacheTtlMs`
  *
  * @example
@@ -474,20 +472,8 @@ export class ApiClient {
         break;
     }
 
-    // Retry only idempotent GETs on transient failures — never replay 401/404 etc.
-    if (method === 'GET') {
-      req$ = req$.pipe(
-        retry({
-          count: 1,
-          delay: (err, retryCount) => {
-            if (!isRetryableGetError(err)) {
-              return throwError(() => err);
-            }
-            return timer(2 ** (retryCount - 1) * 1000);
-          },
-        }),
-      );
-    }
+    // No automatic GET retry — admin shells own Retry via UI
+    // (`africanies-select` showRetry, table error→refreshClick, error-state).
 
     if (this.config.timeout != null) {
       req$ = req$.pipe(

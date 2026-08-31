@@ -9,8 +9,8 @@
  * (no caret/tilde): TanStack marks the Angular adapter experimental and
  * breaking changes land without major bumps.
  *
- * Retry/backoff here mirrors {@link ApiClient}'s GET retry (max 3,
- * exponential) so HTTP-layer and query-layer behavior stay aligned.
+ * Query retries default to **0** to match {@link ApiClient} (fail fast;
+ * screens use manual Retry). Apps can override per `QueryClient` if needed.
  */
 
 /**
@@ -23,9 +23,9 @@ export interface AfricaniesQueryClientDefaults {
     staleTime: number;
     /** Unused-query garbage-collection time (ms). */
     gcTime: number;
-    /** Max failed-fetch retries for queries. */
+    /** Max failed-fetch retries for queries (default 0 — fail fast). */
     retry: number;
-    /** Exponential delay matching ApiClient GET backoff. */
+    /** Delay between retries when {@link AfricaniesQueryClientDefaults.queries.retry} > 0. */
     retryDelay: (attemptIndex: number) => number;
   };
   mutations: {
@@ -82,8 +82,7 @@ export function createAfricaniesQueryClientDefaults(): AfricaniesQueryClientDefa
     queries: {
       staleTime: 60_000,
       gcTime: 5 * 60_000,
-      retry: 3,
-      // attemptIndex is 0-based in TanStack; match 1s, 2s, 4s style backoff.
+      retry: 0,
       retryDelay: (attemptIndex: number) =>
         Math.min(1000 * 2 ** attemptIndex, 30_000),
     },
