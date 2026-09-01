@@ -212,6 +212,7 @@ export {
 export {
   mapNotification,
   mapNotificationInboxItem,
+  isNotificationExternalLink,
   mapNotificationList,
   mapNotificationPayload,
   NOTIFICATION_READ_PATH,

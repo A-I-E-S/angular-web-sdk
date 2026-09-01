@@ -296,13 +296,14 @@ export class NotificationDrawerPanel {
   });
 
   protected readonly title = computed(() => this.data.title ?? 'Notifications');
-  protected readonly items = signal<AfricaniesNotification[]>(
-    this.data.onLoadPage ? [] : (this.data.notifications ?? []),
-  );
+  private readonly seededItems = this.data.notifications ?? [];
+  protected readonly items = signal<AfricaniesNotification[]>(this.seededItems);
   protected readonly markingId = signal<string | null>(null);
   protected readonly markingAll = signal(false);
   protected readonly confirmingMarkAll = signal(false);
-  protected readonly loadingInitial = signal(!!this.data.onLoadPage);
+  protected readonly loadingInitial = signal(
+    !!this.data.onLoadPage && this.seededItems.length === 0,
+  );
   protected readonly loadingMore = signal(false);
   protected readonly loadError = signal<string | null>(null);
   protected readonly hasMore = signal(false);
@@ -334,7 +335,12 @@ export class NotificationDrawerPanel {
 
   constructor() {
     if (this.data.onLoadPage) {
-      this.fetchPage(1, 'replace');
+      if (this.seededItems.length > 0) {
+        this.currentPage.set(1);
+        this.fetchPage(1, 'refresh');
+      } else {
+        this.fetchPage(1, 'replace');
+      }
     }
 
     effect(() => {
@@ -578,7 +584,10 @@ export class NotificationDrawerPanel {
     this.fetchPage(this.currentPage() + 1, 'append');
   }
 
-  private fetchPage(page: number, mode: 'replace' | 'append'): void {
+  private fetchPage(
+    page: number,
+    mode: 'replace' | 'append' | 'refresh',
+  ): void {
     const loadPage = this.data.onLoadPage;
     if (!loadPage) {
       return;
@@ -587,6 +596,8 @@ export class NotificationDrawerPanel {
     if (mode === 'replace') {
       this.loadingInitial.set(true);
       this.loadError.set(null);
+    } else if (mode === 'refresh') {
+      this.loadError.set(null);
     } else {
       this.loadingMore.set(true);
     }
@@ -594,7 +605,7 @@ export class NotificationDrawerPanel {
     this.runPageLoad(
       () => loadPage(page),
       (result) => {
-        if (mode === 'replace') {
+        if (mode === 'replace' || mode === 'refresh') {
           this.items.set(result.items ?? []);
         } else {
           this.appendItems(result.items ?? []);
@@ -614,6 +625,8 @@ export class NotificationDrawerPanel {
         if (mode === 'replace') {
           this.loadError.set('Could not load notifications. Try again.');
           this.loadingInitial.set(false);
+        } else if (mode === 'refresh' && this.items().length === 0) {
+          this.loadError.set('Could not load notifications. Try again.');
         }
         this.loadingMore.set(false);
       },

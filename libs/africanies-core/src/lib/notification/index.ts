@@ -7,4 +7,4 @@ export {
   NOTIFICATION_UPDATE_PATH,
 } from './notification.mapper';
 export { NotificationService } from './notification.service';
-export { resolveNotificationLinkForMode } from './notification-link';
+export { isNotificationExternalLink, resolveNotificationLinkForMode } from './notification-link';

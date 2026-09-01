@@ -349,7 +349,7 @@ export class AppShellHeaderComponent {
     this.notificationsDrawer
       .open({
         title: this.notificationsTitle(),
-        notifications: onLoadPage ? undefined : this.notifications(),
+        notifications: this.notifications(),
         onLoadPage,
         onMarkRead,
         onMarkAllRead,
