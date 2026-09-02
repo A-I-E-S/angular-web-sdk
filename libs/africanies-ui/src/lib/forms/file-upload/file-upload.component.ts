@@ -125,7 +125,7 @@ let nextFileUploadId = 0;
                 <button
                   africanies-button
                   type="button"
-                  variant="secondary"
+                  variant="flat"
                   size="sm"
                   [disabled]="disabled()"
                   (click)="openFilePicker()"
@@ -138,7 +138,7 @@ let nextFileUploadId = 0;
                 <button
                   africanies-button
                   type="button"
-                  variant="secondary"
+                  variant="flat"
                   size="sm"
                   [disabled]="disabled()"
                   (click)="openCamera()"
@@ -193,7 +193,7 @@ let nextFileUploadId = 0;
                 <button
                   africanies-button
                   type="button"
-                  variant="secondary"
+                  variant="flat"
                   size="sm"
                   [disabled]="disabled()"
                   (click)="openFilePicker()"
@@ -262,7 +262,7 @@ let nextFileUploadId = 0;
                 <button
                   africanies-button
                   type="button"
-                  variant="secondary"
+                  variant="flat"
                   size="sm"
                   [disabled]="disabled()"
                   (click)="openFilePicker(); $event.stopPropagation()"

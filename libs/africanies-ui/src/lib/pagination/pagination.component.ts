@@ -134,7 +134,7 @@ type PageItem = number | 'ellipsis';
         <button
           africanies-button
           type="button"
-          variant="secondary"
+          variant="flat"
           size="sm"
           [disabled]="controlsDisabled() || !meta().has_previous_page"
           (click)="emitPage(meta().current_page - 1)"
@@ -155,7 +155,7 @@ type PageItem = number | 'ellipsis';
               type="button"
               size="sm"
               class="min-w-8"
-              [variant]="item === meta().current_page ? 'primary' : 'secondary'"
+              [variant]="item === meta().current_page ? 'primary' : 'flat'"
               [disabled]="controlsDisabled()"
               [attr.aria-label]="'Page ' + item"
               [attr.aria-current]="
@@ -170,7 +170,7 @@ type PageItem = number | 'ellipsis';
         <button
           africanies-button
           type="button"
-          variant="secondary"
+          variant="flat"
           size="sm"
           [disabled]="controlsDisabled() || !meta().has_next_page"
           (click)="emitPage(meta().current_page + 1)"

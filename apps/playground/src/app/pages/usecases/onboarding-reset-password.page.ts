@@ -36,7 +36,7 @@ import { playgroundErrorMessage } from '../../shared/playground-notify';
       />
 
       <form
-        class="flex flex-col gap-4 rounded-xl border border-border bg-white p-6 dark:border-white/10 dark:bg-ink"
+        class="flex flex-col gap-4 rounded-xl border border-border bg-white p-6 dark:border-white/10 dark:bg-ink-950"
         (submit)="$event.preventDefault(); save()"
       >
         @if (errorMessage(); as err) {

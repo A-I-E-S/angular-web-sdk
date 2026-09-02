@@ -186,7 +186,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         @if (multiple() && selectedList().length) {
           @for (chip of selectedList(); track trackOption(chip)) {
             <span
-              class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-background-welcome dark:border-white/20 dark:bg-ink text-body-sm text-ink dark:text-white px-2 py-0.5"
+              class="inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-background-welcome dark:border-white/20 dark:bg-ink-950 text-body-sm text-ink dark:text-white px-2 py-0.5"
             >
               @if (chip.prefix; as prefixIcon) {
                 <africanies-icon [name]="prefixIcon" [size]="14" class="shrink-0" />

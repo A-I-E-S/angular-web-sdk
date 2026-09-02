@@ -77,7 +77,7 @@ type PreviewKind = 'image' | 'unavailable';
           <img
             [src]="src()"
             [alt]="data.file.name"
-            class="max-h-[min(70vh,40rem)] w-full rounded-md object-contain bg-background-welcome ring-1 ring-border dark:bg-ink dark:ring-white/15"
+            class="max-h-[min(70vh,40rem)] w-full rounded-md object-contain bg-background-welcome ring-1 ring-border dark:bg-ink-950 dark:ring-white/15"
           />
         } @else {
           <div

@@ -142,7 +142,7 @@ import { TableColumn, TableSortChange } from './table-column';
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 [disabled]="loading() || refreshing()"
                 [attr.aria-label]="refreshLabel()"
@@ -162,7 +162,7 @@ import { TableColumn, TableSortChange } from './table-column';
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 [attr.aria-label]="filterLabel()"
                 (click)="filterClick.emit()"
@@ -182,7 +182,7 @@ import { TableColumn, TableSortChange } from './table-column';
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 [attr.aria-label]="exportLabel()"
                 (click)="exportClick.emit()"
@@ -208,7 +208,7 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink"
+        class="min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink-surface"
       >
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
@@ -806,7 +806,7 @@ export class TableComponent<T = unknown> {
       // Fill comes from {@link headerSoftClass} on the cell — do not re-tint.
       return `${side} z-[2]`;
     }
-    const fill = 'bg-white dark:bg-ink';
+    const fill = 'bg-white dark:bg-ink-surface';
     return `${side} ${fill}`;
   }
 

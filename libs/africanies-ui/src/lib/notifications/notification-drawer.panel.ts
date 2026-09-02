@@ -127,7 +127,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 (click)="retryInitialLoad()"
               >

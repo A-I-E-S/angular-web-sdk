@@ -38,9 +38,10 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
 /**
  * App shell side navigation with icons, nested items, and a collapsible rail.
  *
- * **Design - ink spine:** a continuous mode-accent edge with soft active
- * highlights. Collapsed mode keeps icons; hover opens a floating label blade
- * (name + children) instead of a plain tooltip.
+ * **Design - ink spine:** a continuous mode-accent edge; active leaves use
+ * primary fill + white text (portal parity); expanded parents of an active
+ * child use primary text on white. Collapsed mode keeps icons; hover opens a
+ * floating label blade (name + children) instead of a plain tooltip.
  *
  * ## Parent items with children
  * **Expanded rail:** branches start open by default (`expandBranchesByDefault`).
@@ -244,12 +245,15 @@ export class SideNavComponent {
 
     const leaf = this.isLeafActive(item);
     const ancestor = !leaf && this.isItemActive(item);
+    const colors = this.modeColor.classes();
 
+    // Portal: active leaf / collapsed rail = primary fill + white text.
     if (leaf) {
-      return `${base} ${this.modeColor.classes().soft} ${this.modeColor.classes().text} font-semibold`;
+      return `${base} ${colors.activeFill} font-semibold`;
     }
+    // Portal: expanded parent of active child = primary text on white.
     if (ancestor) {
-      return `${base} ${this.modeColor.classes().soft} ${this.modeColor.classes().text} font-semibold`;
+      return `${base} bg-transparent ${colors.text} font-semibold`;
     }
     return (
       `${base} font-medium text-neutral-600 hover:bg-background-welcome hover:text-ink ` +
@@ -264,7 +268,7 @@ export class SideNavComponent {
       (item.disabled ? 'cursor-not-allowed opacity-50 ' : 'cursor-pointer ');
 
     if (this.isLeafActive(item)) {
-      return `${base} ${this.modeColor.classes().soft} ${this.modeColor.classes().text} font-semibold`;
+      return `${base} ${this.modeColor.classes().activeFill} font-semibold`;
     }
     return (
       `${base} font-medium text-neutral-600 hover:bg-background-welcome hover:text-ink ` +

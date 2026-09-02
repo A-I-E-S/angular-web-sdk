@@ -14,7 +14,8 @@ import { ModeColorService } from '@africanies/africanies-theme';
  * Visual emphasis for {@link ButtonComponent}.
  *
  * - `primary` — filled mode accent (SFN green / STN orange) for the main action
- * - `secondary` — outlined chrome for secondary actions
+ * - `secondary` — stroked mode accent (white + mode border/text; portal `.btn-stroked`)
+ * - `flat` — neutral chrome (white + ink + soft border; portal `.btn-flat`)
  * - `ghost` — neutral text-only for low-emphasis actions (Cancel, tertiary)
  * - `ghost-primary` — text-only mode accent (SFN green / STN orange)
  * - `ghost-danger` — text-only destructive actions (Clear, Remove)
@@ -23,6 +24,7 @@ import { ModeColorService } from '@africanies/africanies-theme';
 export type ButtonVariant =
   | 'primary'
   | 'secondary'
+  | 'flat'
   | 'ghost'
   | 'ghost-primary'
   | 'ghost-danger'
@@ -167,6 +169,8 @@ export class ButtonComponent {
     } else if (variant === 'ghost-primary') {
       variantClass = this.modeColor.classes().ghostPrimary;
     } else if (variant === 'secondary') {
+      variantClass = this.modeColor.classes().stroked;
+    } else if (variant === 'flat') {
       variantClass =
         'bg-white dark:bg-ink-950 text-ink dark:text-white border-border dark:border-white/15 hover:bg-background-welcome dark:hover:bg-white/10';
     } else if (variant === 'ghost') {

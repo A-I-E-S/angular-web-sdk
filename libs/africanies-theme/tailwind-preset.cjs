@@ -92,8 +92,8 @@ function africaniesAutofillPlugin({ addBase }) {
   const rules = {};
   for (const selector of autofillSelectors) {
     rules[selector] = {
-      WebkitTextFillColor: '#212529',
-      caretColor: '#212529',
+      WebkitTextFillColor: '#1c2b3f',
+      caretColor: '#1c2b3f',
       boxShadow: '0 0 0 1000px #ffffff inset',
       transition: 'background-color 99999s ease-in-out 0s',
     };
@@ -194,9 +194,12 @@ module.exports = {
         black: '#000000',
         white: '#ffffff',
         ink: {
-          DEFAULT: '#212529',
+          // Portal `.txt-primary` navy — primary body / heading text (light).
+          DEFAULT: '#1c2b3f',
           blue: '#192a3e',
           brand: '#1c2b3f',
+          // Previous ink DEFAULT — dark elevated cards / panels (`dark:bg-ink-surface`).
+          surface: '#212529',
           950: '#272729',
         },
         neutral: {
@@ -205,11 +208,17 @@ module.exports = {
           600: '#667185',
         },
         border: {
-          // Light chrome on white — match form field borders (`neutral-300`).
-          // Previous `#f0f2f5` was too close to white and washed out.
-          DEFAULT: '#c9d5e1',
+          // Soft hairline on white (portal `$border-bottom-gray`).
+          DEFAULT: '#f0f2f5',
+          // Nav pins / stronger chrome dividers.
+          strong: '#e0e6f0',
         },
         background: {
+          // Portal page shell (`container-wrap`).
+          chrome: '#f6f7f9',
+          // Nested wells inside white cards.
+          well: '#f3f3f3',
+          // Auth / welcome / soft hover.
           welcome: '#f9fafb',
         },
         export: {
@@ -236,7 +245,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Arial', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // PROVISIONAL — see THEME.md; sizes may tighten after design QA.

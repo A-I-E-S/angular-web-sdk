@@ -19,7 +19,7 @@ import {
   imports: [AppShellComponent, SideNavComponent],
   template: `
     <div
-      class="mx-auto overflow-hidden rounded-xl border border-border bg-white shadow-sm dark:border-white/10 dark:bg-ink"
+      class="mx-auto overflow-hidden rounded-xl border border-border bg-white shadow-sm dark:border-white/10 dark:bg-ink-950"
       [class]="frameClass()"
     >
       <africanies-app-shell

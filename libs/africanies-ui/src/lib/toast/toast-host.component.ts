@@ -25,14 +25,14 @@ import { ToastItemComponent } from './toast-item.component';
     <div class="flex w-full flex-col gap-2">
       @if (toastService.showHostActions()) {
         <div
-          class="sticky top-0 z-10 flex flex-wrap justify-end gap-2 bg-white/80 pb-1 backdrop-blur-sm dark:bg-ink/80"
+          class="sticky top-0 z-10 flex flex-wrap justify-end gap-2 bg-white/80 pb-1 backdrop-blur-sm dark:bg-ink-surface/80"
         >
           @if (toastService.hasStacks()) {
             @if (toastService.allStacksExpanded()) {
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 class="!min-h-0 !rounded-full !bg-white !px-2.5 !py-1 !text-caption dark:!bg-ink"
                 (click)="toastService.collapseAll()"
@@ -43,7 +43,7 @@ import { ToastItemComponent } from './toast-item.component';
               <button
                 africanies-button
                 type="button"
-                variant="secondary"
+                variant="flat"
                 size="sm"
                 class="!min-h-0 !rounded-full !bg-white !px-2.5 !py-1 !text-caption dark:!bg-ink"
                 (click)="toastService.expandAll()"
@@ -55,7 +55,7 @@ import { ToastItemComponent } from './toast-item.component';
           <button
             africanies-button
             type="button"
-            variant="secondary"
+            variant="flat"
             size="sm"
             class="!min-h-0 !rounded-full !bg-white !px-2.5 !py-1 !text-caption dark:!bg-ink"
             (click)="toastService.clear()"

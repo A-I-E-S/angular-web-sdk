@@ -230,7 +230,7 @@ const SUCCESS_ROWS: DemoShipment[] = [
               class="rounded-md px-3 py-1.5 text-body-sm transition-colors duration-150"
               [class]="
                 demo() === kind
-                  ? 'bg-white text-ink shadow-sm dark:bg-ink dark:text-white'
+                  ? 'bg-white text-ink shadow-sm dark:bg-ink-950 dark:text-white'
                   : 'text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white'
               "
               [attr.aria-selected]="demo() === kind"

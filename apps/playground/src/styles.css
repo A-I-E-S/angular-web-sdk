@@ -12,12 +12,11 @@
   }
 
   /*
-   * Playground light canvas — slightly duller than theme `background-welcome`
-   * (#f9fafb) so long catalog sessions feel less glare-y. Demo cards stay white.
+   * Playground light canvas — portal page chrome (#f6f7f9). Demo cards stay white.
    */
   :root {
-    --pg-canvas: #e6ebf1;
-    --pg-chrome: #f2f5f8;
+    --pg-canvas: #f6f7f9;
+    --pg-chrome: #f0f2f5;
   }
 
   body {
@@ -229,7 +228,7 @@
 }
 
 .pg-lecture-scroll-top {
-  @apply fixed bottom-6 right-6 z-40 flex size-11 items-center justify-center rounded-full border border-border bg-white text-ink shadow-md hover:border-export hover:text-export dark:border-white/15 dark:bg-ink dark:text-white dark:hover:border-export-light dark:hover:text-export-light;
+  @apply fixed bottom-6 right-6 z-40 flex size-11 items-center justify-center rounded-full border border-border bg-white text-ink shadow-md hover:border-export hover:text-export dark:border-white/15 dark:bg-ink-surface dark:text-white dark:hover:border-export-light dark:hover:text-export-light;
   opacity: 0;
   pointer-events: none;
   transform: translateY(1rem) scale(0.92);

@@ -42,7 +42,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       />
 
       <section
-        class="rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink sm:p-6"
+        class="rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink-950 sm:p-6"
       >
         <h2 class="m-0 text-heading-3 text-ink dark:text-white">
           Category abbreviations
@@ -75,7 +75,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
       </section>
 
       <section
-        class="rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink sm:p-6"
+        class="rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink-950 sm:p-6"
       >
         <h2 class="m-0 text-heading-3 text-ink dark:text-white">On this page</h2>
         <p class="mt-2 mb-4 text-body-sm text-neutral-600 dark:text-neutral-400">
@@ -114,7 +114,7 @@ import { PageHeaderComponent } from '../shared/page-header.component';
             @for (entry of entriesFor(category); track entry.id) {
               <article
                 [id]="entry.id"
-                class="scroll-mt-24 rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink sm:p-6"
+                class="scroll-mt-24 rounded-xl border border-border bg-white p-5 dark:border-white/10 dark:bg-ink-950 sm:p-6"
                 [class.ring-2]="activeId() === entry.id"
                 [class.ring-export]="activeId() === entry.id"
               >

@@ -38,7 +38,7 @@ import { ICONS_USAGE } from '../snippets';
           @for (sample of samples; track sample) {
             <button
               type="button"
-              class="inline-flex items-center justify-center rounded-lg border border-border bg-white p-2.5 transition hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
+              class="inline-flex items-center justify-center rounded-lg border border-border bg-white p-2.5 transition hover:border-neutral-400 dark:border-white/10 dark:bg-ink-950 dark:hover:border-white/25"
               [attr.aria-label]="'Copy snippet for ' + sample"
               [title]="'Copy <africanies-icon name=&quot;' + sample + '&quot; />'"
               (click)="copySnippet(sample)"
@@ -55,7 +55,7 @@ import { ICONS_USAGE } from '../snippets';
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <input
           type="search"
-          class="w-full max-w-md rounded-xl border border-border bg-white px-4 py-2.5 text-body text-ink outline-none ring-export/30 transition focus:ring-2 dark:border-white/15 dark:bg-ink dark:text-white"
+          class="w-full max-w-md rounded-xl border border-border bg-white px-4 py-2.5 text-body text-ink outline-none ring-export/30 transition focus:ring-2 dark:border-white/15 dark:bg-ink-950 dark:text-white"
           placeholder="Filter by name…"
           [value]="query()"
           (input)="query.set($any($event.target).value)"
@@ -77,7 +77,7 @@ import { ICONS_USAGE } from '../snippets';
         @for (name of filtered(); track name) {
           <button
             type="button"
-            class="group flex flex-col items-center gap-2.5 rounded-xl border border-border bg-white px-2 py-3.5 text-ink transition duration-150 hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-sm dark:border-white/10 dark:bg-ink dark:text-white dark:hover:border-white/25"
+            class="group flex flex-col items-center gap-2.5 rounded-xl border border-border bg-white px-2 py-3.5 text-ink transition duration-150 hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-sm dark:border-white/10 dark:bg-ink-950 dark:text-white dark:hover:border-white/25"
             [attr.aria-label]="'Copy snippet for ' + name"
             [title]="'Copy <africanies-icon name=&quot;' + name + '&quot; />'"
             (click)="copySnippet(name)"

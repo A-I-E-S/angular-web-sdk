@@ -36,7 +36,7 @@ import { findUsecaseShipment } from './shipment-data';
         </div>
 
         <dl
-          class="grid gap-4 rounded-xl border border-border bg-white px-5 py-4 sm:grid-cols-3 dark:border-white/10 dark:bg-ink"
+          class="grid gap-4 rounded-xl border border-border bg-white px-5 py-4 sm:grid-cols-3 dark:border-white/10 dark:bg-ink-950"
         >
           <div>
             <dt class="text-caption text-neutral-500">Origin</dt>

@@ -65,7 +65,7 @@ interface TokenSwatch {
                   class="h-20 border-b border-border dark:border-white/10"
                   [class]="token.bgClass"
                 ></div>
-                <div class="bg-white px-3 py-2.5 dark:bg-ink">
+                <div class="bg-white px-3 py-2.5 dark:bg-ink-surface">
                   <p class="m-0 text-body-sm font-medium text-ink dark:text-white">
                     {{ token.name }}
                   </p>
@@ -177,14 +177,28 @@ export class TokensPage {
   protected readonly colors: TokenSwatch[] = [
     { name: 'black', bgClass: 'bg-black', hex: '#000000', group: 'Core' },
     { name: 'white', bgClass: 'bg-white', hex: '#ffffff', group: 'Core' },
-    { name: 'ink', bgClass: 'bg-ink', hex: '#212529', group: 'Core' },
+    { name: 'ink', bgClass: 'bg-ink', hex: '#1c2b3f', group: 'Core' },
     { name: 'ink-blue', bgClass: 'bg-ink-blue', hex: '#192a3e', group: 'Core' },
     { name: 'ink-brand', bgClass: 'bg-ink-brand', hex: '#1c2b3f', group: 'Core' },
+    { name: 'ink-surface', bgClass: 'bg-ink-surface', hex: '#212529', group: 'Core' },
     { name: 'ink-950', bgClass: 'bg-ink-950', hex: '#272729', group: 'Core' },
     { name: 'neutral-300', bgClass: 'bg-neutral-300', hex: '#c9d5e1', group: 'Neutral' },
     { name: 'neutral-400', bgClass: 'bg-neutral-400', hex: '#a9b5cb', group: 'Neutral' },
     { name: 'neutral-600', bgClass: 'bg-neutral-600', hex: '#667185', group: 'Neutral' },
-    { name: 'border', bgClass: 'bg-border', hex: '#c9d5e1', group: 'Neutral' },
+    { name: 'border', bgClass: 'bg-border', hex: '#f0f2f5', group: 'Neutral' },
+    { name: 'border-strong', bgClass: 'bg-border-strong', hex: '#e0e6f0', group: 'Neutral' },
+    {
+      name: 'background-chrome',
+      bgClass: 'bg-background-chrome',
+      hex: '#f6f7f9',
+      group: 'Neutral',
+    },
+    {
+      name: 'background-well',
+      bgClass: 'bg-background-well',
+      hex: '#f3f3f3',
+      group: 'Neutral',
+    },
     {
       name: 'background-welcome',
       bgClass: 'bg-background-welcome',

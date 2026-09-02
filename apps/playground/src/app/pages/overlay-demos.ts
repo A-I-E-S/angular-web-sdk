@@ -60,7 +60,7 @@ export interface DemoDrawerData {
           Note
         </span>
         <input
-          class="rounded-md border border-border bg-white px-3 py-2 text-body text-ink outline-none focus:border-neutral-400 dark:border-white/15 dark:bg-ink dark:text-white"
+          class="rounded-md border border-border bg-white px-3 py-2 text-body text-ink outline-none focus:border-neutral-400 dark:border-white/15 dark:bg-ink-950 dark:text-white"
           type="text"
           [value]="note"
           (input)="note = $any($event.target).value"

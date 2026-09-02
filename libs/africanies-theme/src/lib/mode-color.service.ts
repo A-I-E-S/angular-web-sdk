@@ -42,6 +42,14 @@ export interface ModeColorClasses {
    * Soft hover highlight for menus and lists.
    */
   softHover: string;
+  /**
+   * Active nav leaf / collapsed rail — solid mode fill + white text.
+   */
+  activeFill: string;
+  /**
+   * Stroked secondary CTA — white fill, mode border + text (portal `.btn-stroked`).
+   */
+  stroked: string;
 }
 
 /**
@@ -84,6 +92,10 @@ export class ModeColorService {
         softSolid:
           'bg-export-subtle dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
         softHover: 'hover:bg-export-subtle dark:hover:bg-export/15',
+        activeFill:
+          'bg-export text-white border-transparent dark:bg-export dark:text-white',
+        stroked:
+          'bg-white text-export border-export hover:bg-export-subtle dark:bg-ink-950 dark:text-export dark:border-export dark:hover:bg-export/15',
       };
     }
     return {
@@ -99,6 +111,10 @@ export class ModeColorService {
       softSolid:
         'bg-import-subtle dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]',
       softHover: 'hover:bg-import-subtle dark:hover:bg-import/15',
+      activeFill:
+        'bg-import text-white border-transparent dark:bg-import dark:text-white',
+      stroked:
+        'bg-white text-import border-import hover:bg-import-subtle dark:bg-ink-950 dark:text-import dark:border-import dark:hover:bg-import/15',
     };
   });
 }

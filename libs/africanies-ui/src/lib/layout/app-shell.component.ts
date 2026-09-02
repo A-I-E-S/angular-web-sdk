@@ -199,8 +199,8 @@ export class AppShellComponent {
 
   protected readonly shellRootClass = computed(() =>
     this.layoutPreview()
-      ? 'relative flex h-full min-h-0'
-      : 'relative flex min-h-full',
+      ? 'relative flex h-full min-h-0 bg-background-chrome dark:bg-ink-950'
+      : 'relative flex min-h-full bg-background-chrome dark:bg-ink-950',
   );
 
   protected readonly headerDensity = computed((): 'mobile' | 'tablet' | 'desktop' => {

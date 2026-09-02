@@ -96,7 +96,7 @@ interface ModelCategory {
               <div class="grid gap-4">
                 @for (entry of group.models; track entry.name) {
                   <article
-                    class="flex flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink sm:p-5"
+                    class="flex flex-col gap-3 rounded-xl border border-border bg-white p-4 dark:border-white/10 dark:bg-ink-950 sm:p-5"
                   >
                     <div
                       class="flex flex-wrap items-baseline justify-between gap-2"

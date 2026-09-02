@@ -262,7 +262,7 @@ export class ToastItemComponent {
     () =>
       'africanies-toast-enter relative flex w-full overflow-hidden rounded-lg border border-border ' +
       'bg-white/95 text-ink shadow-lg backdrop-blur-md ' +
-      'dark:border-white/15 dark:bg-ink/95 dark:text-white',
+      'dark:border-white/15 dark:bg-ink-950/95 dark:text-white',
   );
 
   protected readonly accentClass = computed(

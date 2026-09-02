@@ -3,9 +3,8 @@
 export /**
  *
  */
-const BUTTON_VARIANTS = `// Five variants. Primary and ghost-primary pick up SFN green / STN orange
-// from ModeColorService — don't hard-code those colors yourself.
-// ghost stays neutral (Cancel); ghost-primary is a mode-colored text button.
+const BUTTON_VARIANTS = `// Variants. Primary / ghost-primary / secondary (stroked) pick up SFN green /
+// STN orange from ModeColorService. flat is neutral chrome (Cancel, Filters).
 
 import { Component } from '@angular/core';
 import {
@@ -34,6 +33,7 @@ export class ShipmentActionsComponent {
   protected readonly variants: ButtonVariant[] = [
     'primary',
     'secondary',
+    'flat',
     'ghost',
     'ghost-primary',
     'ghost-danger',
@@ -44,6 +44,7 @@ export class ShipmentActionsComponent {
   protected readonly labels: Record<ButtonVariant, string> = {
     primary: 'Save shipment',
     secondary: 'Save draft',
+    flat: 'Filters',
     ghost: 'Cancel',
     'ghost-primary': 'Add row',
     'ghost-danger': 'Remove',

@@ -147,7 +147,7 @@ export class ModalService implements OverlayOpener {
           'africanies-overlay-backdrop',
           'bg-ink/45',
           'backdrop-blur-sm',
-          'dark:bg-ink/60',
+          'dark:bg-ink-950/60',
         ],
         panelClass: [
           'africanies-modal-panel',

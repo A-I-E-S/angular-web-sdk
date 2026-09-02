@@ -11,12 +11,12 @@
  * SFN (export / green):
  * text-export bg-export bg-export-subtle bg-export-light border-export
  * hover:bg-export-light hover:bg-export-subtle dark:bg-export/15 dark:hover:bg-export/15
- * dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]
+ * dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)] dark:bg-export dark:text-export dark:border-export
  *
  * STN (import / orange):
  * text-import bg-import bg-import-subtle bg-import-light border-import
  * hover:bg-import-light hover:bg-import-subtle dark:bg-import/15 dark:hover:bg-import/15
- * dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]
+ * dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)] dark:bg-import dark:text-import dark:border-import
  */
 export const MODE_COLOR_SAFELIST = [
   'text-export',
@@ -29,6 +29,9 @@ export const MODE_COLOR_SAFELIST = [
   'dark:bg-export/15',
   'dark:hover:bg-export/15',
   'dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
+  'dark:bg-export',
+  'dark:text-export',
+  'dark:border-export',
   'text-import',
   'bg-import',
   'bg-import-subtle',
@@ -39,4 +42,7 @@ export const MODE_COLOR_SAFELIST = [
   'dark:bg-import/15',
   'dark:hover:bg-import/15',
   'dark:bg-[color-mix(in_srgb,#f08829_15%,#212529)]',
+  'dark:bg-import',
+  'dark:text-import',
+  'dark:border-import',
 ] as const;

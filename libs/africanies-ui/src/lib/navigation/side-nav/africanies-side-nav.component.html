@@ -1,5 +1,5 @@
     <aside
-      class="relative flex h-full flex-col overflow-visible border-r border-border bg-white transition-[width] duration-200 ease-out dark:border-white/10 dark:bg-ink"
+      class="relative flex h-full flex-col overflow-visible border-r border-border bg-white transition-[width] duration-200 ease-out dark:border-white/10 dark:bg-ink-950"
       [style.width]="collapsed() ? '3.75rem' : '15rem'"
       [attr.aria-label]="ariaLabel()"
     >
@@ -61,7 +61,7 @@
         @if (!collapsed() && expandParents() && hasOpenBranches()) {
           <button
             type="button"
-            class="absolute right-1.5 top-1.5 z-10 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-white text-neutral-500 shadow-sm ring-1 ring-border/80 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ink dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
+            class="absolute right-1.5 top-1.5 z-10 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-white text-neutral-500 shadow-sm ring-1 ring-border/80 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
             aria-label="Collapse all"
             (click)="collapseAllBranches()"
           >

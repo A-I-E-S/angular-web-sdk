@@ -94,7 +94,7 @@ interface CatalogCard {
           @for (card of cards; track card.path) {
             <a
               [routerLink]="card.path"
-              class="flex flex-col gap-4 rounded-xl border border-border bg-white p-5 no-underline transition-colors hover:border-neutral-400 dark:border-white/10 dark:bg-ink dark:hover:border-white/25"
+              class="flex flex-col gap-4 rounded-xl border border-border bg-white p-5 no-underline transition-colors hover:border-neutral-400 dark:border-white/10 dark:bg-ink-950 dark:hover:border-white/25"
             >
               <div class="flex items-center justify-between">
                 <span

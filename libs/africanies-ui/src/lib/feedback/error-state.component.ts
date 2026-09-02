@@ -40,7 +40,7 @@ import { ButtonComponent } from '../button/button.component';
       <button
         africanies-button
         type="button"
-        variant="secondary"
+        variant="flat"
         [disabled]="refreshing()"
         (click)="retry.emit()"
       >

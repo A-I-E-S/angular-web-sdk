@@ -48,7 +48,7 @@ import {
       <app-demo-section
         title="Variants"
         hint="Pick the visual weight for the action. Primary and ghost-primary are mode-colored — flip STN/SFN in the sidebar to see them change."
-        badge="7"
+        badge="8"
         [code]="variantsCode"
       >
         <div class="flex flex-wrap items-end gap-6">
@@ -113,7 +113,7 @@ import {
             <africanies-icon name="airplane" [size]="16" />
             Create shipment
           </button>
-          <button africanies-button type="button" variant="secondary">
+          <button africanies-button type="button" variant="flat">
             <africanies-icon name="adjust" [size]="16" />
             Filters
           </button>
@@ -216,7 +216,7 @@ import {
             <p class="m-0 text-caption text-neutral-600">Draft · Lagos → London</p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button africanies-button type="button" variant="ghost" size="sm">Cancel</button>
+            <button africanies-button type="button" variant="flat" size="sm">Cancel</button>
             <button africanies-button type="button" variant="secondary" size="sm">Save draft</button>
             <button africanies-button type="button" variant="primary" size="sm">Submit</button>
           </div>
@@ -229,6 +229,7 @@ export class ButtonPage {
   protected readonly variants: ButtonVariant[] = [
     'primary',
     'secondary',
+    'flat',
     'ghost',
     'ghost-primary',
     'ghost-danger',
@@ -239,6 +240,7 @@ export class ButtonPage {
   protected readonly labels: Record<ButtonVariant, string> = {
     primary: 'Save shipment',
     secondary: 'Save draft',
+    flat: 'Filters',
     ghost: 'Cancel',
     'ghost-primary': 'Add row',
     'ghost-danger': 'Remove',

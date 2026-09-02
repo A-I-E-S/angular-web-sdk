@@ -12,11 +12,11 @@ export const FORM_LABEL_CLASS =
 
 /** Default control shell — `h-10` matches md `africanies-button`. */
 export const FORM_FIELD_CLASS =
-  'flex items-center w-full h-10 box-border rounded-md border border-neutral-300 bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
+  'flex items-center w-full h-10 box-border rounded-md border border-border bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
   'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
 
 /**
- * Error border — `!` so it wins over shell `border-neutral-300` /
+ * Error border — `!` so it wins over shell `border-border` /
  * `dark:border-white/25` (same specificity; those utilities sort later in the
  * generated CSS and otherwise paint over `border-danger`).
  *
