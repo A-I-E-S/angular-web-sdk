@@ -26,10 +26,6 @@ import {
 
 import { ButtonComponent } from '../button/button.component';
 import { DatePickerComponent } from '../forms/date-picker/date-picker.component';
-import {
-  RadioComponent,
-  type RadioOption,
-} from '../forms/radio/radio.component';
 import { SelectComponent } from '../forms/select/select.component';
 import type { SelectOption } from '../forms/select/select.types';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
@@ -62,7 +58,6 @@ import { FilterQueryService } from './filter-query.service';
     AfricaniesIconComponent,
     ButtonComponent,
     DatePickerComponent,
-    RadioComponent,
     SelectComponent,
     TextInputComponent,
   ],
@@ -220,12 +215,37 @@ import { FilterQueryService } from './filter-query.service';
                   </div>
                 }
                 @case ('boolean') {
-                  <africanies-radio
-                    label=""
-                    [options]="toRadioOptions(field.options)"
-                    [value]="draft().values[field.key] ?? null"
-                    (valueChange)="onRadioChange(field.key, $event)"
-                  />
+                  <div class="flex flex-wrap gap-2">
+                    @for (opt of booleanOptions(field); track opt.value) {
+                      <button
+                        type="button"
+                        class="cursor-pointer rounded-md border px-2.5 py-1.5 text-body-sm transition-colors"
+                        [style.color]="
+                          draft().values[field.key] === opt.value
+                            ? opt.color ?? null
+                            : null
+                        "
+                        [style.border-color]="
+                          draft().values[field.key] === opt.value
+                            ? opt.color ?? null
+                            : null
+                        "
+                        [style.background-color]="
+                          draft().values[field.key] === opt.value && opt.color
+                            ? opt.color + '1A'
+                            : null
+                        "
+                        [class]="
+                          draft().values[field.key] === opt.value
+                            ? 'font-medium'
+                            : 'border-neutral-300 text-neutral-600 hover:border-neutral-400 dark:border-white/15 dark:text-neutral-300'
+                        "
+                        (click)="setFieldValue(field.key, opt.value)"
+                      >
+                        {{ opt.label }}
+                      </button>
+                    }
+                  </div>
                 }
                 @case ('select') {
                   <!-- Label already shown in the section header — avoid double label. -->
@@ -507,14 +527,6 @@ export class FilterDrawerPanel {
     this.draft.update((s) => ({ ...s, order: opt?.value }));
   }
 
-  protected onRadioChange(key: string, value: string | null): void {
-    if (value == null) {
-      this.clearField(key);
-      return;
-    }
-    this.setFieldValue(key, value);
-  }
-
   protected onSelectChange(
     key: string,
     selected: SelectOption<string> | SelectOption<string>[] | null,
@@ -678,13 +690,18 @@ export class FilterDrawerPanel {
     );
   }
 
-  protected toRadioOptions(
-    options: FilterOptionModel[] | undefined,
-  ): RadioOption<string>[] {
-    return (options ?? []).map((o) => ({
-      label: o.label,
-      value: o.value,
-    }));
+  /**
+   * Boolean Yes/No chips. Prefer field.options when present; otherwise default
+   * colored Yes/No so every boolean filter stays visually distinct.
+   */
+  protected booleanOptions(field: FilterFieldModel): FilterOptionModel[] {
+    if (field.options?.length) {
+      return field.options;
+    }
+    return [
+      { value: '1', label: 'Yes', color: '#25945c' },
+      { value: '0', label: 'No', color: '#FF001C' },
+    ];
   }
 
   protected onReset(): void {

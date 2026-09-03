@@ -122,7 +122,7 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
     },
     {
       key: 'shipment_method_id',
-      label: 'Shipment Carrier',
+      label: 'Shipment Methods',
       type: 'select',
       optionsSource: 'shipmentMethods',
       placeholder: 'Shipment Methods',
@@ -133,6 +133,7 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
       type: 'select',
       optionsSource: 'static',
       options: [
+        { value: '', label: 'None' },
         { value: 'individual', label: 'Individual' },
         { value: 'business', label: 'Business' },
       ],
@@ -148,17 +149,20 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
     {
       key: 'shipment_manifest_id',
       label: 'Shipment Manifest',
-      type: 'select',
-      optionsSource: 'shipmentManifests',
-      placeholder: 'Shipment Manifest',
+      type: 'enum',
+      exclusive: true,
+      options: [
+        { value: 'not_null', label: 'Manifest Added', color: '#25945c' },
+        { value: 'null', label: 'Manifest Not Added', color: '#667185' },
+      ],
     },
     {
       key: 'api_request',
       label: 'API Request',
       type: 'boolean',
       options: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
+        { value: '1', label: 'Yes', color: '#25945c' },
+        { value: '0', label: 'No', color: '#FF001C' },
       ],
     },
     {
@@ -166,8 +170,8 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
       label: 'Insured',
       type: 'boolean',
       options: [
-        { value: '1', label: 'Yes' },
-        { value: '0', label: 'No' },
+        { value: '1', label: 'Yes', color: '#3B82F6' },
+        { value: '0', label: 'No', color: '#f48220' },
       ],
     },
   ],

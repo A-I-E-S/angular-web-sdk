@@ -131,8 +131,8 @@ export class ShippingModeSwitchComponent {
   /** Host padding / divider — tighter when the rail is collapsed. */
   protected readonly hostClass = computed(() =>
     this.collapsed()
-      ? 'block shrink-0 border-t border-strong px-1.5 py-3 dark:border-white/10'
-      : 'block shrink-0 border-t border-strong px-2 py-3 dark:border-white/10',
+      ? 'block shrink-0 border-t border-border px-1.5 py-3 dark:border-white/10'
+      : 'block shrink-0 border-t border-border px-2 py-3 dark:border-white/10',
   );
 
   /**
