@@ -239,7 +239,7 @@ export class SideNavComponent {
   protected rowClass(item: AfricaniesSideNavItem): string {
     const base =
       'group relative flex w-full items-center gap-2 rounded-lg text-body-sm no-underline transition-colors ' +
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
       (this.collapsed() ? 'justify-center px-1.5 py-2' : 'px-3 py-2') +
       (item.disabled ? ' cursor-not-allowed opacity-50' : ' cursor-pointer');
 
@@ -264,7 +264,7 @@ export class SideNavComponent {
   protected childRowClass(item: AfricaniesSideNavItem): string {
     const base =
       'relative flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-body-sm no-underline transition-colors ' +
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
       (item.disabled ? 'cursor-not-allowed opacity-50 ' : 'cursor-pointer ');
 
     if (this.isLeafActive(item)) {

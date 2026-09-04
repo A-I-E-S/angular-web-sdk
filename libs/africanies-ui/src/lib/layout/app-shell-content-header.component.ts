@@ -39,7 +39,7 @@ import { PageHeaderComponent } from './page-header.component';
           <div class="flex min-w-0 items-center gap-2 sm:gap-3">
             @if (showBackButton()) {
               <a
-                class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                 [attr.aria-label]="backLabel()"
                 [routerLink]="backTarget()!.routerLink"
                 [queryParams]="backTarget()!.queryParams"

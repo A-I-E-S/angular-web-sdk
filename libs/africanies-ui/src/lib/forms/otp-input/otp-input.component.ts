@@ -24,6 +24,7 @@ import { ButtonComponent } from '../../button/button.component';
 import {
   FORM_ERROR_CLASS,
   FORM_FIELD_ERROR_CLASS,
+  FORM_FOCUS_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
@@ -165,7 +166,7 @@ export class OtpInputComponent implements ControlValueAccessor, OnDestroy {
     let classes =
       'size-10 shrink-0 rounded-md border border-neutral-300 bg-white text-center text-body font-medium text-ink outline-none transition-colors ' +
       'dark:border-white/25 dark:bg-ink-950 dark:text-white ' +
-      'focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-ink disabled:cursor-not-allowed';
+      `${FORM_FOCUS_CLASS} disabled:cursor-not-allowed`;
     if (this.masked()) {
       classes += ' africanies-otp-cell-masked text-body-lg';
     }

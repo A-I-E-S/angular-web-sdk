@@ -223,7 +223,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Collapse all"
                       (click)="collapseAllRows()"
                     >
@@ -232,7 +232,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Expand all"
                       [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
@@ -255,7 +255,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else if (col.sortable) {
                     <button
                       type="button"
-                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:text-white"
                       (click)="onSortHeaderClick(col.key)"
                     >
                       <span>{{ col.header }}</span>
@@ -311,7 +311,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   <td [class]="expandBodyClass(i)">
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       [attr.aria-label]="
                         isRowExpanded(row, i)
                           ? 'Collapse row details'

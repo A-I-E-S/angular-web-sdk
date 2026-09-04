@@ -83,7 +83,7 @@ export class OverlayFooterDirective {}
       <ng-content select="[africaniesOverlayHeader]" />
     </div>
     <div
-      class="africanies-overlay-scroll min-h-0 flex-1 overflow-x-clip overflow-y-auto px-[2px] -mx-[2px]"
+      class="africanies-overlay-scroll min-h-0 flex-1 overflow-x-clip overflow-y-auto px-1 -mx-1"
     >
       <ng-content />
     </div>

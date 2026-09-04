@@ -341,7 +341,7 @@ let nextFileUploadId = 0;
                   <span> · </span>
                   <button
                     type="button"
-                    class="cursor-pointer bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-white dark:hover:text-neutral-200"
+                    class="cursor-pointer bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-white dark:hover:text-neutral-200"
                     (click)="openPreview(item); $event.stopPropagation()"
                   >
                     View

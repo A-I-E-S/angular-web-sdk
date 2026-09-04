@@ -6,14 +6,41 @@
  * when consumers scan the published UI bundle.
  */
 
+/**
+ * Inset focus ring — stays inside the control border box.
+ *
+ * Prefer this over `outline` + `outline-offset`. Those paint *outside* the box
+ * and are clipped by `overflow: hidden|clip|auto` ancestors (modals, drawers,
+ * steppers, scroll panes). `box-sizing` does not affect outlines.
+ */
+export const FORM_FOCUS_WITHIN_CLASS =
+  'focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-ink';
+
+/** Same inset ring for host / button-style focus-visible. */
+export const FORM_FOCUS_VISIBLE_CLASS =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink';
+
+/** Peer-driven inset ring (checkbox / radio control chrome). */
+export const FORM_FOCUS_VISIBLE_PEER_CLASS =
+  'peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-inset peer-focus-visible:ring-ink';
+
+/** Direct focus (OTP cells and similar). */
+export const FORM_FOCUS_CLASS =
+  'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ink';
+
 /** Label above the control. Hidden when empty so callers can omit a label. */
 export const FORM_LABEL_CLASS =
   'block text-body-sm font-medium text-ink dark:text-white mb-1.5 empty:hidden';
 
-/** Default control shell — `h-10` matches md `africanies-button`. */
+/**
+ * Default control shell — `h-10` matches md `africanies-button`.
+ *
+ * Focus utilities are inlined (not concatenated) so Tailwind content scanning
+ * always sees the full class names in this string literal.
+ */
 export const FORM_FIELD_CLASS =
   'flex items-center w-full h-10 box-border rounded-md border border-border bg-white dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
-  'focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ink';
+  'focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-ink';
 
 /**
  * Error border — `!` so it wins over shell `border-border` /
@@ -23,7 +50,7 @@ export const FORM_FIELD_CLASS =
  * Keep these literals static for Tailwind content scanning in consumer apps.
  */
 export const FORM_FIELD_ERROR_CLASS =
-  '!border-danger dark:!border-danger focus-within:!outline-danger';
+  '!border-danger dark:!border-danger focus-within:!ring-danger focus:!ring-danger';
 
 /** Native input / textarea inside a shell. */
 export const FORM_CONTROL_INNER_CLASS =

@@ -157,7 +157,7 @@ export class AppShellHeaderEndDirective {}
             @if (showNotifications()) {
               <button
                 type="button"
-                class="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                class="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                 [attr.aria-label]="notificationAriaLabel()"
                 (click)="openNotifications()"
               >

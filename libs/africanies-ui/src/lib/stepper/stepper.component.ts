@@ -53,9 +53,9 @@ function prefersReducedMotion(): boolean {
     .africanies-step-body {
       min-width: 0;
       overflow-x: clip;
-      /* 2 px breathing room so focus-outline rings on edge fields are not clipped */
-      padding-inline: 2px;
-      margin-inline: -2px;
+      /* 4 px breathing room so any remaining external focus rings are not clipped */
+      padding-inline: 4px;
+      margin-inline: -4px;
     }
     .africanies-step-pane {
       min-width: 0;
@@ -95,7 +95,7 @@ function prefersReducedMotion(): boolean {
             <li class="flex min-w-0 shrink-0 items-center gap-1">
               <button
                 type="button"
-                class="inline-flex max-w-38 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed"
+                class="inline-flex max-w-38 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink disabled:cursor-not-allowed"
                 [class]="headerButtonClass(i)"
                 [attr.aria-current]="i === activeIndex() ? 'step' : null"
                 [disabled]="!canActivate(i)"

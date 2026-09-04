@@ -159,7 +159,7 @@ export class ShippingModeSwitchComponent {
     const compact = this.collapsed();
     const base =
       'flex w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border text-center text-caption font-medium transition-colors ' +
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
       (compact ? 'min-h-9 px-1 py-1.5' : 'min-h-[4.5rem] px-1.5 py-2');
     const idle =
       'border-border bg-white text-ink hover:bg-background-welcome dark:border-white/15 dark:bg-ink-950 dark:text-white dark:hover:bg-white/10';

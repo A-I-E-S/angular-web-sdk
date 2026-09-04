@@ -45,7 +45,7 @@ import { AvatarComponent, type AvatarSize } from './avatar.component';
       <button
         type="button"
         africaniesActionMenuTrigger
-        class="inline-flex cursor-pointer items-center gap-1 rounded-lg p-0.5 pr-1 transition-colors hover:bg-background-welcome focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+        class="inline-flex cursor-pointer items-center gap-1 rounded-lg p-0.5 pr-1 transition-colors hover:bg-background-welcome focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
         [attr.aria-label]="ariaLabel()"
       >
         <africanies-avatar [name]="name()" [src]="src()" [size]="size()" />

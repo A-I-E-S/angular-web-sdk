@@ -246,7 +246,7 @@ export class ActionMenuComponent {
     const base =
       'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-body-sm no-underline transition-colors ' +
       'disabled:cursor-not-allowed disabled:opacity-50 ' +
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink';
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink';
     if (item.danger) {
       return (
         `${base} text-danger ` +

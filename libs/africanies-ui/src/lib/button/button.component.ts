@@ -153,7 +153,7 @@ export class ButtonComponent {
   protected readonly hostClass = computed(() => {
     const base =
       'relative inline-flex items-center justify-center gap-2 box-border font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
-      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
       'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 
     const sizes: Record<ButtonSize, string> = {

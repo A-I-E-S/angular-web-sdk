@@ -18,6 +18,7 @@ import { ModeColorService } from '@africanies/africanies-theme';
 
 import {
   FORM_ERROR_CLASS,
+  FORM_FOCUS_VISIBLE_PEER_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
 } from '../form-field.classes';
@@ -178,7 +179,7 @@ export class RadioComponent<T = string> implements ControlValueAccessor {
   protected markClass(opt: RadioOption<T>): string {
     const base =
       'pointer-events-none flex size-4 items-center justify-center rounded-full border-2 bg-transparent transition-colors ' +
-      'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink';
+      FORM_FOCUS_VISIBLE_PEER_CLASS;
     const err = this.error() ? ' !border-danger dark:!border-danger' : '';
     if (this.isSelected(opt)) {
       // Ring uses mode accent; fill stays transparent so the center dot reads clearly.
