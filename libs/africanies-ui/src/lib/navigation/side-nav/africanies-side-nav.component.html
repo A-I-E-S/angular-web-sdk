@@ -1,5 +1,5 @@
     <aside
-      class="relative flex h-full flex-col overflow-visible border-r border-border bg-surface transition-[width] duration-200 ease-out dark:border-white/10 dark:bg-ink-950"
+      class="relative flex h-full min-h-0 flex-col overflow-visible border-r border-border bg-surface transition-[width] duration-200 ease-out dark:border-white/10 dark:bg-ink-950"
       [style.width]="collapsed() ? '3.75rem' : '15rem'"
       [attr.aria-label]="ariaLabel()"
     >
@@ -10,7 +10,7 @@
       ></div>
 
       <div
-        class="flex shrink-0 items-center gap-2 border-b border-border py-3 dark:border-white/10"
+        class="sticky top-0 z-20 flex shrink-0 items-center gap-2 border-b border-border bg-surface py-3 dark:border-white/10 dark:bg-ink-950"
         [class.flex-col]="collapsed()"
         [class.px-3]="collapsed()"
         [class.pl-4]="!collapsed()"
@@ -57,16 +57,21 @@
         </button>
       </div>
 
-      <nav class="africanies-overlay-scroll relative flex-1 overflow-y-auto overflow-x-visible px-3 py-3">
+      <nav
+        class="africanies-overlay-scroll relative min-h-0 flex-1 overflow-y-auto overflow-x-visible px-3 py-3"
+      >
         @if (!collapsed() && expandParents() && hasOpenBranches()) {
-          <button
-            type="button"
-            class="absolute right-1.5 top-1.5 z-10 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-surface text-neutral-600 shadow-sm ring-1 ring-border-strong transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
-            aria-label="Collapse all"
-            (click)="collapseAllBranches()"
-          >
-            <africanies-icon name="compress" [size]="14" />
-          </button>
+          <!-- Zero-height sticky host: keeps the control pinned without reserving a row. -->
+          <div class="sticky top-0 z-10 h-0 overflow-visible">
+            <button
+              type="button"
+              class="absolute right-0 top-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-surface text-neutral-600 shadow-sm ring-1 ring-border-strong transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
+              aria-label="Collapse all"
+              (click)="collapseAllBranches()"
+            >
+              <africanies-icon name="compress" [size]="14" />
+            </button>
+          </div>
         }
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           @for (item of items(); track item.id) {

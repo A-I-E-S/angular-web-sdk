@@ -46,7 +46,8 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * ## Parent items with children
  * **Expanded rail:** branches start open by default (`expandBranchesByDefault`).
  * Clicking a parent only opens/closes the branch (no route change). When any
- * branch is open, a collapse-all control sits above the list (top right).
+ * branch is open, a sticky collapse-all control sits above the list (top right).
+ * The rail expand/collapse control stays pinned in the logo header.
  * **Collapsed rail:** clicking a parent expands the rail, opens the
  * branch, and activates the first enabled child (router or `activeId`).
  *
@@ -73,7 +74,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AfricaniesIconComponent, RouterLink, NgTemplateOutlet],
   host: {
-    class: 'relative z-20 block h-full',
+    class: 'relative z-20 block h-full min-h-0',
   },
   styleUrl: './africanies-side-nav.component.css',
   templateUrl: './africanies-side-nav.component.html',

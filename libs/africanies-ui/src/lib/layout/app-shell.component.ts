@@ -229,16 +229,16 @@ export class AppShellComponent {
     // Preview embeds: absolute/h-full so the drawer stays inside the frame.
     // Production: h-dvh so the rail fills the viewport (h-full only matches parent).
     if (preview === 'desktop') {
-      return 'z-50 shrink-0 self-start sticky top-0 block h-full';
+      return 'z-50 shrink-0 self-start sticky top-0 block h-full min-h-0';
     }
 
     if (preview === 'mobile' || preview === 'tablet') {
       return open
-        ? 'z-50 shrink-0 self-start absolute inset-y-0 left-0 h-full shadow-xl'
+        ? 'z-50 shrink-0 self-start absolute inset-y-0 left-0 h-full min-h-0 shadow-xl'
         : 'hidden';
     }
 
-    const base = 'z-50 shrink-0 self-start h-dvh';
+    const base = 'z-50 shrink-0 self-start h-dvh min-h-0';
     if (open) {
       return `${base} fixed inset-y-0 left-0 shadow-xl lg:sticky lg:top-0 lg:block`;
     }
