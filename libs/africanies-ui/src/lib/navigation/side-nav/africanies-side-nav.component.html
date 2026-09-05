@@ -76,7 +76,8 @@
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           @for (item of items(); track item.id) {
             <li
-              class="relative overflow-visible"
+              class="relative overflow-visible last:mb-0"
+              [class.mb-3]="!collapsed() && !item.children?.length"
               (mouseenter)="onItemEnter(item.id)"
               (mouseleave)="onItemLeave(item.id)"
             >

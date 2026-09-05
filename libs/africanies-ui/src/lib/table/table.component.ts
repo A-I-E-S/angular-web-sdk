@@ -251,7 +251,8 @@ import { TableColumn, TableSortChange } from './table-column';
                 <th
                   scope="col"
                   [class]="headerCellClass(col)"
-                  [style.width]="col.width ?? null"
+                  [style.width]="col.width ?? col.maxWidth ?? null"
+                  [style.max-width]="col.maxWidth ?? null"
                 >
                   @if (headerTemplateFor(col.key); as headerTpl) {
                     <ng-container
@@ -335,7 +336,8 @@ import { TableColumn, TableSortChange } from './table-column';
                 @for (col of columns(); track col.key) {
                   <td
                     [class]="bodyCellClass(col, i)"
-                    [style.width]="col.width ?? null"
+                    [style.width]="col.width ?? col.maxWidth ?? null"
+                  [style.max-width]="col.maxWidth ?? null"
                   >
                     @if (templateFor(col.key); as tpl) {
                       <ng-container

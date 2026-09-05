@@ -35,6 +35,15 @@ export interface TableColumn<T = unknown> {
   width?: string;
 
   /**
+   * Optional CSS max-width (e.g. `'14rem'`).
+   *
+   * Caps growth for text-heavy columns without forcing a large minimum the
+   * way {@link width} can. Prefer this for Name / Description / Message when
+   * other columns should stay compact.
+   */
+  maxWidth?: string;
+
+  /**
    * Pin the column while the table scrolls horizontally.
    *
    * Omit to use the default: `key: 'actions'` sticks to the right. Set
