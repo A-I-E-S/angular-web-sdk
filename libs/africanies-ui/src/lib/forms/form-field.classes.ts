@@ -47,10 +47,13 @@ export const FORM_FIELD_CLASS =
  * `dark:border-white/25` (same specificity; those utilities sort later in the
  * generated CSS and otherwise paint over `border-danger`).
  *
+ * Use `danger` (`#ff001c`) for both border and focus ring so field chrome
+ * matches validation copy (not the darker accessible `danger-dark` text token).
+ *
  * Keep these literals static for Tailwind content scanning in consumer apps.
  */
 export const FORM_FIELD_ERROR_CLASS =
-  '!border-danger-dark dark:!border-danger focus-within:!ring-danger-dark focus:!ring-danger-dark';
+  '!border-danger dark:!border-danger focus-within:!ring-danger focus:!ring-danger';
 
 /** Native input / textarea inside a shell. */
 export const FORM_CONTROL_INNER_CLASS =
@@ -77,8 +80,8 @@ export const FORM_DATE_INNER_CLASS =
 export const FORM_HINT_CLASS =
   'mt-1.5 text-caption text-neutral-600 dark:text-neutral-400 m-0';
 
-/** Field-level validation message (not ErrorStateComponent). */
-export const FORM_ERROR_CLASS = 'mt-1.5 text-caption text-danger-dark m-0';
+/** Field-level validation message (not ErrorStateComponent). Matches `#ff001c`. */
+export const FORM_ERROR_CLASS = 'mt-1.5 text-caption text-danger m-0';
 
 /** Disabled shell — dimmed with not-allowed cursor over the full field chrome. */
 export const FORM_DISABLED_CLASS = 'opacity-50 cursor-not-allowed';
