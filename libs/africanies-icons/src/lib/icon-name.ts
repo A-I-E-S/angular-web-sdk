@@ -336,6 +336,7 @@ export const ICON_NAMES = [
   'grid',
   'group',
   'hammer',
+  'hand-coins',
   'hand',
   'handle-corner',
   'hands-up',

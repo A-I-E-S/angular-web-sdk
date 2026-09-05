@@ -174,6 +174,16 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
         { value: '0', label: 'No', color: '#f48220' },
       ],
     },
+    {
+      key: 'pay_later',
+      label: 'Pay Later',
+      type: 'enum',
+      exclusive: true,
+      options: [
+        { value: 'credit', label: 'Credit', color: '#25945c' },
+        { value: 'debit', label: 'Debit', color: '#667185' },
+      ],
+    },
   ],
 };
 

@@ -248,6 +248,16 @@ export const updateShipmentsFilterConfig: ModuleFilterConfigModel = {
         { value: '0', label: 'No' },
       ],
     },
+    {
+      key: 'pay_later',
+      label: 'Pay Later',
+      type: 'enum',
+      exclusive: true,
+      options: [
+        { value: 'credit', label: 'Credit' },
+        { value: 'debit', label: 'Debit' },
+      ],
+    },
   ],
 };
 `;
