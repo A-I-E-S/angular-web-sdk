@@ -102,6 +102,11 @@ import { TableColumn, TableSortChange } from './table-column';
  * to the left when rows are expandable. Override with
  * {@link TableColumn.sticky}. Sticky columns use a slightly thicker bottom
  * border (and opaque fill) so dividers stay visible while scrolling.
+ *
+ * **Sticky header (desktop):** when {@link stickyHeader} is true (default),
+ * large screens scroll the grid inside a capped viewport and keep `th` pinned
+ * to the top of that scrollport. Mobile keeps horizontal-only overflow so
+ * page scroll is unchanged.
  */
 @Component({
   selector: 'africanies-table',
@@ -207,6 +212,8 @@ import { TableColumn, TableSortChange } from './table-column';
 
       <div
         class="relative min-w-0 w-full overflow-x-auto rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
+        [class.lg:max-h-[min(70dvh,calc(100dvh-12rem))]]="stickyHeader()"
+        [class.lg:overflow-auto]="stickyHeader()"
       >
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
@@ -395,7 +402,7 @@ import { TableColumn, TableSortChange } from './table-column';
         </table>
         @if (paginationLoading()) {
           <div
-            class="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center bg-surface/70 px-4 pt-16 dark:bg-ink-950/70"
+            class="pointer-events-none absolute inset-0 z-[5] flex items-start justify-center bg-surface/70 px-4 pt-16 dark:bg-ink-950/70"
             data-testid="africanies-table-keep-rows-loading"
             aria-hidden="true"
           >
@@ -440,6 +447,13 @@ export class TableComponent<T = unknown> {
 
   /** Column definitions (header chrome + keys). */
   readonly columns = input.required<TableColumn<T>[]>();
+
+  /**
+   * When true (default), pin column headers while scrolling the grid on
+   * large screens (`lg+`). Uses a capped scrollport so sticky works with
+   * horizontal overflow. Set false to keep the previous unconstrained layout.
+   */
+  readonly stickyHeader = input(true, { transform: booleanAttribute });
 
   /**
    * Row records to render. Empty arrays show {@link EmptyStateComponent} in
@@ -764,8 +778,20 @@ export class TableComponent<T = unknown> {
       'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
       this.headerSoftClass() +
       ' ' +
-      this.stickySurfaceClass(col, 'head')
+      this.stickySurfaceClass(col, 'head') +
+      (sticky ? '' : this.headerStickClass())
     );
+  }
+
+  /**
+   * Vertical pin for scrolling header cells on desktop. Pinned left/right
+   * headers get `lg:top-0` from {@link stickyPinClass} instead.
+   */
+  protected headerStickClass(): string {
+    if (!this.stickyHeader()) {
+      return '';
+    }
+    return ' lg:sticky lg:top-0 lg:z-[3] print:static';
   }
 
   /**
@@ -814,7 +840,11 @@ export class TableComponent<T = unknown> {
       edge === 'right' ? 'sticky right-0 z-[1]' : 'sticky left-0 z-[1]';
     if (surface === 'head') {
       // Fill comes from {@link headerSoftClass} on the cell — do not re-tint.
-      return `${side} z-[2]`;
+      // Corner pins also stick vertically on desktop when stickyHeader is on.
+      const vertical = this.stickyHeader()
+        ? ' z-[2] lg:top-0 lg:z-[4] print:static'
+        : ' z-[2]';
+      return `${side}${vertical}`;
     }
     const fill = 'bg-surface dark:bg-ink-surface';
     return `${side} ${fill}`;
