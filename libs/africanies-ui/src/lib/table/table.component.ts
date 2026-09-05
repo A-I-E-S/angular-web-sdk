@@ -39,11 +39,11 @@ import { TableColumn, TableSortChange } from './table-column';
  * Hidden while the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
- * of data is changing (pagination / size): rows stay on screen and the built-in
- * pager shows a circular spinner beside the page controls; the body loader
- * appears only when there are no rows yet (first load) or the host cleared
- * rows for a shipping-mode switch (STN ↔ SFN). Toolbar and column headers stay
- * mounted.
+ * of data is changing (pagination / size): rows stay on screen, a keep-rows
+ * overlay covers the grid, and the built-in pager shows a circular spinner
+ * beside the page controls; the body loader appears only when there are no
+ * rows yet (first load) or the host cleared rows for a shipping-mode switch
+ * (STN ↔ SFN). Toolbar and column headers stay mounted.
  * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
  * does not own fetch, filter, or export logic — the host handles those events.
  *
@@ -196,19 +196,17 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       @if (staleError(); as staleMessage) {
-        <div class="flex justify-end">
-          <africanies-error-indicator
-            class="max-w-[min(100%,20rem)]"
-            [error]="staleMessage"
-            retryText="Refresh"
-            [refreshing]="refreshing()"
-            (retry)="refreshClick.emit()"
-          />
-        </div>
+        <africanies-error-indicator
+          class="w-full"
+          [error]="staleMessage"
+          retryText="Refresh"
+          [refreshing]="refreshing()"
+          (retry)="refreshClick.emit()"
+        />
       }
 
       <div
-        class="min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink-surface"
+        class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink-surface"
       >
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
@@ -395,6 +393,18 @@ import { TableColumn, TableSortChange } from './table-column';
             }
           </tbody>
         </table>
+        @if (paginationLoading()) {
+          <div
+            class="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center bg-white/70 px-4 pt-16 dark:bg-ink-950/70"
+            data-testid="africanies-table-keep-rows-loading"
+            aria-hidden="true"
+          >
+            <africanies-loading-state
+              mode="inline"
+              [message]="loadingLabel()"
+            />
+          </div>
+        }
       </div>
 
       @if (meta(); as pager) {
@@ -463,9 +473,9 @@ export class TableComponent<T = unknown> {
 
   /**
    * Page of data is loading (first load, shipping-mode switch, pagination,
-   * page size). When rows are already on screen, the pager shows a spinner
-   * and rows stay visible; when there are no rows (first load or the host
-   * dropped STN/SFN rows after a mode switch), the body shows
+   * page size). When rows are already on screen, a keep-rows overlay covers
+   * the grid and the pager shows a spinner; when there are no rows (first
+   * load or the host dropped STN/SFN rows after a mode switch), the body shows
    * {@link LoadingStateComponent}. Distinct from {@link refreshing}.
    */
   readonly loading = input(false, { transform: booleanAttribute });
