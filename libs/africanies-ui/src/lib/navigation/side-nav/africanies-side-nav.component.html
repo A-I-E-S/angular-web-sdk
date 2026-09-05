@@ -44,6 +44,7 @@
         <button
           type="button"
           class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+          data-onboarding="nav-collapse"
           [attr.aria-label]="
             collapsed() ? 'Expand navigation' : 'Collapse navigation'
           "
@@ -66,6 +67,7 @@
             <button
               type="button"
               class="absolute right-0 top-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-surface text-neutral-600 shadow-sm ring-1 ring-border-strong transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
+              data-onboarding="nav-branches-collapse"
               aria-label="Collapse all"
               (click)="collapseAllBranches()"
             >

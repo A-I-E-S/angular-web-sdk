@@ -198,8 +198,13 @@ export class SideNavComponent {
   }
 
   /** Fold every parent branch on the expanded rail. */
-  protected collapseAllBranches(): void {
+  collapseAllBranches(): void {
     this.openBranches.set(new Set());
+  }
+
+  /** Open every parent branch (e.g. so the collapse-all control is visible). */
+  expandAllBranches(): void {
+    this.openBranches.set(new Set(this.collectParentIds(this.items())));
   }
 
   protected onItemEnter(id: string): void {
