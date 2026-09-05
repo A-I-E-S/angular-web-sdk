@@ -239,7 +239,7 @@ export class SideNavComponent {
   protected rowClass(item: AfricaniesSideNavItem): string {
     const base =
       'group relative flex w-full items-center gap-2 rounded-lg text-body-sm no-underline transition-colors ' +
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ' +
       (this.collapsed() ? 'justify-center px-1.5 py-2' : 'px-3 py-2') +
       (item.disabled ? ' cursor-not-allowed opacity-50' : ' cursor-pointer');
 
@@ -256,7 +256,7 @@ export class SideNavComponent {
       return `${base} bg-transparent ${colors.text} font-semibold`;
     }
     return (
-      `${base} font-medium text-neutral-600 hover:bg-background-welcome hover:text-ink ` +
+      `${base} font-medium text-neutral-600 hover:bg-background-hover hover:text-ink ` +
       'dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white'
     );
   }
@@ -264,14 +264,14 @@ export class SideNavComponent {
   protected childRowClass(item: AfricaniesSideNavItem): string {
     const base =
       'relative flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-body-sm no-underline transition-colors ' +
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ' +
       (item.disabled ? 'cursor-not-allowed opacity-50 ' : 'cursor-pointer ');
 
     if (this.isLeafActive(item)) {
       return `${base} ${this.modeColor.classes().activeFill} font-semibold`;
     }
     return (
-      `${base} font-medium text-neutral-600 hover:bg-background-welcome hover:text-ink ` +
+      `${base} font-medium text-neutral-600 hover:bg-background-hover hover:text-ink ` +
       'dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white'
     );
   }

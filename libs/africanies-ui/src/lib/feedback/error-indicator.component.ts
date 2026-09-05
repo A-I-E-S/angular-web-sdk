@@ -132,10 +132,10 @@ import { ButtonComponent } from '../button/button.component';
           aria-hidden="true"
         >
           <span
-            class="africanies-error-indicator-dot-ping absolute inset-0 rounded-full bg-red-400 opacity-75"
+            class="africanies-error-indicator-dot-ping absolute inset-0 rounded-full bg-danger-dark opacity-75"
           ></span>
           <span
-            class="africanies-error-indicator-dot-core relative size-3 rounded-full bg-red-500"
+            class="africanies-error-indicator-dot-core relative size-3 rounded-full bg-danger-dark"
           ></span>
         </span>
 
@@ -150,7 +150,7 @@ import { ButtonComponent } from '../button/button.component';
           type="button"
           variant="ghost"
           size="sm"
-          class="africanies-error-indicator-retry shrink-0 !min-h-0 !border-transparent !bg-transparent !px-1.5 !py-0.5 !text-danger hover:!bg-danger/10 dark:hover:!bg-danger/20"
+          class="africanies-error-indicator-retry shrink-0 !min-h-0 !border-transparent !bg-transparent !px-1.5 !py-0.5 !text-danger-dark hover:!bg-danger/10 dark:hover:!bg-danger/20"
           [class.opacity-50]="disabled()"
           [disabled]="disabled()"
           (click)="onRetry()"

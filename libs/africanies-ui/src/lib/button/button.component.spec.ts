@@ -65,7 +65,7 @@ describe('ButtonComponent', () => {
   });
 
   it('should apply primary variant classes by default (SFN / export)', () => {
-    expect(button.className).toContain('bg-export');
+    expect(button.className).toContain('bg-export-strong');
     expect(button.className).toContain('text-white');
   });
 
@@ -73,21 +73,21 @@ describe('ButtonComponent', () => {
     mode.set('stn');
     fixture.detectChanges();
 
-    expect(button.className).toContain('bg-import');
-    expect(button.className).not.toContain('bg-export');
+    expect(button.className).toContain('bg-import-strong');
+    expect(button.className).not.toContain('bg-export-strong');
   });
 
   it('should switch ghost-primary text accent with shipping mode', () => {
     host.variant.set('ghost-primary');
     fixture.detectChanges();
-    expect(button.className).toContain('text-export');
+    expect(button.className).toContain('text-export-strong');
     expect(button.className).toContain('bg-transparent');
 
     mode.set('stn');
     fixture.detectChanges();
 
-    expect(button.className).toContain('text-import');
-    expect(button.className).not.toContain('text-export');
+    expect(button.className).toContain('text-import-strong');
+    expect(button.className).not.toContain('text-export-strong');
   });
 
   it('should switch variant and size classes', () => {
@@ -95,7 +95,7 @@ describe('ButtonComponent', () => {
     host.size.set('sm');
     fixture.detectChanges();
 
-    expect(button.className).toContain('bg-danger');
+    expect(button.className).toContain('bg-danger-dark');
     expect(button.className).toContain('h-8');
   });
 

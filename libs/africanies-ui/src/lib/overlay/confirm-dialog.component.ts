@@ -161,8 +161,8 @@ export class ConfirmDialogComponent {
     const well =
       'inline-flex size-14 shrink-0 items-center justify-center rounded-2xl';
     return this.options.danger
-      ? `${well} bg-danger-subtle text-danger dark:bg-danger/20 dark:text-danger`
-      : `${well} bg-export-subtle text-export dark:bg-export/20 dark:text-export-light`;
+      ? `${well} bg-danger-subtle text-danger-dark dark:bg-danger/20 dark:text-danger`
+      : `${well} bg-export-subtle text-export-strong dark:bg-export/20 dark:text-export-light`;
   });
 
   constructor() {

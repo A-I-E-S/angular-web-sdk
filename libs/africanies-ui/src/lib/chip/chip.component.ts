@@ -63,7 +63,7 @@ export type ChipSize = 'sm' | 'md';
     @if (removable()) {
       <button
         type="button"
-        class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink"
+        class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus"
         [attr.aria-label]="removeLabel()"
         (click)="onRemove($event)"
       >
@@ -118,13 +118,13 @@ export class ChipComponent {
     switch (this.variant()) {
       case 'success':
       case 'export':
-        return 'bg-export-subtle text-export dark:bg-export/15 dark:text-export-light';
+        return 'bg-export-subtle text-export-strong dark:bg-export/15 dark:text-export-light';
       case 'import':
-        return 'bg-import-subtle text-import dark:bg-import/15 dark:text-import-light';
+        return 'bg-import-subtle text-import-strong dark:bg-import/15 dark:text-import-light';
       case 'warning':
         return 'bg-warning-subtle text-warning-dark dark:bg-warning/15 dark:text-warning';
       case 'danger':
-        return 'bg-danger-subtle text-danger dark:bg-danger/15 dark:text-danger';
+        return 'bg-danger-subtle text-danger-dark dark:bg-danger/15 dark:text-danger';
       default:
         return 'bg-border/60 text-ink dark:bg-white/10 dark:text-neutral-200';
     }

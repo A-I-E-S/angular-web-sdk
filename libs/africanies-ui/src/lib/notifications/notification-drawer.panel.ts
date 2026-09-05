@@ -66,7 +66,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
             {{ title() }}
           </h2>
           @if (hasUnread()) {
-            <p class="m-0 text-caption text-neutral-500 dark:text-neutral-400">
+            <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
               {{ unreadCount() }} unread
             </p>
           }
@@ -112,7 +112,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
             <africanies-icon
               name="spinner"
               [size]="24"
-              class="animate-spin text-neutral-500 dark:text-neutral-400"
+              class="animate-spin text-neutral-600 dark:text-neutral-400"
             />
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
               Loading notifications…
@@ -179,7 +179,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                       </h3>
                       @if (item.timestamp) {
                         <time
-                          class="shrink-0 whitespace-nowrap text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400"
+                          class="shrink-0 whitespace-nowrap text-[11px] tabular-nums text-neutral-600 dark:text-neutral-400"
                           [dateTime]="item.timestamp"
                         >
                           {{ formatTimestamp(item.timestamp) }}
@@ -258,7 +258,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
             >
               @if (loadingMore()) {
                 <span
-                  class="inline-flex items-center gap-2 text-caption text-neutral-500 dark:text-neutral-400"
+                  class="inline-flex items-center gap-2 text-caption text-neutral-600 dark:text-neutral-400"
                   aria-live="polite"
                 >
                   <africanies-icon name="spinner" [size]="14" class="animate-spin" />
@@ -290,9 +290,9 @@ export class NotificationDrawerPanel {
     const base =
       'inline-flex cursor-pointer items-center gap-1 self-start text-caption font-semibold underline underline-offset-[3px] transition-colors';
     if (this.shipping.mode() === 'stn') {
-      return `${base} text-import decoration-import/35 hover:decoration-import dark:text-import-light dark:decoration-import-light/40 dark:hover:decoration-import-light`;
+      return `${base} text-import-strong decoration-import-strong/35 hover:decoration-import-strong dark:text-import-light dark:decoration-import-light/40 dark:hover:decoration-import-light`;
     }
-    return `${base} text-export decoration-export/35 hover:decoration-export dark:text-export-light dark:decoration-export-light/40 dark:hover:decoration-export-light`;
+    return `${base} text-export-strong decoration-export-strong/35 hover:decoration-export-strong dark:text-export-light dark:decoration-export-light/40 dark:hover:decoration-export-light`;
   });
 
   protected readonly title = computed(() => this.data.title ?? 'Notifications');

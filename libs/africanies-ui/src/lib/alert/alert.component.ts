@@ -144,11 +144,11 @@ export class AlertComponent {
   protected readonly iconClass = computed(() => {
     switch (this.variant()) {
       case 'success':
-        return 'text-export dark:text-export-light';
+        return 'text-export-strong dark:text-export-light';
       case 'warning':
         return 'text-warning-dark dark:text-warning';
       case 'danger':
-        return 'text-danger';
+        return 'text-danger-dark dark:text-danger';
       default:
         return 'text-ink-blue dark:text-neutral-300';
     }
@@ -158,11 +158,11 @@ export class AlertComponent {
     const base = 'm-0 text-body font-medium';
     switch (this.variant()) {
       case 'success':
-        return `${base} text-export dark:text-export-light`;
+        return `${base} text-export-strong dark:text-export-light`;
       case 'warning':
         return `${base} text-warning-dark dark:text-warning`;
       case 'danger':
-        return `${base} text-danger`;
+        return `${base} text-danger-dark dark:text-danger`;
       default:
         return `${base} text-ink dark:text-white`;
     }

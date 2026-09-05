@@ -245,9 +245,9 @@ export class InfoPopoverComponent {
    */
   protected readonly panelArrowClass = computed(() => {
     const card =
-      'relative z-10 w-max max-w-xs rounded-lg border border-border bg-white px-4 py-3 text-ink shadow-lg dark:border-white/15 dark:bg-ink-950 dark:text-white';
+      'relative z-10 w-max max-w-xs rounded-panel border border-border bg-surface px-4 py-3 text-ink shadow-floating dark:border-white/15 dark:bg-ink-950 dark:text-white';
     const base =
-      "before:pointer-events-none before:absolute before:z-0 before:h-2.5 before:w-2.5 before:rotate-45 before:border before:border-border before:bg-white before:content-[''] dark:before:border-white/15 dark:before:bg-ink-950";
+      "before:pointer-events-none before:absolute before:z-0 before:h-2.5 before:w-2.5 before:rotate-45 before:border before:border-border before:bg-surface before:content-[''] dark:before:border-white/15 dark:before:bg-ink-950";
     switch (this.placement()) {
       case 'bottom':
         return `${card} ${base} before:left-1/2 before:top-0 before:-translate-x-1/2 before:-translate-y-1/2 before:border-b-0 before:border-r-0`;

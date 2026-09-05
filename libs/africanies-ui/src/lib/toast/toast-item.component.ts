@@ -260,8 +260,8 @@ export class ToastItemComponent {
 
   protected readonly shellClass = computed(
     () =>
-      'africanies-toast-enter relative flex w-full overflow-hidden rounded-lg border border-border ' +
-      'bg-white/95 text-ink shadow-lg backdrop-blur-md ' +
+      'africanies-toast-enter relative flex w-full overflow-hidden rounded-panel border border-border ' +
+      'bg-surface/95 text-ink shadow-floating backdrop-blur-md ' +
       'dark:border-white/15 dark:bg-ink-950/95 dark:text-white',
   );
 
@@ -272,11 +272,11 @@ export class ToastItemComponent {
   protected readonly iconClass = computed(() => {
     switch (this.item().variant) {
       case 'success':
-        return 'text-export dark:text-export-light';
+        return 'text-export-strong dark:text-export-light';
       case 'warning':
         return 'text-warning-dark dark:text-warning';
       case 'danger':
-        return 'text-danger';
+        return 'text-danger-dark dark:text-danger';
       default:
         return 'text-ink-blue dark:text-neutral-300';
     }
@@ -286,11 +286,11 @@ export class ToastItemComponent {
     const base = 'm-0 break-words text-body-sm font-semibold';
     switch (this.item().variant) {
       case 'success':
-        return `${base} text-export dark:text-export-light`;
+        return `${base} text-export-strong dark:text-export-light`;
       case 'warning':
         return `${base} text-warning-dark dark:text-warning`;
       case 'danger':
-        return `${base} text-danger`;
+        return `${base} text-danger-dark dark:text-danger`;
       default:
         return `${base} text-ink dark:text-white`;
     }

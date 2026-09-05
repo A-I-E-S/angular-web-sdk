@@ -81,7 +81,7 @@ export class AppShellHeaderEndDirective {}
         @if (greeting(); as hello) {
           <div class="min-w-0 overflow-hidden">
             <p
-              class="m-0 truncate text-caption leading-none text-neutral-500 dark:text-neutral-400"
+              class="m-0 truncate text-caption leading-none text-neutral-600 dark:text-neutral-400"
             >
               {{ hello.kicker }}
             </p>
@@ -107,7 +107,7 @@ export class AppShellHeaderEndDirective {}
                 <africanies-icon
                   [name]="weatherIcon()"
                   [size]="18"
-                  class="text-neutral-500 dark:text-neutral-400"
+                  class="text-neutral-600 dark:text-neutral-400"
                 />
                 @if (weatherTemp(); as temp) {
                   <span
@@ -117,7 +117,7 @@ export class AppShellHeaderEndDirective {}
                   </span>
                 }
                 <span
-                  class="hidden text-caption text-neutral-500 md:inline dark:text-neutral-400"
+                  class="hidden text-caption text-neutral-600 md:inline dark:text-neutral-400"
                 >
                   {{ weatherPlace() }}
                 </span>
@@ -127,7 +127,7 @@ export class AppShellHeaderEndDirective {}
             @if (showClock()) {
               <div class="flex items-baseline gap-2" aria-live="polite">
                 <time
-                  class="hidden text-caption text-neutral-500 md:inline dark:text-neutral-400"
+                  class="hidden text-caption text-neutral-600 md:inline dark:text-neutral-400"
                   [dateTime]="nowIso()"
                 >
                   {{ now() | date: clockDateFormat() }}
@@ -157,7 +157,7 @@ export class AppShellHeaderEndDirective {}
             @if (showNotifications()) {
               <button
                 type="button"
-                class="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                class="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                 [attr.aria-label]="notificationAriaLabel()"
                 (click)="openNotifications()"
               >

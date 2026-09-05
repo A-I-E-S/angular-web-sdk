@@ -144,7 +144,7 @@ type PageItem = number | 'ellipsis';
         @for (item of pageItems(); track trackPageItem(item, $index)) {
           @if (item === 'ellipsis') {
             <span
-              class="inline-flex min-w-8 items-center justify-center text-body-sm text-neutral-500 dark:text-neutral-400"
+              class="inline-flex min-w-8 items-center justify-center text-body-sm text-neutral-600 dark:text-neutral-400"
               aria-hidden="true"
             >
               …

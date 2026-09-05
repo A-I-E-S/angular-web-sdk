@@ -92,8 +92,8 @@ function africaniesAutofillPlugin({ addBase }) {
   const rules = {};
   for (const selector of autofillSelectors) {
     rules[selector] = {
-      WebkitTextFillColor: '#1c2b3f',
-      caretColor: '#1c2b3f',
+      WebkitTextFillColor: '#172033',
+      caretColor: '#172033',
       boxShadow: '0 0 0 1000px #ffffff inset',
       transition: 'background-color 99999s ease-in-out 0s',
     };
@@ -144,6 +144,36 @@ function africaniesOverlayStackPlugin({ addBase }) {
 }
 
 /**
+ * Shared elevated card shell so list/detail pages keep one light-theme recipe.
+ *
+ * @param {import('tailwindcss/types/config').PluginAPI} api
+ */
+function africaniesSurfacePlugin({ addComponents }) {
+  addComponents({
+    '.africanies-card': {
+      borderRadius: '0.75rem',
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderColor: '#dde3ea',
+      backgroundColor: '#ffffff',
+      padding: '1.25rem',
+      color: '#172033',
+      boxShadow:
+        '0 1px 2px rgb(23 32 51 / 0.04), 0 1px 3px rgb(23 32 51 / 0.06)',
+      '@media (min-width: 640px)': {
+        padding: '1.5rem',
+      },
+    },
+    '.dark .africanies-card': {
+      borderColor: 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: '#272729',
+      color: '#ffffff',
+      boxShadow: 'none',
+    },
+  });
+}
+
+/**
  * Keep overlay scrollbars off close buttons and other end-aligned chrome.
  *
  * WHY: modal/drawer panes used to scroll themselves. Overlay (and some
@@ -186,6 +216,7 @@ module.exports = {
     africaniesSpinPlugin,
     africaniesOverlayStackPlugin,
     africaniesOverlayScrollPlugin,
+    africaniesSurfacePlugin,
     africaniesAutofillPlugin,
   ],
   theme: {
@@ -193,55 +224,82 @@ module.exports = {
       colors: {
         black: '#000000',
         white: '#ffffff',
+        surface: {
+          DEFAULT: '#ffffff',
+          subtle: '#f8fafc',
+          hover: '#e9eef5',
+          sunken: '#eef2f6',
+        },
         ink: {
-          // Portal `.txt-primary` navy — primary body / heading text (light).
-          DEFAULT: '#1c2b3f',
+          // High-contrast cool navy for light-theme body and heading text.
+          DEFAULT: '#172033',
           blue: '#192a3e',
-          brand: '#1c2b3f',
+          brand: '#172033',
           // Previous ink DEFAULT — dark elevated cards / panels (`dark:bg-ink-surface`).
           surface: '#212529',
           950: '#272729',
         },
         neutral: {
+          50: '#f8fafc',
+          100: '#eef2f6',
+          200: '#dde3ea',
           300: '#c9d5e1',
+          // Keep 300/400 stable: they are the established dark-theme foregrounds.
           400: '#a9b5cb',
-          600: '#667185',
+          500: '#667185',
+          600: '#526071',
+          700: '#3e4a59',
+          800: '#2c3644',
+          900: '#172033',
         },
         border: {
-          // Soft hairline on white (portal `$border-bottom-gray`).
-          DEFAULT: '#f0f2f5',
-          // Nav pins / stronger chrome dividers.
-          strong: '#e0e6f0',
+          // Quiet card/divider chrome. Controls use the stronger `control` token.
+          DEFAULT: '#dde3ea',
+          strong: '#c4cdd8',
         },
+        // 3.1:1 against white: visible enough for meaningful control boundaries.
+        control: '#8793a3',
+        focus: '#175cd3',
         background: {
-          // Portal page shell (`container-wrap`).
-          chrome: '#f6f7f9',
+          // Cooler canvas and a clearer inset level beneath white surfaces.
+          chrome: '#f4f6f8',
           // Nested wells inside white cards.
-          well: '#f3f3f3',
+          well: '#eef2f6',
           // Auth / welcome / soft hover.
-          welcome: '#f9fafb',
+          welcome: '#f8fafc',
+          hover: '#e9eef5',
         },
         export: {
           DEFAULT: '#1cbd5d',
           light: '#24dc6d',
           subtle: '#e4fff3',
           tint: '#f2fff8',
+          // Accessible normal-text / white-text-control foreground (5.43:1).
+          strong: '#0b7a3e',
+          hover: '#096833',
         },
         import: {
           DEFAULT: '#f08829',
           light: '#ffa95b',
           subtle: '#fffcef',
+          // Accessible normal-text / white-text-control foreground (6.20:1).
+          strong: '#9a4b0b',
+          hover: '#7f3e09',
         },
         danger: {
           DEFAULT: '#ff001c',
-          dark: '#b41433',
+          dark: '#b4233c',
           strong: '#C00B19',
           subtle: '#FFF2F2',
         },
         warning: {
           DEFAULT: '#DBB316',
-          dark: '#EF8833',
+          dark: '#8a5a00',
           subtle: '#FFF6E6',
+        },
+        info: {
+          DEFAULT: '#175cd3',
+          subtle: '#eff6ff',
         },
       },
       fontFamily: {
@@ -256,6 +314,16 @@ module.exports = {
         body: ['1rem', { lineHeight: 1.5, fontWeight: 400 }],
         'body-sm': ['0.875rem', { lineHeight: 1.4, fontWeight: 400 }],
         caption: ['0.75rem', { lineHeight: 1.3, fontWeight: 400 }],
+      },
+      borderRadius: {
+        control: '0.5rem',
+        panel: '0.75rem',
+      },
+      boxShadow: {
+        card:
+          '0 1px 2px rgb(23 32 51 / 0.04), 0 1px 3px rgb(23 32 51 / 0.06)',
+        floating:
+          '0 12px 32px rgb(23 32 51 / 0.12), 0 2px 8px rgb(23 32 51 / 0.06)',
       },
     },
   },

@@ -70,7 +70,7 @@ export type ImageFit = 'cover' | 'contain';
 
       @if (showPlaceholder()) {
         <div
-          class="absolute inset-0 flex items-center justify-center bg-neutral-200 text-neutral-500 dark:bg-white/10 dark:text-neutral-400"
+          class="absolute inset-0 flex items-center justify-center bg-neutral-200 text-neutral-600 dark:bg-white/10 dark:text-neutral-400"
           [class.animate-pulse]="pending()"
           aria-hidden="true"
         >

@@ -83,7 +83,7 @@ type PreviewKind = 'image' | 'unavailable';
           <div
             class="flex flex-col items-center gap-3 rounded-md bg-background-welcome px-6 py-10 text-center ring-1 ring-border dark:bg-white/5 dark:ring-white/15"
           >
-            <africanies-icon name="eye-slash" [size]="32" class="text-neutral-500" />
+            <africanies-icon name="eye-slash" [size]="32" class="text-neutral-600" />
             <p class="m-0 text-body font-medium text-ink dark:text-white">
               Preview not available
             </p>

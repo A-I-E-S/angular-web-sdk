@@ -153,7 +153,7 @@ export class ButtonComponent {
   protected readonly hostClass = computed(() => {
     const base =
       'relative inline-flex items-center justify-center gap-2 box-border font-sans font-medium rounded-md border transition-colors cursor-pointer ' +
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ' +
       'disabled:opacity-50 disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:cursor-not-allowed';
 
     const sizes: Record<ButtonSize, string> = {
@@ -172,19 +172,19 @@ export class ButtonComponent {
       variantClass = this.modeColor.classes().stroked;
     } else if (variant === 'flat') {
       variantClass =
-        'bg-white dark:bg-ink-950 text-ink dark:text-white border-border dark:border-white/15 hover:bg-background-welcome dark:hover:bg-white/10';
+        'bg-surface dark:bg-ink-950 text-ink dark:text-white border-control dark:border-white/15 hover:bg-background-hover dark:hover:bg-white/10';
     } else if (variant === 'ghost') {
       variantClass =
-        'bg-transparent text-ink dark:text-white border-transparent hover:bg-background-welcome dark:hover:bg-white/10';
+        'bg-transparent text-ink dark:text-white border-transparent hover:bg-background-hover dark:hover:bg-white/10';
     } else if (variant === 'ghost-danger') {
       variantClass =
-        'bg-transparent text-danger border-transparent hover:bg-danger-subtle dark:hover:bg-danger/10';
+        'bg-transparent text-danger-dark border-transparent hover:bg-danger-subtle dark:text-danger dark:hover:bg-danger/10';
     } else if (variant === 'underline') {
       variantClass =
         'bg-transparent text-ink dark:text-white border-transparent underline underline-offset-2 hover:opacity-80 !px-0 !h-auto !min-h-0';
     } else {
       variantClass =
-        'bg-danger text-white border-transparent hover:bg-danger-dark';
+        'bg-danger-dark text-white border-transparent hover:bg-danger-strong dark:bg-danger dark:hover:bg-danger-dark';
     }
 
     return `${base} ${sizes[this.size()]} ${variantClass}`;

@@ -124,7 +124,7 @@ import { TableColumn, TableSortChange } from './table-column';
     /* Full-row hover: sticky action cells use an opaque fill that would
        otherwise mask a <tr> background. Paint every cell the same way. */
     :host tr.africanies-table-row:hover > td {
-      background-color: #eef2f6;
+      background-color: #e9eef5;
     }
     :host-context(.dark) tr.africanies-table-row:hover > td {
       background-color: #272729;
@@ -206,7 +206,7 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="relative min-w-0 w-full overflow-x-auto rounded-md border border-border bg-white dark:border-white/10 dark:bg-ink-surface"
+        class="relative min-w-0 w-full overflow-x-auto rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
       >
         <table
           class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
@@ -221,7 +221,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Collapse all"
                       (click)="collapseAllRows()"
                     >
@@ -230,7 +230,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-white hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Expand all"
                       [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
@@ -253,7 +253,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else if (col.sortable) {
                     <button
                       type="button"
-                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:text-white"
                       (click)="onSortHeaderClick(col.key)"
                     >
                       <span>{{ col.header }}</span>
@@ -309,7 +309,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   <td [class]="expandBodyClass(i)">
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-welcome hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       [attr.aria-label]="
                         isRowExpanded(row, i)
                           ? 'Collapse row details'
@@ -358,7 +358,7 @@ import { TableColumn, TableSortChange } from './table-column';
                       [class.pointer-events-none]="!isRowExpanded(row, i)"
                     >
                       <div
-                        class="min-h-0 overflow-hidden border-t border-border/70 bg-neutral-50 dark:border-white/10 dark:bg-white/[0.05]"
+                        class="min-h-0 overflow-hidden border-t border-border-strong bg-surface-sunken dark:border-white/10 dark:bg-white/[0.05]"
                       >
                         <dl
                           class="m-0 grid gap-x-6 gap-y-3 px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
@@ -368,7 +368,7 @@ import { TableColumn, TableSortChange } from './table-column';
                           @for (detail of rowDetailDefs(); track detail.label()) {
                             <div class="min-w-0">
                               <dt
-                                class="m-0 text-caption font-medium text-neutral-500 dark:text-neutral-400"
+                                class="m-0 text-caption font-medium text-neutral-600 dark:text-neutral-400"
                               >
                                 {{ detail.label() }}
                               </dt>
@@ -395,7 +395,7 @@ import { TableColumn, TableSortChange } from './table-column';
         </table>
         @if (paginationLoading()) {
           <div
-            class="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center bg-white/70 px-4 pt-16 dark:bg-ink-950/70"
+            class="pointer-events-none absolute inset-0 z-[2] flex items-start justify-center bg-surface/70 px-4 pt-16 dark:bg-ink-950/70"
             data-testid="africanies-table-keep-rows-loading"
             aria-hidden="true"
           >
@@ -816,7 +816,7 @@ export class TableComponent<T = unknown> {
       // Fill comes from {@link headerSoftClass} on the cell — do not re-tint.
       return `${side} z-[2]`;
     }
-    const fill = 'bg-white dark:bg-ink-surface';
+    const fill = 'bg-surface dark:bg-ink-surface';
     return `${side} ${fill}`;
   }
 

@@ -158,7 +158,7 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
     >
       <div
         #panel
-        class="min-w-44 rounded-md border border-border bg-white py-1 shadow-lg outline-none dark:border-white/15 dark:bg-ink-950"
+        class="min-w-44 rounded-md border border-border bg-surface py-1 shadow-floating outline-none dark:border-white/15 dark:bg-ink-950"
         role="menu"
         tabindex="-1"
         [attr.aria-label]="ariaLabel()"
@@ -246,10 +246,10 @@ export class ActionMenuComponent {
     const base =
       'flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-body-sm no-underline transition-colors ' +
       'disabled:cursor-not-allowed disabled:opacity-50 ' +
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink';
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus';
     if (item.danger) {
       return (
-        `${base} text-danger ` +
+        `${base} text-danger-dark dark:text-danger ` +
         (active
           ? 'bg-danger-subtle dark:bg-danger/15'
           : 'hover:bg-danger-subtle dark:hover:bg-danger/15')

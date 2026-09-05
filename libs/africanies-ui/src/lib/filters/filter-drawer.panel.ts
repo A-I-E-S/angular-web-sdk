@@ -304,7 +304,7 @@ import { FilterQueryService } from './filter-query.service';
               type="button"
               variant="ghost"
               size="sm"
-              class="shrink-0 !min-h-0 self-start !px-1 !py-0 text-neutral-500 hover:text-ink dark:text-neutral-400 dark:hover:text-white"
+              class="shrink-0 !min-h-0 self-start !px-1 !py-0 text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white"
               aria-label="Dismiss"
               (click)="applyError.set(null)"
             >

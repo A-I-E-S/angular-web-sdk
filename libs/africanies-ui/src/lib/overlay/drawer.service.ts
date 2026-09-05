@@ -63,11 +63,11 @@ export class DrawerService implements OverlayOpener {
         ],
         panelClass: [
           'africanies-drawer-panel',
-          'bg-white',
+          'bg-surface',
           'dark:bg-ink-950',
           'text-ink',
           'dark:text-white',
-          'shadow-xl',
+          'shadow-floating',
           'border-l',
           'border-border',
           'dark:border-white/15',

@@ -35,8 +35,8 @@ import { ButtonComponent } from '../button/button.component';
       class="flex flex-col items-center justify-center gap-3 py-10 px-4 text-center text-ink dark:text-white"
       role="alert"
     >
-      <africanies-icon name="warning" [size]="32" class="text-danger" />
-      <p class="m-0 text-body text-danger max-w-md">{{ message() }}</p>
+      <africanies-icon name="warning" [size]="32" class="text-danger-dark dark:text-danger" />
+      <p class="m-0 text-body text-danger-dark max-w-md dark:text-danger">{{ message() }}</p>
       <button
         africanies-button
         type="button"

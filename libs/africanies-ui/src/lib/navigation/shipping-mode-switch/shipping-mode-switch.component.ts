@@ -159,18 +159,18 @@ export class ShippingModeSwitchComponent {
     const compact = this.collapsed();
     const base =
       'flex w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border text-center text-caption font-medium transition-colors ' +
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ' +
       (compact ? 'min-h-9 px-1 py-1.5' : 'min-h-[4.5rem] px-1.5 py-2');
     const idle =
-      'border-border bg-white text-ink hover:bg-background-welcome dark:border-white/15 dark:bg-ink-950 dark:text-white dark:hover:bg-white/10';
+      'border-control bg-surface text-ink hover:bg-background-hover dark:border-white/15 dark:bg-ink-950 dark:text-white dark:hover:bg-white/10';
 
     if (option === 'stn') {
       return selected
-        ? `${base} border-import bg-import text-white`
+        ? `${base} border-import-strong bg-import-strong text-white dark:border-import dark:bg-import`
         : `${base} ${idle}`;
     }
     return selected
-      ? `${base} border-export bg-export text-white`
+      ? `${base} border-export-strong bg-export-strong text-white dark:border-export dark:bg-export`
       : `${base} ${idle}`;
   }
 }

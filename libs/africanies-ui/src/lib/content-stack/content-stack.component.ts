@@ -35,7 +35,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         </p>
       }
       @if (extraLine()) {
-        <p class="m-0 text-caption text-neutral-500 dark:text-neutral-400">
+        <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
           {{ extraLine() }}
         </p>
       }

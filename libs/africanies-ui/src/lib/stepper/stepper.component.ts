@@ -66,7 +66,7 @@ function prefersReducedMotion(): boolean {
     <div class="flex flex-col gap-5 text-ink dark:text-white">
       <div class="flex flex-col gap-2">
         <p
-          class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400"
+          class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
         >
           Step {{ activeIndex() + 1 }} of {{ steps().length }}
           <span
@@ -223,7 +223,7 @@ export class StepperComponent {
     if (past) {
       return 'cursor-pointer text-ink hover:bg-background-welcome dark:text-white dark:hover:bg-white/10';
     }
-    return 'opacity-40 text-neutral-500 dark:text-neutral-400';
+    return 'opacity-40 text-neutral-600 dark:text-neutral-400';
   }
 
   protected stepBadgeClass(index: number): string {
@@ -233,7 +233,7 @@ export class StepperComponent {
       const c = this.modeColor.classes();
       return `${base} ${c.border} ${c.bg} text-white`;
     }
-    return `${base} border-border bg-white text-neutral-500 dark:border-white/20 dark:bg-ink-950 dark:text-neutral-400`;
+    return `${base} border-control bg-surface text-neutral-600 dark:border-white/20 dark:bg-ink-950 dark:text-neutral-400`;
   }
 
   protected canActivate(index: number): boolean {
