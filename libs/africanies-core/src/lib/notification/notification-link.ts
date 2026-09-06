@@ -12,7 +12,10 @@ const QUERY_SHIPMENT_APP = 'shipment_app';
 const LEGACY_PORTAL_HOST =
   /^(?:test-)?(?:admin|customer)-(?:export|import)\.africaniestest\.com$/i;
 
-/** Signed export downloads and other hosts that must not be rewritten in-app. */
+/**
+ * Signed export downloads and other hosts that must not be rewritten in-app.
+ * @param link
+ */
 export function isNotificationExternalLink(link: string): boolean {
   const trimmed = decodeNotificationLink(link).trim();
   if (!trimmed) {
@@ -39,6 +42,8 @@ export function isNotificationExternalLink(link: string): boolean {
  * - Legacy portal hosts become relative `/portal/...` paths with query preserved.
  * - When the notification already includes `shipment_app`, it is kept as-is.
  * - Otherwise classic host / `shipment_app` rewriting applies for portal URLs.
+ * @param link
+ * @param mode
  */
 export function resolveNotificationLinkForMode(
   link: string | null | undefined,
