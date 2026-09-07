@@ -1,16 +1,20 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
+  DestroyRef,
+  ElementRef,
   inject,
   input,
   numberAttribute,
   output,
   signal,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
@@ -65,8 +69,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * and never reorder local rows.
  *
  * **Expandable rows:** project `<ng-template africaniesRowDetail="Label" let-row>`
- * templates. A leading chevron column appears; the expanded panel renders each
- * label with its template value in a responsive grid.
+ * templates. A leading chevron column appears; the expanded panel sticks to the
+ * scrollport width (so it does not scroll horizontally with the columns) and
+ * lays out label/value pairs in a wrapping auto-fill grid.
  *
  * @typeParam T - Row record shape.
  *
@@ -133,6 +138,23 @@ import { TableColumn, TableSortChange } from './table-column';
     }
     :host-context(.dark) tr.africanies-table-row:hover > td {
       background-color: #272729;
+    }
+
+    /* Expand panel sticks to the scrollport (not the wide table). Width is
+       also set from measured clientWidth so it stays viewport-bound even
+       when container query units are flaky inside tables. */
+    :host .africanies-table-scrollport {
+      container-type: inline-size;
+      container-name: africanies-table;
+    }
+    :host .africanies-table-expand-panel {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      box-sizing: border-box;
+      width: 100cqi;
+      max-width: 100cqi;
+      overflow-x: hidden;
     }
   `,
   template: `
@@ -211,13 +233,18 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="relative min-w-0 w-full overflow-x-auto rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
-        [class.lg:max-h-[min(70dvh,calc(100dvh-12rem))]]="stickyHeader()"
-        [class.lg:overflow-auto]="stickyHeader()"
+        class="relative min-w-0 w-full overflow-hidden rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
       >
-        <table
-          class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
+        <div
+          #scrollport
+          class="africanies-table-scrollport min-w-0 w-full overflow-x-auto"
+          [class.lg:max-h-[min(70dvh,calc(100dvh-12rem))]]="stickyHeader()"
+          [class.lg:overflow-auto]="stickyHeader() && !paginationLoading()"
+          [class.pointer-events-none]="paginationLoading()"
         >
+          <table
+            class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
+          >
           <thead [class]="headerRowClass()">
             <tr>
               @if (isExpandable()) {
@@ -357,41 +384,52 @@ import { TableColumn, TableSortChange } from './table-column';
                   [class.border-border]="isRowExpanded(row, i)"
                   [class.dark:border-white/10]="isRowExpanded(row, i)"
                 >
-                  <td class="p-0 align-top" [attr.colspan]="columns().length + 1">
+                  <td class="p-0 align-top" [attr.colspan]="colSpan()">
+                    <!-- Sticky must sit outside overflow-hidden or it pins
+                         to the full table width and scrolls with the row. -->
                     <div
-                      class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
-                      [style.grid-template-rows]="
-                        isRowExpanded(row, i) ? '1fr' : '0fr'
-                      "
-                      [attr.aria-hidden]="!isRowExpanded(row, i)"
-                      [class.pointer-events-none]="!isRowExpanded(row, i)"
+                      class="africanies-table-expand-panel bg-surface-sunken dark:bg-white/[0.05]"
+                      [style.width.px]="scrollportWidthPx() || null"
+                      [style.maxWidth.px]="scrollportWidthPx() || null"
                     >
                       <div
-                        class="min-h-0 overflow-hidden border-t border-border-strong bg-surface-sunken dark:border-white/10 dark:bg-white/[0.05]"
+                        class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+                        [style.grid-template-rows]="
+                          isRowExpanded(row, i) ? '1fr' : '0fr'
+                        "
+                        [attr.aria-hidden]="!isRowExpanded(row, i)"
+                        [class.pointer-events-none]="!isRowExpanded(row, i)"
                       >
-                        <dl
-                          class="m-0 grid gap-x-6 gap-y-3 px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
-                          [class.opacity-0]="!isRowExpanded(row, i)"
-                          [class.opacity-100]="isRowExpanded(row, i)"
+                        <div
+                          class="min-h-0 overflow-x-hidden overflow-y-hidden border-t border-border-strong dark:border-white/10"
                         >
-                          @for (detail of rowDetailDefs(); track detail.label()) {
-                            <div class="min-w-0">
-                              <dt
-                                class="m-0 text-caption font-medium text-neutral-600 dark:text-neutral-400"
-                              >
-                                {{ detail.label() }}
-                              </dt>
-                              <dd
-                                class="m-0 mt-0.5 text-body-sm text-ink dark:text-white"
-                              >
-                                <ng-container
-                                  [ngTemplateOutlet]="detail.template"
-                                  [ngTemplateOutletContext]="cellContext(row)"
-                                />
-                              </dd>
-                            </div>
-                          }
-                        </dl>
+                          <dl
+                            class="m-0 grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-x-6 gap-y-3 overflow-x-hidden px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none"
+                            [class.opacity-0]="!isRowExpanded(row, i)"
+                            [class.opacity-100]="isRowExpanded(row, i)"
+                          >
+                            @for (
+                              detail of rowDetailDefs();
+                              track detail.label()
+                            ) {
+                              <div class="min-w-0">
+                                <dt
+                                  class="m-0 text-caption font-medium text-neutral-600 dark:text-neutral-400"
+                                >
+                                  {{ detail.label() }}
+                                </dt>
+                                <dd
+                                  class="m-0 mt-0.5 break-words text-body-sm text-ink dark:text-white"
+                                >
+                                  <ng-container
+                                    [ngTemplateOutlet]="detail.template"
+                                    [ngTemplateOutletContext]="cellContext(row)"
+                                  />
+                                </dd>
+                              </div>
+                            }
+                          </dl>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -402,16 +440,21 @@ import { TableColumn, TableSortChange } from './table-column';
             }
           </tbody>
         </table>
+        </div>
         @if (paginationLoading()) {
           <div
-            class="pointer-events-none absolute inset-0 z-[5] flex items-start justify-center bg-surface/70 px-4 pt-16 dark:bg-ink-950/70"
+            class="absolute inset-0 z-[5] bg-surface/70 dark:bg-ink-950/70"
             data-testid="africanies-table-keep-rows-loading"
             aria-hidden="true"
           >
-            <africanies-loading-state
-              mode="inline"
-              [message]="loadingLabel()"
-            />
+            <div
+              class="sticky top-0 flex h-[min(70dvh,100%)] items-center justify-center px-4"
+            >
+              <africanies-loading-state
+                mode="inline"
+                [message]="loadingLabel()"
+              />
+            </div>
           </div>
         }
       </div>
@@ -430,6 +473,33 @@ import { TableColumn, TableSortChange } from './table-column';
 })
 export class TableComponent<T = unknown> {
   protected readonly modeColor = inject(ModeColorService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Scrollport that owns horizontal overflow for the main grid. */
+  private readonly scrollport =
+    viewChild<ElementRef<HTMLElement>>('scrollport');
+
+  /**
+   * Visible width of {@link scrollport}. Applied to the expand panel so
+   * details stay within the viewport and do not scroll with the columns.
+   */
+  protected readonly scrollportWidthPx = signal(0);
+
+  constructor() {
+    afterNextRender(() => {
+      const el = this.scrollport()?.nativeElement;
+      if (!el) {
+        return;
+      }
+      const sync = (): void => {
+        this.scrollportWidthPx.set(el.clientWidth);
+      };
+      sync();
+      const observer = new ResizeObserver(sync);
+      observer.observe(el);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
 
   /**
    * When false, hides row expansion even if {@link RowDetailDefDirective}
