@@ -119,7 +119,9 @@ export class AppShellHeaderEndDirective {}
                 <span
                   class="hidden text-caption text-neutral-600 md:inline dark:text-neutral-400"
                 >
-                  {{ weatherCondition() }}
+                  {{ weatherCondition() }}@if (weatherCity(); as city) {
+                    · {{ city }}
+                  }
                 </span>
               </div>
             }
@@ -285,6 +287,11 @@ export class AppShellHeaderComponent {
     return headerWeatherLabel(forecast.kind, this.now().getHours());
   });
 
+  protected readonly weatherCity = computed(() => {
+    const city = this.weather()?.city?.trim();
+    return city || null;
+  });
+
   protected readonly weatherAriaLabel = computed(() => {
     const forecast = this.weather();
     if (!forecast) {
@@ -292,9 +299,12 @@ export class AppShellHeaderComponent {
     }
     const condition = this.weatherCondition().toLowerCase();
     const temp = this.weatherTemp();
-    return temp === null
-      ? `Weather: ${condition}`
-      : `Weather: ${temp} degrees Celsius, ${condition}`;
+    const city = this.weatherCity();
+    const degrees =
+      temp === null
+        ? condition
+        : `${temp} degrees Celsius, ${condition}`;
+    return city ? `Weather in ${city}: ${degrees}` : `Weather: ${degrees}`;
   });
 
   protected readonly unreadCount = computed(

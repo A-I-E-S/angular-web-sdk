@@ -63,10 +63,10 @@
       >
         @if (!collapsed() && expandParents() && hasOpenBranches()) {
           <!-- Zero-height sticky host: keeps the control pinned without reserving a row. -->
-          <div class="sticky top-0 z-10 h-0 overflow-visible">
+          <div class="sticky top-0 z-20 h-0 overflow-visible">
             <button
               type="button"
-              class="absolute right-0 top-0 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-surface text-neutral-600 shadow-sm ring-1 ring-border-strong transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-white/10 dark:hover:text-white"
+              class="absolute -right-2 -top-1 inline-flex size-7 cursor-pointer items-center justify-center rounded-md bg-surface text-neutral-600 shadow-sm ring-1 ring-border-strong transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:bg-ink-950 dark:text-neutral-400 dark:ring-white/15 dark:hover:bg-ink-surface dark:hover:text-white"
               data-onboarding="nav-branches-collapse"
               aria-label="Collapse all"
               (click)="collapseAllBranches()"

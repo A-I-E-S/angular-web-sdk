@@ -33,6 +33,8 @@ export interface HeaderWeather {
   kind: HeaderWeatherKind;
   /** Celsius, when the forecast includes it. */
   temperatureC?: number;
+  /** City from reverse-geocode / IP geolocation, when known. */
+  city?: string;
 }
 
 const PERIOD_KICKERS: Record<HeaderGreetingPeriod, readonly string[]> = {
