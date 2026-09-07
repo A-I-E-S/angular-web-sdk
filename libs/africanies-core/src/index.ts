@@ -210,9 +210,9 @@ export {
 
 // User notifications (auth required)
 export {
+  isNotificationExternalLink,
   mapNotification,
   mapNotificationInboxItem,
-  isNotificationExternalLink,
   mapNotificationList,
   mapNotificationPayload,
   NOTIFICATION_READ_PATH,
