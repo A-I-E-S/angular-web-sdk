@@ -113,13 +113,13 @@ export class AppShellHeaderEndDirective {}
                   <span
                     class="text-body-sm font-medium tabular-nums tracking-tight text-ink dark:text-white"
                   >
-                    {{ temp }}°
+                    {{ temp }}°C
                   </span>
                 }
                 <span
                   class="hidden text-caption text-neutral-600 md:inline dark:text-neutral-400"
                 >
-                  {{ weatherPlace() }}
+                  {{ weatherCondition() }}
                 </span>
               </div>
             }
@@ -274,15 +274,15 @@ export class AppShellHeaderComponent {
     if (temp === undefined || !Number.isFinite(temp)) {
       return null;
     }
-    return temp.toFixed(1);
+    return String(Math.round(temp));
   });
 
-  protected readonly weatherPlace = computed(() => {
+  protected readonly weatherCondition = computed(() => {
     const forecast = this.weather();
     if (!forecast) {
       return '';
     }
-    return forecast.city?.trim() || headerWeatherLabel(forecast.kind);
+    return headerWeatherLabel(forecast.kind, this.now().getHours());
   });
 
   protected readonly weatherAriaLabel = computed(() => {
@@ -290,11 +290,11 @@ export class AppShellHeaderComponent {
     if (!forecast) {
       return 'Weather';
     }
-    const condition = headerWeatherLabel(forecast.kind).toLowerCase();
+    const condition = this.weatherCondition().toLowerCase();
     const temp = this.weatherTemp();
-    const city = forecast.city?.trim();
-    const degrees = temp === null ? condition : `${temp} degrees, ${condition}`;
-    return city ? `Weather in ${city}: ${degrees}` : `Weather: ${degrees}`;
+    return temp === null
+      ? `Weather: ${condition}`
+      : `Weather: ${temp} degrees Celsius, ${condition}`;
   });
 
   protected readonly unreadCount = computed(
