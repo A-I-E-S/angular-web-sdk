@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { of } from 'rxjs';
+
 import { ShippingModeService } from '@africanies/africanies-core';
 import type { ShippingMode } from '@africanies/africanies-models';
 
@@ -45,6 +47,7 @@ describe('TableComponent keep-rows loading', () => {
           provide: ShippingModeService,
           useValue: {
             mode: mode.asReadonly(),
+            requestModeChange: () => of(true),
           },
         },
       ],

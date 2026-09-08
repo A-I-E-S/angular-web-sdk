@@ -2,12 +2,15 @@ import type { IconName } from '@africanies/africanies-icons';
 
 import type { HeaderWeather, HeaderWeatherKind } from './header-greeting.util';
 
-/** Bump when cache shape or lookup strategy changes. */
-const CACHE_KEY = 'africanies-header-weather-v5';
+/** Bump when cache shape or city resolution strategy changes. */
+const CACHE_KEY = 'africanies-header-weather-v7';
 const FETCH_MS = 4_000;
 const BROWSER_GEO_MS = 3_500;
-/** IP fallback for coordinates only — city strings are often wrong. */
+/** IP fallback — city string is used only when reverse-geocode is empty. */
 const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json';
+/** Client reverse-geocode so the label matches the forecast coordinates. */
+const REVERSE_GEO_URL =
+  'https://api.bigdatacloud.net/data/reverse-geocode-client';
 
 const WEATHER_LABELS: Record<HeaderWeatherKind, string> = {
   clear: 'Clear',
@@ -23,11 +26,19 @@ interface CachedWeather {
   hour: string;
   kind: HeaderWeatherKind;
   temperatureC?: number;
+  city?: string;
 }
 
 interface GeoJsPayload {
+  city?: string;
   latitude?: string | number;
   longitude?: string | number;
+}
+
+interface ReverseGeoPayload {
+  city?: string;
+  locality?: string;
+  principalSubdivision?: string;
 }
 
 interface OpenMeteoPayload {
@@ -108,12 +119,11 @@ export function headerWeatherIcon(kind: HeaderWeatherKind, hour: number): IconNa
 }
 
 /**
- * Local forecast via browser / IP coordinates + Open-Meteo (no API key).
+ * City-level forecast via browser / IP geolocation + Open-Meteo (no API key).
  *
- * Coordinates prefer the browser Geolocation API (may prompt once).
- * Otherwise IP geo is used for lat/lon only — city labels are not shown
- * because IP and reverse-geocode cities are often wrong (e.g. NG IPs
- * labelled Lagos).
+ * Coordinates prefer the browser Geolocation API (accurate for travellers;
+ * may prompt once). Otherwise IP geo is used. The city label is reverse-
+ * geocoded from those coordinates, with the IP city as a fallback.
  *
  * Fails closed: missing browser APIs, timeouts, and HTTP errors all return
  * `null` so the greeting can stay time-of-day only. Cached per local hour
@@ -158,8 +168,11 @@ export async function loadHeaderWeather(
     }
 
     const temperatureC = asNumber(forecast?.current?.temperature_2m) ?? undefined;
-    const weather: HeaderWeather = { kind, temperatureC };
-    writeCache({ hour, kind, temperatureC });
+    const city =
+      (await reverseGeocodeCity(run, coords.latitude, coords.longitude)) ??
+      coords.fallbackCity;
+    const weather: HeaderWeather = { kind, temperatureC, city };
+    writeCache({ hour, kind, temperatureC, city });
     return weather;
   } catch {
     return null;
@@ -184,9 +197,16 @@ function readCache(hour: string): HeaderWeather | null {
     if (parsed.hour !== hour || !parsed.kind) {
       return null;
     }
+    // City-less entries (e.g. browser geo + failed reverse) used to stick for
+    // the hour — treat them as a miss so we can recover the location label.
+    const city = asCity(parsed.city);
+    if (!city) {
+      return null;
+    }
     return {
       kind: parsed.kind,
       temperatureC: parsed.temperatureC,
+      city,
     };
   } catch {
     return null;
@@ -203,23 +223,36 @@ function writeCache(value: CachedWeather): void {
 
 /**
  * Prefer device coordinates when available (may prompt once); otherwise fall
- * back to IP lat/lon for the forecast only.
+ * back to IP geo. IP is always fetched in parallel so its city can backfill
+ * the label when reverse-geocode is empty (browser geo has no city string).
  */
 async function resolveCoordinates(
   fetchFn: typeof fetch,
-): Promise<Coordinates | null> {
-  const browser = await tryBrowserGeolocation();
+): Promise<(Coordinates & { fallbackCity?: string }) | null> {
+  const [browser, ipGeo] = await Promise.all([
+    tryBrowserGeolocation(),
+    fetchIpGeo(fetchFn),
+  ]);
+  const ipCity = asCity(ipGeo?.city);
+
   if (browser) {
-    return browser;
+    return { ...browser, fallbackCity: ipCity };
   }
 
-  const geo = (await fetchJson(fetchFn, GEO_URL)) as GeoJsPayload | null;
-  const latitude = asNumber(geo?.latitude);
-  const longitude = asNumber(geo?.longitude);
+  const latitude = asNumber(ipGeo?.latitude);
+  const longitude = asNumber(ipGeo?.longitude);
   if (latitude === null || longitude === null) {
     return null;
   }
-  return { latitude, longitude };
+  return {
+    latitude,
+    longitude,
+    fallbackCity: ipCity,
+  };
+}
+
+async function fetchIpGeo(fetchFn: typeof fetch): Promise<GeoJsPayload | null> {
+  return (await fetchJson(fetchFn, GEO_URL)) as GeoJsPayload | null;
 }
 
 async function tryBrowserGeolocation(): Promise<Coordinates | null> {
@@ -253,6 +286,23 @@ async function tryBrowserGeolocation(): Promise<Coordinates | null> {
   });
 }
 
+async function reverseGeocodeCity(
+  fetchFn: typeof fetch,
+  latitude: number,
+  longitude: number,
+): Promise<string | undefined> {
+  const url =
+    `${REVERSE_GEO_URL}?latitude=${encodeURIComponent(String(latitude))}` +
+    `&longitude=${encodeURIComponent(String(longitude))}` +
+    `&localityLanguage=en`;
+  const payload = (await fetchJson(fetchFn, url)) as ReverseGeoPayload | null;
+  return (
+    asCity(payload?.city) ??
+    asCity(payload?.locality) ??
+    asCity(payload?.principalSubdivision)
+  );
+}
+
 function asNumber(value: unknown): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) {
     return value;
@@ -262,6 +312,17 @@ function asNumber(value: unknown): number | null {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function asCity(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.toLowerCase() === 'n/a') {
+    return undefined;
+  }
+  return trimmed;
 }
 
 async function fetchJson(

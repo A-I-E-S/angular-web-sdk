@@ -1,27 +1,37 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChildren,
+  DestroyRef,
+  effect,
+  ElementRef,
   inject,
   input,
   numberAttribute,
   output,
   signal,
   TemplateRef,
+  viewChild,
 } from '@angular/core';
 
+import { ShippingModeService } from '@africanies/africanies-core';
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
-import type { PaginationMetaModel } from '@africanies/africanies-models';
-import { ModeColorService } from '@africanies/africanies-theme';
+import type {
+  PaginationMetaModel,
+  ShippingMode,
+} from '@africanies/africanies-models';
 
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from '../feedback/empty-state.component';
 import { ErrorIndicatorComponent } from '../feedback/error-indicator.component';
 import { ErrorStateComponent } from '../feedback/error-state.component';
 import { LoadingStateComponent } from '../feedback/loading-state.component';
+import type { AfricaniesNavItem } from '../navigation/nav-item';
+import { SegmentComponent } from '../navigation/segment/segment.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
 import { HeaderCellDefDirective } from './header-cell-def.directive';
@@ -35,8 +45,10 @@ import { TableColumn, TableSortChange } from './table-column';
  * `<ng-template africaniesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
  *
- * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
- * Hidden while the body shows empty or error — those states expose Retry instead.
+ * Optional toolbar: top-left **shipping mode** segment (on by default;
+ * `[showShippingMode]="false"` to hide) and **Refresh** (`showRefresh` →
+ * {@link refreshClick}). Refresh is hidden while
+ * the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
  * of data is changing (pagination / size): rows stay on screen, a keep-rows
@@ -65,8 +77,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * and never reorder local rows.
  *
  * **Expandable rows:** project `<ng-template africaniesRowDetail="Label" let-row>`
- * templates. A leading chevron column appears; the expanded panel renders each
- * label with its template value in a responsive grid.
+ * templates. A leading chevron column appears; the expanded panel sticks to the
+ * scrollport width (so it does not scroll horizontally with the columns) and
+ * lays out label/value pairs in a wrapping auto-fill grid.
  *
  * @typeParam T - Row record shape.
  *
@@ -121,6 +134,7 @@ import { TableColumn, TableSortChange } from './table-column';
     ErrorStateComponent,
     LoadingStateComponent,
     PaginationComponent,
+    SegmentComponent,
   ],
   host: {
     class: 'block w-full min-w-0',
@@ -134,15 +148,46 @@ import { TableColumn, TableSortChange } from './table-column';
     :host-context(.dark) tr.africanies-table-row:hover > td {
       background-color: #272729;
     }
+
+    /* Expand panel sticks to the scrollport (not the wide table). Width is
+       also set from measured clientWidth so it stays viewport-bound even
+       when container query units are flaky inside tables. */
+    :host .africanies-table-scrollport {
+      container-type: inline-size;
+      container-name: africanies-table;
+    }
+    :host .africanies-table-expand-panel {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      box-sizing: border-box;
+      width: 100cqi;
+      max-width: 100cqi;
+      overflow-x: hidden;
+    }
   `,
   template: `
     <div
       class="flex w-full min-w-0 flex-col gap-3"
       [attr.aria-busy]="loading() || refreshing() || null"
     >
-      @if (showRefresh() || showFilter() || showExport()) {
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
+      @if (
+        showShippingMode() ||
+        showRefresh() ||
+        showFilter() ||
+        showExport()
+      ) {
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex min-w-0 flex-wrap items-center gap-2">
+            @if (showShippingMode()) {
+              <africanies-segment
+                class="min-w-0"
+                [items]="shippingModeItems"
+                [activeId]="shippingModeActiveId()"
+                ariaLabel="Shipping mode"
+                (activeIdChange)="onShippingModeChange($event)"
+              />
+            }
             @if (showToolbarRefresh()) {
               <button
                 africanies-button
@@ -211,13 +256,18 @@ import { TableColumn, TableSortChange } from './table-column';
       }
 
       <div
-        class="relative min-w-0 w-full overflow-x-auto rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
-        [class.lg:max-h-[min(70dvh,calc(100dvh-12rem))]]="stickyHeader()"
-        [class.lg:overflow-auto]="stickyHeader()"
+        class="relative min-w-0 w-full overflow-hidden rounded-panel border border-border bg-surface dark:border-white/10 dark:bg-ink-surface"
       >
-        <table
-          class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
+        <div
+          #scrollport
+          class="africanies-table-scrollport min-w-0 w-full overflow-x-auto"
+          [class.lg:max-h-[min(70dvh,calc(100dvh-12rem))]]="stickyHeader()"
+          [class.lg:overflow-auto]="stickyHeader() && !paginationLoading()"
+          [class.pointer-events-none]="paginationLoading()"
         >
+          <table
+            class="w-max min-w-full table-auto border-separate border-spacing-0 bg-inherit text-left text-body text-ink dark:text-white"
+          >
           <thead [class]="headerRowClass()">
             <tr>
               @if (isExpandable()) {
@@ -228,7 +278,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Collapse all"
                       (click)="collapseAllRows()"
                     >
@@ -237,7 +287,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Expand all"
                       [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
@@ -261,7 +311,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else if (col.sortable) {
                     <button
                       type="button"
-                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-500 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:text-white"
                       (click)="onSortHeaderClick(col.key)"
                     >
                       <span>{{ col.header }}</span>
@@ -357,41 +407,52 @@ import { TableColumn, TableSortChange } from './table-column';
                   [class.border-border]="isRowExpanded(row, i)"
                   [class.dark:border-white/10]="isRowExpanded(row, i)"
                 >
-                  <td class="p-0 align-top" [attr.colspan]="columns().length + 1">
+                  <td class="p-0 align-top" [attr.colspan]="colSpan()">
+                    <!-- Sticky must sit outside overflow-hidden or it pins
+                         to the full table width and scrolls with the row. -->
                     <div
-                      class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
-                      [style.grid-template-rows]="
-                        isRowExpanded(row, i) ? '1fr' : '0fr'
-                      "
-                      [attr.aria-hidden]="!isRowExpanded(row, i)"
-                      [class.pointer-events-none]="!isRowExpanded(row, i)"
+                      class="africanies-table-expand-panel bg-surface-sunken dark:bg-white/[0.05]"
+                      [style.width.px]="scrollportWidthPx() || null"
+                      [style.maxWidth.px]="scrollportWidthPx() || null"
                     >
                       <div
-                        class="min-h-0 overflow-hidden border-t border-border-strong bg-surface-sunken dark:border-white/10 dark:bg-white/[0.05]"
+                        class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+                        [style.grid-template-rows]="
+                          isRowExpanded(row, i) ? '1fr' : '0fr'
+                        "
+                        [attr.aria-hidden]="!isRowExpanded(row, i)"
+                        [class.pointer-events-none]="!isRowExpanded(row, i)"
                       >
-                        <dl
-                          class="m-0 grid gap-x-6 gap-y-3 px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3"
-                          [class.opacity-0]="!isRowExpanded(row, i)"
-                          [class.opacity-100]="isRowExpanded(row, i)"
+                        <div
+                          class="min-h-0 overflow-x-hidden overflow-y-hidden border-t border-border-strong dark:border-white/10"
                         >
-                          @for (detail of rowDetailDefs(); track detail.label()) {
-                            <div class="min-w-0">
-                              <dt
-                                class="m-0 text-caption font-medium text-neutral-600 dark:text-neutral-400"
-                              >
-                                {{ detail.label() }}
-                              </dt>
-                              <dd
-                                class="m-0 mt-0.5 text-body-sm text-ink dark:text-white"
-                              >
-                                <ng-container
-                                  [ngTemplateOutlet]="detail.template"
-                                  [ngTemplateOutletContext]="cellContext(row)"
-                                />
-                              </dd>
-                            </div>
-                          }
-                        </dl>
+                          <dl
+                            class="m-0 grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] gap-x-6 gap-y-3 overflow-x-hidden px-[1.125rem] py-4 transition-opacity duration-200 ease-out motion-reduce:transition-none"
+                            [class.opacity-0]="!isRowExpanded(row, i)"
+                            [class.opacity-100]="isRowExpanded(row, i)"
+                          >
+                            @for (
+                              detail of rowDetailDefs();
+                              track detail.label()
+                            ) {
+                              <div class="min-w-0">
+                                <dt
+                                  class="m-0 text-caption font-medium text-neutral-600 dark:text-neutral-400"
+                                >
+                                  {{ detail.label() }}
+                                </dt>
+                                <dd
+                                  class="m-0 mt-0.5 break-words text-body-sm text-ink dark:text-white"
+                                >
+                                  <ng-container
+                                    [ngTemplateOutlet]="detail.template"
+                                    [ngTemplateOutletContext]="cellContext(row)"
+                                  />
+                                </dd>
+                              </div>
+                            }
+                          </dl>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -402,16 +463,21 @@ import { TableColumn, TableSortChange } from './table-column';
             }
           </tbody>
         </table>
+        </div>
         @if (paginationLoading()) {
           <div
-            class="pointer-events-none absolute inset-0 z-[5] flex items-start justify-center bg-surface/70 px-4 pt-16 dark:bg-ink-950/70"
+            class="absolute inset-0 z-[5] bg-surface/70 dark:bg-ink-950/70"
             data-testid="africanies-table-keep-rows-loading"
             aria-hidden="true"
           >
-            <africanies-loading-state
-              mode="inline"
-              [message]="loadingLabel()"
-            />
+            <div
+              class="sticky top-0 flex h-[min(70dvh,100%)] items-center justify-center px-4"
+            >
+              <africanies-loading-state
+                mode="inline"
+                [message]="loadingLabel()"
+              />
+            </div>
           </div>
         }
       </div>
@@ -429,7 +495,51 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
-  protected readonly modeColor = inject(ModeColorService);
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly shipping = inject(ShippingModeService);
+
+  /** Local STN / SFN segment options for {@link showShippingMode}. */
+  protected readonly shippingModeItems: AfricaniesNavItem[] = [
+    { id: 'stn', label: 'Shipping to Nigeria' },
+    { id: 'sfn', label: 'Shipping from Nigeria' },
+  ];
+
+  /**
+   * Segment selection mirror of {@link ShippingModeService.mode}. Kept local
+   * so a denied {@link ShippingModeService.requestModeChange} can snap the
+   * pills back when the service mode did not change.
+   */
+  protected readonly shippingModeActiveId = signal<string>('sfn');
+
+  /** Scrollport that owns horizontal overflow for the main grid. */
+  private readonly scrollport =
+    viewChild<ElementRef<HTMLElement>>('scrollport');
+
+  /**
+   * Visible width of {@link scrollport}. Applied to the expand panel so
+   * details stay within the viewport and do not scroll with the columns.
+   */
+  protected readonly scrollportWidthPx = signal(0);
+
+  constructor() {
+    effect(() => {
+      this.shippingModeActiveId.set(this.shipping.mode());
+    });
+
+    afterNextRender(() => {
+      const el = this.scrollport()?.nativeElement;
+      if (!el) {
+        return;
+      }
+      const sync = (): void => {
+        this.scrollportWidthPx.set(el.clientWidth);
+      };
+      sync();
+      const observer = new ResizeObserver(sync);
+      observer.observe(el);
+      this.destroyRef.onDestroy(() => observer.disconnect());
+    });
+  }
 
   /**
    * When false, hides row expansion even if {@link RowDetailDefDirective}
@@ -469,6 +579,14 @@ export class TableComponent<T = unknown> {
    * server-side `order` param. Omitted / null means no column is active.
    */
   readonly sort = input<TableSortChange | null>(null);
+
+  /**
+   * Show the Shipping to / from Nigeria segment above the table (top-left).
+   * On by default; set `[showShippingMode]="false"` to hide (e.g. modals).
+   * Writes through {@link ShippingModeService.requestModeChange} so feature
+   * guards still run.
+   */
+  readonly showShippingMode = input(true, { transform: booleanAttribute });
 
   /**
    * Show a Refresh button above the table (top-left) once rows are on screen.
@@ -626,6 +744,27 @@ export class TableComponent<T = unknown> {
     () => this.showRefresh() && this.bodyKind() === 'rows',
   );
 
+  /**
+   * Applies a shipping-mode segment selection through
+   * {@link ShippingModeService.requestModeChange}.
+   *
+   * @param id - Segment id (`stn` / `sfn`) or null.
+   */
+  protected onShippingModeChange(id: string | null): void {
+    if (id !== 'stn' && id !== 'sfn') {
+      return;
+    }
+    this.shippingModeActiveId.set(id);
+    if (id === this.shipping.mode()) {
+      return;
+    }
+    this.shipping.requestModeChange(id as ShippingMode).subscribe((ok) => {
+      if (!ok) {
+        this.shippingModeActiveId.set(this.shipping.mode());
+      }
+    });
+  }
+
   protected readonly visibleRowIds = computed(() =>
     this.rowList().map((row, index) => this.rowId(row, index)),
   );
@@ -691,11 +830,12 @@ export class TableComponent<T = unknown> {
   }
 
   /**
-   * Opaque mode soft fill for header cells (sticky-safe in dark mode).
-   * @returns Soft solid background utilities.
+   * Opaque header fill (sticky-safe). Neutral chrome — not mode-accented.
+   * Light `#f0f2f5` / dark elevated ink surface.
+   * @returns Background utility classes.
    */
   protected headerSoftClass(): string {
-    return this.modeColor.classes().softSolid;
+    return 'bg-[#f0f2f5] dark:bg-[#2a2c31]';
   }
 
   /**
@@ -777,7 +917,7 @@ export class TableComponent<T = unknown> {
       : 'border-b ';
     return (
       border +
-      'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-500 dark:border-white/10 dark:text-neutral-400 ' +
       this.headerSoftClass() +
       ' ' +
       this.stickySurfaceClass(col, 'head') +

@@ -47,7 +47,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
  * **Expanded rail:** branches start open by default (`expandBranchesByDefault`).
  * Clicking a parent only opens/closes the branch (no route change). When any
  * branch is open, a sticky collapse-all control sits above the list (top right).
- * The rail expand/collapse control stays pinned in the logo header.
+ * The rail expand/collapse control stays pinned in the logo header. Project
+ * chrome above the scrollable list with `pre-nav` (e.g. shipping modes) or
+ * below with `footer`.
  * **Collapsed rail:** clicking a parent expands the rail, opens the
  * branch, and activates the first enabled child (router or `activeId`).
  *

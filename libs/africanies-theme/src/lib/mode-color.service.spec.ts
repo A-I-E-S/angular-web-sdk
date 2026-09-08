@@ -26,14 +26,16 @@ describe('ModeColorService', () => {
     service = TestBed.inject(ModeColorService);
   });
 
-  it('uses accessible export-strong fills and text in SFN light mode', () => {
+  it('uses export brand fills and text for SFN in light and dark', () => {
     const classes = service.classes();
-    expect(classes.text).toContain('text-export-strong');
-    expect(classes.primary).toContain('bg-export-strong');
-    expect(classes.ghostPrimary).toContain('text-export-strong');
-    expect(classes.activeFill).toContain('bg-export-strong');
-    expect(classes.stroked).toContain('text-export-strong');
-    expect(classes.stroked).toContain('border-export-strong');
+    const primaryTokens = classes.primary.split(/\s+/);
+    expect(classes.text.split(/\s+/)).toContain('text-export');
+    expect(primaryTokens).toContain('bg-export');
+    expect(primaryTokens).not.toContain('bg-export-strong');
+    expect(classes.ghostPrimary.split(/\s+/)).toContain('text-export');
+    expect(classes.activeFill.split(/\s+/)).toContain('bg-export');
+    expect(classes.stroked.split(/\s+/)).toContain('text-export');
+    expect(classes.stroked.split(/\s+/)).toContain('border-export');
   });
 
   it('keeps bright export accents for dark-mode companions in SFN', () => {

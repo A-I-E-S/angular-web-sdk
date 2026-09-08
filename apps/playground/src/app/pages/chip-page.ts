@@ -27,7 +27,7 @@ import { CHIP_ICON_REMOVE, CHIP_TABLE, CHIP_VARIANTS } from '../snippets';
 
       <app-demo-section
         title="Variants"
-        hint="neutral, success, warning, danger, plus export/import for shipping mode. success and export both use the SFN green family."
+        hint="neutral, success, warning, danger, info, violet, teal, rose, cyan, plus export/import for shipping mode. success and export both use the SFN green family."
         badge="6"
         [code]="variantsCode"
       >
@@ -96,6 +96,11 @@ export class ChipPage {
     'success',
     'warning',
     'danger',
+    'info',
+    'violet',
+    'teal',
+    'rose',
+    'cyan',
     'export',
     'import',
   ];
@@ -107,6 +112,11 @@ export class ChipPage {
     success: 'Delivered',
     warning: 'Pending',
     danger: 'Exception',
+    info: 'Info',
+    violet: 'Violet',
+    teal: 'Teal',
+    rose: 'Rose',
+    cyan: 'Cyan',
     export: 'SFN / export',
     import: 'STN / import',
   };

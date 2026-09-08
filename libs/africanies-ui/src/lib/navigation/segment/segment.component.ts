@@ -38,6 +38,10 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
 /**
  * Compact segmented control for view modes and filters.
  *
+ * Selected option uses a **solid brand pill** (white label) on a neutral track —
+ * same pattern as the portal shipping-mode toggle. With exactly two options the
+ * pill slides; with more options each selected chip fills in place.
+ *
  * ## Router mode (URL is source of truth)
  *
  * Set `routerLink` (and optional `queryParams`) on items. The selected pill
@@ -65,20 +69,38 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AfricaniesIconComponent],
+  styles: `
+    :host .africanies-segment-thumb {
+      width: calc((100% - 0.5rem) / 2);
+    }
+  `,
   template: `
     <div
-      class="inline-flex max-w-full flex-wrap gap-1 rounded-lg bg-background-welcome p-1 dark:bg-ink-950"
+      class="relative inline-grid max-w-full rounded-lg bg-[#f0f2f5] p-1 dark:bg-[#2a2c31]"
       role="group"
       [attr.aria-label]="ariaLabel()"
+      [class.grid-cols-2]="useSlidingThumb()"
+      [class.inline-flex]="!useSlidingThumb()"
+      [class.flex-wrap]="!useSlidingThumb()"
+      [class.gap-1]="!useSlidingThumb()"
     >
+      @if (useSlidingThumb()) {
+        <div
+          class="africanies-segment-thumb pointer-events-none absolute top-1 bottom-1 left-1 rounded-md shadow-sm transition-transform duration-200 ease-out motion-reduce:transition-none"
+          [class]="thumbFillClass()"
+          [style.transform]="
+            activeIndex() === 1
+              ? 'translateX(calc(100% + 0.25rem))'
+              : 'translateX(0)'
+          "
+          aria-hidden="true"
+        ></div>
+      }
+
       @for (item of items(); track item.id) {
         @if (item.routerLink !== null && item.routerLink !== undefined) {
           <a
-            [class]="
-              segmentChrome() +
-              ' ' +
-              (isItemActive(item) ? selectedClass() : idleClass())
-            "
+            [class]="optionChrome(item)"
             [class.cursor-pointer]="!item.disabled"
             [class.cursor-not-allowed]="item.disabled"
             [class.opacity-50]="item.disabled"
@@ -95,11 +117,7 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
         } @else {
           <button
             type="button"
-            [class]="
-              segmentChrome() +
-              ' ' +
-              (isItemActive(item) ? selectedClass() : idleClass())
-            "
+            [class]="optionChrome(item)"
             [disabled]="!!item.disabled"
             [class.cursor-pointer]="!item.disabled"
             [class.cursor-not-allowed]="item.disabled"
@@ -154,20 +172,17 @@ export class SegmentComponent {
     { initialValue: this.router.url },
   );
 
-  protected readonly segmentChrome = computed(
-    () =>
-      'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-body-sm transition-colors duration-150 no-underline',
+  /** Two equal options → portal-style sliding brand pill. */
+  protected readonly useSlidingThumb = computed(
+    () => this.items().length === 2,
   );
 
-  protected readonly selectedClass = computed(() => {
-    const colors = this.modeColor.classes();
-    return `${colors.soft} ${colors.text} shadow-sm font-semibold`;
+  /** Index of the active option (0 / 1 for the sliding thumb). */
+  protected readonly activeIndex = computed(() => {
+    const list = this.items();
+    const idx = list.findIndex((item) => this.isItemActive(item));
+    return idx < 0 ? 0 : idx;
   });
-
-  protected readonly idleClass = computed(
-    () =>
-      'font-medium text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white',
-  );
 
   constructor() {
     effect(() => {
@@ -196,6 +211,67 @@ export class SegmentComponent {
       return isNavItemActive(this.router, item, this.linkActiveOptions());
     }
     return this.activeId() === item.id;
+  }
+
+  /**
+   * Sliding thumb fill. STN / SFN options keep their own brand color so the
+   * pill matches mode identity; other pairs follow the active theme primary.
+   */
+  protected thumbFillClass(): string {
+    const active = this.items()[this.activeIndex()];
+    return this.brandFillFor(active?.id ?? null);
+  }
+
+  /**
+   * Option chrome: sliding mode keeps labels transparent over the thumb;
+   * multi-option mode paints a solid selected chip in place.
+   *
+   * @param item - Option being rendered.
+   * @returns Class string for the control.
+   */
+  protected optionChrome(item: AfricaniesNavItem): string {
+    const base =
+      'relative z-10 inline-flex min-w-0 items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-center text-body-sm no-underline transition-colors duration-150';
+    const active = this.isItemActive(item);
+
+    if (this.useSlidingThumb()) {
+      return (
+        base +
+        ' w-full ' +
+        (active
+          ? 'font-semibold text-white'
+          : 'font-medium text-ink hover:text-ink dark:text-neutral-300 dark:hover:text-white')
+      );
+    }
+
+    if (active) {
+      return `${base} font-semibold text-white shadow-sm ${this.brandFillFor(item.id)}`;
+    }
+
+    return (
+      base +
+      ' font-medium text-ink hover:bg-white/70 hover:text-ink dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white'
+    );
+  }
+
+  /**
+   * Solid brand fill for a selected option / sliding thumb.
+   *
+   * Light + dark use the same SFN green / STN orange primaries so the control
+   * stays mode-identifiable on both surfaces (portal primary, not soft tint).
+   * Class strings are full literals so Tailwind keeps them.
+   *
+   * @param id - Option id (`stn` / `sfn` get fixed brands; else theme primary).
+   * @returns Background utility classes.
+   */
+  protected brandFillFor(id: string | null): string {
+    if (id === 'stn') {
+      return 'bg-import dark:bg-import';
+    }
+    if (id === 'sfn') {
+      return 'bg-export dark:bg-export';
+    }
+    return this.modeColor.classes().activeFill;
   }
 
   protected selectLocal(item: AfricaniesNavItem): void {
