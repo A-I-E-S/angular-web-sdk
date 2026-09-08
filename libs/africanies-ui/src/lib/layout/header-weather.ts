@@ -3,7 +3,7 @@ import type { IconName } from '@africanies/africanies-icons';
 import type { HeaderWeather, HeaderWeatherKind } from './header-greeting.util';
 
 /** Bump when cache shape or city resolution strategy changes. */
-const CACHE_KEY = 'africanies-header-weather-v6';
+const CACHE_KEY = 'africanies-header-weather-v7';
 const FETCH_MS = 4_000;
 const BROWSER_GEO_MS = 3_500;
 /** IP fallback — city string is used only when reverse-geocode is empty. */
@@ -197,10 +197,16 @@ function readCache(hour: string): HeaderWeather | null {
     if (parsed.hour !== hour || !parsed.kind) {
       return null;
     }
+    // City-less entries (e.g. browser geo + failed reverse) used to stick for
+    // the hour — treat them as a miss so we can recover the location label.
+    const city = asCity(parsed.city);
+    if (!city) {
+      return null;
+    }
     return {
       kind: parsed.kind,
       temperatureC: parsed.temperatureC,
-      city: parsed.city,
+      city,
     };
   } catch {
     return null;
@@ -217,27 +223,36 @@ function writeCache(value: CachedWeather): void {
 
 /**
  * Prefer device coordinates when available (may prompt once); otherwise fall
- * back to IP geo.
+ * back to IP geo. IP is always fetched in parallel so its city can backfill
+ * the label when reverse-geocode is empty (browser geo has no city string).
  */
 async function resolveCoordinates(
   fetchFn: typeof fetch,
 ): Promise<(Coordinates & { fallbackCity?: string }) | null> {
-  const browser = await tryBrowserGeolocation();
+  const [browser, ipGeo] = await Promise.all([
+    tryBrowserGeolocation(),
+    fetchIpGeo(fetchFn),
+  ]);
+  const ipCity = asCity(ipGeo?.city);
+
   if (browser) {
-    return browser;
+    return { ...browser, fallbackCity: ipCity };
   }
 
-  const geo = (await fetchJson(fetchFn, GEO_URL)) as GeoJsPayload | null;
-  const latitude = asNumber(geo?.latitude);
-  const longitude = asNumber(geo?.longitude);
+  const latitude = asNumber(ipGeo?.latitude);
+  const longitude = asNumber(ipGeo?.longitude);
   if (latitude === null || longitude === null) {
     return null;
   }
   return {
     latitude,
     longitude,
-    fallbackCity: asCity(geo?.city),
+    fallbackCity: ipCity,
   };
+}
+
+async function fetchIpGeo(fetchFn: typeof fetch): Promise<GeoJsPayload | null> {
+  return (await fetchJson(fetchFn, GEO_URL)) as GeoJsPayload | null;
 }
 
 async function tryBrowserGeolocation(): Promise<Coordinates | null> {
