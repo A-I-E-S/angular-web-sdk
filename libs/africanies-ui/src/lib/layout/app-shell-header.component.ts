@@ -17,7 +17,7 @@ import type { Observable } from 'rxjs';
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import type { AfricaniesMenuItem } from '../action-menu/menu-item';
-import { AvatarMenuComponent } from '../avatar';
+import { AvatarComponent, AvatarMenuComponent } from '../avatar';
 import type { AfricaniesNotification, NotificationPageResult } from '../notifications';
 import { NotificationDrawerService } from '../notifications';
 import type { HeaderWeather } from './header-greeting.util';
@@ -70,7 +70,12 @@ export class AppShellHeaderEndDirective {}
   selector: 'africanies-app-shell-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AfricaniesIconComponent, AvatarMenuComponent, DatePipe],
+  imports: [
+    AfricaniesIconComponent,
+    AvatarComponent,
+    AvatarMenuComponent,
+    DatePipe,
+  ],
   template: `
     <div
       class="flex min-w-0 items-center gap-2 px-3 py-2.5 sm:gap-4 sm:px-6 sm:py-3"
@@ -180,12 +185,20 @@ export class AppShellHeaderEndDirective {}
             }
 
             @if (userName()) {
-              <africanies-avatar-menu
-                [name]="userName()!"
-                [src]="userAvatarSrc()"
-                [menuItems]="userMenuItems()"
-                [size]="'md'"
-              />
+              @if (userMenuItems().length > 0) {
+                <africanies-avatar-menu
+                  [name]="userName()!"
+                  [src]="userAvatarSrc()"
+                  [menuItems]="userMenuItems()"
+                  [size]="'md'"
+                />
+              } @else {
+                <africanies-avatar
+                  [name]="userName()!"
+                  [src]="userAvatarSrc()"
+                  size="md"
+                />
+              }
             }
           </div>
         }

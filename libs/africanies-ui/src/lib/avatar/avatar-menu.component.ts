@@ -37,28 +37,32 @@ import { AvatarComponent, type AvatarSize } from './avatar.component';
     AfricaniesIconComponent,
   ],
   template: `
-    <africanies-action-menu
-      [items]="menuItems()"
-      [ariaLabel]="ariaLabel()"
-      [disabled]="disabled()"
-    >
-      <button
-        type="button"
-        africaniesActionMenuTrigger
-        class="inline-flex cursor-pointer items-center gap-1 rounded-lg p-0.5 pr-1 transition-colors hover:bg-background-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
-        [attr.aria-label]="ariaLabel()"
+    @if (menuItems().length > 0) {
+      <africanies-action-menu
+        [items]="menuItems()"
+        [ariaLabel]="ariaLabel()"
+        [disabled]="disabled()"
       >
-        <africanies-avatar [name]="name()" [src]="src()" [size]="size()" />
-        @if (showCaret()) {
-          <africanies-icon
-            name="chevron-down"
-            [size]="14"
-            class="shrink-0 text-neutral-600 dark:text-neutral-400"
-            aria-hidden="true"
-          />
-        }
-      </button>
-    </africanies-action-menu>
+        <button
+          type="button"
+          africaniesActionMenuTrigger
+          class="inline-flex cursor-pointer items-center gap-1 rounded-lg p-0.5 pr-1 transition-colors hover:bg-background-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-white/10"
+          [attr.aria-label]="ariaLabel()"
+        >
+          <africanies-avatar [name]="name()" [src]="src()" [size]="size()" />
+          @if (showCaret()) {
+            <africanies-icon
+              name="chevron-down"
+              [size]="14"
+              class="shrink-0 text-neutral-600 dark:text-neutral-400"
+              aria-hidden="true"
+            />
+          }
+        </button>
+      </africanies-action-menu>
+    } @else {
+      <africanies-avatar [name]="name()" [src]="src()" [size]="size()" />
+    }
   `,
 })
 export class AvatarMenuComponent {

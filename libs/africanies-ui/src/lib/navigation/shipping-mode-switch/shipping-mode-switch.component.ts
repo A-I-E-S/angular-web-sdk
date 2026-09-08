@@ -3,12 +3,45 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   input,
+  model,
 } from '@angular/core';
 
 import { ShippingModeService } from '@africanies/africanies-core';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import type { ShippingMode } from '@africanies/africanies-models';
+
+import { ChipComponent, type ChipVariant } from '../../chip/chip.component';
+
+const PANEL_OPEN_STORAGE_KEY = 'africanies-shipping-mode-panel-open';
+
+function readStoredPanelOpen(): boolean {
+  if (typeof localStorage === 'undefined') {
+    return true;
+  }
+  try {
+    const raw = localStorage.getItem(PANEL_OPEN_STORAGE_KEY);
+    if (raw === null) {
+      return true;
+    }
+    return raw !== '0' && raw !== 'false';
+  } catch {
+    return true;
+  }
+}
+
+function writeStoredPanelOpen(open: boolean): void {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+  try {
+    localStorage.setItem(PANEL_OPEN_STORAGE_KEY, open ? '1' : '0');
+  } catch {
+    // Private mode / quota — panel still toggles in-session.
+  }
+}
 
 /**
  * Shared globe + plane glyph for STN / SFN. STN paints it rotated 180°.
@@ -25,12 +58,13 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
  * import orange; **from Nigeria** uses export green. Both tiles keep equal
  * chrome so unselected does not look like floating text.
  *
- * Project into `<africanies-side-nav>` with the `footer` attribute.
+ * Project into `<africanies-side-nav>` with the `pre-nav` attribute (above the
+ * nav list). `footer` still works for legacy placement under the list.
  *
  * @example
  * ```html
  * <africanies-side-nav [items]="nav" [(collapsed)]="collapsed">
- *   <africanies-shipping-mode-switch footer [collapsed]="collapsed()" />
+ *   <africanies-shipping-mode-switch pre-nav [collapsed]="collapsed()" />
  * </africanies-side-nav>
  * ```
  */
@@ -38,70 +72,114 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
   selector: 'africanies-shipping-mode-switch',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AfricaniesIconComponent, ChipComponent],
   host: {
     '[class]': 'hostClass()',
   },
   template: `
-    @if (!collapsed()) {
-      <p
-        class="m-0 mb-2 px-1 text-caption font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
-      >
-        Shipping mode
-      </p>
-    }
     <div
-      class="grid gap-1.5"
-      [class.grid-cols-1]="collapsed()"
-      [class.grid-cols-2]="!collapsed()"
-      role="radiogroup"
-      aria-label="Shipping mode"
+      class="flex items-center gap-1.5"
+      [class.mb-2]="panelOpen()"
+      [class.justify-center]="collapsed()"
+      [class.justify-between]="!collapsed()"
     >
+      @if (!collapsed()) {
+        <p
+          class="m-0 shrink-0 px-1 text-caption font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
+        >
+          Shipping mode
+        </p>
+        <africanies-chip
+          class="min-w-0"
+          [variant]="modeChipVariant()"
+          size="sm"
+        >
+          {{ modeChipLabel() }}
+        </africanies-chip>
+        <span class="min-w-0 flex-1" aria-hidden="true"></span>
+      } @else {
+        <africanies-chip [variant]="modeChipVariant()" size="sm">
+          {{ modeChipLabel() }}
+        </africanies-chip>
+      }
       <button
         type="button"
-        role="radio"
-        [attr.aria-checked]="mode() === 'stn'"
-        aria-label="Shipping to Nigeria"
-        [class]="cardClass('stn')"
-        (click)="select('stn')"
+        class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+        [attr.aria-label]="
+          panelOpen() ? 'Hide shipping modes' : 'Show shipping modes'
+        "
+        [attr.aria-expanded]="panelOpen()"
+        (click)="togglePanel()"
       >
-        <svg
-          viewBox="0 0 122.88 107.54"
-          class="h-6 w-6 shrink-0 rotate-180"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path [attr.d]="glyphPath()" fill="currentColor" />
-        </svg>
-        @if (!collapsed()) {
-          <span class="flex flex-col leading-tight">
-            <span>Shipping</span>
-            <span>to Nigeria</span>
-          </span>
-        }
+        <africanies-icon
+          [name]="panelOpen() ? 'chevron-up' : 'chevron-down'"
+          [size]="14"
+        />
       </button>
-      <button
-        type="button"
-        role="radio"
-        [attr.aria-checked]="mode() === 'sfn'"
-        aria-label="Shipping from Nigeria"
-        [class]="cardClass('sfn')"
-        (click)="select('sfn')"
-      >
-        <svg
-          viewBox="0 0 122.88 107.54"
-          class="h-6 w-6 shrink-0"
-          aria-hidden="true"
-          focusable="false"
+    </div>
+
+    <div
+      class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+      [style.grid-template-rows]="panelOpen() ? '1fr' : '0fr'"
+      [attr.aria-hidden]="!panelOpen()"
+      [class.pointer-events-none]="!panelOpen()"
+    >
+      <div class="min-h-0 overflow-hidden">
+        <div
+          class="grid gap-1.5"
+          [class.grid-cols-1]="collapsed()"
+          [class.grid-cols-2]="!collapsed()"
+          role="radiogroup"
+          aria-label="Shipping mode"
         >
-          <path [attr.d]="glyphPath()" fill="currentColor" />
-        </svg>
-        @if (!collapsed()) {
-          <span class="flex flex-col leading-tight">
-            <span>Shipping</span>
-            <span>from Nigeria</span>
-          </span>
-        }
-      </button>
+          <button
+            type="button"
+            role="radio"
+            [attr.aria-checked]="mode() === 'stn'"
+            aria-label="Shipping to Nigeria"
+            [class]="cardClass('stn')"
+            (click)="select('stn')"
+          >
+            <svg
+              viewBox="0 0 122.88 107.54"
+              class="h-6 w-6 shrink-0 rotate-180"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path [attr.d]="glyphPath()" fill="currentColor" />
+            </svg>
+            @if (!collapsed()) {
+              <span class="flex flex-col leading-tight">
+                <span>Shipping</span>
+                <span>to Nigeria</span>
+              </span>
+            }
+          </button>
+          <button
+            type="button"
+            role="radio"
+            [attr.aria-checked]="mode() === 'sfn'"
+            aria-label="Shipping from Nigeria"
+            [class]="cardClass('sfn')"
+            (click)="select('sfn')"
+          >
+            <svg
+              viewBox="0 0 122.88 107.54"
+              class="h-6 w-6 shrink-0"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path [attr.d]="glyphPath()" fill="currentColor" />
+            </svg>
+            @if (!collapsed()) {
+              <span class="flex flex-col leading-tight">
+                <span>Shipping</span>
+                <span>from Nigeria</span>
+              </span>
+            }
+          </button>
+        </div>
+      </div>
     </div>
   `,
 })
@@ -125,15 +203,40 @@ export class ShippingModeSwitchComponent {
    */
   readonly collapsed = input(false, { transform: booleanAttribute });
 
+  /**
+   * When true, the mode tiles are visible. Persisted in `localStorage`.
+   * Two-way bindable for hosts that need to force-open (e.g. onboarding).
+   */
+  readonly panelOpen = model(readStoredPanelOpen());
+
   /** Active mode from {@link ShippingModeService}. */
   protected readonly mode = this.shipping.mode;
 
-  /** Host padding / divider — tighter when the rail is collapsed. */
+  protected readonly modeChipLabel = computed(() =>
+    this.mode() === 'stn' ? 'STN' : 'SFN',
+  );
+
+  protected readonly modeChipVariant = computed(
+    (): ChipVariant => (this.mode() === 'stn' ? 'import' : 'export'),
+  );
+
+  /** Host padding / divider — sits above the nav list (`border-b`). */
   protected readonly hostClass = computed(() =>
     this.collapsed()
-      ? 'block shrink-0 border-t border-border px-1.5 py-3 dark:border-white/10'
-      : 'block shrink-0 border-t border-border px-2 py-3 dark:border-white/10',
+      ? 'block shrink-0 border-b border-border px-1.5 py-2 dark:border-white/10'
+      : 'block shrink-0 border-b border-border px-2 py-2.5 dark:border-white/10',
   );
+
+  constructor() {
+    effect(() => {
+      writeStoredPanelOpen(this.panelOpen());
+    });
+  }
+
+  /** Show or hide the mode tiles. */
+  protected togglePanel(): void {
+    this.panelOpen.update((open) => !open);
+  }
 
   /**
    * Requests a mode change through {@link ShippingModeService.requestModeChange}
