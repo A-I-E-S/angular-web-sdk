@@ -65,29 +65,34 @@ describe('ButtonComponent', () => {
   });
 
   it('should apply primary variant classes by default (SFN / export)', () => {
-    expect(button.className).toContain('bg-export-strong');
-    expect(button.className).toContain('text-white');
+    const tokens = button.className.split(/\s+/);
+    expect(tokens).toContain('bg-export');
+    expect(tokens).toContain('text-white');
+    expect(tokens).not.toContain('bg-export-strong');
   });
 
   it('should switch primary to import orange when mode is STN', () => {
     mode.set('stn');
     fixture.detectChanges();
 
-    expect(button.className).toContain('bg-import-strong');
-    expect(button.className).not.toContain('bg-export-strong');
+    const tokens = button.className.split(/\s+/);
+    expect(tokens).toContain('bg-import-strong');
+    expect(tokens).not.toContain('bg-export');
   });
 
   it('should switch ghost-primary text accent with shipping mode', () => {
     host.variant.set('ghost-primary');
     fixture.detectChanges();
-    expect(button.className).toContain('text-export-strong');
-    expect(button.className).toContain('bg-transparent');
+    let tokens = button.className.split(/\s+/);
+    expect(tokens).toContain('text-export');
+    expect(tokens).toContain('bg-transparent');
 
     mode.set('stn');
     fixture.detectChanges();
 
-    expect(button.className).toContain('text-import-strong');
-    expect(button.className).not.toContain('text-export-strong');
+    tokens = button.className.split(/\s+/);
+    expect(tokens).toContain('text-import-strong');
+    expect(tokens).not.toContain('text-export');
   });
 
   it('should switch variant and size classes', () => {

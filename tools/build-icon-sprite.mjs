@@ -85,7 +85,7 @@ function parseSvg(svg, iconName) {
  */
 const PRESERVED_FILLS = new Set([
   '#ef8833',
-  '#1cbd5d',
+  '#26bd5d',
   '#26a4f0',
 ]);
 

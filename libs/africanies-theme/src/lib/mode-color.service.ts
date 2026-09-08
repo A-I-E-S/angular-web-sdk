@@ -9,7 +9,9 @@ import { ShippingModeService } from '@africanies/africanies-core';
  * and accent text. Semantic colors (danger / warning) stay mode-independent.
  */
 export interface ModeColorClasses {
-  /** Accessible accent text — `text-export-strong` in light, `text-export` in dark. */
+  /**
+   * Accessible accent text — mode brand color in light and dark.
+   */
   text: string;
   /** Solid background utility, e.g. `bg-export`. */
   bg: string;
@@ -80,22 +82,22 @@ export class ModeColorService {
     // Literal strings required for Tailwind content detection — do not interpolate.
     if (this.shippingMode.mode() === 'sfn') {
       return {
-        text: 'text-export-strong dark:text-export',
+        text: 'text-export dark:text-export',
         bg: 'bg-export',
         bgSubtle: 'bg-export-subtle',
         border: 'border-export',
         primary:
-          'bg-export-strong text-white border-transparent hover:bg-export-hover dark:bg-export dark:hover:bg-export-light',
+          'bg-export text-white border-transparent hover:bg-export-strong dark:bg-export dark:hover:bg-export-light',
         ghostPrimary:
-          'bg-transparent text-export-strong border-transparent hover:bg-export-subtle dark:text-export dark:hover:bg-export/15',
+          'bg-transparent text-export border-transparent hover:bg-export-subtle dark:text-export dark:hover:bg-export/15',
         soft: 'bg-export-subtle dark:bg-export/15',
         softSolid:
-          'bg-export-subtle dark:bg-[color-mix(in_srgb,#1cbd5d_15%,#212529)]',
+          'bg-export-subtle dark:bg-[color-mix(in_srgb,#26bd5d_15%,#212529)]',
         softHover: 'hover:bg-export-subtle dark:hover:bg-export/15',
         activeFill:
-          'bg-export-strong text-white border-transparent hover:bg-export-hover dark:bg-export dark:text-white dark:hover:bg-export-light',
+          'bg-export text-white border-transparent hover:bg-export-strong dark:bg-export dark:text-white dark:hover:bg-export-light',
         stroked:
-          'bg-surface text-export-strong border-export-strong hover:bg-export-subtle dark:bg-ink-950 dark:text-export dark:border-export dark:hover:bg-export/15',
+          'bg-surface text-export border-export hover:bg-export-subtle dark:bg-ink-950 dark:text-export dark:border-export dark:hover:bg-export/15',
       };
     }
     return {

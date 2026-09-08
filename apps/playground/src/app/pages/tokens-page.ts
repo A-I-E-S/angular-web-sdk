@@ -207,7 +207,7 @@ export class TokensPage {
       hex: '#f8fafc',
       group: 'Neutral',
     },
-    { name: 'export', bgClass: 'bg-export', hex: '#1cbd5d', group: 'Export (SFN)' },
+    { name: 'export', bgClass: 'bg-export', hex: '#26bd5d', group: 'Export (SFN)' },
     { name: 'export-strong', bgClass: 'bg-export-strong', hex: '#0b7a3e', group: 'Export (SFN)' },
     { name: 'export-light', bgClass: 'bg-export-light', hex: '#24dc6d', group: 'Export (SFN)' },
     { name: 'export-subtle', bgClass: 'bg-export-subtle', hex: '#e4fff3', group: 'Export (SFN)' },

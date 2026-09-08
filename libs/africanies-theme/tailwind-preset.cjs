@@ -270,7 +270,7 @@ module.exports = {
           hover: '#e9eef5',
         },
         export: {
-          DEFAULT: '#1cbd5d',
+          DEFAULT: '#26bd5d',
           light: '#24dc6d',
           subtle: '#e4fff3',
           tint: '#f2fff8',

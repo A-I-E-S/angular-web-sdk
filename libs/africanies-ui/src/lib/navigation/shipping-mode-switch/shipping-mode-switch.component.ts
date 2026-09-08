@@ -170,7 +170,7 @@ export class ShippingModeSwitchComponent {
         : `${base} ${idle}`;
     }
     return selected
-      ? `${base} border-export-strong bg-export-strong text-white dark:border-export dark:bg-export`
+      ? `${base} border-export bg-export text-white dark:border-export dark:bg-export`
       : `${base} ${idle}`;
   }
 }
