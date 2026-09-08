@@ -212,7 +212,7 @@ export class TokensPage {
     { name: 'export-light', bgClass: 'bg-export-light', hex: '#24dc6d', group: 'Export (SFN)' },
     { name: 'export-subtle', bgClass: 'bg-export-subtle', hex: '#e4fff3', group: 'Export (SFN)' },
     { name: 'import', bgClass: 'bg-import', hex: '#f08829', group: 'Import (STN)' },
-    { name: 'import-strong', bgClass: 'bg-import-strong', hex: '#9a4b0b', group: 'Import (STN)' },
+    { name: 'import-strong', bgClass: 'bg-import-strong', hex: '#f08829', group: 'Import (STN)' },
     { name: 'import-light', bgClass: 'bg-import-light', hex: '#ffa95b', group: 'Import (STN)' },
     { name: 'import-subtle', bgClass: 'bg-import-subtle', hex: '#fffcef', group: 'Import (STN)' },
     { name: 'danger', bgClass: 'bg-danger', hex: '#ff001c', group: 'Feedback' },

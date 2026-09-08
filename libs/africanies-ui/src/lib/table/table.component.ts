@@ -45,8 +45,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * `<ng-template africaniesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
  *
- * Optional toolbar: top-left **shipping mode** segment (`showShippingMode`) and
- * **Refresh** (`showRefresh` → {@link refreshClick}). Refresh is hidden while
+ * Optional toolbar: top-left **shipping mode** segment (on by default;
+ * `[showShippingMode]="false"` to hide) and **Refresh** (`showRefresh` →
+ * {@link refreshClick}). Refresh is hidden while
  * the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
@@ -580,11 +581,12 @@ export class TableComponent<T = unknown> {
   readonly sort = input<TableSortChange | null>(null);
 
   /**
-   * Show a Ship to / Ship from Nigeria segment above the table (top-left).
+   * Show the Shipping to / from Nigeria segment above the table (top-left).
+   * On by default; set `[showShippingMode]="false"` to hide (e.g. modals).
    * Writes through {@link ShippingModeService.requestModeChange} so feature
    * guards still run.
    */
-  readonly showShippingMode = input(false, { transform: booleanAttribute });
+  readonly showShippingMode = input(true, { transform: booleanAttribute });
 
   /**
    * Show a Refresh button above the table (top-left) once rows are on screen.

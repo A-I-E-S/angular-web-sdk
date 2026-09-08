@@ -282,8 +282,8 @@ module.exports = {
           DEFAULT: '#f08829',
           light: '#ffa95b',
           subtle: '#fffcef',
-          // Accessible normal-text / white-text-control foreground (6.20:1).
-          strong: '#9a4b0b',
+          // Brand orange (same as DEFAULT) — portal STN primary.
+          strong: '#f08829',
           hover: '#7f3e09',
         },
         danger: {
