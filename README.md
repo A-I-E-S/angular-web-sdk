@@ -26,23 +26,6 @@ npm install @africanies/africanies-core @africanies/africanies-models @africanie
   @africanies/africanies-theme @africanies/africanies-icons @africanies/africanies-ui
 ```
 
-### Migrating from `@aies/*`
-
-If a consuming app still references the old scope, update in one pass:
-
-| Before | After |
-| --- | --- |
-| GitHub Packages `.npmrc` lines | Remove — packages install from npmjs.org |
-| `@aies/aies-core` (etc.) | `@africanies/africanies-core` (etc.) |
-| `provideAiesSdk` | `provideAfricaniesSdk` |
-| `provideAiesHttpClient` | `provideAfricaniesHttpClient` |
-| `provideAiesUiOverlays` | `provideAfricaniesUiOverlays` |
-| `provideAiesToasts` | `provideAfricaniesToasts` |
-| `<aies-button>` / `aiesCellDef` | `<africanies-button>` / `africaniesCellDef` |
-| Storage keys `aies.theme`, `aies.accessToken`, … | `africanies.theme`, `africanies.accessToken`, … |
-
-Publish current versions from this repo to npm (`nx release publish`; see [CONTRIBUTING](./CONTRIBUTING.md)) before pointing production apps at the new names.
-
 ## Quickstart
 
 Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
