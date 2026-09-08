@@ -77,110 +77,135 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
     '[class]': 'hostClass()',
   },
   template: `
-    <div
-      class="flex items-center gap-1.5"
-      [class.mb-2]="panelOpen()"
-      [class.justify-center]="collapsed()"
-      [class.justify-between]="!collapsed()"
-    >
-      @if (!collapsed()) {
+    @if (collapsed()) {
+      <!-- Narrow rail: icon tiles only — chip + chevron reads as cramped. -->
+      <div
+        class="grid grid-cols-1 gap-1.5"
+        role="radiogroup"
+        aria-label="Shipping mode"
+      >
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="mode() === 'stn'"
+          aria-label="Shipping to Nigeria"
+          title="Shipping to Nigeria"
+          [class]="cardClass('stn')"
+          (click)="select('stn')"
+        >
+          <svg
+            viewBox="0 0 122.88 107.54"
+            class="h-5 w-5 shrink-0 rotate-180"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path [attr.d]="glyphPath()" fill="currentColor" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="mode() === 'sfn'"
+          aria-label="Shipping from Nigeria"
+          title="Shipping from Nigeria"
+          [class]="cardClass('sfn')"
+          (click)="select('sfn')"
+        >
+          <svg
+            viewBox="0 0 122.88 107.54"
+            class="h-5 w-5 shrink-0"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path [attr.d]="glyphPath()" fill="currentColor" />
+          </svg>
+        </button>
+      </div>
+    } @else {
+      <div class="mb-2 flex items-center gap-1.5">
         <p
           class="m-0 shrink-0 px-1 text-caption font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
         >
           Shipping mode
         </p>
-        <africanies-chip
-          class="min-w-0"
-          [variant]="modeChipVariant()"
-          size="sm"
-        >
-          {{ modeChipLabel() }}
-        </africanies-chip>
-        <span class="min-w-0 flex-1" aria-hidden="true"></span>
-      } @else {
         <africanies-chip [variant]="modeChipVariant()" size="sm">
           {{ modeChipLabel() }}
         </africanies-chip>
-      }
-      <button
-        type="button"
-        class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-        [attr.aria-label]="
-          panelOpen() ? 'Hide shipping modes' : 'Show shipping modes'
-        "
-        [attr.aria-expanded]="panelOpen()"
-        (click)="togglePanel()"
-      >
-        <africanies-icon
-          [name]="panelOpen() ? 'chevron-up' : 'chevron-down'"
-          [size]="14"
-        />
-      </button>
-    </div>
-
-    <div
-      class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
-      [style.grid-template-rows]="panelOpen() ? '1fr' : '0fr'"
-      [attr.aria-hidden]="!panelOpen()"
-      [class.pointer-events-none]="!panelOpen()"
-    >
-      <div class="min-h-0 overflow-hidden">
-        <div
-          class="grid gap-1.5"
-          [class.grid-cols-1]="collapsed()"
-          [class.grid-cols-2]="!collapsed()"
-          role="radiogroup"
-          aria-label="Shipping mode"
+        <span class="min-w-0 flex-1" aria-hidden="true"></span>
+        <button
+          type="button"
+          class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+          [attr.aria-label]="
+            panelOpen() ? 'Hide shipping modes' : 'Show shipping modes'
+          "
+          [attr.aria-expanded]="panelOpen()"
+          (click)="togglePanel()"
         >
-          <button
-            type="button"
-            role="radio"
-            [attr.aria-checked]="mode() === 'stn'"
-            aria-label="Shipping to Nigeria"
-            [class]="cardClass('stn')"
-            (click)="select('stn')"
+          <africanies-icon
+            [name]="panelOpen() ? 'chevron-up' : 'chevron-down'"
+            [size]="14"
+          />
+        </button>
+      </div>
+
+      <div
+        class="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+        [style.grid-template-rows]="panelOpen() ? '1fr' : '0fr'"
+        [attr.aria-hidden]="!panelOpen()"
+        [class.pointer-events-none]="!panelOpen()"
+      >
+        <div class="min-h-0 overflow-hidden">
+          <div
+            class="grid grid-cols-2 gap-1.5"
+            role="radiogroup"
+            aria-label="Shipping mode"
           >
-            <svg
-              viewBox="0 0 122.88 107.54"
-              class="h-6 w-6 shrink-0 rotate-180"
-              aria-hidden="true"
-              focusable="false"
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="mode() === 'stn'"
+              aria-label="Shipping to Nigeria"
+              [class]="cardClass('stn')"
+              (click)="select('stn')"
             >
-              <path [attr.d]="glyphPath()" fill="currentColor" />
-            </svg>
-            @if (!collapsed()) {
+              <svg
+                viewBox="0 0 122.88 107.54"
+                class="h-6 w-6 shrink-0 rotate-180"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path [attr.d]="glyphPath()" fill="currentColor" />
+              </svg>
               <span class="flex flex-col leading-tight">
                 <span>Shipping</span>
                 <span>to Nigeria</span>
               </span>
-            }
-          </button>
-          <button
-            type="button"
-            role="radio"
-            [attr.aria-checked]="mode() === 'sfn'"
-            aria-label="Shipping from Nigeria"
-            [class]="cardClass('sfn')"
-            (click)="select('sfn')"
-          >
-            <svg
-              viewBox="0 0 122.88 107.54"
-              class="h-6 w-6 shrink-0"
-              aria-hidden="true"
-              focusable="false"
+            </button>
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="mode() === 'sfn'"
+              aria-label="Shipping from Nigeria"
+              [class]="cardClass('sfn')"
+              (click)="select('sfn')"
             >
-              <path [attr.d]="glyphPath()" fill="currentColor" />
-            </svg>
-            @if (!collapsed()) {
+              <svg
+                viewBox="0 0 122.88 107.54"
+                class="h-6 w-6 shrink-0"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path [attr.d]="glyphPath()" fill="currentColor" />
+              </svg>
               <span class="flex flex-col leading-tight">
                 <span>Shipping</span>
                 <span>from Nigeria</span>
               </span>
-            }
-          </button>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    }
   `,
 })
 export class ShippingModeSwitchComponent {
@@ -263,7 +288,7 @@ export class ShippingModeSwitchComponent {
     const base =
       'flex w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border text-center text-caption font-medium transition-colors ' +
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus ' +
-      (compact ? 'min-h-9 px-1 py-1.5' : 'min-h-[4.5rem] px-1.5 py-2');
+      (compact ? 'size-9 min-h-0 px-0 py-0' : 'min-h-[4.5rem] px-1.5 py-2');
     const idle =
       'border-control bg-surface text-ink hover:bg-background-hover dark:border-white/15 dark:bg-ink-950 dark:text-white dark:hover:bg-white/10';
 

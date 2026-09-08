@@ -7,6 +7,7 @@ import {
   computed,
   contentChildren,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   input,
@@ -17,15 +18,20 @@ import {
   viewChild,
 } from '@angular/core';
 
+import { ShippingModeService } from '@africanies/africanies-core';
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
-import type { PaginationMetaModel } from '@africanies/africanies-models';
-import { ModeColorService } from '@africanies/africanies-theme';
+import type {
+  PaginationMetaModel,
+  ShippingMode,
+} from '@africanies/africanies-models';
 
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from '../feedback/empty-state.component';
 import { ErrorIndicatorComponent } from '../feedback/error-indicator.component';
 import { ErrorStateComponent } from '../feedback/error-state.component';
 import { LoadingStateComponent } from '../feedback/loading-state.component';
+import type { AfricaniesNavItem } from '../navigation/nav-item';
+import { SegmentComponent } from '../navigation/segment/segment.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { CellDefDirective } from './cell-def.directive';
 import { HeaderCellDefDirective } from './header-cell-def.directive';
@@ -39,8 +45,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * `<ng-template africaniesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
  *
- * Optional toolbar: top-left **Refresh** (`showRefresh` → {@link refreshClick}).
- * Hidden while the body shows empty or error — those states expose Retry instead.
+ * Optional toolbar: top-left **shipping mode** segment (`showShippingMode`) and
+ * **Refresh** (`showRefresh` → {@link refreshClick}). Refresh is hidden while
+ * the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
  * spins (do not swap to a blocking loader). Use {@link loading} when the page
  * of data is changing (pagination / size): rows stay on screen, a keep-rows
@@ -126,6 +133,7 @@ import { TableColumn, TableSortChange } from './table-column';
     ErrorStateComponent,
     LoadingStateComponent,
     PaginationComponent,
+    SegmentComponent,
   ],
   host: {
     class: 'block w-full min-w-0',
@@ -162,9 +170,23 @@ import { TableColumn, TableSortChange } from './table-column';
       class="flex w-full min-w-0 flex-col gap-3"
       [attr.aria-busy]="loading() || refreshing() || null"
     >
-      @if (showRefresh() || showFilter() || showExport()) {
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
+      @if (
+        showShippingMode() ||
+        showRefresh() ||
+        showFilter() ||
+        showExport()
+      ) {
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex min-w-0 flex-wrap items-center gap-2">
+            @if (showShippingMode()) {
+              <africanies-segment
+                class="min-w-0"
+                [items]="shippingModeItems"
+                [activeId]="shippingModeActiveId()"
+                ariaLabel="Shipping mode"
+                (activeIdChange)="onShippingModeChange($event)"
+              />
+            }
             @if (showToolbarRefresh()) {
               <button
                 africanies-button
@@ -255,7 +277,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   @if (someRowsExpanded()) {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Collapse all"
                       (click)="collapseAllRows()"
                     >
@@ -264,7 +286,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else {
                     <button
                       type="button"
-                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
+                      class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
                       aria-label="Expand all"
                       [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
@@ -288,7 +310,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   } @else if (col.sortable) {
                     <button
                       type="button"
-                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-600 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-sm font-medium text-neutral-500 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:text-white"
                       (click)="onSortHeaderClick(col.key)"
                     >
                       <span>{{ col.header }}</span>
@@ -472,8 +494,21 @@ import { TableColumn, TableSortChange } from './table-column';
   `,
 })
 export class TableComponent<T = unknown> {
-  protected readonly modeColor = inject(ModeColorService);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly shipping = inject(ShippingModeService);
+
+  /** Local STN / SFN segment options for {@link showShippingMode}. */
+  protected readonly shippingModeItems: AfricaniesNavItem[] = [
+    { id: 'stn', label: 'Shipping to Nigeria' },
+    { id: 'sfn', label: 'Shipping from Nigeria' },
+  ];
+
+  /**
+   * Segment selection mirror of {@link ShippingModeService.mode}. Kept local
+   * so a denied {@link ShippingModeService.requestModeChange} can snap the
+   * pills back when the service mode did not change.
+   */
+  protected readonly shippingModeActiveId = signal<string>('sfn');
 
   /** Scrollport that owns horizontal overflow for the main grid. */
   private readonly scrollport =
@@ -486,6 +521,10 @@ export class TableComponent<T = unknown> {
   protected readonly scrollportWidthPx = signal(0);
 
   constructor() {
+    effect(() => {
+      this.shippingModeActiveId.set(this.shipping.mode());
+    });
+
     afterNextRender(() => {
       const el = this.scrollport()?.nativeElement;
       if (!el) {
@@ -539,6 +578,13 @@ export class TableComponent<T = unknown> {
    * server-side `order` param. Omitted / null means no column is active.
    */
   readonly sort = input<TableSortChange | null>(null);
+
+  /**
+   * Show a Ship to / Ship from Nigeria segment above the table (top-left).
+   * Writes through {@link ShippingModeService.requestModeChange} so feature
+   * guards still run.
+   */
+  readonly showShippingMode = input(false, { transform: booleanAttribute });
 
   /**
    * Show a Refresh button above the table (top-left) once rows are on screen.
@@ -696,6 +742,27 @@ export class TableComponent<T = unknown> {
     () => this.showRefresh() && this.bodyKind() === 'rows',
   );
 
+  /**
+   * Applies a shipping-mode segment selection through
+   * {@link ShippingModeService.requestModeChange}.
+   *
+   * @param id - Segment id (`stn` / `sfn`) or null.
+   */
+  protected onShippingModeChange(id: string | null): void {
+    if (id !== 'stn' && id !== 'sfn') {
+      return;
+    }
+    this.shippingModeActiveId.set(id);
+    if (id === this.shipping.mode()) {
+      return;
+    }
+    this.shipping.requestModeChange(id as ShippingMode).subscribe((ok) => {
+      if (!ok) {
+        this.shippingModeActiveId.set(this.shipping.mode());
+      }
+    });
+  }
+
   protected readonly visibleRowIds = computed(() =>
     this.rowList().map((row, index) => this.rowId(row, index)),
   );
@@ -761,11 +828,12 @@ export class TableComponent<T = unknown> {
   }
 
   /**
-   * Opaque mode soft fill for header cells (sticky-safe in dark mode).
-   * @returns Soft solid background utilities.
+   * Opaque header fill (sticky-safe). Neutral chrome — not mode-accented.
+   * Light `#f0f2f5` / dark elevated ink surface.
+   * @returns Background utility classes.
    */
   protected headerSoftClass(): string {
-    return this.modeColor.classes().softSolid;
+    return 'bg-[#f0f2f5] dark:bg-[#2a2c31]';
   }
 
   /**
@@ -847,7 +915,7 @@ export class TableComponent<T = unknown> {
       : 'border-b ';
     return (
       border +
-      'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-600 dark:border-white/10 dark:text-neutral-400 ' +
+      'border-border whitespace-normal wrap-break-word px-[1.125rem] py-4 font-medium text-neutral-500 dark:border-white/10 dark:text-neutral-400 ' +
       this.headerSoftClass() +
       ' ' +
       this.stickySurfaceClass(col, 'head') +
