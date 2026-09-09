@@ -59,4 +59,19 @@ describe('ShippingModeSwitchComponent', () => {
     expect(shipping.mode()).toBe('stn');
     expect(toNigeria.getAttribute('aria-checked')).toBe('true');
   });
+
+  it('should show the STN/SFN chip only when the mode panel is collapsed', () => {
+    fixture.componentRef.setInput('panelOpen', true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).not.toContain('SFN');
+
+    fixture.componentRef.setInput('panelOpen', false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('SFN');
+
+    shipping.setMode('stn');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('STN');
+    expect(fixture.nativeElement.textContent).not.toContain('SFN');
+  });
 });

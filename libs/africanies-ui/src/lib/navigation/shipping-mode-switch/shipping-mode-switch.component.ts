@@ -128,9 +128,12 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
         >
           Shipping mode
         </p>
-        <africanies-chip [variant]="modeChipVariant()" size="sm">
-          {{ modeChipLabel() }}
-        </africanies-chip>
+        <!-- STN / SFN chip only when the tiles are collapsed — open panel already shows both modes. -->
+        @if (!panelOpen()) {
+          <africanies-chip [variant]="modeChipVariant()" size="sm">
+            {{ modeChipLabel() }}
+          </africanies-chip>
+        }
         <span class="min-w-0 flex-1" aria-hidden="true"></span>
         <button
           type="button"
