@@ -45,8 +45,9 @@ import { TableColumn, TableSortChange } from './table-column';
  * `<ng-template africaniesCellDef="key">` templates. Columns without a matching
  * template fall back to rendering `row[key]` as plain text.
  *
- * Optional toolbar: top-left **shipping mode** segment (on by default;
- * `[showShippingMode]="false"` to hide) and **Refresh** (`showRefresh` →
+ * Optional toolbar: top-left **shipping mode** segment on its own row above
+ * Refresh / Filter / Export (on by default; `[showShippingMode]="false"` to
+ * hide) and **Refresh** (`showRefresh` →
  * {@link refreshClick}). Refresh is hidden while
  * the body shows empty or error — those states expose Retry instead.
  * While {@link refreshing} is true the rows stay on screen — the refresh icon
@@ -177,71 +178,75 @@ import { TableColumn, TableSortChange } from './table-column';
         showFilter() ||
         showExport()
       ) {
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex min-w-0 flex-wrap items-center gap-2">
-            @if (showShippingMode()) {
-              <africanies-segment
-                class="min-w-0"
-                [items]="shippingModeItems"
-                [activeId]="shippingModeActiveId()"
-                ariaLabel="Shipping mode"
-                (activeIdChange)="onShippingModeChange($event)"
-              />
-            }
-            @if (showToolbarRefresh()) {
-              <button
-                africanies-button
-                type="button"
-                variant="flat"
-                size="sm"
-                [disabled]="loading() || refreshing()"
-                [attr.aria-label]="refreshLabel()"
-                (click)="refreshClick.emit()"
-              >
-                <africanies-icon
-                  name="refresh"
-                  [size]="16"
-                  [class]="refreshing() ? 'animate-spin' : ''"
-                />
-                {{ refreshLabel() }}
-              </button>
-            }
-          </div>
-          <div class="flex items-center gap-2">
-            @if (showFilter()) {
-              <button
-                africanies-button
-                type="button"
-                variant="flat"
-                size="sm"
-                [attr.aria-label]="filterLabel()"
-                (click)="filterClick.emit()"
-              >
-                <africanies-icon name="filter" [size]="16" />
-                {{ filterLabel() }}
-                @if (filterCount() > 0) {
-                  <span
-                    class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
+        <div class="flex w-full min-w-0 flex-col gap-3">
+          @if (showShippingMode()) {
+            <africanies-segment
+              class="min-w-0 self-start"
+              [items]="shippingModeItems"
+              [activeId]="shippingModeActiveId()"
+              ariaLabel="Shipping mode"
+              (activeIdChange)="onShippingModeChange($event)"
+            />
+          }
+          @if (showToolbarRefresh() || showFilter() || showExport()) {
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex min-w-0 flex-wrap items-center gap-2">
+                @if (showToolbarRefresh()) {
+                  <button
+                    africanies-button
+                    type="button"
+                    variant="flat"
+                    size="sm"
+                    [disabled]="loading() || refreshing()"
+                    [attr.aria-label]="refreshLabel()"
+                    (click)="refreshClick.emit()"
                   >
-                    {{ filterCount() }}
-                  </span>
+                    <africanies-icon
+                      name="refresh"
+                      [size]="16"
+                      [class]="refreshing() ? 'animate-spin' : ''"
+                    />
+                    {{ refreshLabel() }}
+                  </button>
                 }
-              </button>
-            }
-            @if (showExport()) {
-              <button
-                africanies-button
-                type="button"
-                variant="flat"
-                size="sm"
-                [attr.aria-label]="exportLabel()"
-                (click)="exportClick.emit()"
-              >
-                <africanies-icon name="download" [size]="16" />
-                {{ exportLabel() }}
-              </button>
-            }
-          </div>
+              </div>
+              <div class="flex items-center gap-2">
+                @if (showFilter()) {
+                  <button
+                    africanies-button
+                    type="button"
+                    variant="flat"
+                    size="sm"
+                    [attr.aria-label]="filterLabel()"
+                    (click)="filterClick.emit()"
+                  >
+                    <africanies-icon name="filter" [size]="16" />
+                    {{ filterLabel() }}
+                    @if (filterCount() > 0) {
+                      <span
+                        class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
+                      >
+                        {{ filterCount() }}
+                      </span>
+                    }
+                  </button>
+                }
+                @if (showExport()) {
+                  <button
+                    africanies-button
+                    type="button"
+                    variant="flat"
+                    size="sm"
+                    [attr.aria-label]="exportLabel()"
+                    (click)="exportClick.emit()"
+                  >
+                    <africanies-icon name="download" [size]="16" />
+                    {{ exportLabel() }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
         </div>
       }
 
