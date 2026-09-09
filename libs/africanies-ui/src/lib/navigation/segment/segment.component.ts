@@ -70,8 +70,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AfricaniesIconComponent],
   styles: `
+    /* Track p-1 (0.25×2) + 0.25 gap between pills — keep right inset equal to left. */
     :host .africanies-segment-thumb {
-      width: calc((100% - 0.5rem) / 2);
+      width: calc((100% - 0.75rem) / 2);
     }
   `,
   template: `
