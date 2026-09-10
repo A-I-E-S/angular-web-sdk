@@ -7,6 +7,7 @@ export type { PhoneCountryOption, PhoneNumberValue } from './phone-input.types';
 export {
   buildPhoneNumberValue,
   dialCodeForIso2,
+  filterPhoneCountries,
   formatNationalDigits,
   isPhoneNumberComplete,
   matchDialCode,

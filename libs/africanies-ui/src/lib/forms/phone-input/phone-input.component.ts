@@ -1,14 +1,19 @@
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
+  ElementRef,
   forwardRef,
+  inject,
+  Injector,
   input,
   model,
   signal,
   untracked,
+  viewChild,
 } from '@angular/core';
 import {
   CdkConnectedOverlay,
@@ -36,6 +41,7 @@ import type { PhoneCountryOption, PhoneNumberValue } from './phone-input.types';
 import {
   buildPhoneNumberValue,
   dialCodeForIso2,
+  filterPhoneCountries,
   normalizePhoneIso2,
   parsePhoneControlValue,
   phoneCountryOptions,
@@ -175,11 +181,13 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
       >
         <div class="border-b border-border p-2 dark:border-white/15">
           <input
+            #countrySearch
             type="search"
             class="h-9 w-full rounded-control border border-control bg-transparent px-3 text-body-sm text-ink outline-none placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-focus dark:border-white/25 dark:text-white"
             placeholder="Search country or code"
             [value]="countryQuery()"
             (input)="onCountryQuery($event)"
+            (keydown)="$event.stopPropagation()"
           />
         </div>
         <ul class="africanies-overlay-scroll m-0 max-h-56 list-none overflow-auto p-1">
@@ -227,6 +235,9 @@ export class PhoneInputComponent implements ControlValueAccessor {
   protected readonly panelPositions = PANEL_POSITIONS;
 
   private readonly allCountries = phoneCountryOptions();
+  private readonly injector = inject(Injector);
+  private readonly countrySearch =
+    viewChild<ElementRef<HTMLInputElement>>('countrySearch');
 
   /** Visible field label. */
   readonly label = input('');
@@ -290,19 +301,9 @@ export class PhoneInputComponent implements ControlValueAccessor {
 
   protected readonly nationalDisplay = computed(() => this.nationalDigits());
 
-  protected readonly filteredCountries = computed((): PhoneCountryOption[] => {
-    const q = this.countryQuery().trim().toLowerCase();
-    if (!q) {
-      return this.allCountries;
-    }
-    return this.allCountries.filter(
-      (row) =>
-        row.name.toLowerCase().includes(q) ||
-        row.iso2.toLowerCase().includes(q) ||
-        row.dialCode.includes(q) ||
-        phoneDigitsOnly(row.dialCode).includes(phoneDigitsOnly(q)),
-    );
-  });
+  protected readonly filteredCountries = computed((): PhoneCountryOption[] =>
+    filterPhoneCountries(this.allCountries, this.countryQuery()),
+  );
 
   protected readonly shellClass = computed(() => {
     let classes = FORM_FIELD_CLASS;
@@ -377,6 +378,11 @@ export class PhoneInputComponent implements ControlValueAccessor {
     this.countryOpen.update((open) => !open);
     if (this.countryOpen()) {
       this.countryQuery.set('');
+      // Overlay attaches on the next render; focus search so typing filters.
+      afterNextRender(
+        () => this.countrySearch()?.nativeElement.focus(),
+        { injector: this.injector },
+      );
     }
   }
 

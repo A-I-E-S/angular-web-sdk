@@ -58,6 +58,34 @@ export function phoneCountryOptions(): PhoneCountryOption[] {
 }
 
 /**
+ * Filter dial-code countries by name, ISO2, or dial digits.
+ * Digit matching is skipped when the query has no digits — otherwise
+ * `''.includes('')` would keep every country for letter-only searches.
+ */
+export function filterPhoneCountries(
+  countries: readonly PhoneCountryOption[],
+  query: string,
+): PhoneCountryOption[] {
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    return [...countries];
+  }
+  const qDigits = phoneDigitsOnly(q);
+  return countries.filter((row) => {
+    if (
+      row.name.toLowerCase().includes(q) ||
+      row.iso2.toLowerCase().includes(q) ||
+      row.dialCode.toLowerCase().includes(q)
+    ) {
+      return true;
+    }
+    return qDigits.length > 0
+      ? phoneDigitsOnly(row.dialCode).includes(qDigits)
+      : false;
+  });
+}
+
+/**
  * Match an E.164 / international string to the longest known dial code.
  * Prefers `hintIso2` when several countries share the same dial code (e.g. `+1`).
  */

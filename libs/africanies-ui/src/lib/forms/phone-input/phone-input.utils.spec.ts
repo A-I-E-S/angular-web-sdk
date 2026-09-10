@@ -1,7 +1,10 @@
 import {
   buildPhoneNumberValue,
+  filterPhoneCountries,
   matchDialCode,
   parsePhoneControlValue,
+  phoneCountryOptions,
+  phoneDigitsOnly,
   phoneToE164,
   removeDialCode,
 } from './phone-input.utils';
@@ -55,5 +58,24 @@ describe('phone-input.utils', () => {
         dialCode: '+234',
       }),
     ).toBe('+2348012345678');
+  });
+
+  it('filters countries by name without matching every dial code', () => {
+    const countries = phoneCountryOptions();
+    const nigeria = filterPhoneCountries(countries, 'nigeria');
+    expect(nigeria.some((row) => row.iso2 === 'NG')).toBe(true);
+    expect(nigeria.length).toBeLessThan(countries.length);
+    expect(
+      nigeria.every((row) => row.name.toLowerCase().includes('nigeria')),
+    ).toBe(true);
+  });
+
+  it('filters countries by dial digits', () => {
+    const countries = phoneCountryOptions();
+    const matched = filterPhoneCountries(countries, '234');
+    expect(matched.some((row) => row.iso2 === 'NG')).toBe(true);
+    expect(
+      matched.every((row) => phoneDigitsOnly(row.dialCode).includes('234')),
+    ).toBe(true);
   });
 });
