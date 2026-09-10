@@ -6,6 +6,7 @@ import { DatePickerComponent } from '../forms/date-picker';
 import { FileUploadComponent } from '../forms/file-upload';
 import { NumberInputComponent } from '../forms/number-input';
 import { OtpInputComponent } from '../forms/otp-input';
+import { PhoneInputComponent } from '../forms/phone-input';
 import { RadioComponent } from '../forms/radio';
 import { SelectComponent } from '../forms/select';
 import { TextInputComponent } from '../forms/text-input';
@@ -24,6 +25,7 @@ const FORM_CONTROLS = [
   DatePickerComponent,
   FileUploadComponent,
   OtpInputComponent,
+  PhoneInputComponent,
 ] as const;
 
 /**

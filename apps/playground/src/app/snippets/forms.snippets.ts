@@ -41,8 +41,8 @@ import { TextInputComponent } from '@africanies/africanies-ui';
   \`,
 })
 export class ShipmentReferenceFormComponent {
-  protected readonly tracking = signal('');
-  protected readonly reference = signal('');
+  protected readonly tracking = signal('AWB-10482');
+  protected readonly reference = signal('PO-7781');
   protected readonly email = signal('not-an-email');
   protected readonly locked = signal('WH-LOCKED-01');
 }
@@ -79,8 +79,8 @@ import { TextareaComponent } from '@africanies/africanies-ui';
   \`,
 })
 export class ShipmentInstructionsFormComponent {
-  protected readonly instructions = signal('');
-  protected readonly notesError = signal('');
+  protected readonly instructions = signal('Fragile — keep upright');
+  protected readonly notesError = signal('x'.repeat(12));
 }
 `;
 
@@ -119,6 +119,41 @@ import { NumberInputComponent } from '@africanies/africanies-ui';
 export class ShipmentValueFormComponent {
   protected readonly amount = signal<number | null>(12500);
   protected readonly weight = signal<number | null>(24.5);
+}
+`;
+
+export /**
+ *
+ */
+const FORMS_PHONE = `
+// [(value)] is an E.164 string (+234…). Edit screens prepopulate from the API
+// phone field; countryIso2 is a hint when dial codes are shared (e.g. +1).
+
+import { Component, signal } from '@angular/core';
+import { PhoneInputComponent } from '@africanies/africanies-ui';
+
+@Component({
+  selector: 'app-consignee-phone-form',
+  standalone: true,
+  imports: [PhoneInputComponent],
+  template: \`
+    <africanies-phone-input
+      label="Consignee phone"
+      countryIso2="NG"
+      [(value)]="phone"
+    />
+
+    <africanies-phone-input
+      label="Locked sender phone"
+      countryIso2="GH"
+      [lockCountry]="true"
+      [(value)]="lockedPhone"
+    />
+  \`,
+})
+export class ConsigneePhoneFormComponent {
+  protected readonly phone = signal('+2348012345678');
+  protected readonly lockedPhone = signal('+233244123456');
 }
 `;
 
@@ -476,8 +511,8 @@ import { OtpInputComponent } from '@africanies/africanies-ui';
   \`,
 })
 export class VerifyOtpFormComponent {
-  protected readonly code = signal('');
-  protected readonly pin = signal('');
+  protected readonly code = signal('482913');
+  protected readonly pin = signal('7391');
 
   protected verify(code: string): void {
     // POST /auth/verify { code }

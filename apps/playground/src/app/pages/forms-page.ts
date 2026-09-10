@@ -11,6 +11,7 @@ import {
   type FileUploadResult,
   NumberInputComponent,
   OtpInputComponent,
+  PhoneInputComponent,
   RadioComponent,
   type RadioOption,
   SelectComponent,
@@ -30,6 +31,7 @@ import {
   FORMS_LIVE_VALUES,
   FORMS_NUMBER,
   FORMS_OTP,
+  FORMS_PHONE,
   FORMS_SELECT,
   FORMS_TEXT,
   FORMS_TEXTAREA,
@@ -48,6 +50,7 @@ import {
     TextareaComponent,
     SelectComponent,
     AddressInputComponent,
+    PhoneInputComponent,
     NumberInputComponent,
     OtpInputComponent,
     FileUploadComponent,
@@ -131,6 +134,33 @@ import {
           <africanies-number-input label="Weight" hint="Kilograms" [(value)]="weight">
             <span suffix>kg</span>
           </africanies-number-input>
+        </div>
+      </app-demo-section>
+
+      <app-demo-section
+        title="Phone input"
+        hint="International number — flag + dial code + national digits. [(value)] is E.164 (e.g. +2348012345678) so edit screens can prepopulate from the API string."
+        [code]="phoneCode"
+      >
+        <div class="grid gap-5 md:grid-cols-2">
+          <africanies-phone-input
+            label="Consignee phone"
+            hint="Prefilled from a stored E.164 value"
+            countryIso2="NG"
+            [(value)]="phone"
+          />
+          <africanies-phone-input
+            label="Locked sender phone"
+            countryIso2="GH"
+            [lockCountry]="true"
+            [(value)]="lockedPhone"
+          />
+          <africanies-phone-input
+            label="Phone with error"
+            error="Enter a valid mobile number"
+            countryIso2="US"
+            [(value)]="phoneError"
+          />
         </div>
       </app-demo-section>
 
@@ -358,6 +388,12 @@ import {
             </dd>
           </div>
           <div>
+            <dt class="text-neutral-600">Phone</dt>
+            <dd class="m-0 font-medium text-ink dark:text-white">
+              {{ phone() || '—' }}
+            </dd>
+          </div>
+          <div>
             <dt class="text-neutral-600">Amount</dt>
             <dd class="m-0 font-medium text-ink dark:text-white">
               {{
@@ -403,14 +439,17 @@ import {
   `,
 })
 export class FormsPage {
-  protected readonly tracking = signal('');
-  protected readonly reference = signal('');
+  protected readonly tracking = signal('AWB-10482');
+  protected readonly reference = signal('PO-7781');
   protected readonly email = signal('not-an-email');
   protected readonly locked = signal('WH-LOCKED-01');
-  protected readonly instructions = signal('');
+  protected readonly instructions = signal('Fragile — keep upright');
   protected readonly notesError = signal('x'.repeat(12));
   protected readonly amount = signal<number | null>(12500);
   protected readonly weight = signal<number | null>(24.5);
+  protected readonly phone = signal('+2348012345678');
+  protected readonly lockedPhone = signal('+233244123456');
+  protected readonly phoneError = signal('+15551212');
   protected readonly warehouses = signal<SelectOption<string>[]>([
     { label: 'Lagos Hub', value: 'los', prefix: 'warehouse', suffix: 'globe' },
     { label: 'Accra Depot', value: 'acc', prefix: 'warehouse' },
@@ -422,24 +461,31 @@ export class FormsPage {
     },
     { label: 'Cairo Gateway', value: 'cai', prefix: 'warehouse' },
   ]);
-  protected readonly selectedWarehouse = signal<SelectOption<string> | null>(
-    null,
-  );
+  protected readonly selectedWarehouse = signal<SelectOption<string> | null>({
+    label: 'Lagos Hub',
+    value: 'los',
+    prefix: 'warehouse',
+    suffix: 'globe',
+  });
   protected readonly tags = signal<SelectOption<string>[]>([
     { label: 'Fragile', value: 'fragile', prefix: 'warning' },
     { label: 'Priority', value: 'priority', prefix: 'alarm' },
     { label: 'Bonded', value: 'bonded', prefix: 'anchor' },
   ]);
-  protected readonly selectedTags = signal<SelectOption<string>[]>([]);
+  protected readonly selectedTags = signal<SelectOption<string>[]>([
+    { label: 'Fragile', value: 'fragile', prefix: 'warning' },
+    { label: 'Priority', value: 'priority', prefix: 'alarm' },
+  ]);
   protected readonly incoterms: SelectOption<string>[] = [
     { label: 'DDP', value: 'ddp' },
     { label: 'DAP', value: 'dap' },
     { label: 'EXW', value: 'exw' },
     { label: 'FOB', value: 'fob' },
   ];
-  protected readonly selectedIncoterm = signal<SelectOption<string> | null>(
-    null,
-  );
+  protected readonly selectedIncoterm = signal<SelectOption<string> | null>({
+    label: 'DDP',
+    value: 'ddp',
+  });
   protected readonly carriers: SelectOption<string>[] = [
     {
       label: 'DHL Express',
@@ -453,7 +499,16 @@ export class FormsPage {
   protected readonly selectedCarrier = signal<SelectOption<string> | null>(
     null,
   );
-  protected readonly pickupAddress = signal<AddressPlace | null>(null);
+  protected readonly pickupAddress = signal<AddressPlace | null>({
+    placeId: 'place-lagos-1',
+    formattedAddress: '12 Broad Street, Lagos, Nigeria',
+    name: '12 Broad Street',
+    lat: 6.4541,
+    lng: 3.3947,
+    locality: 'Lagos',
+    country: 'Nigeria',
+    countryCode: 'NG',
+  });
   protected readonly lastPlaceSelected = signal<AddressPlace | null>(null);
   protected readonly signature = signal(true);
   protected readonly insured = signal(false);
@@ -469,12 +524,12 @@ export class FormsPage {
   ];
   protected readonly serviceLevel = signal<string | null>('standard');
   protected readonly readyDate = signal<string | null>('2026-08-15');
-  protected readonly cutoffDate = signal<string | null>(null);
+  protected readonly cutoffDate = signal<string | null>('2026-08-14');
   protected readonly files = signal<FileUploadResult[]>([]);
   protected readonly buttonFiles = signal<FileUploadResult[]>([]);
   protected readonly compactFiles = signal<FileUploadResult[]>([]);
-  protected readonly otpCodeValue = signal('');
-  protected readonly otpPin = signal('');
+  protected readonly otpCodeValue = signal('482913');
+  protected readonly otpPin = signal('7391');
   protected readonly otpError = signal('0000');
   protected readonly lastOtpCompleted = signal('');
   protected readonly otpResendCount = signal(0);
@@ -482,6 +537,7 @@ export class FormsPage {
   protected readonly textCode = FORMS_TEXT;
   protected readonly textareaCode = FORMS_TEXTAREA;
   protected readonly numberCode = FORMS_NUMBER;
+  protected readonly phoneCode = FORMS_PHONE;
   protected readonly selectCode = FORMS_SELECT;
   protected readonly addressCode = FORMS_ADDRESS;
   protected readonly choiceCode = FORMS_CHOICE;

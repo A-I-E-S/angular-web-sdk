@@ -26,6 +26,26 @@ export {
 } from './file-upload';
 export { NumberInputComponent } from './number-input';
 export { OtpInputComponent, type OtpInputVariant } from './otp-input';
+export {
+  buildPhoneNumberValue,
+  dialCodeForIso2,
+  formatNationalDigits,
+  isPhoneNumberComplete,
+  matchDialCode,
+  normalizePhoneIso2,
+  parsePhoneControlValue,
+  PHONE_DIAL_CODES,
+  PHONE_MAX_NATIONAL_DIGITS,
+  PHONE_MIN_NATIONAL_DIGITS,
+  type PhoneCountryOption,
+  PhoneInputComponent,
+  type PhoneNumberValue,
+  phoneCountryName,
+  phoneCountryOptions,
+  phoneDigitsOnly,
+  phoneToE164,
+  removeDialCode,
+} from './phone-input';
 export { RadioComponent, type RadioOption } from './radio';
 export {
   type SearchComboboxBadge,
