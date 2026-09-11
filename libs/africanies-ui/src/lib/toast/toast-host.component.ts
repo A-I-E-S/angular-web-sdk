@@ -25,7 +25,7 @@ import { ToastItemComponent } from './toast-item.component';
     <div class="flex w-full flex-col gap-2">
       @if (toastService.showHostActions()) {
         <div
-          class="sticky top-0 z-10 flex flex-wrap justify-end gap-2 bg-white/80 pb-1 backdrop-blur-sm dark:bg-ink-surface/80"
+          class="sticky top-0 z-10 flex flex-wrap justify-end gap-2 bg-transparent pb-1 backdrop-blur-sm dark:bg-transparent"
         >
           @if (toastService.hasStacks()) {
             @if (toastService.allStacksExpanded()) {
