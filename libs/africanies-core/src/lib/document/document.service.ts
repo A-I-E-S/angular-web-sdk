@@ -46,6 +46,9 @@ const DOCUMENT_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Public document catalog reads (`GET /public/document/read/{id?}`).
+ */
 export class DocumentService {
   private readonly api = inject(ApiClient);
 

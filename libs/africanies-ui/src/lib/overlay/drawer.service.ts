@@ -21,6 +21,9 @@ import {
  * ```
  */
 @Injectable()
+/**
+ * Opens edge-anchored drawer panels via Angular CDK Overlay.
+ */
 export class DrawerService implements OverlayOpener {
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);

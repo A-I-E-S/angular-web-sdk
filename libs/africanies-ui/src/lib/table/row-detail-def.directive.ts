@@ -25,6 +25,9 @@ export type RowDetailDefContext<T = unknown> = CellDefContext<T>;
   selector: '[africaniesRowDetail]',
   standalone: true,
 })
+/**
+ * Registers a label / value pair inside an expanded table row.
+ */
 export class RowDetailDefDirective {
   /** Template rendered as the detail value. */
   readonly template = inject(TemplateRef<RowDetailDefContext>);

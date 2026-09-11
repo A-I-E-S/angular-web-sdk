@@ -18,6 +18,9 @@ import { ChangeDetectionStrategy, Component, Directive } from '@angular/core';
   selector: '[africaniesOverlayHeader]',
   standalone: true,
 })
+/**
+ * Marks projected chrome as the non-scrolling overlay header (title + close).
+ */
 export class OverlayHeaderDirective {}
 
 /**
@@ -38,6 +41,9 @@ export class OverlayHeaderDirective {}
   selector: '[africaniesOverlayFooter]',
   standalone: true,
 })
+/**
+ * Marks projected chrome as the non-scrolling overlay footer (actions).
+ */
 export class OverlayFooterDirective {}
 
 /**
@@ -92,4 +98,7 @@ export class OverlayFooterDirective {}
     </div>
   `,
 })
+/**
+ * Header / scroll body / footer shell for {@link ModalService} and {@link DrawerService} panels.
+ */
 export class OverlayFrameComponent {}

@@ -43,6 +43,9 @@ import {
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Authenticated user notifications (`GET /user/notifications/read/{id?}`).
+ */
 export class NotificationService {
   private readonly api = inject(ApiClient);
 

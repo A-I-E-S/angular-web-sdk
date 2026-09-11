@@ -443,6 +443,9 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
     }
   `,
 })
+/**
+ * Option select following the shared AFRICANIES form field pattern.
+ */
 export class SelectComponent<T = string> implements ControlValueAccessor {
   private readonly modal = inject(ModalService, { optional: true });
   protected readonly modeColor = inject(ModeColorService);

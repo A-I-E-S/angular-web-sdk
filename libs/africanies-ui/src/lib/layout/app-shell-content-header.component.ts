@@ -71,6 +71,9 @@ import { PageHeaderComponent } from './page-header.component';
     }
   `,
 })
+/**
+ * Content chrome above the app-shell body: Back, breadcrumbs, then the page title and optional subtitle.
+ */
 export class AppShellContentHeaderComponent {
   private readonly router = inject(Router);
 

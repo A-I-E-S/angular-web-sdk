@@ -115,6 +115,9 @@ export type TextInputType =
     }
   `,
 })
+/**
+ * Single-line text field — **reference** form control for `@africanies/africanies-ui`.
+ */
 export class TextInputComponent implements ControlValueAccessor {
   /** Stable ids so label / aria-describedby stay paired across re-renders. */
   protected readonly controlId = `africanies-text-input-${++nextTextInputId}`;

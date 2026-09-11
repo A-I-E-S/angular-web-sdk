@@ -32,4 +32,7 @@ const ACTIONS = [
   imports: [...ACTIONS],
   exports: [...ACTIONS],
 })
+/**
+ * Button, copy-to-clipboard control, overflow action menu, and avatar menu.
+ */
 export class AfricaniesActionsModule {}

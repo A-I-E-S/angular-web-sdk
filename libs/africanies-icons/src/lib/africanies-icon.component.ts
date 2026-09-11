@@ -59,6 +59,9 @@ import { IconRegistryService } from './icon-registry.service';
     '[attr.data-icon]': 'name()',
   },
 })
+/**
+ * Renders a single icon from the shared SVG sprite.
+ */
 export class AfricaniesIconComponent {
   private readonly registry = inject(IconRegistryService);
 

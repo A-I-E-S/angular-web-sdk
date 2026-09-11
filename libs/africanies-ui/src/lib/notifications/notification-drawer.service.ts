@@ -15,6 +15,9 @@ import { NotificationDrawerPanel } from './notification-drawer.panel';
  * Requires {@link provideAfricaniesUiOverlays} at bootstrap.
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Opens {@link NotificationDrawerPanel} via {@link DrawerService}.
+ */
 export class NotificationDrawerService {
   private readonly drawer = inject(DrawerService);
 

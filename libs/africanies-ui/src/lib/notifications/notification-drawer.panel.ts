@@ -272,6 +272,9 @@ const MARK_ALL_CONFIRM_MS = 4000;
     </div>
   `,
 })
+/**
+ * Right-edge drawer listing in-app notifications.
+ */
 export class NotificationDrawerPanel {
   protected readonly ref =
     inject<AfricaniesOverlayRef<NotificationDrawerResult>>(AfricaniesOverlayRef);

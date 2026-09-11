@@ -161,6 +161,9 @@ import { ButtonComponent } from '../button/button.component';
     }
   `,
 })
+/**
+ * Compact error pill for non-blocking failures while stale data stays visible — distinct from {@link ErrorStateComponent} (full-section blocking).
+ */
 export class ErrorIndicatorComponent {
   /**
    * Error copy. When empty, the indicator is not shown.

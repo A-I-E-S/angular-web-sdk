@@ -97,6 +97,9 @@ let nextCheckboxId = 0;
     </div>
   `,
 })
+/**
+ * Boolean checkbox following the shared AFRICANIES form field pattern.
+ */
 export class CheckboxComponent implements ControlValueAccessor {
   private readonly modeColor = inject(ModeColorService);
 

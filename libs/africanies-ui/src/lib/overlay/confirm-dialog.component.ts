@@ -115,6 +115,9 @@ import { OVERLAY_DATA } from './overlay-data.token';
     </div>
   `,
 })
+/**
+ * Built-in confirm dialog hosted by {@link ConfirmService} / {@link ModalService}.
+ */
 export class ConfirmDialogComponent {
   /** Stable ids so aria-labelledby / aria-describedby stay unique per instance. */
   protected readonly titleId = `africanies-confirm-title-${cryptoRandom()}`;

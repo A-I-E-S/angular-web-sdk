@@ -19,4 +19,7 @@ const STEPPER = [StepperComponent, StepDefDirective] as const;
   imports: [...STEPPER],
   exports: [...STEPPER],
 })
+/**
+ * Stepper (+ `africaniesStepDef`).
+ */
 export class AfricaniesStepperModule {}

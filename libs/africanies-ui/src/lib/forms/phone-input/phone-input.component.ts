@@ -1,4 +1,9 @@
 import {
+  CdkConnectedOverlay,
+  CdkOverlayOrigin,
+  type ConnectedPosition,
+} from '@angular/cdk/overlay';
+import {
   afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -16,17 +21,12 @@ import {
   viewChild,
 } from '@angular/core';
 import {
-  CdkConnectedOverlay,
-  CdkOverlayOrigin,
-  type ConnectedPosition,
-} from '@angular/cdk/overlay';
-import {
   type ControlValueAccessor,
   NG_VALUE_ACCESSOR,
 } from '@angular/forms';
 
-import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import { countryFlagUrl } from '@africanies/africanies-core';
+import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import {
   FORM_DISABLED_CLASS,
@@ -225,6 +225,9 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
     </ng-template>
   `,
 })
+/**
+ * International phone field — flag + dial code + national number.
+ */
 export class PhoneInputComponent implements ControlValueAccessor {
   protected readonly controlId = `africanies-phone-input-${++nextPhoneInputId}`;
   protected readonly hintId = `${this.controlId}-hint`;

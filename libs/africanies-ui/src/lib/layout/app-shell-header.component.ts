@@ -38,6 +38,9 @@ export type AppShellHeaderDensity = 'mobile' | 'tablet' | 'desktop';
   selector: '[africaniesAppShellHeaderStart]',
   standalone: true,
 })
+/**
+ * Marks projected content as extra leading chrome in {@link AppShellHeaderComponent}.
+ */
 export class AppShellHeaderStartDirective {}
 
 /**
@@ -47,6 +50,9 @@ export class AppShellHeaderStartDirective {}
   selector: '[africaniesAppShellHeaderEnd]',
   standalone: true,
 })
+/**
+ * Marks projected content as extra trailing chrome in {@link AppShellHeaderComponent}.
+ */
 export class AppShellHeaderEndDirective {}
 
 /**
@@ -206,6 +212,9 @@ export class AppShellHeaderEndDirective {}
     </div>
   `,
 })
+/**
+ * Product header bar for {@link AppShellComponent}: a short time-of-day kicker plus the given name, local weather, live clock, notification inbox drawer, and avatar menu. Breadcrumbs and Back belong in the content column via {@link AppShellContentHeaderComponent}.
+ */
 export class AppShellHeaderComponent {
   private readonly notificationsDrawer = inject(NotificationDrawerService);
   private readonly destroyRef = inject(DestroyRef);

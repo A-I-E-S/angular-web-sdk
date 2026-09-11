@@ -114,6 +114,9 @@ type CameraFacing = 'environment' | 'user';
     </div>
   `,
 })
+/**
+ * Live webcam capture dialog for {@link FileUploadComponent}.
+ */
 export class CameraCaptureDialogComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly ref = inject(AfricaniesOverlayRef<File>);

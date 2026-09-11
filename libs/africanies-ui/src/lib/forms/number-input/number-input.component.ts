@@ -148,6 +148,9 @@ function formatWhileTyping(raw: string): {
     }
   `,
 })
+/**
+ * Numeric field following the shared AFRICANIES form field pattern.
+ */
 export class NumberInputComponent implements ControlValueAccessor {
   protected readonly controlId = `africanies-number-input-${++nextNumberInputId}`;
   protected readonly hintId = `${this.controlId}-hint`;

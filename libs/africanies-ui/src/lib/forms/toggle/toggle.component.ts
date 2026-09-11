@@ -105,6 +105,9 @@ let nextToggleId = 0;
     </div>
   `,
 })
+/**
+ * Boolean switch following the shared AFRICANIES form field pattern.
+ */
 export class ToggleComponent implements ControlValueAccessor {
   private readonly modeColor = inject(ModeColorService);
 

@@ -54,6 +54,9 @@ import { ButtonComponent } from '../button/button.component';
     </div>
   `,
 })
+/**
+ * Blocking empty state when a fetch succeeded but produced no rows / value.
+ */
 export class EmptyStateComponent {
   /**
    * Empty-copy. Defaults to a generic phrase; override for filter-specific help.

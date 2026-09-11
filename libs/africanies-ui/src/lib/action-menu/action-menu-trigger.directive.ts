@@ -16,4 +16,7 @@ import { Directive } from '@angular/core';
   selector: '[africaniesActionMenuTrigger]',
   standalone: true,
 })
+/**
+ * Marks projected content as the custom trigger for {@link ActionMenuComponent}.
+ */
 export class ActionMenuTriggerDirective {}

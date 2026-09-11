@@ -386,6 +386,9 @@ let nextFileUploadId = 0;
     />
   `,
 })
+/**
+ * File / camera / drag-and-drop picker following the shared AFRICANIES form field pattern.
+ */
 export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   /** Optional so the control still works when overlays are not registered. */

@@ -23,6 +23,9 @@ export interface TabDefContext {
   selector: '[africaniesTabDef]',
   standalone: true,
 })
+/**
+ * Registers projected tab panel content against a tab id for {@link TabsComponent} (local / non-router mode).
+ */
 export class TabDefDirective {
   /** Template projected as the active tab panel. */
   readonly template = inject(TemplateRef<TabDefContext>);

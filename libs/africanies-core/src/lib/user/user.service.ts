@@ -44,6 +44,9 @@ import {
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Current authenticated user (`GET /user`).
+ */
 export class UserService {
   private readonly api = inject(ApiClient);
 

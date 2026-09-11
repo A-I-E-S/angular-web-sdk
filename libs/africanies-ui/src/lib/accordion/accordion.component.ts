@@ -97,6 +97,9 @@ export type AccordionSize = 'md' | 'sm';
     </div>
   `,
 })
+/**
+ * Bordered expandable panel with animated fold — the pattern used on Manifest detail and Make Payment review.
+ */
 export class AccordionComponent {
   /** Plain-text header. Prefer projected `[africaniesAccordionTitle]` for rich titles. */
   readonly title = input('');

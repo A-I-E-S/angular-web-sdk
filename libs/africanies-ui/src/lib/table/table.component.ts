@@ -499,6 +499,9 @@ import { TableColumn, TableSortChange } from './table-column';
     </div>
   `,
 })
+/**
+ * Presentational data table with template-based cells.
+ */
 export class TableComponent<T = unknown> {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly shipping = inject(ShippingModeService);

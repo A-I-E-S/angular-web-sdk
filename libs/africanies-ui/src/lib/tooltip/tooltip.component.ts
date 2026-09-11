@@ -191,6 +191,9 @@ const PLACEMENT_POSITIONS: Record<TooltipPlacement, ConnectedPosition[]> = {
     </ng-template>
   `,
 })
+/**
+ * Contextual help tip — default info icon or a custom projected trigger.
+ */
 export class TooltipComponent {
   protected readonly tooltipId = `africanies-tooltip-${++nextTooltipId}`;
 

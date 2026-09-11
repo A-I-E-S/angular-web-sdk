@@ -47,6 +47,9 @@ type PopoverToggles = {
  * Prefer {@link provideAfricaniesToasts} at bootstrap so the host overlay mounts once.
  */
 @Injectable()
+/**
+ * Imperative toast stack for AFRICANIES apps.
+ */
 export class ToastService implements AfricaniesHttpToastHandler {
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);

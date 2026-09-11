@@ -21,6 +21,9 @@ import { readJson, writeJson } from './storage-json';
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * `localStorage`-backed {@link StorageService}.
+ */
 export class LocalStorageService extends StorageService {
   /**
    * @inheritdoc

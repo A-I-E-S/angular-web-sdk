@@ -95,6 +95,9 @@ export type ImageFit = 'cover' | 'contain';
     </div>
   `,
 })
+/**
+ * Image with a shaped loading frame and fallback while the asset fetches or if it fails to render.
+ */
 export class ImageComponent {
   private readonly imgRef = viewChild<ElementRef<HTMLImageElement>>('img');
 

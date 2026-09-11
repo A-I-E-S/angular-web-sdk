@@ -45,6 +45,9 @@ const SHIPMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Shipment method / carrier utility reads (`GET /shipment_method/read/{id?}`).
+ */
 export class ShipmentMethodService {
   private readonly api = inject(ApiClient);
 

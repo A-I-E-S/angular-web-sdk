@@ -40,6 +40,9 @@ import type { Theme } from './theme.types';
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Application light/dark theme preference.
+ */
 export class ThemeService {
   private readonly storage = inject(STORAGE_TOKEN);
   private readonly document = inject(DOCUMENT);

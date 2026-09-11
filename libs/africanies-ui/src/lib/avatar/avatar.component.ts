@@ -44,6 +44,9 @@ export type AvatarSize = 'sm' | 'md' | 'lg';
     </span>
   `,
 })
+/**
+ * Circular avatar with image or initials fallback.
+ */
 export class AvatarComponent {
   /** Display name — used for initials when no image loads. */
   readonly name = input('');

@@ -39,4 +39,7 @@ const FEEDBACK = [
   imports: [...FEEDBACK],
   exports: [...FEEDBACK],
 })
+/**
+ * Async feedback states, accordion panels, inline alert, and status chips.
+ */
 export class AfricaniesFeedbackModule {}

@@ -95,6 +95,9 @@ import type { AfricaniesNavItem } from '../nav-item';
     </nav>
   `,
 })
+/**
+ * Breadcrumb trail for hierarchical navigation.
+ */
 export class BreadcrumbComponent {
   protected readonly modeColor = inject(ModeColorService);
 

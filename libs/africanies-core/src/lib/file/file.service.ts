@@ -41,6 +41,9 @@ import {
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * File utility reads (`POST /file/read`).
+ */
 export class FileService {
   private readonly api = inject(ApiClient);
 

@@ -41,6 +41,9 @@ const PRODUCT_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Product utility reads (`GET /product/read/{id?}`).
+ */
 export class ProductService {
   private readonly api = inject(ApiClient);
 

@@ -30,6 +30,9 @@ export interface CellDefContext<T = unknown> {
   selector: '[africaniesCellDef]',
   standalone: true,
 })
+/**
+ * Registers a projected cell template against a column key for {@link TableComponent}.
+ */
 export class CellDefDirective {
   /** Template projected into matching column body cells. */
   readonly template = inject(TemplateRef<CellDefContext>);

@@ -72,6 +72,9 @@ export interface ModeColorClasses {
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Maps {@link ShippingModeService} to mode-accent Tailwind classes.
+ */
 export class ModeColorService {
   private readonly shippingMode = inject(ShippingModeService);
 

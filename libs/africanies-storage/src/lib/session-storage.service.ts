@@ -25,6 +25,9 @@ import { readJson, writeJson } from './storage-json';
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * `sessionStorage`-backed {@link StorageService}.
+ */
 export class SessionStorageService extends StorageService {
   /**
    * @inheritdoc

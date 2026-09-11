@@ -85,6 +85,9 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
   },
   templateUrl: './app-shell.component.html',
 })
+/**
+ * Application chrome scaffold: side nav + sticky header + constrained content.
+ */
 export class AppShellComponent {
   protected readonly modeColor = inject(ModeColorService);
   protected readonly logoMiniUrl = inject(AFRICANIES_BRAND_LOGO_MINI_URL);

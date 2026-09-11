@@ -60,6 +60,9 @@ const CURRENCY_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Currency App Settings API (`GET /currency/read/{id?}` plus create / update / delete).
+ */
 export class CurrencyService {
   private readonly api = inject(ApiClient);
 

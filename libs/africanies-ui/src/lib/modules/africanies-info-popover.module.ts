@@ -26,4 +26,7 @@ import {
     InfoPopoverTriggerDirective,
   ],
 })
+/**
+ * NgModule facade for {@link InfoPopoverComponent} and its trigger/content markers.
+ */
 export class AfricaniesInfoPopoverModule {}

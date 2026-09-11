@@ -55,6 +55,9 @@ interface PlaceDetailsApiResponse {
  * Register {@link provideGooglePlaces} with a key that has Places API (New).
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Places API (New) over REST — same contract as the working React autocomplete (`POST …/places:autocomplete`, `GET …/places/{id}`).
+ */
 export class GooglePlacesService {
   private readonly config = inject(GOOGLE_PLACES_CONFIG, { optional: true });
 

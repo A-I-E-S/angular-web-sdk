@@ -209,6 +209,9 @@ const ADDRESS_PANEL_POSITIONS: ConnectedPosition[] = [
     }
   `,
 })
+/**
+ * Google Places address field with suggestion dropdown.
+ */
 export class AddressInputComponent implements ControlValueAccessor {
   private readonly places = inject(GooglePlacesService);
   private readonly destroyRef = inject(DestroyRef);

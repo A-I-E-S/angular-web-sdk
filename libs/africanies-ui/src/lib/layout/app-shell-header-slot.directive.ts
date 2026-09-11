@@ -9,4 +9,7 @@ import { Directive } from '@angular/core';
   selector: '[africaniesAppShellHeader]',
   standalone: true,
 })
+/**
+ * Marks projected content as the custom header for {@link AppShellComponent}.
+ */
 export class AppShellHeaderSlotDirective {}

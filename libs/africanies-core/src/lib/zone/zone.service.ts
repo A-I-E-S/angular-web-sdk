@@ -41,6 +41,9 @@ const ZONE_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Zone utility reads (`GET /zone/read/records/{id?}`).
+ */
 export class ZoneService {
   private readonly api = inject(ApiClient);
 

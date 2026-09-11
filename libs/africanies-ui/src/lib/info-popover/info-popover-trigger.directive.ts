@@ -18,4 +18,7 @@ import { Directive } from '@angular/core';
   selector: '[africaniesInfoPopoverTrigger]',
   standalone: true,
 })
+/**
+ * Marks projected content as the custom trigger for {@link InfoPopoverComponent}.
+ */
 export class InfoPopoverTriggerDirective {}

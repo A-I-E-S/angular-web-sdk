@@ -58,6 +58,9 @@ export type LoadingStateMode = 'inline' | 'block';
     </div>
   `,
 })
+/**
+ * Blocking / inline loading indicator for async surfaces.
+ */
 export class LoadingStateComponent {
   protected readonly modeColor = inject(ModeColorService);
 

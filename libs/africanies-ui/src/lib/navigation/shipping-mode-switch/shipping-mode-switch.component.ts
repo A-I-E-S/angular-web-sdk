@@ -211,6 +211,9 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
     }
   `,
 })
+/**
+ * Two-up shipping mode switcher for app-shell side navs.
+ */
 export class ShippingModeSwitchComponent {
   private readonly shipping = inject(ShippingModeService);
 

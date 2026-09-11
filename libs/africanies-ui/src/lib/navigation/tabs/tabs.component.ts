@@ -155,6 +155,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
     </div>
   `,
 })
+/**
+ * Tab list for page / section navigation.
+ */
 export class TabsComponent {
   private readonly router = inject(Router);
   protected readonly modeColor = inject(ModeColorService);

@@ -269,6 +269,9 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
     }
   `,
 })
+/**
+ * Generic type-as-you-search combobox with a debounced async lookup and overlay result list.
+ */
 export class SearchComboboxComponent<T> implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
 

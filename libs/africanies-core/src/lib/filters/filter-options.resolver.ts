@@ -46,6 +46,9 @@ const SDK_FILTER_OPTIONS_SOURCES = new Set<FilterOptionsSource>([
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Resolves filter drawer select options from built-in SDK catalog services.
+ */
 export class FilterOptionsResolver {
   private readonly warehouses = inject(WarehouseService);
   private readonly shipmentMethods = inject(ShipmentMethodService);

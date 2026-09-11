@@ -43,6 +43,9 @@ import { FilterQueryService } from './filter-query.service';
  * ```
  */
 @Injectable()
+/**
+ * Opens the schema-driven {@link FilterDrawerPanel} via {@link DrawerService}.
+ */
 export class FilterDrawerService {
   private readonly drawer = inject(DrawerService);
   private readonly filterQuery = inject(FilterQueryService);

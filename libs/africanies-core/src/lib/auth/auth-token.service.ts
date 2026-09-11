@@ -30,6 +30,9 @@ import { asString } from '../http/wire';
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Holds the bearer access token used by {@link authInterceptor}.
+ */
 export class AuthTokenService {
   private readonly storage = inject(STORAGE_TOKEN);
   private readonly api = inject(ApiClient);

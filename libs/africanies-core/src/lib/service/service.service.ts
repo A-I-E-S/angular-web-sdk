@@ -45,6 +45,9 @@ const SERVICE_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Public subscription-service reads (`GET /public/service/read/{id?}`).
+ */
 export class ServiceService {
   private readonly api = inject(ApiClient);
 

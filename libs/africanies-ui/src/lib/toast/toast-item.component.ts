@@ -221,6 +221,9 @@ import {
     }
   `,
 })
+/**
+ * Single toast card — dense, token-based, with optional countdown rail. Stacked identical toasts can expand; close peels the outermost copy.
+ */
 export class ToastItemComponent {
   /** Stack entry to render. */
   readonly item = input.required<ToastItem>();

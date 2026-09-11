@@ -114,6 +114,9 @@ export type ChipSize = 'sm' | 'md';
     }
   `,
 })
+/**
+ * Compact status / category label.
+ */
 export class ChipComponent {
   /** Semantic tone. Defaults to `neutral`. Ignored when {@link color} is set. */
   readonly variant = input<ChipVariant>('neutral');

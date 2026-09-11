@@ -148,6 +148,9 @@ export type OtpInputVariant = 'default' | 'masked';
     </div>
   `,
 })
+/**
+ * One-time-passcode field — discrete digit cells, single string model.
+ */
 export class OtpInputComponent implements ControlValueAccessor, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly cellInputs =

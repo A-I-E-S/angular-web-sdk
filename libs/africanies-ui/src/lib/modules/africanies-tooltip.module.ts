@@ -22,4 +22,7 @@ const TOOLTIP = [TooltipComponent, TooltipTriggerDirective] as const;
   imports: [...TOOLTIP],
   exports: [...TOOLTIP],
 })
+/**
+ * Tooltip (+ `africaniesTooltipTrigger`).
+ */
 export class AfricaniesTooltipModule {}

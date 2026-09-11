@@ -211,6 +211,9 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
     </ng-template>
   `,
 })
+/**
+ * Compact overflow menu for row and toolbar actions.
+ */
 export class ActionMenuComponent {
   private readonly router = inject(Router);
 

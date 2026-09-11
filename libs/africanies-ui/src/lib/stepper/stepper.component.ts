@@ -136,6 +136,9 @@ function prefersReducedMotion(): boolean {
     </div>
   `,
 })
+/**
+ * Multi-step wizard for form flows (e.g. shipment creation).
+ */
 export class StepperComponent {
   protected readonly modeColor = inject(ModeColorService);
 

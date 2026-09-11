@@ -54,6 +54,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     }
   `,
 })
+/**
+ * Page title + subtitle for product screens.
+ */
 export class PageHeaderComponent {
   /** Page heading. Omit when the shell already rendered a title. */
   readonly title = input('');

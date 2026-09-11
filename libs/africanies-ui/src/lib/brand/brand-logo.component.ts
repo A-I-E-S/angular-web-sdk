@@ -57,6 +57,9 @@ export type BrandLogoSize = 'sm' | 'md' | 'lg';
     </svg>
   `,
 })
+/**
+ * Default AFRICANIES wordmark — inlined so it works without copying static assets.
+ */
 export class BrandLogoComponent {
   readonly size = input<BrandLogoSize>('md');
 

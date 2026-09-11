@@ -20,4 +20,7 @@ import { Directive } from '@angular/core';
   selector: '[africaniesInfoPopoverContent]',
   standalone: true,
 })
+/**
+ * Marks projected content as the panel body for {@link InfoPopoverComponent}.
+ */
 export class InfoPopoverContentDirective {}

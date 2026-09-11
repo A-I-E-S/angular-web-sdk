@@ -78,6 +78,9 @@ import { ToastItemComponent } from './toast-item.component';
     </div>
   `,
 })
+/**
+ * Fixed stack host attached once by {@link ToastService.ensureHost}. Caps to the viewport and scrolls when the stack (or an expanded group) would otherwise run off-screen.
+ */
 export class ToastHostComponent {
   protected readonly toastService = inject(ToastService);
   protected readonly toasts = this.toastService.items;

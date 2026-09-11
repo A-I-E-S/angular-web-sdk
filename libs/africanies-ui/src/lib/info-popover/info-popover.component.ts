@@ -205,6 +205,9 @@ const PLACEMENT_POSITIONS: Record<InfoPopoverPlacement, ConnectedPosition[]> = {
     </ng-template>
   `,
 })
+/**
+ * Hover / focus / click info panel with a white card, optional title, and fully projected body content (any child component or markup).
+ */
 export class InfoPopoverComponent {
   protected readonly panelId = `africanies-info-popover-${++nextInfoPopoverId}`;
 

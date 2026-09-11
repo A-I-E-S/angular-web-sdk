@@ -45,6 +45,9 @@ const WAREHOUSE_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Warehouse utility reads (`GET /warehouse/read/{id?}`).
+ */
 export class WarehouseService {
   private readonly api = inject(ApiClient);
 

@@ -82,6 +82,9 @@ let nextTextareaId = 0;
     }
   `,
 })
+/**
+ * Multi-line text field following the shared form-control pattern (`shared AFRICANIES form field pattern`). Supports prefix/suffix slots, field-level `error`, and {@link ControlValueAccessor}.
+ */
 export class TextareaComponent implements ControlValueAccessor {
   protected readonly controlId = `africanies-textarea-${++nextTextareaId}`;
   protected readonly hintId = `${this.controlId}-hint`;

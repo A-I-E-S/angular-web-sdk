@@ -102,6 +102,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     '(click)': 'blockWhenDisabled($event)',
   },
 })
+/**
+ * Theme-token button used across AFRICANIES surfaces.
+ */
 export class ButtonComponent {
   private readonly modeColor = inject(ModeColorService);
 

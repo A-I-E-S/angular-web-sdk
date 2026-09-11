@@ -37,6 +37,9 @@ interface OpenOverlayState {
  * {@link MODAL_SERVICE} / {@link DRAWER_SERVICE} to avoid a circular dependency.
  */
 @Injectable()
+/**
+ * Keeps query-param state in sync with modal/drawer overlays.
+ */
 export class RouteOverlayService {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

@@ -65,6 +65,9 @@ import { AvatarComponent, type AvatarSize } from './avatar.component';
     }
   `,
 })
+/**
+ * Avatar trigger with an attached overflow menu — profile / account actions.
+ */
 export class AvatarMenuComponent {
   readonly name = input.required<string>();
   readonly src = input<string | null>(null);

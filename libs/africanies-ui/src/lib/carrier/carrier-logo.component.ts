@@ -78,6 +78,9 @@ export function normalizeCarrierLogoSlug(
     }
   `,
 })
+/**
+ * Inline carrier marks for delivery vendor cells.
+ */
 export class CarrierLogoComponent {
   /** Raw carrier slug or label from the API. */
   readonly carrier = input('');

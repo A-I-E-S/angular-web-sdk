@@ -30,6 +30,9 @@ export interface StepDefContext {
   selector: '[africaniesStepDef]',
   standalone: true,
 })
+/**
+ * Registers projected step body content against a step key for {@link StepperComponent}.
+ */
 export class StepDefDirective {
   /** Template projected as the active step body. */
   readonly template = inject(TemplateRef<StepDefContext>);

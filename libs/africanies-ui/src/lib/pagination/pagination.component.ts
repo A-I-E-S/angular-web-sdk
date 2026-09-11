@@ -181,6 +181,9 @@ type PageItem = number | 'ellipsis';
     </nav>
   `,
 })
+/**
+ * Page-size select, numbered pager, and prev/next — driven by {@link PaginationMetaModel} from the API envelope.
+ */
 export class PaginationComponent {
   private readonly filterQuery = inject(FilterQueryService);
   protected readonly modeColor = inject(ModeColorService);

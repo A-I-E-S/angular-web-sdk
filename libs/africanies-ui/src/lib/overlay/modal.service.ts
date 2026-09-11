@@ -72,6 +72,9 @@ export interface ModalOpenConfig<TData = unknown>
  * ```
  */
 @Injectable()
+/**
+ * Opens centered modal dialogs via Angular CDK Overlay.
+ */
 export class ModalService implements OverlayOpener {
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);

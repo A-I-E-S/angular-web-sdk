@@ -34,6 +34,9 @@ export const AFRICANIES_ICON_SPRITE_URL = new InjectionToken<string>(
  * to invoke repeatedly — concurrent callers share one in-flight promise.
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Fetches and inlines the icon sprite once into `document.body`.
+ */
 export class IconRegistryService {
   private readonly document = inject(DOCUMENT);
   private readonly spriteUrl = inject(AFRICANIES_ICON_SPRITE_URL);

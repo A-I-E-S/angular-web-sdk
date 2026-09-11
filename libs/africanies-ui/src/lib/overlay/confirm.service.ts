@@ -33,6 +33,9 @@ import { ModalService } from './modal.service';
  * ```
  */
 @Injectable()
+/**
+ * One-line confirm flow built on {@link ModalService}.
+ */
 export class ConfirmService {
   private readonly modal = inject(ModalService);
 

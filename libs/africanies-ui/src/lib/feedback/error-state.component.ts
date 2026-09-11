@@ -54,6 +54,9 @@ import { ButtonComponent } from '../button/button.component';
     </div>
   `,
 })
+/**
+ * Blocking error state for failed async fetches (not field validation).
+ */
 export class ErrorStateComponent {
   /**
    * Human-readable failure reason. Required so the alert is never an empty

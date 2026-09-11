@@ -118,6 +118,9 @@ let nextRadioId = 0;
     </fieldset>
   `,
 })
+/**
+ * Radio group following the shared AFRICANIES form field pattern.
+ */
 export class RadioComponent<T = string> implements ControlValueAccessor {
   private readonly modeColor = inject(ModeColorService);
 

@@ -90,6 +90,9 @@ const DEFAULT_ICONS: Record<AlertVariant, IconName> = {
     </div>
   `,
 })
+/**
+ * Inline page/section banner — distinct from {@link ErrorStateComponent} (full-section async failure + Retry).
+ */
 export class AlertComponent {
   /** Semantic tone. Defaults to `info`. */
   readonly variant = input<AlertVariant>('info');

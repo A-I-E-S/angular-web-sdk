@@ -116,6 +116,9 @@ type ResponseMode = NonNullable<ApiRequestOptions['responseMode']>;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Endpoint-agnostic HTTP façade over Angular {@link HttpClient}.
+ */
 export class ApiClient {
   private readonly http = inject(HttpClient);
   private readonly config = inject(AFRICANIES_SDK_CONFIG);

@@ -45,4 +45,7 @@ const FORM_CONTROLS = [
   imports: [...FORM_CONTROLS],
   exports: [...FORM_CONTROLS],
 })
+/**
+ * All form controls in one import for apps that prefer NgModules.
+ */
 export class AfricaniesFormsModule {}

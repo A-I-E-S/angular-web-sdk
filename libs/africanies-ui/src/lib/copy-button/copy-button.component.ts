@@ -53,6 +53,9 @@ import { ToastService } from '../toast/toast.service';
     </button>
   `,
 })
+/**
+ * Icon button that copies {@link value} to the clipboard.
+ */
 export class CopyButtonComponent {
   private readonly toastService = inject(ToastService, { optional: true });
 

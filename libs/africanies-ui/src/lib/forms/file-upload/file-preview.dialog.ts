@@ -97,6 +97,9 @@ type PreviewKind = 'image' | 'unavailable';
     </div>
   `,
 })
+/**
+ * Large-file preview modal for {@link FileUploadComponent}.
+ */
 export class FilePreviewDialogComponent {
   protected readonly data = inject<FilePreviewData>(OVERLAY_DATA);
   private readonly ref = inject(AfricaniesOverlayRef<void>);

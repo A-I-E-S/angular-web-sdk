@@ -98,6 +98,9 @@ let nextDatePickerId = 0;
     }
   `,
 })
+/**
+ * Date field wrapping native `input[type=date]`, following shared AFRICANIES form field pattern.
+ */
 export class DatePickerComponent implements ControlValueAccessor {
   private readonly theme = inject(ThemeService, { optional: true });
 

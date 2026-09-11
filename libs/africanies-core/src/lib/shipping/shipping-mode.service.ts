@@ -62,6 +62,9 @@ export type ShippingModeChangeGuard = (
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Signal-based holder for the active {@link ShippingMode}.
+ */
 export class ShippingModeService {
   private readonly storage = inject(SessionStorageService);
   private readonly injector = inject(Injector);

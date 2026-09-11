@@ -24,6 +24,9 @@ import {
  * `provideRouter`).
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Bidirectional list-query sync with the browser URL.
+ */
 export class FilterQueryService {
   private readonly route = inject(ActivatedRoute, { optional: true });
   private readonly router = inject(Router, { optional: true });

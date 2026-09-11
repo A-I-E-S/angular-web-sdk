@@ -25,4 +25,7 @@ const DATA = [
   imports: [...DATA],
   exports: [...DATA],
 })
+/**
+ * Table (+ `africaniesCellDef`) and pagination.
+ */
 export class AfricaniesTableModule {}

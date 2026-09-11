@@ -135,6 +135,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
     </div>
   `,
 })
+/**
+ * Compact segmented control for view modes and filters.
+ */
 export class SegmentComponent {
   private readonly router = inject(Router);
   protected readonly modeColor = inject(ModeColorService);

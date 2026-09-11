@@ -48,4 +48,7 @@ const NAV = [
   imports: [...NAV],
   exports: [...NAV],
 })
+/**
+ * App shell, breadcrumb, tabs (+ `africaniesTabDef`), segment, side nav, shipping mode switch, brand logo, avatar menu, and shell header chrome.
+ */
 export class AfricaniesNavigationModule {}

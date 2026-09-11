@@ -42,6 +42,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     </div>
   `,
 })
+/**
+ * Compact stacked text for table cells and detail panels.
+ */
 export class ContentStackComponent {
   /** Primary line — usually a person or entity name. */
   readonly title = input('');

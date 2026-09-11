@@ -40,6 +40,9 @@ import { AUTH_FORGOT_PASSWORD_PATH } from './auth.paths';
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Unauthenticated auth endpoints (`POST /auth/…`).
+ */
 export class AuthService {
   private readonly api = inject(ApiClient);
 

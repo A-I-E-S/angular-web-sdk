@@ -65,6 +65,9 @@ const PAYMENT_METHOD_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Payment-method App Settings API (`GET /payment_method/read/{id?}` plus update).
+ */
 export class PaymentMethodService {
   private readonly api = inject(ApiClient);
 

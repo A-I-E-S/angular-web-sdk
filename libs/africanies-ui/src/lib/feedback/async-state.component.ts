@@ -111,6 +111,9 @@ type AsyncView =
     }
   `,
 })
+/**
+ * Async query wrapper that maps {@link AsyncQueryStateModel} into loading / error / empty / success with non-blocking badges for background activity.
+ */
 export class AsyncStateComponent<T = unknown> {
   /**
    * Snapshot from the app's query layer (e.g. mapped `injectQuery()` signals).

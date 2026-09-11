@@ -19,4 +19,7 @@ import { Directive } from '@angular/core';
   selector: '[africaniesTooltipTrigger]',
   standalone: true,
 })
+/**
+ * Marks projected content as the custom trigger for {@link TooltipComponent}.
+ */
 export class TooltipTriggerDirective {}

@@ -45,6 +45,9 @@ import {
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Source of truth for region currency and measurement units (STN / SFN).
+ */
 export class ModeConfigService {
   private readonly api = inject(ApiClient);
   private readonly storage = inject(STORAGE_TOKEN);

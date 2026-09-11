@@ -338,6 +338,9 @@ import { FilterQueryService } from './filter-query.service';
     </div>
   `,
 })
+/**
+ * Schema-driven filter drawer body.
+ */
 export class FilterDrawerPanel {
   protected readonly data = inject<FilterDrawerData>(OVERLAY_DATA);
   protected readonly ref = inject(AfricaniesOverlayRef<FilterDrawerResult>);

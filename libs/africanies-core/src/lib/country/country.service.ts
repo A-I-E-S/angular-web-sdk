@@ -46,6 +46,9 @@ const COUNTRY_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Public country utility reads (`GET /public/country/read/{id?}`).
+ */
 export class CountryService {
   private readonly api = inject(ApiClient);
 

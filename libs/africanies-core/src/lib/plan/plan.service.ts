@@ -42,6 +42,9 @@ const PLAN_CACHE_TTL_MS = 5 * 60_000;
  * ```
  */
 @Injectable({ providedIn: 'root' })
+/**
+ * Public subscription-plan reads (`GET /public/plan/read/{id?}`).
+ */
 export class PlanService {
   private readonly api = inject(ApiClient);
 

@@ -18,6 +18,9 @@ import { Directive, inject, input, TemplateRef } from '@angular/core';
   selector: '[africaniesHeaderCellDef]',
   standalone: true,
 })
+/**
+ * Registers a projected header cell template against a column key for {@link TableComponent}.
+ */
 export class HeaderCellDefDirective {
   /** Template projected into the matching column header cell. */
   readonly template = inject(TemplateRef);

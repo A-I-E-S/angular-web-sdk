@@ -81,6 +81,9 @@ const DEFAULT_LINK_ACTIVE: IsActiveMatchOptions = {
   styleUrl: './africanies-side-nav.component.css',
   templateUrl: './africanies-side-nav.component.html',
 })
+/**
+ * App shell side navigation with icons, nested items, and a collapsible rail.
+ */
 export class SideNavComponent {
   protected readonly modeColor = inject(ModeColorService);
   private readonly defaultLogoUrl = inject(AFRICANIES_BRAND_LOGO_URL);
