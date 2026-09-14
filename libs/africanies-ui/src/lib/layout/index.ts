@@ -23,4 +23,9 @@ export {
   type HeaderWeatherKind,
   pickHeaderGreeting,
 } from './header-greeting.util';
+export {
+  type HeaderWeatherConfig,
+  HEADER_WEATHER_CONFIG,
+} from './header-weather.token';
+export { provideHeaderWeather } from './provide-header-weather';
 export { PageHeaderComponent } from './page-header.component';

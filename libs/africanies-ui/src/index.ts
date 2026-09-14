@@ -256,9 +256,12 @@ export {
   type HeaderGreetingPeriod,
   headerGreetingPeriod,
   type HeaderWeather,
+  type HeaderWeatherConfig,
   type HeaderWeatherKind,
+  HEADER_WEATHER_CONFIG,
   PageHeaderComponent,
   pickHeaderGreeting,
+  provideHeaderWeather,
 } from './lib/layout';
 
 // Brand

@@ -3,14 +3,16 @@ import type { IconName } from '@africanies/africanies-icons';
 import type { HeaderWeather, HeaderWeatherKind } from './header-greeting.util';
 
 /** Bump when cache shape or city resolution strategy changes. */
-const CACHE_KEY = 'africanies-header-weather-v8';
+const CACHE_KEY = 'africanies-header-weather-v9';
 const FETCH_MS = 8_000;
 /** After Allow, wait for a GPS/Wi-Fi fix. A short timeout loses the prompt and falls through to IP. */
 const DEVICE_GEO_MS = 15_000;
 const DEVICE_GEO_PROMPT_MS = 25_000;
 /** IP city is the office egress (often Lagos) and must not label the device. */
 const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json';
-const REVERSE_GEO_URL = 'https://geocoding-api.open-meteo.com/v1/reverse';
+const OPEN_METEO_REVERSE_GEO_URL = 'https://geocoding-api.open-meteo.com/v1/reverse';
+/** Keyed reverse-geocode (server / any coords). Free client endpoint forbids non-GPS use. */
+const BDC_REVERSE_GEO_URL = 'https://api-bdc.net/data/reverse-geocode';
 
 const WEATHER_LABELS: Record<HeaderWeatherKind, string> = {
   clear: 'Clear',
@@ -35,11 +37,17 @@ interface GeoJsPayload {
   longitude?: string | number;
 }
 
-interface ReverseGeoPayload {
+interface OpenMeteoReversePayload {
   results?: Array<{
     name?: string;
     admin1?: string;
   }>;
+}
+
+interface BigDataCloudReversePayload {
+  city?: string;
+  locality?: string;
+  principalSubdivision?: string;
 }
 
 interface OpenMeteoPayload {
@@ -52,6 +60,17 @@ interface OpenMeteoPayload {
 interface Coordinates {
   latitude: number;
   longitude: number;
+}
+
+/** Options for {@link loadHeaderWeather}. */
+export interface LoadHeaderWeatherOptions {
+  /** Injected `fetch` for tests. */
+  fetch?: typeof fetch;
+  /**
+   * BigDataCloud API key for keyed reverse-geocode (`api-bdc.net`).
+   * When omitted, Open-Meteo reverse-geocode is used.
+   */
+  bigDataCloudApiKey?: string;
 }
 
 /**
@@ -127,17 +146,23 @@ export function headerWeatherIcon(kind: HeaderWeatherKind, hour: number): IconNa
  * If the device fix is refused, weather still loads from IP coordinates with
  * no city.
  *
+ * Reverse-geocode uses BigDataCloud when `bigDataCloudApiKey` is set; otherwise
+ * Open-Meteo.
+ *
  * Fails closed: missing browser APIs, timeouts, and HTTP errors all return
  * `null` so the greeting can stay time-of-day only. A snapshot with a city
  * is cached per local hour in `sessionStorage`.
  *
- * @param fetchFn - Injected `fetch` for tests.
+ * @param fetchOrOptions - Injected `fetch`, or options bag (preferred).
+ * @param options - Extra options when the first arg is `fetch`.
  * @returns Forecast snapshot, or `null` when lookup fails.
  */
 export async function loadHeaderWeather(
-  fetchFn?: typeof fetch,
+  fetchOrOptions?: typeof fetch | LoadHeaderWeatherOptions,
+  options?: LoadHeaderWeatherOptions,
 ): Promise<HeaderWeather | null> {
-  const run = fetchFn ?? defaultFetch();
+  const resolved = resolveLoadOptions(fetchOrOptions, options);
+  const run = resolved.fetch ?? defaultFetch();
   if (typeof run !== 'function' || typeof window === 'undefined') {
     return null;
   }
@@ -172,7 +197,12 @@ export async function loadHeaderWeather(
 
     const temperatureC = asNumber(forecast?.current?.temperature_2m) ?? undefined;
     const city = device
-      ? await reverseGeocodeCity(run, device.latitude, device.longitude)
+      ? await reverseGeocodeCity(
+          run,
+          device.latitude,
+          device.longitude,
+          resolved.bigDataCloudApiKey,
+        )
       : undefined;
     const weather: HeaderWeather = { kind, temperatureC, city };
     if (city) {
@@ -182,6 +212,16 @@ export async function loadHeaderWeather(
   } catch {
     return null;
   }
+}
+
+function resolveLoadOptions(
+  fetchOrOptions?: typeof fetch | LoadHeaderWeatherOptions,
+  options?: LoadHeaderWeatherOptions,
+): LoadHeaderWeatherOptions {
+  if (typeof fetchOrOptions === 'function') {
+    return { fetch: fetchOrOptions, ...options };
+  }
+  return { ...fetchOrOptions, ...options };
 }
 
 function defaultFetch(): typeof fetch | undefined {
@@ -286,12 +326,27 @@ async function reverseGeocodeCity(
   fetchFn: typeof fetch,
   latitude: number,
   longitude: number,
+  bigDataCloudApiKey?: string,
 ): Promise<string | undefined> {
+  const key = bigDataCloudApiKey?.trim();
+  if (key) {
+    const url =
+      `${BDC_REVERSE_GEO_URL}?latitude=${encodeURIComponent(String(latitude))}` +
+      `&longitude=${encodeURIComponent(String(longitude))}` +
+      `&localityLanguage=en&key=${encodeURIComponent(key)}`;
+    const payload = (await fetchJson(fetchFn, url)) as BigDataCloudReversePayload | null;
+    return (
+      asCity(payload?.city) ??
+      asCity(payload?.locality) ??
+      asCity(payload?.principalSubdivision)
+    );
+  }
+
   const url =
-    `${REVERSE_GEO_URL}?latitude=${encodeURIComponent(String(latitude))}` +
+    `${OPEN_METEO_REVERSE_GEO_URL}?latitude=${encodeURIComponent(String(latitude))}` +
     `&longitude=${encodeURIComponent(String(longitude))}` +
     `&language=en&count=1`;
-  const payload = (await fetchJson(fetchFn, url)) as ReverseGeoPayload | null;
+  const payload = (await fetchJson(fetchFn, url)) as OpenMeteoReversePayload | null;
   const place = payload?.results?.[0];
   return asCity(place?.name) ?? asCity(place?.admin1);
 }

@@ -122,7 +122,7 @@ describe('loadHeaderWeather', () => {
     const cacheKey = Object.keys(sessionStorage).find((key) =>
       key.startsWith('africanies-header-weather'),
     );
-    expect(cacheKey).toBe('africanies-header-weather-v8');
+    expect(cacheKey).toBe('africanies-header-weather-v9');
     const stored = JSON.parse(sessionStorage.getItem(cacheKey!) ?? '{}') as {
       hour?: string;
     };
@@ -131,6 +131,31 @@ describe('loadHeaderWeather', () => {
 
     await loadHeaderWeather(fetchFn as unknown as typeof fetch);
     expect(fetchFn).toHaveBeenCalledTimes(4);
+  });
+
+  it('uses BigDataCloud reverse-geocode when an API key is provided', async () => {
+    stubDeviceAt(9.0765, 7.3986);
+
+    const fetchFn = jest.fn(async (url: string) => {
+      if (String(url).includes('api-bdc.net')) {
+        expect(String(url)).toContain('key=test-bdc-key');
+        return jsonResponse({ city: 'Abuja', locality: 'Central' });
+      }
+      return jsonResponse({ current: { weather_code: 0, temperature_2m: 31 } });
+    });
+
+    await expect(
+      loadHeaderWeather(fetchFn as unknown as typeof fetch, {
+        bigDataCloudApiKey: 'test-bdc-key',
+      }),
+    ).resolves.toEqual({
+      kind: 'clear',
+      temperatureC: 31,
+      city: 'Abuja',
+    });
+    expect(fetchFn).not.toHaveBeenCalledWith(
+      expect.stringContaining('geocoding-api'),
+    );
   });
 
   it('uses device coordinates and ignores the IP city', async () => {
@@ -189,7 +214,7 @@ describe('loadHeaderWeather', () => {
 
   it('refetches when the hour cache has weather but no city', async () => {
     sessionStorage.setItem(
-      'africanies-header-weather-v8',
+      'africanies-header-weather-v9',
       JSON.stringify({
         hour: `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}-${new Date().getHours()}`,
         kind: 'cloudy',

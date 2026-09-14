@@ -27,6 +27,7 @@ import {
   headerWeatherLabel,
   loadHeaderWeather,
 } from './header-weather';
+import { HEADER_WEATHER_CONFIG } from './header-weather.token';
 
 /** Header density — affects clock visibility in narrow layouts. */
 export type AppShellHeaderDensity = 'mobile' | 'tablet' | 'desktop';
@@ -218,6 +219,9 @@ export class AppShellHeaderEndDirective {}
 export class AppShellHeaderComponent {
   private readonly notificationsDrawer = inject(NotificationDrawerService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly weatherConfig = inject(HEADER_WEATHER_CONFIG, {
+    optional: true,
+  });
 
   /** Account display name for the avatar menu. */
   readonly userName = input<string | null>(null);
@@ -349,7 +353,9 @@ export class AppShellHeaderComponent {
   constructor() {
     let active = true;
     const refreshWeather = (): void => {
-      void loadHeaderWeather().then((forecast) => {
+      void loadHeaderWeather({
+        bigDataCloudApiKey: this.weatherConfig?.bigDataCloudApiKey,
+      }).then((forecast) => {
         if (active && forecast) {
           this.weather.set(forecast);
         }
