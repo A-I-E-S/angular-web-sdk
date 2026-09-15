@@ -166,6 +166,44 @@ import { TableColumn, TableSortChange } from './table-column';
       max-width: 100cqi;
       overflow-x: hidden;
     }
+
+    /* Corner pulse on Filters when the list is actively filtered. */
+    @keyframes africanies-table-filter-pulse-ping {
+      0% {
+        transform: scale(1);
+        opacity: 0.75;
+      }
+      70%,
+      100% {
+        transform: scale(2.25);
+        opacity: 0;
+      }
+    }
+    @keyframes africanies-table-filter-pulse-core {
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+    }
+    :host .africanies-table-filter-pulse-ping {
+      animation: africanies-table-filter-pulse-ping 1.5s
+        cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    :host .africanies-table-filter-pulse-core {
+      animation: africanies-table-filter-pulse-core 1.5s ease-in-out infinite
+        alternate;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      :host .africanies-table-filter-pulse-ping,
+      :host .africanies-table-filter-pulse-core {
+        animation: none;
+      }
+    }
   `,
   template: `
     <div
@@ -212,24 +250,39 @@ import { TableColumn, TableSortChange } from './table-column';
               </div>
               <div class="flex items-center gap-2">
                 @if (showFilter()) {
-                  <button
-                    africanies-button
-                    type="button"
-                    variant="flat"
-                    size="sm"
-                    [attr.aria-label]="filterLabel()"
-                    (click)="filterClick.emit()"
-                  >
-                    <africanies-icon name="filter" [size]="16" />
-                    {{ filterLabel() }}
+                  <span class="relative inline-flex">
+                    <button
+                      africanies-button
+                      type="button"
+                      variant="flat"
+                      size="sm"
+                      [attr.aria-label]="filterAriaLabel()"
+                      (click)="filterClick.emit()"
+                    >
+                      <africanies-icon name="filter" [size]="16" />
+                      {{ filterLabel() }}
+                      @if (filterCount() > 0) {
+                        <span
+                          class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
+                        >
+                          {{ filterCount() }}
+                        </span>
+                      }
+                    </button>
                     @if (filterCount() > 0) {
                       <span
-                        class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
+                        class="pointer-events-none absolute -left-0.5 -top-0.5 inline-flex size-2.5 items-center justify-center"
+                        aria-hidden="true"
                       >
-                        {{ filterCount() }}
+                        <span
+                          class="africanies-table-filter-pulse-ping absolute inset-0 rounded-full bg-danger-dark opacity-75"
+                        ></span>
+                        <span
+                          class="africanies-table-filter-pulse-core relative size-2.5 rounded-full bg-danger-dark ring-2 ring-surface dark:ring-ink-surface"
+                        ></span>
                       </span>
                     }
-                  </button>
+                  </span>
                 }
                 @if (showExport()) {
                   <button
@@ -648,6 +701,8 @@ export class TableComponent<T = unknown> {
 
   /**
    * Optional badge count on the filter trigger (active filters). Hidden when 0.
+   * When greater than 0, also shows a corner pulse so a filtered list is
+   * easier to spot.
    */
   readonly filterCount = input(0, { transform: numberAttribute });
 
@@ -751,6 +806,15 @@ export class TableComponent<T = unknown> {
   protected readonly showToolbarRefresh = computed(
     () => this.showRefresh() && this.bodyKind() === 'rows',
   );
+
+  protected readonly filterAriaLabel = computed(() => {
+    const label = this.filterLabel().trim() || 'Filters';
+    const count = this.filterCount();
+    if (count <= 0) {
+      return label;
+    }
+    return `${label}, ${count} active`;
+  });
 
   /**
    * Applies a shipping-mode segment selection through
