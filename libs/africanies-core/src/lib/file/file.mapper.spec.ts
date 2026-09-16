@@ -52,7 +52,7 @@ describe('file.mapper', () => {
     expect(mapFileReadList(null)).toEqual([]);
   });
 
-  it('toFileGenerateRequest maps jpeg/png blobs', () => {
+  it('toFileGenerateRequest maps jpeg/png/pdf and office blobs', () => {
     expect(
       toFileGenerateRequest(
         new File(['x'], 'a.jpeg', { type: 'image/jpeg' }),
@@ -83,15 +83,58 @@ describe('file.mapper', () => {
       mime_type: 'image/png',
       folder: 'images/items',
     });
+    expect(
+      toFileGenerateRequest(
+        new File(['x'], 'a.pdf', { type: 'application/pdf' }),
+        'images/items',
+      ),
+    ).toEqual({
+      extension: 'pdf',
+      mime_type: 'application/pdf',
+      folder: 'images/items',
+    });
+    expect(
+      toFileGenerateRequest(
+        new File(['x'], 'a.webp', { type: 'image/webp' }),
+        'images/items',
+      ),
+    ).toEqual({
+      extension: 'webp',
+      mime_type: 'image/webp',
+      folder: 'images/items',
+    });
+    expect(
+      toFileGenerateRequest(
+        new File(['x'], 'notes.docx', {
+          type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        }),
+        'documents',
+      ),
+    ).toEqual({
+      extension: 'docx',
+      mime_type:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      folder: 'documents',
+    });
+  });
+
+  it('toFileGenerateRequest falls back to filename extension when mime is empty', () => {
+    expect(
+      toFileGenerateRequest(new File(['x'], 'scan.HEIC', { type: '' }), 'images/items'),
+    ).toEqual({
+      extension: 'heic',
+      mime_type: 'image/heic',
+      folder: 'images/items',
+    });
   });
 
   it('toFileGenerateRequest rejects unsupported mime types', () => {
     expect(() =>
       toFileGenerateRequest(
-        new File(['x'], 'a.gif', { type: 'image/gif' }),
+        new File(['x'], 'a.bmp', { type: 'image/bmp' }),
         'images/items',
       ),
-    ).toThrow(/JPEG, JPG, and PNG/);
+    ).toThrow(/Unsupported file type/);
   });
 
   it('mapSignedUploadInstructions validates count and shape', () => {

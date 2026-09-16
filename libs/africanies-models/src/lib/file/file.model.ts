@@ -34,14 +34,48 @@ export interface FileReadModel {
   url: string;
 }
 
-/** Allowed image extensions for {@link FileGenerateRequestModel}. */
-export type FileGenerateExtension = 'jpeg' | 'jpg' | 'png';
+/**
+ * Allowed extensions for {@link FileGenerateRequestModel}.
+ * Hosts still filter with `accept` — this is the SDK generate allow-list.
+ */
+export type FileGenerateExtension =
+  | 'jpeg'
+  | 'jpg'
+  | 'png'
+  | 'webp'
+  | 'gif'
+  | 'heic'
+  | 'heif'
+  | 'pdf'
+  | 'doc'
+  | 'docx'
+  | 'xls'
+  | 'xlsx'
+  | 'csv'
+  | 'txt'
+  | 'zip';
 
-/** Allowed image MIME types for {@link FileGenerateRequestModel}. */
+/**
+ * Allowed MIME types for {@link FileGenerateRequestModel}.
+ * Hosts still filter with `accept` — this is the SDK generate allow-list.
+ */
 export type FileGenerateMimeType =
   | 'image/jpeg'
   | 'image/jpg'
-  | 'image/png';
+  | 'image/png'
+  | 'image/webp'
+  | 'image/gif'
+  | 'image/heic'
+  | 'image/heif'
+  | 'application/pdf'
+  | 'application/msword'
+  | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  | 'application/vnd.ms-excel'
+  | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  | 'text/csv'
+  | 'text/plain'
+  | 'application/zip'
+  | 'application/x-zip-compressed';
 
 /**
  * One entry in the `files` array for `POST /file/generate`.

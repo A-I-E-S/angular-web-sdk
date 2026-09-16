@@ -1,4 +1,6 @@
 import type {
+  FileGenerateExtension,
+  FileGenerateMimeType,
   FileGenerateRequestModel,
   FileReadModel,
   SignedUploadInstructionModel,
@@ -17,6 +19,77 @@ export const FILE_READ_MULTIPLE_PARAM = 'yes';
 
 /** Default S3 folder for delivery / item photos. */
 export const FILE_UPLOAD_DEFAULT_FOLDER = 'images/items';
+
+interface FileGenerateKind {
+  extension: FileGenerateExtension;
+  mime_type: FileGenerateMimeType;
+}
+
+/** MIME → generate payload. Prefer this over guessing from the filename alone. */
+const FILE_GENERATE_BY_MIME: Readonly<Record<string, FileGenerateKind>> = {
+  'image/jpeg': { extension: 'jpeg', mime_type: 'image/jpeg' },
+  'image/jpg': { extension: 'jpg', mime_type: 'image/jpg' },
+  'image/png': { extension: 'png', mime_type: 'image/png' },
+  'image/webp': { extension: 'webp', mime_type: 'image/webp' },
+  'image/gif': { extension: 'gif', mime_type: 'image/gif' },
+  'image/heic': { extension: 'heic', mime_type: 'image/heic' },
+  'image/heif': { extension: 'heif', mime_type: 'image/heif' },
+  'application/pdf': { extension: 'pdf', mime_type: 'application/pdf' },
+  'application/msword': { extension: 'doc', mime_type: 'application/msword' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+    extension: 'docx',
+    mime_type:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  },
+  'application/vnd.ms-excel': {
+    extension: 'xls',
+    mime_type: 'application/vnd.ms-excel',
+  },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': {
+    extension: 'xlsx',
+    mime_type:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  },
+  'text/csv': { extension: 'csv', mime_type: 'text/csv' },
+  'text/plain': { extension: 'txt', mime_type: 'text/plain' },
+  'application/zip': { extension: 'zip', mime_type: 'application/zip' },
+  'application/x-zip-compressed': {
+    extension: 'zip',
+    mime_type: 'application/x-zip-compressed',
+  },
+};
+
+/**
+ * Filename extension → generate payload when `Blob.type` is empty/unknown
+ * (common for some Office / HEIC picks).
+ */
+const FILE_GENERATE_BY_EXTENSION: Readonly<
+  Record<string, FileGenerateKind>
+> = {
+  jpeg: { extension: 'jpeg', mime_type: 'image/jpeg' },
+  jpg: { extension: 'jpg', mime_type: 'image/jpeg' },
+  png: { extension: 'png', mime_type: 'image/png' },
+  webp: { extension: 'webp', mime_type: 'image/webp' },
+  gif: { extension: 'gif', mime_type: 'image/gif' },
+  heic: { extension: 'heic', mime_type: 'image/heic' },
+  heif: { extension: 'heif', mime_type: 'image/heif' },
+  pdf: { extension: 'pdf', mime_type: 'application/pdf' },
+  doc: { extension: 'doc', mime_type: 'application/msword' },
+  docx: {
+    extension: 'docx',
+    mime_type:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  },
+  xls: { extension: 'xls', mime_type: 'application/vnd.ms-excel' },
+  xlsx: {
+    extension: 'xlsx',
+    mime_type:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  },
+  csv: { extension: 'csv', mime_type: 'text/csv' },
+  txt: { extension: 'txt', mime_type: 'text/plain' },
+  zip: { extension: 'zip', mime_type: 'application/zip' },
+};
 
 /**
  * Map wire `data` into {@link FileReadModel} (snake_case preserved).
@@ -58,35 +131,43 @@ export function mapFileReadList(raw: unknown): FileReadModel[] {
 /**
  * Build a {@link FileGenerateRequestModel} from a Blob / File.
  *
- * @throws Error when the MIME type is not JPEG/JPG/PNG.
+ * Supports common image, document, and archive types. Product UIs should still
+ * narrow picks with the file-upload `accept` attribute.
+ *
+ * @throws Error when the MIME type / filename extension is not supported.
  */
 export function toFileGenerateRequest(
   file: Blob,
   folder: string,
 ): FileGenerateRequestModel {
-  const mime = file.type.toLowerCase();
+  const mime = file.type.toLowerCase().trim();
   const extensionFromName =
     file instanceof File
-      ? file.name.split('.').pop()?.toLowerCase()
+      ? file.name.split('.').pop()?.toLowerCase()?.trim()
       : undefined;
 
-  if (mime === 'image/jpeg') {
-    return {
-      extension: extensionFromName === 'jpg' ? 'jpg' : 'jpeg',
-      mime_type: 'image/jpeg',
-      folder,
-    };
+  const fromMime = mime ? FILE_GENERATE_BY_MIME[mime] : undefined;
+  if (fromMime) {
+    // Prefer `.jpg` when the browser reports `image/jpeg` but the name says jpg.
+    if (
+      fromMime.mime_type === 'image/jpeg' &&
+      extensionFromName === 'jpg'
+    ) {
+      return { extension: 'jpg', mime_type: 'image/jpeg', folder };
+    }
+    return { ...fromMime, folder };
   }
 
-  if (mime === 'image/jpg') {
-    return { extension: 'jpg', mime_type: 'image/jpg', folder };
+  const fromExt = extensionFromName
+    ? FILE_GENERATE_BY_EXTENSION[extensionFromName]
+    : undefined;
+  if (fromExt) {
+    return { ...fromExt, folder };
   }
 
-  if (mime === 'image/png') {
-    return { extension: 'png', mime_type: 'image/png', folder };
-  }
-
-  throw new Error('Only JPEG, JPG, and PNG images can be uploaded.');
+  throw new Error(
+    'Unsupported file type. Use a common image, PDF, Office, CSV, text, or ZIP file.',
+  );
 }
 
 /**
