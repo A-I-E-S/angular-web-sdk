@@ -9,6 +9,7 @@ import {
   forwardRef,
   inject,
   input,
+  linkedSignal,
   OnDestroy,
   output,
   signal,
@@ -61,6 +62,26 @@ export interface FileUploadResult {
   isImage: boolean;
 }
 
+/**
+ * Server / previously uploaded file shown in the list before the user picks
+ * replacements. `previewUrl` is a signed URL or data URI — the component does
+ * **not** revoke it (the host owns its lifetime).
+ */
+export interface FileUploadExistingFile {
+  /** Display name in the file row. */
+  name: string;
+  /** Image / document preview URL (signed URL or data URI). */
+  previewUrl: string;
+  /** Defaults to whether {@link previewUrl} looks like an image. */
+  isImage?: boolean;
+  /** Optional host id (e.g. `photo_ref`) echoed in {@link FileUploadComponent.existingChange}. */
+  id?: string;
+}
+
+type FileUploadListRow =
+  | { kind: 'existing'; item: FileUploadExistingFile; index: number }
+  | { kind: 'local'; item: FileUploadResult; index: number };
+
 let nextFileUploadId = 0;
 
 /**
@@ -72,6 +93,17 @@ let nextFileUploadId = 0;
  * Invalid picks are skipped and a short reject message is shown. Object URLs
  * are revoked in `ngOnDestroy` and when items are removed. Each added file
  * has an underlined **View** action that opens a larger preview.
+ *
+ * Prefill previously uploaded files with {@link existing} so edit forms reuse
+ * the same list UI as fresh picks:
+ *
+ * ```html
+ * <africanies-file-upload
+ *   [existing]="savedPhotos"
+ *   (existingChange)="savedPhotos = $event"
+ *   (filesSelected)="onFiles($event)"
+ * />
+ * ```
  *
  * **Camera** opens a live `getUserMedia` modal when overlays are registered;
  * otherwise falls back to `<input capture="environment">`.
@@ -301,65 +333,120 @@ let nextFileUploadId = 0;
     </div>
 
     <ng-template #fileList>
-      @if (results().length) {
+      @if (listRows().length) {
         <ul
           class="m-0 flex list-none flex-col gap-2 p-0"
           [class.mt-3]="variant() !== 'compact'"
           [class.mt-2]="variant() === 'compact'"
         >
-          @for (item of results(); track trackResult(item); let i = $index) {
+          @for (row of listRows(); track trackRow(row)) {
             <li [class]="fileRowClass()">
-              @if (item.isImage && item.previewUrl) {
-                <img
-                  [src]="item.previewUrl"
-                  [alt]="item.file.name"
-                  class="size-12 shrink-0 rounded-md object-cover ring-1 ring-border dark:ring-white/15"
-                />
-              } @else {
-                <div
-                  class="relative flex size-12 shrink-0 items-center justify-center rounded-md bg-background-welcome text-neutral-600 ring-1 ring-border dark:bg-white/10 dark:text-neutral-300 dark:ring-white/15"
-                >
-                  <africanies-icon [name]="nonImageIcon(item.file)" [size]="22" />
-                  @if (extensionOf(item.file); as ext) {
-                    <span
-                      class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded bg-ink px-1 py-px text-[10px] font-semibold uppercase leading-none tracking-wide text-white dark:bg-white/20 dark:text-white"
-                    >
-                      {{ ext }}
-                    </span>
-                  }
-                </div>
-              }
-              <div class="min-w-0 flex-1">
-                <p class="m-0 truncate text-body-sm font-medium text-ink dark:text-white">
-                  {{ item.file.name }}
-                </p>
-                <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
-                  {{ formatSize(item.file.size) }}
-                  @if (!item.isImage) {
-                    <span> · {{ kindLabel(item.file) }}</span>
-                  }
-                  <span> · </span>
-                  <button
-                    type="button"
-                    class="cursor-pointer bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-white dark:hover:text-neutral-200"
-                    (click)="openPreview(item); $event.stopPropagation()"
+              @if (row.kind === 'existing') {
+                @if (row.item.isImage && row.item.previewUrl) {
+                  <img
+                    [src]="row.item.previewUrl"
+                    [alt]="row.item.name"
+                    class="size-12 shrink-0 rounded-md object-cover ring-1 ring-border dark:ring-white/15"
+                  />
+                } @else {
+                  <div
+                    class="relative flex size-12 shrink-0 items-center justify-center rounded-md bg-background-welcome text-neutral-600 ring-1 ring-border dark:bg-white/10 dark:text-neutral-300 dark:ring-white/15"
                   >
-                    View
-                  </button>
-                </p>
-              </div>
-              <button
-                africanies-button
-                type="button"
-                variant="ghost"
-                size="sm"
-                class="!px-2"
-                [disabled]="disabled()"
-                [attr.aria-label]="'Remove ' + item.file.name"
-                (click)="removeAt(i)"
-              >
-                <africanies-icon name="close" [size]="16" />
-              </button>
+                    <africanies-icon name="file" [size]="22" />
+                  </div>
+                }
+                <div class="min-w-0 flex-1">
+                  <p
+                    class="m-0 truncate text-body-sm font-medium text-ink dark:text-white"
+                  >
+                    {{ row.item.name }}
+                  </p>
+                  <p
+                    class="m-0 text-caption text-neutral-600 dark:text-neutral-400"
+                  >
+                    On file
+                    <span> · </span>
+                    <button
+                      type="button"
+                      class="cursor-pointer bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-white dark:hover:text-neutral-200"
+                      (click)="openExistingPreview(row.item); $event.stopPropagation()"
+                    >
+                      View
+                    </button>
+                  </p>
+                </div>
+                <button
+                  africanies-button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  class="!px-2"
+                  [disabled]="disabled()"
+                  [attr.aria-label]="'Remove ' + row.item.name"
+                  (click)="removeExistingAt(row.index)"
+                >
+                  <africanies-icon name="close" [size]="16" />
+                </button>
+              } @else {
+                @if (row.item.isImage && row.item.previewUrl) {
+                  <img
+                    [src]="row.item.previewUrl"
+                    [alt]="row.item.file.name"
+                    class="size-12 shrink-0 rounded-md object-cover ring-1 ring-border dark:ring-white/15"
+                  />
+                } @else {
+                  <div
+                    class="relative flex size-12 shrink-0 items-center justify-center rounded-md bg-background-welcome text-neutral-600 ring-1 ring-border dark:bg-white/10 dark:text-neutral-300 dark:ring-white/15"
+                  >
+                    <africanies-icon
+                      [name]="nonImageIcon(row.item.file)"
+                      [size]="22"
+                    />
+                    @if (extensionOf(row.item.file); as ext) {
+                      <span
+                        class="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded bg-ink px-1 py-px text-[10px] font-semibold uppercase leading-none tracking-wide text-white dark:bg-white/20 dark:text-white"
+                      >
+                        {{ ext }}
+                      </span>
+                    }
+                  </div>
+                }
+                <div class="min-w-0 flex-1">
+                  <p
+                    class="m-0 truncate text-body-sm font-medium text-ink dark:text-white"
+                  >
+                    {{ row.item.file.name }}
+                  </p>
+                  <p
+                    class="m-0 text-caption text-neutral-600 dark:text-neutral-400"
+                  >
+                    {{ formatSize(row.item.file.size) }}
+                    @if (!row.item.isImage) {
+                      <span> · {{ kindLabel(row.item.file) }}</span>
+                    }
+                    <span> · </span>
+                    <button
+                      type="button"
+                      class="cursor-pointer bg-transparent p-0 text-caption font-medium text-ink underline underline-offset-2 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink dark:text-white dark:hover:text-neutral-200"
+                      (click)="openPreview(row.item); $event.stopPropagation()"
+                    >
+                      View
+                    </button>
+                  </p>
+                </div>
+                <button
+                  africanies-button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  class="!px-2"
+                  [disabled]="disabled()"
+                  [attr.aria-label]="'Remove ' + row.item.file.name"
+                  (click)="removeAt(row.index)"
+                >
+                  <africanies-icon name="close" [size]="16" />
+                </button>
+              }
             </li>
           }
         </ul>
@@ -448,6 +535,19 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
    */
   readonly filesSelected = output<FileUploadResult[]>();
 
+  /**
+   * Previously uploaded files to show in the list (signed URL / data URI).
+   * Resets the visible existing rows when the bound array identity or contents
+   * change (e.g. switching tabs on an edit form).
+   */
+  readonly existing = input<readonly FileUploadExistingFile[]>([]);
+
+  /**
+   * Emitted when the user removes an existing row (or a new single-file pick
+   * clears them). Does not fire for local {@link filesSelected} picks alone.
+   */
+  readonly existingChange = output<FileUploadExistingFile[]>();
+
   /** Host disable flag (in addition to CVA). */
   readonly disabledInput = input(false, {
     alias: 'disabled',
@@ -455,6 +555,22 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
   });
 
   protected readonly results = signal<FileUploadResult[]>([]);
+  /** Writable mirror of {@link existing} so removals can update before parent rebinds. */
+  protected readonly existingShown = linkedSignal(() =>
+    this.existing().map((row) => normalizeExistingFile(row)),
+  );
+  protected readonly listRows = computed((): FileUploadListRow[] => [
+    ...this.existingShown().map((item, index) => ({
+      kind: 'existing' as const,
+      item,
+      index,
+    })),
+    ...this.results().map((item, index) => ({
+      kind: 'local' as const,
+      item,
+      index,
+    })),
+  ]);
   protected readonly cvaDisabled = signal(false);
   protected readonly dragDepth = signal(0);
   protected readonly rejectMessage = signal<string | null>(null);
@@ -679,7 +795,13 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
     if (this.modal) {
       this.modal.open(FilePreviewDialogComponent, {
         dismissible: true,
-        data: item,
+        data: {
+          file: item.file,
+          name: item.file.name,
+          previewUrl: item.previewUrl,
+          isImage: item.isImage,
+          size: item.file.size,
+        },
         size: 'xl',
       });
       return;
@@ -697,6 +819,26 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
     }
   }
 
+  protected openExistingPreview(item: FileUploadExistingFile): void {
+    if (this.modal) {
+      this.modal.open(FilePreviewDialogComponent, {
+        dismissible: true,
+        data: {
+          file: null,
+          name: item.name,
+          previewUrl: item.previewUrl,
+          isImage: item.isImage === true,
+          size: null,
+        },
+        size: 'xl',
+      });
+      return;
+    }
+    if (item.isImage) {
+      window.open(item.previewUrl, '_blank', 'noopener');
+    }
+  }
+
   protected removeAt(index: number): void {
     if (this.disabled()) {
       return;
@@ -706,14 +848,29 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
     if (!target) {
       return;
     }
-    if (target.previewUrl) {
-      URL.revokeObjectURL(target.previewUrl);
-    }
+    this.revokePreviewUrl(target.previewUrl);
     const next = current.filter((_, i) => i !== index);
     this.results.set(next);
     this.filesSelected.emit(next);
     this.onChange(next);
     this.onTouched();
+  }
+
+  protected removeExistingAt(index: number): void {
+    if (this.disabled()) {
+      return;
+    }
+    const next = this.existingShown().filter((_, i) => i !== index);
+    this.existingShown.set(next);
+    this.existingChange.emit(next);
+    this.onTouched();
+  }
+
+  protected trackRow(row: FileUploadListRow): string {
+    if (row.kind === 'existing') {
+      return `existing:${row.item.id ?? row.item.previewUrl}:${row.index}`;
+    }
+    return `local:${this.trackResult(row.item)}`;
   }
 
   protected trackResult(item: FileUploadResult): string {
@@ -814,6 +971,12 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
       this.revokeAll(this.results());
     }
 
+    // Fresh picks replace server-backed rows (edit forms prefill via `existing`).
+    if (this.existingShown().length) {
+      this.existingShown.set([]);
+      this.existingChange.emit([]);
+    }
+
     this.results.set(next);
     this.filesSelected.emit(next);
     this.onChange(next);
@@ -855,9 +1018,31 @@ export class FileUploadComponent implements ControlValueAccessor, OnDestroy {
 
   private revokeAll(items: FileUploadResult[]): void {
     for (const item of items) {
-      if (item.previewUrl) {
-        URL.revokeObjectURL(item.previewUrl);
-      }
+      this.revokePreviewUrl(item.previewUrl);
     }
   }
+
+  /** Only revoke blob: object URLs — never http(s) / data URIs from the host. */
+  private revokePreviewUrl(url: string | null): void {
+    if (url?.startsWith('blob:')) {
+      URL.revokeObjectURL(url);
+    }
+  }
+}
+
+function normalizeExistingFile(
+  row: FileUploadExistingFile,
+): FileUploadExistingFile {
+  const previewUrl = row.previewUrl.trim();
+  const name = row.name.trim() || 'Existing file';
+  const isImage =
+    row.isImage ??
+    (previewUrl.startsWith('data:image/') ||
+      /\.(jpe?g|png|gif|webp|bmp|svg)(\?|#|$)/i.test(previewUrl));
+  return {
+    ...row,
+    name,
+    previewUrl,
+    isImage,
+  };
 }

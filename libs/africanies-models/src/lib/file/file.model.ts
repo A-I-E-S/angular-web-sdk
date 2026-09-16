@@ -1,5 +1,5 @@
 /**
- * File read shapes from `POST /file/read`.
+ * File read / signed-upload shapes from `POST /file/read` and `POST /file/generate`.
  *
  * Domain interfaces in `@africanies/africanies-models` use a `*Model` suffix.
  * Field names match the wire (snake_case).
@@ -32,4 +32,38 @@ export interface FileReadModel {
 
   /** Time-limited signed URL for the object (when provided). */
   url: string;
+}
+
+/** Allowed image extensions for {@link FileGenerateRequestModel}. */
+export type FileGenerateExtension = 'jpeg' | 'jpg' | 'png';
+
+/** Allowed image MIME types for {@link FileGenerateRequestModel}. */
+export type FileGenerateMimeType =
+  | 'image/jpeg'
+  | 'image/jpg'
+  | 'image/png';
+
+/**
+ * One entry in the `files` array for `POST /file/generate`.
+ */
+export interface FileGenerateRequestModel {
+  extension: FileGenerateExtension;
+  mime_type: FileGenerateMimeType;
+  /** Storage folder prefix (e.g. `"images/items"`). */
+  folder: string;
+}
+
+/**
+ * One signed PUT instruction from `POST /file/generate` (`data[]`).
+ */
+export interface SignedUploadInstructionModel {
+  upload_url: string;
+  s3_key: string;
+  method: 'PUT';
+  headers: {
+    'Content-Type': string;
+    'x-amz-acl'?: string;
+  };
+  mime: string;
+  input_name: 'file';
 }

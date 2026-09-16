@@ -21,8 +21,11 @@ export {
   fileExtensionLabel,
   fileMatchesAccept,
   FileUploadComponent,
-  type FileUploadResult,
-  type FileUploadVariant,
+} from './file-upload';
+export type {
+  FileUploadExistingFile,
+  FileUploadResult,
+  FileUploadVariant,
 } from './file-upload';
 export { NumberInputComponent } from './number-input';
 export { OtpInputComponent, type OtpInputVariant } from './otp-input';

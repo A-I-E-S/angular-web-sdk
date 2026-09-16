@@ -8,6 +8,9 @@ export {
 } from './file-accept';
 export {
   FileUploadComponent,
-  type FileUploadResult,
-  type FileUploadVariant,
+} from './file-upload.component';
+export type {
+  FileUploadExistingFile,
+  FileUploadResult,
+  FileUploadVariant,
 } from './file-upload.component';

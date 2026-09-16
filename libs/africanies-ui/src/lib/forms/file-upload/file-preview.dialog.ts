@@ -14,9 +14,17 @@ import { OVERLAY_DATA } from '../../overlay/overlay-data.token';
 
 /** Payload for {@link FilePreviewDialogComponent}. */
 export interface FilePreviewData {
-  file: File;
+  /**
+   * Local pick when previewing a fresh upload. Null for server-backed
+   * {@link FileUploadExistingFile} rows (preview uses {@link previewUrl} only).
+   */
+  file: File | null;
+  /** Display name in the dialog title. */
+  name: string;
   previewUrl: string | null;
   isImage: boolean;
+  /** Byte size when known; omit for remote existing files. */
+  size?: number | null;
 }
 
 type PreviewKind = 'image' | 'unavailable';
@@ -24,10 +32,9 @@ type PreviewKind = 'image' | 'unavailable';
 /**
  * Large-file preview modal for {@link FileUploadComponent}.
  *
- * Local image picks render inline. Other local file types (PDF, etc.) show a
- * clear “can’t view” message — server-hosted previews use other modals.
- * Object URLs created here are revoked on destroy; the list’s image
- * `previewUrl` is left alone.
+ * Local image picks and existing server image URLs render inline. Other types
+ * show a clear “can’t view” message. Object URLs created here are revoked on
+ * destroy; list-owned `previewUrl` values are left alone.
  */
 @Component({
   selector: 'africanies-file-preview-dialog',
@@ -50,12 +57,12 @@ type PreviewKind = 'image' | 'unavailable';
             [id]="titleId"
             class="m-0 truncate text-heading-3 font-semibold text-ink dark:text-white"
           >
-            {{ data.file.name }}
+            {{ data.name }}
           </h2>
           <p class="m-0 mt-1 text-body-sm text-neutral-600 dark:text-neutral-400">
             {{ sizeLabel() }}
-            @if (data.file.type) {
-              <span> · {{ data.file.type }}</span>
+            @if (typeLabel(); as type) {
+              <span> · {{ type }}</span>
             }
           </p>
         </div>
@@ -76,7 +83,7 @@ type PreviewKind = 'image' | 'unavailable';
         @if (kind() === 'image') {
           <img
             [src]="src()"
-            [alt]="data.file.name"
+            [alt]="data.name"
             class="max-h-[min(70vh,40rem)] w-full rounded-md object-contain bg-background-welcome ring-1 ring-border dark:bg-ink-950 dark:ring-white/15"
           />
         } @else {
@@ -111,7 +118,7 @@ export class FilePreviewDialogComponent {
 
   constructor() {
     this.ownedUrl =
-      this.data.isImage && !this.data.previewUrl
+      this.data.isImage && !this.data.previewUrl && this.data.file
         ? URL.createObjectURL(this.data.file)
         : null;
     this.destroyRef.onDestroy(() => {
@@ -126,15 +133,23 @@ export class FilePreviewDialogComponent {
   );
 
   protected readonly kind = computed((): PreviewKind => {
-    const type = (this.data.file.type || '').toLowerCase();
+    const type = (this.data.file?.type || '').toLowerCase();
     if (this.data.isImage || type.startsWith('image/')) {
       return 'image';
     }
     return 'unavailable';
   });
 
+  protected typeLabel(): string | null {
+    const type = this.data.file?.type?.trim();
+    return type || null;
+  }
+
   protected sizeLabel(): string {
-    const bytes = this.data.file.size;
+    const bytes = this.data.size ?? this.data.file?.size;
+    if (bytes == null) {
+      return 'On file';
+    }
     if (bytes < 1024) {
       return `${bytes} B`;
     }

@@ -170,6 +170,7 @@ export {
   fileExtensionLabel,
   fileMatchesAccept,
   FileUploadComponent,
+  type FileUploadExistingFile,
   type FileUploadResult,
   type FileUploadVariant,
   formatNationalDigits,

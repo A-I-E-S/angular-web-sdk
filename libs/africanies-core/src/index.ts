@@ -221,13 +221,18 @@ export {
   resolveNotificationLinkForMode,
 } from './lib/notification';
 
-// File reads (POST /file/read — may require auth)
+// File reads + signed S3 uploads (POST /file/read, POST /file/generate)
 export {
+  FILE_GENERATE_PATH,
   FILE_READ_MULTIPLE_PARAM,
   FILE_READ_PATH,
+  FILE_UPLOAD_DEFAULT_FOLDER,
   FileService,
+  type FileUploadOptions,
   mapFileRead,
   mapFileReadList,
+  mapSignedUploadInstructions,
+  toFileGenerateRequest,
 } from './lib/file';
 
 // Products
