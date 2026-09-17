@@ -120,11 +120,19 @@ export class CarrierLogoComponent {
     return this.fallbackLabel();
   });
 
-  protected readonly imgClass = computed(() =>
-    this.size() === 'md'
+  protected readonly imgClass = computed(() => {
+    const slug = this.slug();
+    const md = this.size() === 'md';
+    // UPS is a tall shield mark — give it more height so it reads like the wordmarks.
+    if (slug === 'ups') {
+      return md
+        ? 'h-9 w-auto max-w-[3.75rem] object-contain'
+        : 'h-8 w-auto max-w-[3.25rem] object-contain';
+    }
+    return md
       ? 'h-6 w-auto max-w-[7rem] object-contain'
-      : 'h-5 w-auto max-w-[5.5rem] object-contain',
-  );
+      : 'h-5 w-auto max-w-[5.5rem] object-contain';
+  });
 
   protected logoSrc(slug: CarrierLogoSlug): string {
     return `${CARRIER_LOGO_ASSET_BASE}/${slug}.svg`;

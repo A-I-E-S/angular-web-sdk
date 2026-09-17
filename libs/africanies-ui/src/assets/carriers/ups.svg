@@ -1,10 +1,8 @@
 <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                        height="60"
-                        width="150"
-                        viewBox="-11.025 -21.8125 95.55 130.875"
-                      >
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="0 -0.5 73.5 88"
+>
                         <defs>
                           <path d="M-14.272-13.996h102v115h-102z" id="a" />
                         </defs>
