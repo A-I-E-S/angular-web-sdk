@@ -1,6 +1,6 @@
 {
   "name": "@africanies/angular-web-sdk",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "packageManager": "pnpm@11.24.0",
   "license": "MIT",
   "contributors": [
