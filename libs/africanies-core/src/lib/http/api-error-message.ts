@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { normalize } from './normalize';
 import { joinApiErrorMessages } from './validation-bag';
-import { asRecord } from './wire';
+import { asNullableString, asRecord } from './wire';
 
 /**
  * Resolve user-facing error copy from an API envelope, raw body, or HttpClient error.
@@ -51,12 +51,9 @@ export function formatApiErrorMessage(input: unknown): string {
 
   if (input && typeof input === 'object') {
     const record = asRecord(input);
-    if (
-      record &&
-      typeof record['message'] === 'string' &&
-      record['message'].trim()
-    ) {
-      return record['message'].trim();
+    const fromMessage = asNullableString(record?.['message'])?.trim();
+    if (fromMessage) {
+      return fromMessage;
     }
   }
 

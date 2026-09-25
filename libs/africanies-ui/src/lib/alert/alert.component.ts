@@ -11,6 +11,7 @@ import type { IconName } from '@africanies/africanies-icons';
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import { splitMessageLines } from '../feedback/message-lines';
 
 /**
  * Visual tone for {@link AlertComponent}.
@@ -70,7 +71,15 @@ const DEFAULT_ICONS: Record<AlertVariant, IconName> = {
         @if (title(); as heading) {
           <p [class]="titleClass()">{{ heading }}</p>
         }
-        <p [class]="messageClass()">{{ message() }}</p>
+        @if (messageLines().length > 1) {
+          <ol [class]="listClass()">
+            @for (line of messageLines(); track $index) {
+              <li>{{ line }}</li>
+            }
+          </ol>
+        } @else {
+          <p [class]="messageClass()">{{ message() }}</p>
+        }
         <ng-content />
       </div>
 
@@ -130,7 +139,7 @@ export class AlertComponent {
 
   protected readonly shellClass = computed(() => {
     const base =
-      'flex items-center gap-3 rounded-lg border px-4 py-3 text-body ' +
+      'flex items-start gap-3 rounded-lg border px-4 py-3 text-body ' +
       'text-ink dark:text-white';
     switch (this.variant()) {
       case 'success':
@@ -173,6 +182,15 @@ export class AlertComponent {
 
   protected readonly messageClass = computed(
     () => 'm-0 text-body-sm text-neutral-600 dark:text-neutral-300',
+  );
+
+  protected readonly listClass = computed(
+    () =>
+      'm-0 list-decimal space-y-1 pl-5 text-body-sm text-neutral-600 dark:text-neutral-300',
+  );
+
+  protected readonly messageLines = computed(() =>
+    splitMessageLines(this.message()),
   );
 
   protected onDismiss(): void {

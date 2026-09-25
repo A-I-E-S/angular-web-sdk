@@ -147,6 +147,12 @@ export function asNullableString(value: unknown): string | null {
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
   }
+  if (Array.isArray(value)) {
+    const lines = value
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter((item) => item.length > 0);
+    return lines.length > 0 ? lines.join('\n') : null;
+  }
   return null;
 }
 

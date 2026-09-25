@@ -10,6 +10,7 @@ import {
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import { splitMessageLines } from '../feedback/message-lines';
 import {
   TOAST_ICONS,
   type ToastItem,
@@ -55,11 +56,21 @@ import {
                   @if (item().title; as heading) {
                     <p [class]="titleClass()">{{ heading }}</p>
                   }
-                  <p
-                    class="m-0 break-words text-body-sm text-neutral-600 dark:text-neutral-300"
-                  >
-                    {{ item().message }}
-                  </p>
+                  @if (messageLines().length > 1) {
+                    <ol
+                      class="m-0 list-decimal space-y-1 break-words pl-4 text-body-sm text-neutral-600 dark:text-neutral-300"
+                    >
+                      @for (line of messageLines(); track $index) {
+                        <li>{{ line }}</li>
+                      }
+                    </ol>
+                  } @else {
+                    <p
+                      class="m-0 break-words text-body-sm text-neutral-600 dark:text-neutral-300"
+                    >
+                      {{ item().message }}
+                    </p>
+                  }
                 </div>
                 <button
                   africanies-button
@@ -119,11 +130,21 @@ import {
                     @if (item().title; as heading) {
                       <p [class]="titleClass()">{{ heading }}</p>
                     }
-                    <p
-                      class="m-0 break-words text-body-sm text-neutral-600 dark:text-neutral-300"
-                    >
-                      {{ item().message }}
-                    </p>
+                    @if (messageLines().length > 1) {
+                      <ol
+                        class="m-0 list-decimal space-y-1 break-words pl-4 text-body-sm text-neutral-600 dark:text-neutral-300"
+                      >
+                        @for (line of messageLines(); track $index) {
+                          <li>{{ line }}</li>
+                        }
+                      </ol>
+                    } @else {
+                      <p
+                        class="m-0 break-words text-body-sm text-neutral-600 dark:text-neutral-300"
+                      >
+                        {{ item().message }}
+                      </p>
+                    }
                   </div>
                   @if (item().count > 1) {
                     <span
@@ -245,6 +266,10 @@ export class ToastItemComponent {
 
   protected readonly copies = computed(() =>
     Array.from({ length: Math.max(1, this.item().count) }, (_, i) => i),
+  );
+
+  protected readonly messageLines = computed(() =>
+    splitMessageLines(this.item().message),
   );
 
   protected readonly defaultIcon = computed(

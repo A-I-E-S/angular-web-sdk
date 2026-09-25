@@ -115,6 +115,9 @@ export function unwrapLaravelPaginator<T>(raw: unknown): {
  * @param value
  */
 function normalizeErrorDetail(value: unknown): ApiErrorDetailModel {
+  if (typeof value === 'string') {
+    return { field: null, message: value.trim(), code: null };
+  }
   const record = asRecord(value) ?? {};
   return {
     field: asString(record['field']) || null,

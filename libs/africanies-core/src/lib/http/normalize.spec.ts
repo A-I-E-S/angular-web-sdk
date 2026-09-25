@@ -150,6 +150,39 @@ describe('normalize', () => {
       'The email field is required.\nThe email must be valid.',
     );
   });
+
+  it('joins a string error array onto message with newlines', () => {
+    const result = normalize({
+      success: false,
+      status_code: 422,
+      message: 'Validation failed',
+      data: null,
+      errors: ['Warehouse length is required.', 'Warehouse width is required.'],
+    });
+
+    expect(result.errors).toEqual([
+      { field: null, message: 'Warehouse length is required.', code: null },
+      { field: null, message: 'Warehouse width is required.', code: null },
+    ]);
+    expect(result.message).toBe(
+      'Warehouse length is required.\nWarehouse width is required.',
+    );
+  });
+
+  it('joins a message string array when errors are absent', () => {
+    const result = normalize({
+      success: false,
+      status_code: 422,
+      message: ['Price monthly is required.', 'Discount is required.'],
+      data: null,
+      errors: null,
+    });
+
+    expect(result.errors).toBeNull();
+    expect(result.message).toBe(
+      'Price monthly is required.\nDiscount is required.',
+    );
+  });
 });
 
 describe('normalizePagination', () => {

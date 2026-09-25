@@ -38,4 +38,12 @@ describe('formatApiErrorMessage', () => {
       'The name field is required.\nThe value field is required.',
     );
   });
+
+  it('joins a message string array', () => {
+    expect(
+      formatApiErrorMessage({
+        message: ['Price monthly is required.', 'Discount is required.'],
+      }),
+    ).toBe('Price monthly is required.\nDiscount is required.');
+  });
 });

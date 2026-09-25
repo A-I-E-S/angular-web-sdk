@@ -50,6 +50,10 @@ describe('wire coercions', () => {
     expect(asString(undefined)).toBe('');
     expect(asString(null)).toBe('');
     expect(asNullableString(undefined)).toBeNull();
+    expect(asNullableString(['Price is required.', 'Discount is required.'])).toBe(
+      'Price is required.\nDiscount is required.',
+    );
+    expect(asNullableString(['', '  '])).toBeNull();
   });
 
   it('flags accept boolean, 1/0, and "1"/"0"', () => {
