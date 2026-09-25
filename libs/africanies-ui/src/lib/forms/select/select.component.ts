@@ -35,6 +35,9 @@ import {
   FORM_FIELD_ERROR_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
+  FORM_OVERLAY_LIST_CLASS,
+  FORM_OVERLAY_PANEL_CLASS,
+  FORM_OVERLAY_SEARCH_CLASS,
 } from '../form-field.classes';
 import type { SelectCreateConfig, SelectOption, SelectSize } from './select.types';
 
@@ -292,7 +295,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       (detach)="onOverlayDetach()"
     >
       <div
-        class="w-full rounded-md border border-border dark:border-white/15 bg-white dark:bg-ink-950 shadow-lg max-h-64 overflow-auto africanies-overlay-scroll"
+        [class]="overlayPanelClass"
         role="listbox"
         tabindex="-1"
         [attr.aria-multiselectable]="multiple() || null"
@@ -300,12 +303,12 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       >
         @if (searchable()) {
           <div
-            class="sticky top-0 z-[1] bg-white dark:bg-ink-950 border-b border-border dark:border-white/10 p-2"
+            class="border-b border-border p-2 dark:border-white/10"
           >
             <input
               #searchInput
               type="search"
-              class="w-full rounded-md border border-neutral-300 dark:border-white/25 bg-transparent text-body text-ink dark:text-white px-2.5 py-1.5 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink"
+              [class]="overlaySearchClass"
               [value]="searchQuery()"
               placeholder="Search…"
               (input)="onSearchInput($event)"
@@ -314,6 +317,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
           </div>
         }
 
+        <div [class]="overlayListClass">
         @if (loading()) {
           <div
             class="flex items-center gap-2 px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400"
@@ -404,6 +408,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
             Up to {{ maxSelected() }} selected
           </div>
         }
+        </div>
 
       </div>
     </ng-template>
@@ -461,6 +466,9 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
     'size-4 shrink-0 rounded-full object-cover';
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
+  protected readonly overlayPanelClass = FORM_OVERLAY_PANEL_CLASS;
+  protected readonly overlayListClass = FORM_OVERLAY_LIST_CLASS;
+  protected readonly overlaySearchClass = FORM_OVERLAY_SEARCH_CLASS;
   protected readonly panelPositions = SELECT_PANEL_POSITIONS;
 
   /** Floor width for the overlay panel when the trigger width is unknown. */

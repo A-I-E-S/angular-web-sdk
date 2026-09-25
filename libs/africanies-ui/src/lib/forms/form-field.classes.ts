@@ -39,7 +39,7 @@ export const FORM_LABEL_CLASS =
  * always sees the full class names in this string literal.
  */
 export const FORM_FIELD_CLASS =
-  'flex items-center w-full h-10 box-border rounded-control border border-control bg-surface dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
+  'flex items-center w-full h-10 box-border overflow-hidden rounded-control border border-control bg-surface dark:bg-ink-950 text-ink dark:text-white dark:border-white/25 ' +
   'focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-focus';
 
 /**
@@ -85,3 +85,19 @@ export const FORM_ERROR_CLASS = 'mt-1.5 text-caption text-danger m-0';
 
 /** Disabled shell — dimmed with not-allowed cursor over the full field chrome. */
 export const FORM_DISABLED_CLASS = 'opacity-50 cursor-not-allowed';
+
+/**
+ * Suggestion / option overlay. `overflow-hidden` clips the search field and
+ * row hover so they cannot square off `rounded-control` (same radius as the
+ * trigger). Scroll the list, not this shell.
+ */
+export const FORM_OVERLAY_PANEL_CLASS =
+  'flex w-full flex-col overflow-hidden rounded-control border border-border bg-white shadow-lg dark:border-white/15 dark:bg-ink-950';
+
+/** Scrollport inside {@link FORM_OVERLAY_PANEL_CLASS}. */
+export const FORM_OVERLAY_LIST_CLASS =
+  'africanies-overlay-scroll max-h-64 overflow-auto';
+
+/** Search field inside a suggestion overlay — matches the trigger control. */
+export const FORM_OVERLAY_SEARCH_CLASS =
+  'h-9 w-full rounded-control border border-control bg-transparent px-3 text-body-sm text-ink outline-none placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-focus dark:border-white/25 dark:text-white';

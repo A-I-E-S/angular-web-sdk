@@ -175,7 +175,7 @@ let nextFileUploadId = 0;
                   [disabled]="disabled()"
                   (click)="openCamera()"
                 >
-                  <africanies-icon name="camera" [size]="16" />
+                  <africanies-icon name="camera" [size]="20" />
                   Camera
                 </button>
               }
@@ -242,7 +242,7 @@ let nextFileUploadId = 0;
                   [disabled]="disabled()"
                   (click)="openCamera()"
                 >
-                  <africanies-icon name="camera" [size]="16" />
+                  <africanies-icon name="camera" [size]="20" />
                 </button>
               }
             </div>
@@ -312,7 +312,7 @@ let nextFileUploadId = 0;
                   [disabled]="disabled()"
                   (click)="openCamera(); $event.stopPropagation()"
                 >
-                  <africanies-icon name="camera" [size]="16" />
+                  <africanies-icon name="camera" [size]="20" />
                   Camera
                 </button>
               }

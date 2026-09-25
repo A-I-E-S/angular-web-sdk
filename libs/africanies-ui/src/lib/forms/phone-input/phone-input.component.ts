@@ -35,6 +35,8 @@ import {
   FORM_FIELD_ERROR_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
+  FORM_OVERLAY_PANEL_CLASS,
+  FORM_OVERLAY_SEARCH_CLASS,
 } from '../form-field.classes';
 import { PHONE_MAX_NATIONAL_DIGITS } from './phone-codes';
 import type { PhoneCountryOption, PhoneNumberValue } from './phone-input.types';
@@ -175,7 +177,7 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
       (overlayOutsideClick)="closeCountryPicker()"
     >
       <div
-        class="flex w-full flex-col overflow-hidden rounded-md border border-border bg-white shadow-lg dark:border-white/15 dark:bg-ink-950"
+        [class]="overlayPanelClass"
         role="listbox"
         [attr.aria-label]="'Select country'"
       >
@@ -183,7 +185,7 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
           <input
             #countrySearch
             type="search"
-            class="h-9 w-full rounded-control border border-control bg-transparent px-3 text-body-sm text-ink outline-none placeholder:text-neutral-500 focus:ring-2 focus:ring-inset focus:ring-focus dark:border-white/25 dark:text-white"
+            [class]="overlaySearchClass"
             placeholder="Search country or code"
             [value]="countryQuery()"
             (input)="onCountryQuery($event)"
@@ -233,6 +235,8 @@ export class PhoneInputComponent implements ControlValueAccessor {
   protected readonly hintId = `${this.controlId}-hint`;
   protected readonly errorId = `${this.controlId}-error`;
   protected readonly labelClass = FORM_LABEL_CLASS;
+  protected readonly overlayPanelClass = FORM_OVERLAY_PANEL_CLASS;
+  protected readonly overlaySearchClass = FORM_OVERLAY_SEARCH_CLASS;
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
   protected readonly panelPositions = PANEL_POSITIONS;

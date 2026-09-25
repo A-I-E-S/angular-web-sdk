@@ -50,6 +50,8 @@ import {
   FORM_FIELD_ERROR_CLASS,
   FORM_HINT_CLASS,
   FORM_LABEL_CLASS,
+  FORM_OVERLAY_LIST_CLASS,
+  FORM_OVERLAY_PANEL_CLASS,
 } from '../form-field.classes';
 import type {
   SearchComboboxBadgeFn,
@@ -189,10 +191,11 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
     >
       <div
         [id]="listboxId"
-        class="africanies-overlay-scroll max-h-64 w-full overflow-auto rounded-md border border-border bg-white shadow-lg dark:border-white/15 dark:bg-ink-950"
+        [class]="overlayPanelClass"
         role="listbox"
         tabindex="-1"
       >
+        <div [class]="overlayListClass">
         @if (loading()) {
           <div
             class="px-3 py-2 text-body-sm text-neutral-600 dark:text-neutral-400"
@@ -259,6 +262,7 @@ const PANEL_POSITIONS: ConnectedPosition[] = [
             </button>
           }
         }
+        </div>
       </div>
     </ng-template>
 
@@ -285,6 +289,8 @@ export class SearchComboboxComponent<T> implements ControlValueAccessor {
   protected readonly innerClass = FORM_CONTROL_INNER_CLASS;
   protected readonly hintClass = FORM_HINT_CLASS;
   protected readonly errorClass = FORM_ERROR_CLASS;
+  protected readonly overlayPanelClass = FORM_OVERLAY_PANEL_CLASS;
+  protected readonly overlayListClass = FORM_OVERLAY_LIST_CLASS;
   protected readonly panelPositions = PANEL_POSITIONS;
   protected readonly minPanelWidth = 224;
 
