@@ -24,6 +24,10 @@ interface Row {
       [loading]="loading()"
       [error]="error()"
       loadingLabel="Loading page…"
+      [showRefresh]="showRefresh()"
+      [showFilter]="showFilter()"
+      [filterCount]="filterCount()"
+      (filterClearClick)="cleared.set(cleared() + 1)"
     />
   `,
 })
@@ -32,6 +36,10 @@ class TableHostComponent {
   readonly rows = signal<Row[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly showRefresh = signal(false);
+  readonly showFilter = signal(false);
+  readonly filterCount = signal(0);
+  readonly cleared = signal(0);
 }
 
 describe('TableComponent keep-rows loading', () => {
@@ -39,6 +47,19 @@ describe('TableComponent keep-rows loading', () => {
   let host: TableHostComponent;
 
   beforeEach(async () => {
+    // jsdom does not provide ResizeObserver; the table measures expand width.
+    globalThis.ResizeObserver = class {
+      observe(): void {
+        /* no-op */
+      }
+      unobserve(): void {
+        /* no-op */
+      }
+      disconnect(): void {
+        /* no-op */
+      }
+    } as typeof ResizeObserver;
+
     const mode = signal<ShippingMode>('sfn');
     await TestBed.configureTestingModule({
       imports: [TableHostComponent],
@@ -98,5 +119,29 @@ describe('TableComponent keep-rows loading', () => {
     expect(indicator?.className).toContain('w-full');
     expect(root.textContent).toContain('Could not load page.');
     expect(root.textContent).toContain('Ada');
+  });
+
+  it('shows Clear when filters are active and emits filterClearClick', () => {
+    host.rows.set([{ id: 1, name: 'Ada' }]);
+    host.showFilter.set(true);
+    host.filterCount.set(2);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const clear = Array.from(root.querySelectorAll('button')).find((button) =>
+      /Clear/.test(button.textContent ?? ''),
+    ) as HTMLButtonElement | undefined;
+    expect(clear).toBeTruthy();
+    clear?.click();
+    expect(host.cleared()).toBe(1);
+  });
+
+  it('renders africanies-refresh when showRefresh and rows are present', () => {
+    host.rows.set([{ id: 1, name: 'Ada' }]);
+    host.showRefresh.set(true);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelector('africanies-refresh')).not.toBeNull();
   });
 });

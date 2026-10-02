@@ -1,0 +1,52 @@
+:host {
+  --refresh-color: #1cbd5d;
+  display: inline-flex;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  font:
+    400 12px/1.4 Inter,
+    sans-serif;
+  color: var(--refresh-color);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+button:disabled {
+  cursor: wait;
+}
+button:focus-visible {
+  outline: 2px solid var(--refresh-color);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+africanies-icon {
+  flex-shrink: 0;
+  color: inherit;
+}
+.spinning {
+  animation: africanies-refresh-spin 0.8s linear infinite;
+}
+@keyframes africanies-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (min-width: 768px) {
+  button {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
+  }
+}
+
+:host(.is-import) {
+  --refresh-color: #f08829;
+}

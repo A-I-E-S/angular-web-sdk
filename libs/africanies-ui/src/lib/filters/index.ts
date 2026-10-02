@@ -1,3 +1,4 @@
+export { clearAppliedListFilters } from './clear-applied-list-filters';
 export { FilterDrawerPanel } from './filter-drawer.panel';
 export { FilterDrawerService } from './filter-drawer.service';
 export type {
