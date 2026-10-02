@@ -91,7 +91,9 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
  *
  * - **Control slots** — project into the shell with `[prefix]` / `[suffix]`
  *   (same pattern as TextInput). Used as the empty-state affixes. Set
- *   `[showTriggerIcon]="false"` when the suffix replaces the built-in caret.
+ *   `[showTriggerIcon]="false"` when the suffix replaces the built-in caret
+ *   (caret/spinner sit in a trailing `FORM_AFFIX` gutter, not inside the
+ *   label button).
  * - **Option slots** — set `prefix` / `suffix` on each {@link SelectOption} to
  *   an `IconName`. In the list/chips always; in **single-select**, when an
  *   option is selected its icons replace the shell prefix/suffix slots.
@@ -181,10 +183,19 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       >
         <ng-content select="[prefix]" />
       </span>
+      <!--
+        WHY asymmetric padding when the trigger icon shows: caret/spinner live
+        in a trailing FORM_AFFIX gutter (same as prefix flags / text-input
+        suffixes). Keeping full px-3 here stacked with that gutter and pinned
+        the caret against the border in narrow columns (country + flag).
+      -->
       <div
         class="flex h-full min-h-0 min-w-0 flex-1 flex-wrap items-center gap-1.5 py-0"
-        [class.px-3]="size() !== 'sm'"
-        [class.px-2]="size() === 'sm'"
+        [class.pl-3]="size() !== 'sm'"
+        [class.pl-2]="size() === 'sm'"
+        [class.pr-3]="size() !== 'sm' && !showTrailingTriggerIcon()"
+        [class.pr-2]="size() === 'sm' && !showTrailingTriggerIcon()"
+        [class.pr-1]="showTrailingTriggerIcon()"
       >
         @if (multiple() && selectedList().length) {
           @for (chip of selectedList(); track trackOption(chip)) {
@@ -223,7 +234,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
         <button
           [id]="controlId"
           type="button"
-          class="flex flex-1 cursor-pointer items-center justify-between gap-2 min-w-[6rem] text-left bg-transparent border-0 outline-none disabled:cursor-not-allowed"
+          class="flex min-w-0 flex-1 cursor-pointer items-center text-left bg-transparent border-0 outline-none disabled:cursor-not-allowed"
           [class.text-body]="size() !== 'sm'"
           [class.text-body-sm]="size() === 'sm'"
           [disabled]="triggerDisabled()"
@@ -248,20 +259,6 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
               {{ displayLabel() || triggerText() }}
             }
           </span>
-          @if (loading()) {
-            <africanies-icon
-              name="spinner"
-              [size]="16"
-              [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
-              aria-hidden="true"
-            />
-          } @else if (showTriggerIcon()) {
-            <africanies-icon
-              name="angle-down"
-              [size]="16"
-              class="shrink-0 text-neutral-600 dark:text-neutral-400"
-            />
-          }
         </button>
       </div>
       @if (shellSuffix(); as suffixIcon) {
@@ -276,6 +273,23 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       >
         <ng-content select="[suffix]" />
       </span>
+      @if (loading()) {
+        <span [class]="affixClass" data-slot="trigger-icon" aria-hidden="true">
+          <africanies-icon
+            name="spinner"
+            [size]="16"
+            [class]="'shrink-0 animate-spin ' + modeColor.classes().text"
+          />
+        </span>
+      } @else if (showTriggerIcon()) {
+        <span [class]="affixClass" data-slot="trigger-icon" aria-hidden="true">
+          <africanies-icon
+            name="angle-down"
+            [size]="16"
+            class="shrink-0 text-neutral-600 dark:text-neutral-400"
+          />
+        </span>
+      }
     </div>
     <!-- eslint-enable @angular-eslint/template/click-events-have-key-events -->
     <!-- eslint-enable @angular-eslint/template/interactive-supports-focus -->
@@ -591,9 +605,9 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   });
 
   /**
-   * When false, hides the built-in `angle-down` on the trigger so callers can
+   * When false, hides the built-in `angle-down` trailing affix so callers can
    * supply a chevron via the `[suffix]` slot (e.g. compact page-size selects).
-   * Loading still shows the spinner on the trigger.
+   * Loading still shows the spinner in that same trailing gutter.
    */
   readonly showTriggerIcon = input(true, { transform: booleanAttribute });
 
@@ -719,6 +733,14 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
   /** True when multiple mode has at least one chip selected. */
   protected readonly hasMultiSelection = computed(
     () => this.multiple() && this.selectedList().length > 0,
+  );
+
+  /**
+   * Loading spinner or built-in caret occupies the trailing affix gutter —
+   * content area drops its right padding so the icon is not double-inset.
+   */
+  protected readonly showTrailingTriggerIcon = computed(
+    () => this.loading() || this.showTriggerIcon(),
   );
 
   /**
