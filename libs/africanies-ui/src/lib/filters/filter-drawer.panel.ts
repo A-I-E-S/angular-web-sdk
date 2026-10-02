@@ -46,6 +46,10 @@ import { FilterQueryService } from './filter-query.service';
  * drawer stays open until that call succeeds, then closes with
  * {@link FilterDrawerResult}. Successful Apply also writes the query bag to
  * the browser URL via {@link FilterQueryService} (page resets to 1).
+ *
+ * Enter in an input/select applies filters (same as Apply). Textareas,
+ * contenteditable, and focused buttons/links are skipped so native activation
+ * still works.
  */
 @Component({
   selector: 'africanies-filter-drawer',
@@ -53,6 +57,7 @@ import { FilterQueryService } from './filter-query.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'block h-full min-h-0 overflow-hidden',
+    '(keydown.enter)': 'onEnterKey($any($event))',
   },
   imports: [
     AfricaniesIconComponent,
@@ -711,6 +716,28 @@ export class FilterDrawerPanel {
     const next = resetFilterState(true, this.draft());
     this.draft.set(next);
     this.selectedKeys.set([]);
+  }
+
+  /**
+   * Enter in a field applies filters. Skip textarea / contenteditable / buttons
+   * so those keep their native Enter behaviour.
+   */
+  protected onEnterKey(event: KeyboardEvent): void {
+    if (event.isComposing || event.defaultPrevented || this.applying()) {
+      return;
+    }
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    if (target.closest('textarea, [contenteditable="true"]')) {
+      return;
+    }
+    if (target.closest('button, a, [role="button"]')) {
+      return;
+    }
+    event.preventDefault();
+    this.onApply();
   }
 
   protected onApply(): void {

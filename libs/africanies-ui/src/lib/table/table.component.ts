@@ -33,6 +33,7 @@ import { LoadingStateComponent } from '../feedback/loading-state.component';
 import type { AfricaniesNavItem } from '../navigation/nav-item';
 import { SegmentComponent } from '../navigation/segment/segment.component';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { RefreshComponent } from '../refresh/refresh.component';
 import { CellDefDirective } from './cell-def.directive';
 import { HeaderCellDefDirective } from './header-cell-def.directive';
 import { RowDetailDefDirective } from './row-detail-def.directive';
@@ -46,20 +47,21 @@ import { TableColumn, TableSortChange } from './table-column';
  * template fall back to rendering `row[key]` as plain text.
  *
  * Optional toolbar: top-left **shipping mode** segment on its own row above
- * Refresh / Filter / Export (on by default; `[showShippingMode]="false"` to
- * hide) and **Refresh** (`showRefresh` →
- * {@link refreshClick}). Refresh is hidden while
- * the body shows empty or error — those states expose Retry instead.
- * While {@link refreshing} is true the rows stay on screen — the refresh icon
- * spins (do not swap to a blocking loader). Use {@link loading} when the page
- * of data is changing (pagination / size): rows stay on screen, a keep-rows
- * overlay covers the grid, and the built-in pager shows a circular spinner
- * beside the page controls; the body loader appears only when there are no
- * rows yet (first load) or the host cleared rows for a shipping-mode switch
- * (STN ↔ SFN). Toolbar and column headers stay mounted.
- * top-right **Filters** then **Export** (`showFilter` / `showExport`). The table
- * does not own fetch, filter, or export logic — the host handles those events.
- *
+ * Refresh / Clear / Filter / Export (on by default; `[showShippingMode]="false"`
+ * to hide) and **Refresh** (`showRefresh` → {@link refreshClick}) via
+ * {@link RefreshComponent}. Refresh is hidden while the body shows empty or
+ * error — those states expose Retry instead. While {@link refreshing} is true
+ * the rows stay on screen — the refresh icon spins (do not swap to a blocking
+ * loader). Use {@link loading} when the page of data is changing (pagination /
+ * size): rows stay on screen, a keep-rows overlay covers the grid, and the
+ * built-in pager shows a circular spinner beside the page controls; the body
+ * loader appears only when there are no rows yet (first load) or the host
+ * cleared rows for a shipping-mode switch (STN ↔ SFN). Toolbar and column
+ * headers stay mounted. Top-right **Clear** (when {@link filterCount} &gt; 0),
+ * **Filters**, then **Export** (`showFilter` / `showExport`). Clear emits
+ * {@link filterClearClick}; use {@link clearAppliedListFilters} in the host.
+ * The table does not own fetch, filter, or export logic — the host handles
+ * those events. *
  * Optional footer pager: pass {@link meta} to embed {@link PaginationComponent};
  * the host still owns refetch via {@link pageChange} / {@link sizeChange}. The
  * pager also writes `page` / `size` to the URL (same keys as filters). Rows
@@ -99,6 +101,7 @@ import { TableColumn, TableSortChange } from './table-column';
  *   [showExport]="true"
  *   [filterCount]="activeFilterCount()"
  *   (refreshClick)="refetch()"
+ *   (filterClearClick)="clearFilters()"
  *   (filterClick)="openFilters()"
  *   (exportClick)="exportCsv()"
  *   (pageChange)="onPageChange($event)"
@@ -135,6 +138,7 @@ import { TableColumn, TableSortChange } from './table-column';
     ErrorStateComponent,
     LoadingStateComponent,
     PaginationComponent,
+    RefreshComponent,
     SegmentComponent,
   ],
   host: {
@@ -230,25 +234,29 @@ import { TableColumn, TableSortChange } from './table-column';
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex min-w-0 flex-wrap items-center gap-2">
                 @if (showToolbarRefresh()) {
-                  <button
-                    africanies-button
-                    type="button"
-                    variant="flat"
-                    size="sm"
-                    [disabled]="loading() || refreshing()"
-                    [attr.aria-label]="refreshLabel()"
-                    (click)="refreshClick.emit()"
-                  >
-                    <africanies-icon
-                      name="refresh"
-                      [size]="16"
-                      [class]="refreshing() ? 'animate-spin' : ''"
-                    />
-                    {{ refreshLabel() }}
-                  </button>
+                  <africanies-refresh
+                    [loading]="refreshing()"
+                    [disabled]="loading()"
+                    [label]="refreshLabel()"
+                    [appType]="shipping.mode()"
+                    (refresh)="refreshClick.emit()"
+                  />
                 }
               </div>
               <div class="flex items-center gap-2">
+                @if (showFilter() && filterCount() > 0) {
+                  <button
+                    africanies-button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    class="text-neutral-600 dark:text-neutral-400"
+                    aria-label="Clear filters"
+                    (click)="filterClearClick.emit()"
+                  >
+                    Clear
+                  </button>
+                }
                 @if (showFilter()) {
                   <span class="relative inline-flex">
                     <button
@@ -730,6 +738,12 @@ export class TableComponent<T = unknown> {
 
   /** Emitted when the top-left Refresh control is clicked. */
   readonly refreshClick = output<void>();
+
+  /**
+   * Emitted when Clear next to Filters is clicked ({@link filterCount} &gt; 0).
+   * Host should call {@link clearAppliedListFilters} (or equivalent).
+   */
+  readonly filterClearClick = output<void>();
 
   /** Emitted when the top-right Filters control is clicked. */
   readonly filterClick = output<void>();

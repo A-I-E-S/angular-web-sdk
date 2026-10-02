@@ -91,6 +91,7 @@ export {
 
 // Filters (schema-driven list filter drawer)
 export {
+  clearAppliedListFilters,
   type FilterDrawerData,
   FilterDrawerPanel,
   type FilterDrawerResult,
@@ -272,6 +273,12 @@ export {
   BrandLogoComponent,
   type BrandLogoSize,
 } from './lib/brand';
+
+// Refresh (list / panel reload control)
+export { RefreshComponent } from './lib/refresh';
+
+// Pulse dot (live / unread indicator)
+export { PulseDotComponent } from './lib/pulse-dot';
 
 // Avatar
 export {
