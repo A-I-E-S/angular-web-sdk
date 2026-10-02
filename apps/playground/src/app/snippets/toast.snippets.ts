@@ -45,7 +45,7 @@ export /**
  */
 const TOAST_STACK = `
 // Same message twice? They collapse into one with ×N.
-// X peels one copy; Expand shows all; Close all clears the group.
+// × peels one copy; host Expand/Collapse all and Close all manage the stack.
 
 this.toast.error('Warehouse offline');
 this.toast.error('Warehouse offline'); // ×2

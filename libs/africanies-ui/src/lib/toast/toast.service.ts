@@ -38,8 +38,8 @@ type PopoverToggles = {
  * - **danger** — persistent until the user closes it
  * - **warning** — longer auto-dismiss (8s)
  * - **info / success** — shorter auto-dismiss (4.5s)
- * - Identical toasts collapse with a count; close removes the outermost copy,
- *   with Expand / Close all when stacked
+ * - Identical toasts collapse with a count; × peels the outermost copy;
+ *   host Expand/Collapse all and Close all manage stacked groups
  * - The host caps to the viewport and scrolls when the list would overflow
  *
  * Also implements {@link AfricaniesHttpToastHandler} for {@link withToast} HTTP tagging.
