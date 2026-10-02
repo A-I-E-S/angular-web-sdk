@@ -68,9 +68,6 @@ import { ToastItemComponent } from './toast-item.component';
         <africanies-toast-item
           [item]="toast"
           (dismissOne)="toastService.dismissOne(toast.id)"
-          (dismissAll)="toastService.dismiss(toast.id)"
-          (expand)="toastService.expand(toast.id)"
-          (collapse)="toastService.collapse(toast.id)"
           (paused)="toastService.pause(toast.id)"
           (resumed)="toastService.resume(toast.id)"
         />

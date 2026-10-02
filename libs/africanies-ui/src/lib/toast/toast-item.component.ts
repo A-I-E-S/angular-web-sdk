@@ -19,7 +19,7 @@ import {
 
 /**
  * Single toast card — dense, token-based, with optional countdown rail.
- * Stacked identical toasts can expand; close peels the outermost copy.
+ * Stacked identical toasts show a count; host Expand/Collapse all and Close all manage the stack; × peels one copy.
  */
 @Component({
   selector: 'africanies-toast-item',
@@ -87,28 +87,6 @@ import {
             </div>
           </div>
         }
-        <div class="flex flex-wrap justify-end gap-1 px-0.5">
-          <button
-            africanies-button
-            type="button"
-            variant="ghost"
-            size="sm"
-            class="!min-h-0 !px-2 !py-1 !text-caption"
-            (click)="collapse.emit()"
-          >
-            Collapse
-          </button>
-          <button
-            africanies-button
-            type="button"
-            variant="ghost"
-            size="sm"
-            class="!min-h-0 !px-2 !py-1 !text-caption"
-            (click)="dismissAll.emit()"
-          >
-            Close all
-          </button>
-        </div>
       } @else {
         <div
           [class]="shellClass()"
@@ -167,30 +145,6 @@ import {
                     <africanies-icon name="close" [size]="14" />
                   </button>
                 </div>
-                @if (item().count > 1) {
-                  <div class="mt-2 flex flex-wrap gap-1">
-                    <button
-                      africanies-button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      class="!min-h-0 !px-2 !py-1 !text-caption"
-                      (click)="expand.emit()"
-                    >
-                      Expand
-                    </button>
-                    <button
-                      africanies-button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      class="!min-h-0 !px-2 !py-1 !text-caption"
-                      (click)="dismissAll.emit()"
-                    >
-                      Close all
-                    </button>
-                  </div>
-                }
               </div>
             </div>
             @if (item().durationMs) {
@@ -243,7 +197,7 @@ import {
   `,
 })
 /**
- * Single toast card — dense, token-based, with optional countdown rail. Stacked identical toasts can expand; close peels the outermost copy.
+ * Single toast card — dense, token-based, with optional countdown rail. Stacked identical toasts show a count; host Expand/Collapse all and Close all manage the stack; × peels one copy.
  */
 export class ToastItemComponent {
   /** Stack entry to render. */
@@ -251,12 +205,6 @@ export class ToastItemComponent {
 
   /** Peel one copy (outermost) from the stack. */
   readonly dismissOne = output<void>();
-  /** Remove the whole stack. */
-  readonly dismissAll = output<void>();
-  /** Show every stacked copy. */
-  readonly expand = output<void>();
-  /** Fold expanded copies back into one card. */
-  readonly collapse = output<void>();
   /** Hover / focus — pause timer. */
   readonly paused = output<void>();
   /** Leave — resume timer. */
