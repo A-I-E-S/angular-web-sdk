@@ -2,6 +2,8 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -9,6 +11,7 @@ import {
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 
 /**
  * Blocking empty state when a fetch succeeded but produced no rows / value.
@@ -36,7 +39,9 @@ import { ButtonComponent } from '../button/button.component';
       role="status"
     >
       <africanies-icon name="inbox" [size]="32" class="text-neutral-400" />
-      <p class="m-0 text-body text-neutral-600 dark:text-neutral-400 max-w-md">{{ message() }}</p>
+      <p class="m-0 text-body text-neutral-600 dark:text-neutral-400 max-w-md">{{
+        resolvedMessage()
+      }}</p>
       <button
         africanies-button
         type="button"
@@ -49,7 +54,7 @@ import { ButtonComponent } from '../button/button.component';
           [size]="16"
           [class]="refreshing() ? 'animate-spin' : ''"
         />
-        Retry
+        {{ retryLabel() }}
       </button>
     </div>
   `,
@@ -58,10 +63,12 @@ import { ButtonComponent } from '../button/button.component';
  * Blocking empty state when a fetch succeeded but produced no rows / value.
  */
 export class EmptyStateComponent {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
   /**
    * Empty-copy. Defaults to a generic phrase; override for filter-specific help.
    */
-  readonly message = input('No results found.');
+  readonly message = input<string | undefined>(undefined);
 
   /**
    * Background refetch in flight — spins the refresh icon and disables Retry.
@@ -75,4 +82,14 @@ export class EmptyStateComponent {
    * "static empty illustration" mode.
    */
   readonly retry = output<void>();
+
+  protected readonly resolvedMessage = computed(
+    () =>
+      this.message() ??
+      this.i18n.t('africaniesUi.feedback.empty', 'No results found.'),
+  );
+
+  protected readonly retryLabel = computed(() =>
+    this.i18n.t('africaniesUi.feedback.retry', 'Retry'),
+  );
 }

@@ -18,6 +18,7 @@ import { ModeColorService } from '@africanies/africanies-theme';
 
 import type { AfricaniesMenuItem } from '../action-menu/menu-item';
 import { AFRICANIES_BRAND_LOGO_MINI_URL } from '../brand';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import type { AfricaniesNavItem } from '../navigation/nav-item';
 import type { AfricaniesSideNavItem } from '../navigation/side-nav';
 import type { AfricaniesNotification } from '../notifications';
@@ -91,11 +92,30 @@ export type AppShellLayoutPreview = 'mobile' | 'tablet' | 'desktop';
 export class AppShellComponent {
   protected readonly modeColor = inject(ModeColorService);
   protected readonly logoMiniUrl = inject(AFRICANIES_BRAND_LOGO_MINI_URL);
+  private readonly i18n = inject(AfricaniesUiI18n);
 
   private readonly router = inject(Router);
   private readonly customHeader = contentChild(AppShellHeaderSlotDirective);
 
   protected readonly mobileNavOpen = signal(false);
+
+  protected readonly closeNavLabel = computed(() =>
+    this.i18n.t('africaniesUi.shell.closeNavigation', 'Close navigation'),
+  );
+  protected readonly openNavLabel = computed(() =>
+    this.i18n.t('africaniesUi.shell.openNavigation', 'Open navigation'),
+  );
+  protected readonly brandAlt = computed(() =>
+    this.i18n.t(
+      'africaniesUi.shell.brandAlt',
+      'African Import Export Solutions',
+    ),
+  );
+  protected readonly resolvedNotificationsTitle = computed(
+    () =>
+      this.notificationsTitle() ??
+      this.i18n.t('africaniesUi.shell.notifications', 'Notifications'),
+  );
 
   /**
    * Max width of the content column. Defaults to `5xl` (same as the playground).
@@ -160,7 +180,7 @@ export class AppShellComponent {
   readonly notifications = input<AfricaniesNotification[]>([]);
 
   /** Built-in notification drawer title. */
-  readonly notificationsTitle = input('Notifications');
+  readonly notificationsTitle = input<string | undefined>(undefined);
 
   /** Built-in header clock visibility. */
   readonly showClock = input(true, { transform: booleanAttribute });

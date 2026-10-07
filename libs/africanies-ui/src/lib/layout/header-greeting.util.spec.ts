@@ -39,6 +39,7 @@ describe('pickHeaderGreeting', () => {
     const greeting = pickHeaderGreeting('Busola Omosipe', atHour(8));
     expect(greeting?.name).toBe('Busola');
     expect(greeting?.kicker).toBeTruthy();
+    expect(greeting?.kickerKey).toMatch(/^africaniesUi\.header\.kickers\./);
   });
 
   it('picks from the period pool', () => {

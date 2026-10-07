@@ -17,6 +17,7 @@ import {
 
 import { ModeColorService } from '@africanies/africanies-theme';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { StepDefDirective } from './step-def.directive';
 import { StepDefinition } from './step-definition';
 
@@ -68,7 +69,7 @@ function prefersReducedMotion(): boolean {
         <p
           class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
         >
-          Step {{ activeIndex() + 1 }} of {{ steps().length }}
+          {{ stepOfLabel() }}
           <span
             class="normal-case tracking-normal text-neutral-400 dark:text-neutral-500"
           >
@@ -141,6 +142,7 @@ function prefersReducedMotion(): boolean {
  */
 export class StepperComponent {
   protected readonly modeColor = inject(ModeColorService);
+  private readonly i18n = inject(AfricaniesUiI18n);
 
   readonly steps = input.required<StepDefinition[]>();
   readonly activeIndex = input.required<number>();
@@ -151,6 +153,17 @@ export class StepperComponent {
   private readonly stepDefs = contentChildren(StepDefDirective);
   private readonly stepPane = viewChild<ElementRef<HTMLElement>>('stepPane');
   private readonly animatedIndex = signal<number | null>(null);
+
+  protected readonly stepOfLabel = computed(() =>
+    this.i18n.tParams(
+      'africaniesUi.stepper.stepOf',
+      'Step {{current}} of {{total}}',
+      {
+        current: this.activeIndex() + 1,
+        total: this.steps().length,
+      },
+    ),
+  );
 
   private readonly stepTemplateMap = computed(() => {
     const map = new Map<string, TemplateRef<unknown>>();

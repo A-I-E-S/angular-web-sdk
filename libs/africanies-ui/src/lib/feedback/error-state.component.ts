@@ -2,6 +2,8 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  inject,
   input,
   output,
 } from '@angular/core';
@@ -9,6 +11,7 @@ import {
 import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 
 /**
  * Blocking error state for failed async fetches (not field validation).
@@ -49,7 +52,7 @@ import { ButtonComponent } from '../button/button.component';
           [size]="16"
           [class]="refreshing() ? 'animate-spin' : ''"
         />
-        Retry
+        {{ retryLabel() }}
       </button>
     </div>
   `,
@@ -58,6 +61,8 @@ import { ButtonComponent } from '../button/button.component';
  * Blocking error state for failed async fetches (not field validation).
  */
 export class ErrorStateComponent {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
   /**
    * Human-readable failure reason. Required so the alert is never an empty
    * red box without explanation.
@@ -68,6 +73,10 @@ export class ErrorStateComponent {
    * Background refetch in flight — spins the refresh icon and disables Retry.
    */
   readonly refreshing = input(false, { transform: booleanAttribute });
+
+  protected readonly retryLabel = computed(() =>
+    this.i18n.t('africaniesUi.feedback.retry', 'Retry'),
+  );
 
   /**
    * Emitted when the user activates Retry.

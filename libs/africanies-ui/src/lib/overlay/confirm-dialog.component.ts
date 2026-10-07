@@ -19,6 +19,8 @@ import {
 
 import { AfricaniesIconComponent, type IconName } from '@africanies/africanies-icons';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
+
 import { ButtonComponent } from '../button/button.component';
 import { AfricaniesOverlayRef } from './africanies-overlay-ref';
 import type { ConfirmOptions, ConfirmWork } from './confirm-options';
@@ -119,6 +121,8 @@ import { OVERLAY_DATA } from './overlay-data.token';
  * Built-in confirm dialog hosted by {@link ConfirmService} / {@link ModalService}.
  */
 export class ConfirmDialogComponent {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
   /** Stable ids so aria-labelledby / aria-describedby stay unique per instance. */
   protected readonly titleId = `africanies-confirm-title-${cryptoRandom()}`;
   protected readonly messageId = `africanies-confirm-message-${cryptoRandom()}`;
@@ -134,16 +138,24 @@ export class ConfirmDialogComponent {
   protected readonly loading = signal(false);
 
   /** Resolved heading with a sensible default when callers omit `title`. */
-  protected readonly title = computed(() => this.options.title ?? 'Confirm');
+  protected readonly title = computed(
+    () =>
+      this.options.title ??
+      this.i18n.t('africaniesUi.confirm.title', 'Confirm'),
+  );
 
   /** Resolved confirm CTA label. */
   protected readonly confirmLabel = computed(
-    () => this.options.confirmLabel ?? 'Confirm',
+    () =>
+      this.options.confirmLabel ??
+      this.i18n.t('africaniesUi.confirm.confirm', 'Confirm'),
   );
 
   /** Resolved cancel CTA label. */
   protected readonly cancelLabel = computed(
-    () => this.options.cancelLabel ?? 'Cancel',
+    () =>
+      this.options.cancelLabel ??
+      this.i18n.t('africaniesUi.confirm.cancel', 'Cancel'),
   );
 
   /** When true, cancel is primary and listed after confirm (safe choice last). */

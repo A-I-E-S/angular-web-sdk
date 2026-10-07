@@ -2,6 +2,11 @@
 export interface HeaderGreeting {
   /** Time-of-day or weather line, shown above the name. */
   kicker: string;
+  /**
+   * Transloco / {@link AfricaniesUiI18n} key for {@link kicker}
+   * (`africaniesUi.header.kickers.*`). Hosts translate with `kicker` as fallback.
+   */
+  kickerKey: string;
   /** Given name — the visual focus of the header. */
   name: string;
 }
@@ -37,143 +42,189 @@ export interface HeaderWeather {
   city?: string;
 }
 
-const PERIOD_KICKERS: Record<HeaderGreetingPeriod, readonly string[]> = {
-  'wee-hours': [
-    'Moonlit chat?',
-    'Still here?',
-    'Quiet hours.',
-    'Night-owl desk.',
-    "The city's asleep.",
-    'Burning the midnight oil?',
-    'Late-night glow.',
-    'Stars are out.',
-    'Hushed shift.',
-    'After midnight.',
-    'Just us and the dark.',
-    'Owl hours.',
-  ],
-  dawn: [
-    'First light.',
-    'Dawn patrol.',
-    'Before the rush.',
-    "The sky's waking up.",
-    'Early bird.',
-    'Sunrise shift.',
-    "Coffee's brewing.",
-    'Soft morning.',
-    'Ahead of the day.',
-    'Pale gold hour.',
-    'World still yawning.',
-    'Catch the quiet.',
-  ],
-  'early-morning': [
-    'Rise and shine.',
-    "Let's ease in.",
-    'Bright and early.',
-    'Warm-up lap.',
-    "Day's just starting.",
-    'Stretch and go.',
-    'Morning pages.',
-    'Good hour to begin.',
-    'Easy does it.',
-    'First coffee?',
-    'Laces tied.',
-    'Fresh notebook energy.',
-  ],
-  morning: [
-    'Morning momentum.',
-    'Ready to ship?',
-    "Let's make it count.",
-    'Onward.',
-    'Full steam.',
-    "Let's clear the decks.",
-    'Good hour for it.',
-    'Inbox awaits.',
-    "Let's get into it.",
-    'Lights are on.',
-    'Plotting the day?',
-    'Open the windows.',
-  ],
-  midday: [
-    'Midday check-in.',
-    "Sun's high.",
-    'Halfway there.',
-    'Peak hours.',
-    'Lunch-adjacent.',
-    'Keep the pace.',
-    'Quick reset?',
-    'Still rolling.',
-    'High noon.',
-    'Midday desk.',
-    'Second act.',
-    'Refill and resume.',
-  ],
-  afternoon: [
-    'Afternoon stretch.',
-    'Second wind?',
-    'Back at it.',
-    'Steady on.',
-    'Still plenty of day.',
-    'Carry it forward.',
-    'Afternoon light.',
-    'Keep going.',
-    'Golden grind.',
-    'Long-shadow hours.',
-    'Push the next tile.',
-    'Not done yet.',
-  ],
-  dusk: [
-    'Golden hour.',
-    'Evening glow.',
-    'Last daylight.',
-    'Wrapping the day?',
-    'Soft landing.',
-    'Dusk desk.',
-    'Sunset shift.',
-    'Almost there.',
-    "Light's going gold.",
-    'Close of play?',
-    'Sky on fire.',
-    'Blue hour soon.',
-  ],
-  evening: [
-    'Evening session.',
-    "Night's coming in.",
-    'After hours?',
-    'Evening quiet.',
-    'One more round?',
-    'Lights are low.',
-    'Evening desk.',
-    'Unwind or push?',
-    'Settling in.',
-    'Lamp-light hours.',
-    'City lights on.',
-    'Slow the tempo?',
-  ],
-  'late-night': [
-    'Moonlit chat?',
-    'Late shift.',
-    'Quiet tonight.',
-    'Still glowing?',
-    'Night desk.',
-    'Hushed hours.',
-    'Wrap it gently?',
-    'Starside.',
-    'Last lap?',
-    'Soft landing tonight.',
-    'The moon is clocked in.',
-    'Dim the noise.',
-  ],
-};
+interface HeaderKickerLine {
+  key: string;
+  en: string;
+}
 
-const WEATHER_KICKERS: Record<HeaderWeatherKind, readonly string[]> = {
-  clear: ['Clear skies.', "Sun's out.", 'Bright out there.', 'Blue overhead.'],
-  cloudy: ['Soft grey day.', 'Cloud cover.', 'Overcast calm.', 'Grey but going.'],
-  fog: ['Foggy out.', 'Misty hours.', 'Wrapped in fog.', 'Low and quiet.'],
-  drizzle: ['Light drizzle.', 'Soft rain.', 'Grey and gentle.', 'A little wet out.'],
-  rain: ['Rainy round?', 'Wet out there.', 'Cozy weather for it.', 'Rain on the glass.'],
-  snow: ['Snow in the air.', 'Flurries out.', 'Cold sparkle.', 'Winter at the window.'],
-  storm: ['Stormy out.', 'Wild skies.', 'Hold tight.', 'Thunder weather.'],
+const K = (slug: string, en: string): HeaderKickerLine => ({
+  key: `africaniesUi.header.kickers.${slug}`,
+  en,
+});
+
+const PERIOD_KICKERS: Record<HeaderGreetingPeriod, readonly HeaderKickerLine[]> =
+  {
+    'wee-hours': [
+      K('moonlitChat', 'Moonlit chat?'),
+      K('stillHere', 'Still here?'),
+      K('quietHours', 'Quiet hours.'),
+      K('nightOwlDesk', 'Night-owl desk.'),
+      K('cityAsleep', "The city's asleep."),
+      K('burningMidnightOil', 'Burning the midnight oil?'),
+      K('lateNightGlow', 'Late-night glow.'),
+      K('starsAreOut', 'Stars are out.'),
+      K('hushedShift', 'Hushed shift.'),
+      K('afterMidnight', 'After midnight.'),
+      K('justUsAndTheDark', 'Just us and the dark.'),
+      K('owlHours', 'Owl hours.'),
+    ],
+    dawn: [
+      K('firstLight', 'First light.'),
+      K('dawnPatrol', 'Dawn patrol.'),
+      K('beforeTheRush', 'Before the rush.'),
+      K('skyWakingUp', "The sky's waking up."),
+      K('earlyBird', 'Early bird.'),
+      K('sunriseShift', 'Sunrise shift.'),
+      K('coffeeBrewing', "Coffee's brewing."),
+      K('softMorning', 'Soft morning.'),
+      K('aheadOfTheDay', 'Ahead of the day.'),
+      K('paleGoldHour', 'Pale gold hour.'),
+      K('worldStillYawning', 'World still yawning.'),
+      K('catchTheQuiet', 'Catch the quiet.'),
+    ],
+    'early-morning': [
+      K('riseAndShine', 'Rise and shine.'),
+      K('letsEaseIn', "Let's ease in."),
+      K('brightAndEarly', 'Bright and early.'),
+      K('warmUpLap', 'Warm-up lap.'),
+      K('daysJustStarting', "Day's just starting."),
+      K('stretchAndGo', 'Stretch and go.'),
+      K('morningPages', 'Morning pages.'),
+      K('goodHourToBegin', 'Good hour to begin.'),
+      K('easyDoesIt', 'Easy does it.'),
+      K('firstCoffee', 'First coffee?'),
+      K('lacesTied', 'Laces tied.'),
+      K('freshNotebookEnergy', 'Fresh notebook energy.'),
+    ],
+    morning: [
+      K('morningMomentum', 'Morning momentum.'),
+      K('readyToShip', 'Ready to ship?'),
+      K('letsMakeItCount', "Let's make it count."),
+      K('onward', 'Onward.'),
+      K('fullSteam', 'Full steam.'),
+      K('letsClearTheDecks', "Let's clear the decks."),
+      K('goodHourForIt', 'Good hour for it.'),
+      K('inboxAwaits', 'Inbox awaits.'),
+      K('letsGetIntoIt', "Let's get into it."),
+      K('lightsAreOn', 'Lights are on.'),
+      K('plottingTheDay', 'Plotting the day?'),
+      K('openTheWindows', 'Open the windows.'),
+    ],
+    midday: [
+      K('middayCheckIn', 'Midday check-in.'),
+      K('sunsHigh', "Sun's high."),
+      K('halfwayThere', 'Halfway there.'),
+      K('peakHours', 'Peak hours.'),
+      K('lunchAdjacent', 'Lunch-adjacent.'),
+      K('keepThePace', 'Keep the pace.'),
+      K('quickReset', 'Quick reset?'),
+      K('stillRolling', 'Still rolling.'),
+      K('highNoon', 'High noon.'),
+      K('middayDesk', 'Midday desk.'),
+      K('secondAct', 'Second act.'),
+      K('refillAndResume', 'Refill and resume.'),
+    ],
+    afternoon: [
+      K('afternoonStretch', 'Afternoon stretch.'),
+      K('secondWind', 'Second wind?'),
+      K('backAtIt', 'Back at it.'),
+      K('steadyOn', 'Steady on.'),
+      K('stillPlentyOfDay', 'Still plenty of day.'),
+      K('carryItForward', 'Carry it forward.'),
+      K('afternoonLight', 'Afternoon light.'),
+      K('keepGoing', 'Keep going.'),
+      K('goldenGrind', 'Golden grind.'),
+      K('longShadowHours', 'Long-shadow hours.'),
+      K('pushTheNextTile', 'Push the next tile.'),
+      K('notDoneYet', 'Not done yet.'),
+    ],
+    dusk: [
+      K('goldenHour', 'Golden hour.'),
+      K('eveningGlow', 'Evening glow.'),
+      K('lastDaylight', 'Last daylight.'),
+      K('wrappingTheDay', 'Wrapping the day?'),
+      K('softLanding', 'Soft landing.'),
+      K('duskDesk', 'Dusk desk.'),
+      K('sunsetShift', 'Sunset shift.'),
+      K('almostThere', 'Almost there.'),
+      K('lightsGoingGold', "Light's going gold."),
+      K('closeOfPlay', 'Close of play?'),
+      K('skyOnFire', 'Sky on fire.'),
+      K('blueHourSoon', 'Blue hour soon.'),
+    ],
+    evening: [
+      K('eveningSession', 'Evening session.'),
+      K('nightsComingIn', "Night's coming in."),
+      K('afterHours', 'After hours?'),
+      K('eveningQuiet', 'Evening quiet.'),
+      K('oneMoreRound', 'One more round?'),
+      K('lightsAreLow', 'Lights are low.'),
+      K('eveningDesk', 'Evening desk.'),
+      K('unwindOrPush', 'Unwind or push?'),
+      K('settlingIn', 'Settling in.'),
+      K('lampLightHours', 'Lamp-light hours.'),
+      K('cityLightsOn', 'City lights on.'),
+      K('slowTheTempo', 'Slow the tempo?'),
+    ],
+    'late-night': [
+      K('moonlitChat', 'Moonlit chat?'),
+      K('lateShift', 'Late shift.'),
+      K('quietTonight', 'Quiet tonight.'),
+      K('stillGlowing', 'Still glowing?'),
+      K('nightDesk', 'Night desk.'),
+      K('hushedHours', 'Hushed hours.'),
+      K('wrapItGently', 'Wrap it gently?'),
+      K('starside', 'Starside.'),
+      K('lastLap', 'Last lap?'),
+      K('softLandingTonight', 'Soft landing tonight.'),
+      K('moonIsClockedIn', 'The moon is clocked in.'),
+      K('dimTheNoise', 'Dim the noise.'),
+    ],
+  };
+
+const WEATHER_KICKERS: Record<HeaderWeatherKind, readonly HeaderKickerLine[]> = {
+  clear: [
+    K('clearSkies', 'Clear skies.'),
+    K('sunsOut', "Sun's out."),
+    K('brightOutThere', 'Bright out there.'),
+    K('blueOverhead', 'Blue overhead.'),
+  ],
+  cloudy: [
+    K('softGreyDay', 'Soft grey day.'),
+    K('cloudCover', 'Cloud cover.'),
+    K('overcastCalm', 'Overcast calm.'),
+    K('greyButGoing', 'Grey but going.'),
+  ],
+  fog: [
+    K('foggyOut', 'Foggy out.'),
+    K('mistyHours', 'Misty hours.'),
+    K('wrappedInFog', 'Wrapped in fog.'),
+    K('lowAndQuiet', 'Low and quiet.'),
+  ],
+  drizzle: [
+    K('lightDrizzle', 'Light drizzle.'),
+    K('softRain', 'Soft rain.'),
+    K('greyAndGentle', 'Grey and gentle.'),
+    K('aLittleWetOut', 'A little wet out.'),
+  ],
+  rain: [
+    K('rainyRound', 'Rainy round?'),
+    K('wetOutThere', 'Wet out there.'),
+    K('cozyWeatherForIt', 'Cozy weather for it.'),
+    K('rainOnTheGlass', 'Rain on the glass.'),
+  ],
+  snow: [
+    K('snowInTheAir', 'Snow in the air.'),
+    K('flurriesOut', 'Flurries out.'),
+    K('coldSparkle', 'Cold sparkle.'),
+    K('winterAtTheWindow', 'Winter at the window.'),
+  ],
+  storm: [
+    K('stormyOut', 'Stormy out.'),
+    K('wildSkies', 'Wild skies.'),
+    K('holdTight', 'Hold tight.'),
+    K('thunderWeather', 'Thunder weather.'),
+  ],
 };
 
 const NOTABLE_WEATHER: ReadonlySet<HeaderWeatherKind> = new Set([
@@ -238,12 +289,19 @@ export function headerGreetingPeriod(now: Date): HeaderGreetingPeriod {
  *
  * @param period - Time-of-day window.
  * @param weather - Forecast snapshot, when available.
- * @returns Lines the header may show for this moment.
+ * @returns Lines the header may show for this moment (English fallbacks).
  */
 export function headerGreetingPool(
   period: HeaderGreetingPeriod,
   weather: HeaderWeather | null = null,
 ): readonly string[] {
+  return headerGreetingPoolLines(period, weather).map((line) => line.en);
+}
+
+function headerGreetingPoolLines(
+  period: HeaderGreetingPeriod,
+  weather: HeaderWeather | null = null,
+): readonly HeaderKickerLine[] {
   const periodLines = PERIOD_KICKERS[period];
   if (!weather) {
     return periodLines;
@@ -267,7 +325,8 @@ export function headerGreetingPool(
  * Kickers are drawn from a list for the current slice of the day (dawn, dusk,
  * moonlit hours, and so on). When weather is passed in, a few forecast lines
  * join the pool. The name is always returned separately so the header can set
- * it in larger type.
+ * it in larger type. {@link HeaderGreeting.kickerKey} is for host i18n;
+ * {@link HeaderGreeting.kicker} remains the English fallback.
  *
  * @param name - Given name or full display name.
  * @param now - Clock used for the period and the daily pick.
@@ -285,23 +344,47 @@ export function pickHeaderGreeting(
   }
 
   const period = headerGreetingPeriod(now);
-  const pool = headerGreetingPool(period, weather);
+  const pool = headerGreetingPoolLines(period, weather);
   const weatherKey = weather?.kind ?? 'none';
   const key = `${first.toLowerCase()}|${now.getFullYear()}-${now.getMonth()}-${now.getDate()}|${period}|${weatherKey}`;
-  const kicker = pool[hashString(key) % pool.length] ?? pool[0];
+  const line = pool[hashString(key) % pool.length] ?? pool[0];
 
-  return { kicker, name: first };
+  return { kicker: line.en, kickerKey: line.key, name: first };
 }
 
-function temperatureKickers(temperatureC: number | undefined): readonly string[] {
+/** Flat English dictionary for SDK / admin `africaniesUi.header.kickers`. */
+export function headerKickerDictionary(): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const lines of Object.values(PERIOD_KICKERS)) {
+    for (const line of lines) {
+      out[line.key.replace('africaniesUi.header.kickers.', '')] = line.en;
+    }
+  }
+  for (const lines of Object.values(WEATHER_KICKERS)) {
+    for (const line of lines) {
+      out[line.key.replace('africaniesUi.header.kickers.', '')] = line.en;
+    }
+  }
+  for (const line of temperatureKickers(40)) {
+    out[line.key.replace('africaniesUi.header.kickers.', '')] = line.en;
+  }
+  for (const line of temperatureKickers(0)) {
+    out[line.key.replace('africaniesUi.header.kickers.', '')] = line.en;
+  }
+  return out;
+}
+
+function temperatureKickers(
+  temperatureC: number | undefined,
+): readonly HeaderKickerLine[] {
   if (temperatureC === undefined || !Number.isFinite(temperatureC)) {
     return [];
   }
   if (temperatureC >= 32) {
-    return ["Heat's on.", 'Warm one.'];
+    return [K('heatsOn', "Heat's on."), K('warmOne', 'Warm one.')];
   }
   if (temperatureC <= 12) {
-    return ['Chilly out.', 'Crisp air.'];
+    return [K('chillyOut', 'Chilly out.'), K('crispAir', 'Crisp air.')];
   }
   return [];
 }

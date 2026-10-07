@@ -5,6 +5,13 @@
  * table/pagination, stepper, and the button primitive.
  */
 
+// i18n (optional host translate for SDK chrome; see assets/i18n)
+export {
+  AFRICANIES_UI_LANG,
+  AFRICANIES_UI_TRANSLATE,
+  AfricaniesUiI18n,
+} from './lib/i18n';
+
 // Button
 export {
   ButtonComponent,
@@ -261,6 +268,7 @@ export {
   type HeaderWeatherConfig,
   type HeaderWeatherKind,
   HEADER_WEATHER_CONFIG,
+  headerKickerDictionary,
   PageHeaderComponent,
   pickHeaderGreeting,
   provideHeaderWeather,
@@ -286,6 +294,13 @@ export {
   AvatarMenuComponent,
   type AvatarSize,
 } from './lib/avatar';
+
+// Language switcher (flagcdn / custom flags)
+export {
+  flagCdnUrl,
+  LanguageSwitcherComponent,
+  type LanguageSwitcherOption,
+} from './lib/language-switcher';
 
 // Image (loading / fallback frame)
 export {

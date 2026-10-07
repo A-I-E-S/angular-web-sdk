@@ -14,6 +14,7 @@ import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import type { ShippingMode } from '@africanies/africanies-models';
 
 import { ChipComponent, type ChipVariant } from '../../chip/chip.component';
+import { AfricaniesUiI18n } from '../../i18n/africanies-ui-i18n';
 
 const PANEL_OPEN_STORAGE_KEY = 'africanies-shipping-mode-panel-open';
 
@@ -82,14 +83,14 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
       <div
         class="grid grid-cols-1 gap-1.5"
         role="radiogroup"
-        aria-label="Shipping mode"
+        [attr.aria-label]="shippingModeTitle()"
       >
         <button
           type="button"
           role="radio"
           [attr.aria-checked]="mode() === 'stn'"
-          aria-label="Shipping to Nigeria"
-          title="Shipping to Nigeria"
+          [attr.aria-label]="toNigeriaLabel()"
+          [attr.title]="toNigeriaLabel()"
           [class]="cardClass('stn')"
           (click)="select('stn')"
         >
@@ -106,8 +107,8 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
           type="button"
           role="radio"
           [attr.aria-checked]="mode() === 'sfn'"
-          aria-label="Shipping from Nigeria"
-          title="Shipping from Nigeria"
+          [attr.aria-label]="fromNigeriaLabel()"
+          [attr.title]="fromNigeriaLabel()"
           [class]="cardClass('sfn')"
           (click)="select('sfn')"
         >
@@ -126,7 +127,7 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
         <p
           class="m-0 shrink-0 px-1 text-caption font-semibold uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
         >
-          Shipping mode
+          {{ shippingModeTitle() }}
         </p>
         <!-- STN / SFN chip only when the tiles are collapsed — open panel already shows both modes. -->
         @if (!panelOpen()) {
@@ -139,7 +140,7 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
           type="button"
           class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-background-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
           [attr.aria-label]="
-            panelOpen() ? 'Hide shipping modes' : 'Show shipping modes'
+            panelOpen() ? hideModesLabel() : showModesLabel()
           "
           [attr.aria-expanded]="panelOpen()"
           (click)="togglePanel()"
@@ -161,13 +162,13 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
           <div
             class="grid grid-cols-2 gap-1.5"
             role="radiogroup"
-            aria-label="Shipping mode"
+            [attr.aria-label]="shippingModeTitle()"
           >
             <button
               type="button"
               role="radio"
               [attr.aria-checked]="mode() === 'stn'"
-              aria-label="Shipping to Nigeria"
+              [attr.aria-label]="toNigeriaLabel()"
               [class]="cardClass('stn')"
               (click)="select('stn')"
             >
@@ -180,15 +181,15 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
                 <path [attr.d]="glyphPath()" fill="currentColor" />
               </svg>
               <span class="flex flex-col leading-tight">
-                <span>Shipping</span>
-                <span>to Nigeria</span>
+                <span>{{ toLine1() }}</span>
+                <span>{{ toLine2() }}</span>
               </span>
             </button>
             <button
               type="button"
               role="radio"
               [attr.aria-checked]="mode() === 'sfn'"
-              aria-label="Shipping from Nigeria"
+              [attr.aria-label]="fromNigeriaLabel()"
               [class]="cardClass('sfn')"
               (click)="select('sfn')"
             >
@@ -201,8 +202,8 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
                 <path [attr.d]="glyphPath()" fill="currentColor" />
               </svg>
               <span class="flex flex-col leading-tight">
-                <span>Shipping</span>
-                <span>from Nigeria</span>
+                <span>{{ fromLine1() }}</span>
+                <span>{{ fromLine2() }}</span>
               </span>
             </button>
           </div>
@@ -216,6 +217,41 @@ const SHIPPING_MODE_GLYPH = `M88.42,68.75a48.8,48.8,0,0,1-4.74,11.1h9.89a7.67,7.
  */
 export class ShippingModeSwitchComponent {
   private readonly shipping = inject(ShippingModeService);
+  private readonly i18n = inject(AfricaniesUiI18n);
+
+  protected readonly shippingModeTitle = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.title', 'Shipping mode'),
+  );
+  protected readonly toNigeriaLabel = computed(() =>
+    this.i18n.t(
+      'africaniesUi.shippingMode.toNigeria',
+      'Shipping to Nigeria',
+    ),
+  );
+  protected readonly fromNigeriaLabel = computed(() =>
+    this.i18n.t(
+      'africaniesUi.shippingMode.fromNigeria',
+      'Shipping from Nigeria',
+    ),
+  );
+  protected readonly toLine1 = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.toLine1', 'Shipping'),
+  );
+  protected readonly toLine2 = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.toLine2', 'to Nigeria'),
+  );
+  protected readonly fromLine1 = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.fromLine1', 'Shipping'),
+  );
+  protected readonly fromLine2 = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.fromLine2', 'from Nigeria'),
+  );
+  protected readonly hideModesLabel = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.hide', 'Hide shipping modes'),
+  );
+  protected readonly showModesLabel = computed(() =>
+    this.i18n.t('africaniesUi.shippingMode.show', 'Show shipping modes'),
+  );
 
   /**
    * Path data for the shared shipping-mode glyph.

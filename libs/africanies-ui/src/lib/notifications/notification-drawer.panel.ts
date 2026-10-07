@@ -23,6 +23,7 @@ import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 import type { PaginationMetaModel } from '@africanies/africanies-models';
 
 import { ButtonComponent } from '../button/button.component';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { AfricaniesOverlayRef } from '../overlay/africanies-overlay-ref';
 import { OVERLAY_DATA } from '../overlay/overlay-data.token';
 import type {
@@ -60,14 +61,14 @@ const MARK_ALL_CONFIRM_MS = 4000;
           <p
             class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
           >
-            Inbox
+            {{ inboxLabel() }}
           </p>
           <h2 class="m-0 text-heading-3 font-bold text-ink dark:text-white">
             {{ title() }}
           </h2>
           @if (hasUnread()) {
             <p class="m-0 text-caption text-neutral-600 dark:text-neutral-400">
-              {{ unreadCount() }} unread
+              {{ unreadLabel() }}
             </p>
           }
         </div>
@@ -91,7 +92,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
             type="button"
             variant="ghost"
             size="sm"
-            aria-label="Close notifications"
+            [attr.aria-label]="closeLabel()"
             (click)="ref.close()"
           >
             <africanies-icon name="close" [size]="18" />
@@ -115,7 +116,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
               class="animate-spin text-neutral-600 dark:text-neutral-400"
             />
             <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-              Loading notifications…
+              {{ loadingLabel() }}
             </p>
           </div>
         } @else if (loadError()) {
@@ -131,7 +132,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                 size="sm"
                 (click)="retryInitialLoad()"
               >
-                Try again
+                {{ tryAgainLabel() }}
               </button>
             }
           </div>
@@ -145,7 +146,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
               class="text-neutral-400 dark:text-neutral-500"
             />
             <p class="m-0 max-w-xs text-body leading-relaxed text-neutral-600 dark:text-neutral-300">
-              You're all caught up.
+              {{ emptyLabel() }}
             </p>
           </div>
         } @else {
@@ -211,7 +212,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                             [attr.rel]="item.externalLink ? 'noopener noreferrer' : null"
                             (click)="onViewClick($event, item)"
                           >
-                            {{ markingId() === item.id ? 'Opening…' : 'View' }}
+                            {{ viewLabel(item) }}
                             @if (item.externalLink) {
                               <africanies-icon name="external-link" [size]="12" />
                             }
@@ -223,7 +224,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                           [disabled]="markingId() === item.id"
                           (click)="markRead(item)"
                         >
-                          {{ markingId() === item.id ? 'Marking…' : 'Mark read' }}
+                          {{ markReadLabel(item) }}
                         </button>
                       </div>
                     } @else if (item.link) {
@@ -237,7 +238,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                           [attr.rel]="item.externalLink ? 'noopener noreferrer' : null"
                           (click)="onViewClick($event, item)"
                         >
-                          {{ markingId() === item.id ? 'Opening…' : 'View' }}
+                          {{ viewLabel(item) }}
                           @if (item.externalLink) {
                             <africanies-icon name="external-link" [size]="12" />
                           }
@@ -262,7 +263,7 @@ const MARK_ALL_CONFIRM_MS = 4000;
                   aria-live="polite"
                 >
                   <africanies-icon name="spinner" [size]="14" class="animate-spin" />
-                  Loading more…
+                  {{ loadingMoreLabel() }}
                 </span>
               }
             </div>
@@ -282,6 +283,7 @@ export class NotificationDrawerPanel {
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
   private readonly shipping = inject(ShippingModeService);
+  private readonly i18n = inject(AfricaniesUiI18n);
 
   private readonly scrollHost = viewChild<ElementRef<HTMLElement>>('scrollHost');
   private readonly loadSentinel =
@@ -298,7 +300,11 @@ export class NotificationDrawerPanel {
     return `${base} text-export-strong decoration-export-strong/35 hover:decoration-export-strong dark:text-export-light dark:decoration-export-light/40 dark:hover:decoration-export-light`;
   });
 
-  protected readonly title = computed(() => this.data.title ?? 'Notifications');
+  protected readonly title = computed(
+    () =>
+      this.data.title ??
+      this.i18n.t('africaniesUi.notifications.title', 'Notifications'),
+  );
   private readonly seededItems = this.data.notifications ?? [];
   protected readonly items = signal<AfricaniesNotification[]>(this.seededItems);
   protected readonly markingId = signal<string | null>(null);
@@ -319,20 +325,76 @@ export class NotificationDrawerPanel {
 
   protected readonly markAllReadLabel = computed(() => {
     if (this.markingAll()) {
-      return 'Marking…';
+      return this.i18n.t('africaniesUi.notifications.marking', 'Marking…');
     }
     if (this.confirmingMarkAll()) {
-      return 'Click again to confirm';
+      return this.i18n.t(
+        'africaniesUi.notifications.confirmMarkAll',
+        'Click again to confirm',
+      );
     }
-    return 'Mark all as read';
+    return this.i18n.t(
+      'africaniesUi.notifications.markAllRead',
+      'Mark all as read',
+    );
   });
 
   protected readonly markAllReadAria = computed(() => {
     if (this.confirmingMarkAll()) {
-      return 'Click again to confirm mark all as read';
+      return this.i18n.t(
+        'africaniesUi.notifications.confirmMarkAllAria',
+        'Click again to confirm mark all as read',
+      );
     }
-    return 'Mark all as read';
+    return this.i18n.t(
+      'africaniesUi.notifications.markAllRead',
+      'Mark all as read',
+    );
   });
+
+  protected readonly inboxLabel = computed(() =>
+    this.i18n.t('africaniesUi.notifications.inbox', 'Inbox'),
+  );
+  protected readonly unreadLabel = computed(() =>
+    this.i18n.tParams(
+      'africaniesUi.notifications.unread',
+      '{{count}} unread',
+      { count: this.unreadCount() },
+    ),
+  );
+  protected readonly closeLabel = computed(() =>
+    this.i18n.t('africaniesUi.notifications.close', 'Close notifications'),
+  );
+  protected readonly loadingLabel = computed(() =>
+    this.i18n.t(
+      'africaniesUi.notifications.loading',
+      'Loading notifications…',
+    ),
+  );
+  protected readonly loadingMoreLabel = computed(() =>
+    this.i18n.t('africaniesUi.notifications.loadingMore', 'Loading more…'),
+  );
+  protected readonly tryAgainLabel = computed(() =>
+    this.i18n.t('africaniesUi.notifications.tryAgain', 'Try again'),
+  );
+  protected readonly emptyLabel = computed(() =>
+    this.i18n.t(
+      'africaniesUi.notifications.empty',
+      "You're all caught up.",
+    ),
+  );
+
+  protected viewLabel(item: AfricaniesNotification): string {
+    return this.markingId() === item.id
+      ? this.i18n.t('africaniesUi.notifications.opening', 'Opening…')
+      : this.i18n.t('africaniesUi.notifications.view', 'View');
+  }
+
+  protected markReadLabel(item: AfricaniesNotification): string {
+    return this.markingId() === item.id
+      ? this.i18n.t('africaniesUi.notifications.marking', 'Marking…')
+      : this.i18n.t('africaniesUi.notifications.markRead', 'Mark read');
+  }
 
   private markAllConfirmTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -626,10 +688,10 @@ export class NotificationDrawerPanel {
       },
       () => {
         if (mode === 'replace') {
-          this.loadError.set('Could not load notifications. Try again.');
+          this.loadError.set(this.i18n.t('africaniesUi.notifications.loadError', 'Could not load notifications. Try again.'));
           this.loadingInitial.set(false);
         } else if (mode === 'refresh' && this.items().length === 0) {
-          this.loadError.set('Could not load notifications. Try again.');
+          this.loadError.set(this.i18n.t('africaniesUi.notifications.loadError', 'Could not load notifications. Try again.'));
         }
         this.loadingMore.set(false);
       },

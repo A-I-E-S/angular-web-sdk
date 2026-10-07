@@ -25,6 +25,7 @@ import type {
   ShippingMode,
 } from '@africanies/africanies-models';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { ButtonComponent } from '../button/button.component';
 import { EmptyStateComponent } from '../feedback/empty-state.component';
 import { ErrorIndicatorComponent } from '../feedback/error-indicator.component';
@@ -224,9 +225,9 @@ import { TableColumn, TableSortChange } from './table-column';
           @if (showShippingMode()) {
             <africanies-segment
               class="min-w-0 self-start"
-              [items]="shippingModeItems"
+              [items]="shippingModeItems()"
               [activeId]="shippingModeActiveId()"
-              ariaLabel="Shipping mode"
+              [ariaLabel]="shippingModeAriaLabel()"
               (activeIdChange)="onShippingModeChange($event)"
             />
           }
@@ -237,7 +238,7 @@ import { TableColumn, TableSortChange } from './table-column';
                   <africanies-refresh
                     [loading]="refreshing()"
                     [disabled]="loading()"
-                    [label]="refreshLabel()"
+                    [label]="resolvedRefreshLabel()"
                     [appType]="shipping.mode()"
                     (refresh)="refreshClick.emit()"
                   />
@@ -251,10 +252,10 @@ import { TableColumn, TableSortChange } from './table-column';
                     variant="ghost"
                     size="sm"
                     class="text-neutral-600 dark:text-neutral-400"
-                    aria-label="Clear filters"
+                    [attr.aria-label]="clearFiltersAriaLabel()"
                     (click)="filterClearClick.emit()"
                   >
-                    Clear
+                    {{ clearLabel() }}
                   </button>
                 }
                 @if (showFilter()) {
@@ -268,7 +269,7 @@ import { TableColumn, TableSortChange } from './table-column';
                       (click)="filterClick.emit()"
                     >
                       <africanies-icon name="filter" [size]="16" />
-                      {{ filterLabel() }}
+                      {{ resolvedFilterLabel() }}
                       @if (filterCount() > 0) {
                         <span
                           class="inline-flex min-w-5 items-center justify-center rounded-full bg-ink px-1.5 py-0.5 text-caption font-semibold tabular-nums text-white dark:bg-white dark:text-ink"
@@ -298,11 +299,11 @@ import { TableColumn, TableSortChange } from './table-column';
                     type="button"
                     variant="flat"
                     size="sm"
-                    [attr.aria-label]="exportLabel()"
+                    [attr.aria-label]="resolvedExportLabel()"
                     (click)="exportClick.emit()"
                   >
                     <africanies-icon name="download" [size]="16" />
-                    {{ exportLabel() }}
+                    {{ resolvedExportLabel() }}
                   </button>
                 }
               </div>
@@ -315,7 +316,7 @@ import { TableColumn, TableSortChange } from './table-column';
         <africanies-error-indicator
           class="w-full"
           [error]="staleMessage"
-          retryText="Refresh"
+          [retryText]="resolvedRefreshLabel()"
           [refreshing]="refreshing()"
           (retry)="refreshClick.emit()"
         />
@@ -345,7 +346,7 @@ import { TableColumn, TableSortChange } from './table-column';
                     <button
                       type="button"
                       class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-                      aria-label="Collapse all"
+                      [attr.aria-label]="collapseAllLabel()"
                       (click)="collapseAllRows()"
                     >
                       <africanies-icon name="minus" [size]="16" />
@@ -354,7 +355,7 @@ import { TableColumn, TableSortChange } from './table-column';
                     <button
                       type="button"
                       class="inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-surface hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:opacity-40 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white"
-                      aria-label="Expand all"
+                      [attr.aria-label]="expandAllLabel()"
                       [disabled]="rowList().length === 0"
                       (click)="expandAllRows()"
                     >
@@ -419,7 +420,7 @@ import { TableColumn, TableSortChange } from './table-column';
                 <tr>
                   <td class="px-[1.125rem] py-6" [attr.colspan]="colSpan()">
                     <africanies-empty-state
-                      [message]="emptyMessage()"
+                      [message]="resolvedEmptyMessage()"
                       [refreshing]="refreshing()"
                       (retry)="refreshClick.emit()"
                     />
@@ -566,12 +567,65 @@ import { TableColumn, TableSortChange } from './table-column';
 export class TableComponent<T = unknown> {
   private readonly destroyRef = inject(DestroyRef);
   protected readonly shipping = inject(ShippingModeService);
+  private readonly i18n = inject(AfricaniesUiI18n);
 
   /** Local STN / SFN segment options for {@link showShippingMode}. */
-  protected readonly shippingModeItems: AfricaniesNavItem[] = [
-    { id: 'stn', label: 'Shipping to Nigeria' },
-    { id: 'sfn', label: 'Shipping from Nigeria' },
-  ];
+  protected readonly shippingModeItems = computed((): AfricaniesNavItem[] => [
+    {
+      id: 'stn',
+      label: this.i18n.t(
+        'africaniesUi.table.shippingToNigeria',
+        'Shipping to Nigeria',
+      ),
+    },
+    {
+      id: 'sfn',
+      label: this.i18n.t(
+        'africaniesUi.table.shippingFromNigeria',
+        'Shipping from Nigeria',
+      ),
+    },
+  ]);
+
+  protected readonly shippingModeAriaLabel = computed(() =>
+    this.i18n.t('africaniesUi.table.shippingMode', 'Shipping mode'),
+  );
+  protected readonly clearLabel = computed(() =>
+    this.i18n.t('africaniesUi.table.clear', 'Clear'),
+  );
+  protected readonly clearFiltersAriaLabel = computed(() =>
+    this.i18n.t('africaniesUi.table.clearFilters', 'Clear filters'),
+  );
+  protected readonly expandAllLabel = computed(() =>
+    this.i18n.t('africaniesUi.table.expandAll', 'Expand all'),
+  );
+  protected readonly collapseAllLabel = computed(() =>
+    this.i18n.t('africaniesUi.table.collapseAll', 'Collapse all'),
+  );
+  protected readonly resolvedRefreshLabel = computed(() => {
+    const label = this.refreshLabel();
+    return label === 'Refresh'
+      ? this.i18n.t('africaniesUi.table.refresh', 'Refresh')
+      : label;
+  });
+  protected readonly resolvedFilterLabel = computed(() => {
+    const label = this.filterLabel();
+    return label === 'Filters'
+      ? this.i18n.t('africaniesUi.table.filters', 'Filters')
+      : label;
+  });
+  protected readonly resolvedExportLabel = computed(() => {
+    const label = this.exportLabel();
+    return label === 'Export'
+      ? this.i18n.t('africaniesUi.table.export', 'Export')
+      : label;
+  });
+  protected readonly resolvedEmptyMessage = computed(() => {
+    const message = this.emptyMessage();
+    return message === 'No results found.'
+      ? this.i18n.t('africaniesUi.table.empty', 'No results found.')
+      : message;
+  });
 
   /**
    * Segment selection mirror of {@link ShippingModeService.mode}. Kept local
@@ -785,7 +839,9 @@ export class TableComponent<T = unknown> {
   );
 
   protected readonly errorMessage = computed(
-    () => this.error()?.trim() || 'Something went wrong.',
+    () =>
+      this.error()?.trim() ||
+      this.i18n.t('africaniesUi.table.error', 'Something went wrong.'),
   );
 
   protected readonly staleError = computed(() => {

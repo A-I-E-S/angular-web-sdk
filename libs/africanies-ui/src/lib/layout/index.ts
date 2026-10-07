@@ -19,6 +19,7 @@ export {
   headerGreetingFirstName,
   type HeaderGreetingPeriod,
   headerGreetingPeriod,
+  headerKickerDictionary,
   type HeaderWeather,
   type HeaderWeatherKind,
   pickHeaderGreeting,

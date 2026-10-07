@@ -19,6 +19,13 @@ export interface AfricaniesMenuItem {
   /** Optional leading icon from `@africanies/africanies-icons`. */
   icon?: IconName;
   /**
+   * Optional leading image URL (e.g. flagcdn). Takes precedence over
+   * {@link icon} when both are set.
+   */
+  imageUrl?: string;
+  /** Leading image crop; default rectangular flag aspect. */
+  imageShape?: 'rect' | 'circle';
+  /**
    * Optional Angular router link (`string` or commands array).
    * When set, the row is an `<a>` with a real `href` for open-in-new-tab.
    */

@@ -7,6 +7,7 @@ import {
 import { AvatarComponent, AvatarMenuComponent } from '../avatar';
 import { ButtonComponent } from '../button';
 import { CopyButtonComponent } from '../copy-button';
+import { LanguageSwitcherComponent } from '../language-switcher';
 
 const ACTIONS = [
   ButtonComponent,
@@ -15,10 +16,11 @@ const ACTIONS = [
   ActionMenuTriggerDirective,
   AvatarComponent,
   AvatarMenuComponent,
+  LanguageSwitcherComponent,
 ] as const;
 
 /**
- * Button, copy-to-clipboard control, overflow action menu, and avatar menu.
+ * Button, copy, overflow menu, avatar menu, and language switcher.
  *
  * @example
  * ```ts
@@ -33,6 +35,6 @@ const ACTIONS = [
   exports: [...ACTIONS],
 })
 /**
- * Button, copy-to-clipboard control, overflow action menu, and avatar menu.
+ * Button, copy, overflow menu, avatar menu, and language switcher.
  */
 export class AfricaniesActionsModule {}

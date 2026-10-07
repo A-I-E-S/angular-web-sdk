@@ -24,6 +24,7 @@ import {
   toFilterParams,
 } from '@africanies/africanies-models';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { ButtonComponent } from '../button/button.component';
 import { DatePickerComponent } from '../forms/date-picker/date-picker.component';
 import { SelectComponent } from '../forms/select/select.component';
@@ -77,7 +78,7 @@ import { FilterQueryService } from './filter-query.service';
           <p
             class="m-0 text-caption font-medium uppercase tracking-wide text-neutral-600 dark:text-neutral-400"
           >
-            Filters
+            {{ eyebrowLabel() }}
           </p>
           <h2 class="m-0 text-heading-3 text-ink dark:text-white">
             {{ title() }}
@@ -88,7 +89,7 @@ import { FilterQueryService } from './filter-query.service';
           type="button"
           variant="ghost"
           size="sm"
-          aria-label="Close"
+          [attr.aria-label]="closeLabel()"
           (click)="ref.close()"
         >
           <africanies-icon name="close" [size]="18" />
@@ -111,7 +112,7 @@ import { FilterQueryService } from './filter-query.service';
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between gap-2">
               <p class="m-0 text-body-sm font-medium text-ink dark:text-white">
-                Date
+                {{ dateLabel() }}
               </p>
               <button
                 africanies-button
@@ -120,7 +121,7 @@ import { FilterQueryService } from './filter-query.service';
                 size="sm"
                 (click)="clearDateSection()"
               >
-                Clear
+                {{ clearLabel() }}
               </button>
             </div>
             <africanies-select
@@ -132,13 +133,13 @@ import { FilterQueryService } from './filter-query.service';
             />
             <div class="grid grid-cols-2 gap-3">
               <africanies-date-picker
-                label="From"
+                [label]="fromLabel()"
                 [value]="draft().from ?? null"
                 [max]="draft().to || undefined"
                 (valueChange)="patchFrom($event)"
               />
               <africanies-date-picker
-                label="To"
+                [label]="toLabel()"
                 [value]="draft().to ?? null"
                 [min]="draft().from || undefined"
                 (valueChange)="patchTo($event)"
@@ -149,7 +150,7 @@ import { FilterQueryService } from './filter-query.service';
 
         @if (config.sort; as sortCfg) {
           <africanies-select
-            label="Sort"
+            [label]="sortLabel()"
             [searchable]="sortOptions().length > 6"
             [options]="sortOptions()"
             [selected]="selectedSort()"
@@ -159,8 +160,8 @@ import { FilterQueryService } from './filter-query.service';
 
         @if (config.fields.length) {
           <africanies-select
-            label="Filter by"
-            placeholder="Select fields…"
+            [label]="filterByLabel()"
+            [placeholder]="selectFieldsLabel()"
             [multiple]="true"
             [searchable]="true"
             [options]="filterByOptions()"
@@ -181,7 +182,7 @@ import { FilterQueryService } from './filter-query.service';
                   size="sm"
                   (click)="clearField(field.key)"
                 >
-                  Clear
+                  {{ clearLabel() }}
                 </button>
               </div>
 
@@ -257,7 +258,7 @@ import { FilterQueryService } from './filter-query.service';
                   <africanies-select
                     label=""
                     [searchable]="true"
-                    [placeholder]="field.placeholder ?? 'Select…'"
+                    [placeholder]="field.placeholder ?? selectPlaceholder()"
                     [options]="selectOptionsFor(field)"
                     [selected]="selectedForField(field)"
                     [error]="optionErrorFor(field.key)"
@@ -297,7 +298,7 @@ import { FilterQueryService } from './filter-query.service';
               class="mt-0.5 shrink-0 text-danger"
             />
             <div class="min-w-0 flex-1 flex flex-col gap-0.5">
-              <p class="m-0 text-caption font-medium text-danger">Apply failed</p>
+              <p class="m-0 text-caption font-medium text-danger">{{ applyFailedLabel() }}</p>
               <p
                 class="m-0 text-caption leading-snug text-neutral-700 dark:text-neutral-300"
               >
@@ -310,7 +311,7 @@ import { FilterQueryService } from './filter-query.service';
               variant="ghost"
               size="sm"
               class="shrink-0 !min-h-0 self-start !px-1 !py-0 text-neutral-600 hover:text-ink dark:text-neutral-400 dark:hover:text-white"
-              aria-label="Dismiss"
+              [attr.aria-label]="dismissLabel()"
               (click)="applyError.set(null)"
             >
               <africanies-icon name="close" [size]="14" />
@@ -326,7 +327,7 @@ import { FilterQueryService } from './filter-query.service';
             [disabled]="applying()"
             (click)="onReset()"
           >
-            Reset
+            {{ resetLabel() }}
           </button>
           <button
             africanies-button
@@ -336,7 +337,7 @@ import { FilterQueryService } from './filter-query.service';
             [disabled]="applying()"
             (click)="onApply()"
           >
-            {{ applying() ? 'Applying…' : 'Apply' }}
+            {{ applying() ? applyingLabel() : applyLabel() }}
           </button>
         </div>
       </div>
@@ -347,15 +348,64 @@ import { FilterQueryService } from './filter-query.service';
  * Schema-driven filter drawer body.
  */
 export class FilterDrawerPanel {
+  private readonly i18n = inject(AfricaniesUiI18n);
   protected readonly data = inject<FilterDrawerData>(OVERLAY_DATA);
   protected readonly ref = inject(AfricaniesOverlayRef<FilterDrawerResult>);
+
+  protected readonly eyebrowLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.eyebrow', 'Filters'),
+  );
+  protected readonly closeLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.close', 'Close'),
+  );
+  protected readonly dateLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.date', 'Date'),
+  );
+  protected readonly clearLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.clear', 'Clear'),
+  );
+  protected readonly fromLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.from', 'From'),
+  );
+  protected readonly toLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.to', 'To'),
+  );
+  protected readonly sortLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.sort', 'Sort'),
+  );
+  protected readonly filterByLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.filterBy', 'Filter by'),
+  );
+  protected readonly selectFieldsLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.selectFields', 'Select fields…'),
+  );
+  protected readonly selectPlaceholder = computed(() =>
+    this.i18n.t('africaniesUi.filters.select', 'Select…'),
+  );
+  protected readonly applyFailedLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.applyFailed', 'Apply failed'),
+  );
+  protected readonly dismissLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.dismiss', 'Dismiss'),
+  );
+  protected readonly resetLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.reset', 'Reset'),
+  );
+  protected readonly applyLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.apply', 'Apply'),
+  );
+  protected readonly applyingLabel = computed(() =>
+    this.i18n.t('africaniesUi.filters.applying', 'Applying…'),
+  );
   private readonly destroyRef = inject(DestroyRef);
   private readonly filterOptions = inject(FilterOptionsResolver);
   private readonly filterQuery = inject(FilterQueryService);
 
   protected readonly config = this.data.config;
   protected readonly title = computed(
-    () => this.data.title ?? 'Filters',
+    () =>
+      this.data.title ??
+      this.i18n.t('africaniesUi.filters.title', 'Filters'),
   );
 
   /** True while {@link FilterDrawerData.onApply} is in flight. */
@@ -680,7 +730,7 @@ export class FilterDrawerPanel {
         return msg.trim();
       }
     }
-    return 'Could not load options. Try again.';
+    return this.i18n.t('africaniesUi.filters.optionsLoadError', 'Could not load options. Try again.');
   }
 
   protected selectedForField(
@@ -707,8 +757,8 @@ export class FilterDrawerPanel {
       return field.options;
     }
     return [
-      { value: '1', label: 'Yes', color: '#25945c' },
-      { value: '0', label: 'No', color: '#FF001C' },
+      { value: '1', label: this.i18n.t('africaniesUi.filters.yes', 'Yes'), color: '#25945c' },
+      { value: '0', label: this.i18n.t('africaniesUi.filters.no', 'No'), color: '#FF001C' },
     ];
   }
 
@@ -821,7 +871,7 @@ export class FilterDrawerPanel {
         return 'Authentication failed. Check your access token and try again.';
       }
       if (err.status >= 500) {
-        return 'Server error. Try again in a moment.';
+        return this.i18n.t('africaniesUi.filters.serverError', 'Server error. Try again in a moment.');
       }
       return err.message || `Request failed (${err.status}).`;
     }
@@ -834,6 +884,6 @@ export class FilterDrawerPanel {
         return msg.trim();
       }
     }
-    return 'Could not apply filters. Try again.';
+    return this.i18n.t('africaniesUi.filters.applyError', 'Could not apply filters. Try again.');
   }
 }

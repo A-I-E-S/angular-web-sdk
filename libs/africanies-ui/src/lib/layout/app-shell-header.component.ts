@@ -18,6 +18,7 @@ import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import type { AfricaniesMenuItem } from '../action-menu/menu-item';
 import { AvatarComponent, AvatarMenuComponent } from '../avatar';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import type { AfricaniesNotification, NotificationPageResult } from '../notifications';
 import { NotificationDrawerService } from '../notifications';
 import type { HeaderWeather } from './header-greeting.util';
@@ -219,6 +220,7 @@ export class AppShellHeaderEndDirective {}
 export class AppShellHeaderComponent {
   private readonly notificationsDrawer = inject(NotificationDrawerService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly i18n = inject(AfricaniesUiI18n);
   private readonly weatherConfig = inject(HEADER_WEATHER_CONFIG, {
     optional: true,
   });
@@ -241,7 +243,7 @@ export class AppShellHeaderComponent {
   readonly notifications = input<AfricaniesNotification[]>([]);
 
   /** Drawer heading override. */
-  readonly notificationsTitle = input('Notifications');
+  readonly notificationsTitle = input<string | undefined>(undefined);
 
   /** Marks one notification read when the user taps View. */
   readonly onNotificationMarkRead = input<
@@ -285,9 +287,20 @@ export class AppShellHeaderComponent {
 
   protected readonly nowIso = computed(() => this.now().toISOString());
 
-  protected readonly greeting = computed(() =>
-    pickHeaderGreeting(this.greetingName(), this.now(), this.weather()),
-  );
+  protected readonly greeting = computed(() => {
+    const raw = pickHeaderGreeting(
+      this.greetingName(),
+      this.now(),
+      this.weather(),
+    );
+    if (!raw) {
+      return null;
+    }
+    return {
+      name: raw.name,
+      kicker: this.i18n.t(raw.kickerKey, raw.kicker),
+    };
+  });
 
   protected readonly weatherIcon = computed(() => {
     const forecast = this.weather();
@@ -310,7 +323,21 @@ export class AppShellHeaderComponent {
     if (!forecast) {
       return '';
     }
-    return headerWeatherLabel(forecast.kind, this.now().getHours());
+    const hour = this.now().getHours();
+    const fallback = headerWeatherLabel(forecast.kind, hour);
+    if (forecast.kind === 'clear') {
+      const night = hour >= 19 || hour < 6;
+      return this.i18n.t(
+        night
+          ? 'africaniesUi.header.weather.clearNight'
+          : 'africaniesUi.header.weather.clearDay',
+        fallback,
+      );
+    }
+    return this.i18n.t(
+      `africaniesUi.header.weather.${forecast.kind}`,
+      fallback,
+    );
   });
 
   protected readonly weatherCity = computed(() => {
@@ -321,16 +348,35 @@ export class AppShellHeaderComponent {
   protected readonly weatherAriaLabel = computed(() => {
     const forecast = this.weather();
     if (!forecast) {
-      return 'Weather';
+      return this.i18n.t('africaniesUi.header.weather.aria', 'Weather');
     }
     const condition = this.weatherCondition().toLowerCase();
     const temp = this.weatherTemp();
     const city = this.weatherCity();
-    const degrees =
-      temp === null
-        ? condition
-        : `${temp} degrees Celsius, ${condition}`;
-    return city ? `Weather in ${city}: ${degrees}` : `Weather: ${degrees}`;
+    if (city) {
+      return temp === null
+        ? this.i18n.tParams(
+            'africaniesUi.header.weather.ariaInCity',
+            'Weather in {{city}}: {{condition}}',
+            { city, condition },
+          )
+        : this.i18n.tParams(
+            'africaniesUi.header.weather.ariaInCityTemp',
+            'Weather in {{city}}: {{temp}} degrees Celsius, {{condition}}',
+            { city, temp, condition },
+          );
+    }
+    return temp === null
+      ? this.i18n.tParams(
+          'africaniesUi.header.weather.ariaCondition',
+          'Weather: {{condition}}',
+          { condition },
+        )
+      : this.i18n.tParams(
+          'africaniesUi.header.weather.ariaConditionTemp',
+          'Weather: {{temp}} degrees Celsius, {{condition}}',
+          { temp, condition },
+        );
   });
 
   protected readonly unreadCount = computed(
@@ -345,10 +391,24 @@ export class AppShellHeaderComponent {
   protected readonly notificationAriaLabel = computed(() => {
     const unread = this.unreadCount();
     if (unread === 0) {
-      return 'Open notifications';
+      return this.i18n.t(
+        'africaniesUi.shell.openNotifications',
+        'Open notifications',
+      );
     }
-    return `Open notifications, ${unread} unread`;
+    return this.i18n.tParams(
+      'africaniesUi.shell.openNotificationsUnread',
+      'Open notifications, {{count}} unread',
+      { count: unread },
+    );
   });
+
+  private resolvedNotificationsTitle(): string {
+    return (
+      this.notificationsTitle() ??
+      this.i18n.t('africaniesUi.shell.notifications', 'Notifications')
+    );
+  }
 
   constructor() {
     let active = true;
@@ -386,7 +446,7 @@ export class AppShellHeaderComponent {
 
     this.notificationsDrawer
       .open({
-        title: this.notificationsTitle(),
+        title: this.resolvedNotificationsTitle(),
         notifications: this.notifications(),
         onLoadPage,
         onMarkRead,

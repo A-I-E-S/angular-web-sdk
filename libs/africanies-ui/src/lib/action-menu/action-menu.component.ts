@@ -181,7 +181,17 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
               (click)="onRoutedItemClick($event, item)"
               (mouseenter)="activeIndex.set(i)"
             >
-              @if (item.icon; as icon) {
+              @if (item.imageUrl; as imageUrl) {
+                <img
+                  [src]="imageUrl"
+                  alt=""
+                  [attr.width]="item.imageShape === 'circle' ? 16 : 20"
+                  [attr.height]="item.imageShape === 'circle' ? 16 : 14"
+                  [class]="imageClass(item)"
+                  loading="lazy"
+                  decoding="async"
+                />
+              } @else if (item.icon; as icon) {
                 <africanies-icon [name]="icon" [size]="16" class="shrink-0" />
               }
               <span class="min-w-0 flex-1 truncate text-left">{{
@@ -198,7 +208,17 @@ const MENU_PANEL_POSITIONS: ConnectedPosition[] = [
               (click)="selectItem(item)"
               (mouseenter)="activeIndex.set(i)"
             >
-              @if (item.icon; as icon) {
+              @if (item.imageUrl; as imageUrl) {
+                <img
+                  [src]="imageUrl"
+                  alt=""
+                  [attr.width]="item.imageShape === 'circle' ? 16 : 20"
+                  [attr.height]="item.imageShape === 'circle' ? 16 : 14"
+                  [class]="imageClass(item)"
+                  loading="lazy"
+                  decoding="async"
+                />
+              } @else if (item.icon; as icon) {
                 <africanies-icon [name]="icon" [size]="16" class="shrink-0" />
               }
               <span class="min-w-0 flex-1 truncate text-left">{{
@@ -242,6 +262,12 @@ export class ActionMenuComponent {
 
   protected itemDomId(index: number): string {
     return `${this.menuId}-item-${index}`;
+  }
+
+  protected imageClass(item: AfricaniesMenuItem): string {
+    return item.imageShape === 'circle'
+      ? 'size-4 shrink-0 rounded-full object-cover'
+      : 'h-3.5 w-5 shrink-0 rounded-sm object-cover';
   }
 
   protected itemClass(item: AfricaniesMenuItem, index: number): string {

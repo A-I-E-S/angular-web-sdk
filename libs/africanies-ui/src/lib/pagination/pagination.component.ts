@@ -17,6 +17,7 @@ import {
 } from '@africanies/africanies-models';
 import { ModeColorService } from '@africanies/africanies-theme';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { ButtonComponent } from '../button/button.component';
 import { FilterQueryService } from '../filters/filter-query.service';
 import { SelectComponent, type SelectOption } from '../forms/select';
@@ -94,9 +95,9 @@ type PageItem = number | 'ellipsis';
       [attr.aria-busy]="controlsDisabled() || null"
     >
       <p class="m-0 text-body-sm text-neutral-600 dark:text-neutral-400">
-        Page {{ meta().current_page }} of {{ meta().total_pages }}
+        {{ pageOfLabel() }}
         <span class="text-neutral-400 dark:text-neutral-500">
-          ({{ meta().total_items }} items)
+          {{ itemsLabel() }}
         </span>
       </p>
       <div class="inline-flex flex-wrap items-center gap-2">
@@ -112,7 +113,7 @@ type PageItem = number | 'ellipsis';
               [class]="'animate-spin ' + modeColor.classes().text"
               aria-hidden="true"
             />
-            <span class="sr-only">Loading page</span>
+            <span class="sr-only">{{ loadingPageLabel() }}</span>
           </span>
         }
         <africanies-select
@@ -139,7 +140,7 @@ type PageItem = number | 'ellipsis';
           [disabled]="controlsDisabled() || !meta().has_previous_page"
           (click)="emitPage(meta().current_page - 1)"
         >
-          Previous
+          {{ previousLabel() }}
         </button>
         @for (item of pageItems(); track trackPageItem(item, $index)) {
           @if (item === 'ellipsis') {
@@ -157,7 +158,7 @@ type PageItem = number | 'ellipsis';
               class="min-w-8"
               [variant]="item === meta().current_page ? 'primary' : 'flat'"
               [disabled]="controlsDisabled()"
-              [attr.aria-label]="'Page ' + item"
+              [attr.aria-label]="pageAriaLabel(item)"
               [attr.aria-current]="
                 item === meta().current_page ? 'page' : null
               "
@@ -175,7 +176,7 @@ type PageItem = number | 'ellipsis';
           [disabled]="controlsDisabled() || !meta().has_next_page"
           (click)="emitPage(meta().current_page + 1)"
         >
-          Next
+          {{ nextLabel() }}
         </button>
       </div>
     </nav>
@@ -185,6 +186,42 @@ type PageItem = number | 'ellipsis';
  * Page-size select, numbered pager, and prev/next — driven by {@link PaginationMetaModel} from the API envelope.
  */
 export class PaginationComponent {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
+  protected readonly pageOfLabel = computed(() =>
+    this.i18n.tParams(
+      'africaniesUi.pagination.pageOf',
+      `Page ${this.meta().current_page} of ${this.meta().total_pages}`,
+      {
+        current: this.meta().current_page,
+        total: this.meta().total_pages,
+      },
+    ),
+  );
+  protected readonly itemsLabel = computed(() =>
+    this.i18n.tParams(
+      'africaniesUi.pagination.items',
+      `(${this.meta().total_items} items)`,
+      { count: this.meta().total_items },
+    ),
+  );
+  protected readonly previousLabel = computed(() =>
+    this.i18n.t('africaniesUi.pagination.previous', 'Previous'),
+  );
+  protected readonly nextLabel = computed(() =>
+    this.i18n.t('africaniesUi.pagination.next', 'Next'),
+  );
+  protected readonly loadingPageLabel = computed(() =>
+    this.i18n.t('africaniesUi.pagination.loadingPage', 'Loading page'),
+  );
+  protected pageAriaLabel(page: number): string {
+    return this.i18n.tParams(
+      'africaniesUi.pagination.page',
+      `Page ${page}`,
+      { page },
+    );
+  }
+
   private readonly filterQuery = inject(FilterQueryService);
   protected readonly modeColor = inject(ModeColorService);
   /**

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
   signal,
@@ -11,6 +12,7 @@ import { AfricaniesIconComponent } from '@africanies/africanies-icons';
 
 import { ButtonComponent } from '../button/button.component';
 import { splitMessageLines } from '../feedback/message-lines';
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import {
   TOAST_ICONS,
   type ToastItem,
@@ -78,7 +80,7 @@ import {
                   variant="ghost"
                   size="sm"
                   class="!min-h-0 !px-1.5 !py-1 shrink-0"
-                  aria-label="Dismiss"
+                  [attr.aria-label]="dismissLabel()"
                   (click)="dismissOne.emit()"
                 >
                   <africanies-icon name="close" [size]="14" />
@@ -137,9 +139,7 @@ import {
                     variant="ghost"
                     size="sm"
                     class="!min-h-0 !px-1.5 !py-1 shrink-0"
-                    [attr.aria-label]="
-                      item().count > 1 ? 'Dismiss outermost' : 'Dismiss'
-                    "
+                    [attr.aria-label]="dismissAriaLabel()"
                     (click)="dismissOne.emit()"
                   >
                     <africanies-icon name="close" [size]="14" />
@@ -200,6 +200,8 @@ import {
  * Single toast card — dense, token-based, with optional countdown rail. Stacked identical toasts show a count; host Expand/Collapse all and Close all manage the stack; × peels one copy.
  */
 export class ToastItemComponent {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
   /** Stack entry to render. */
   readonly item = input.required<ToastItem>();
 
@@ -211,6 +213,19 @@ export class ToastItemComponent {
   readonly resumed = output<void>();
 
   protected readonly isPaused = signal(false);
+
+  protected readonly dismissLabel = computed(() =>
+    this.i18n.t('africaniesUi.toast.dismiss', 'Dismiss'),
+  );
+
+  protected readonly dismissAriaLabel = computed(() =>
+    this.item().count > 1
+      ? this.i18n.t(
+          'africaniesUi.toast.dismissOutermost',
+          'Dismiss outermost',
+        )
+      : this.dismissLabel(),
+  );
 
   protected readonly copies = computed(() =>
     Array.from({ length: Math.max(1, this.item().count) }, (_, i) => i),

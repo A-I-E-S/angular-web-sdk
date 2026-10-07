@@ -2,12 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
 } from '@angular/core';
 
 import type { AsyncQueryStateModel } from '@africanies/africanies-models';
 
+import { AfricaniesUiI18n } from '../i18n/africanies-ui-i18n';
 import { EmptyStateComponent } from './empty-state.component';
 import { ErrorIndicatorComponent } from './error-indicator.component';
 import { ErrorStateComponent } from './error-state.component';
@@ -73,7 +75,7 @@ type AsyncView =
   template: `
     @switch (view().kind) {
       @case ('loading') {
-        <africanies-loading-state message="Loading…" />
+        <africanies-loading-state [message]="loadingLabel()" />
       }
       @case ('error') {
         <africanies-error-state
@@ -84,7 +86,7 @@ type AsyncView =
       }
       @case ('empty') {
         <africanies-empty-state
-          [message]="emptyMessage()"
+          [message]="resolvedEmptyMessage()"
           [refreshing]="state().isFetching"
           (retry)="retry.emit()"
         />
@@ -97,8 +99,8 @@ type AsyncView =
                 <africanies-error-indicator
                   class="max-w-[min(100%,20rem)]"
                   [error]="staleErrorCopy()"
-                  retryText="Refresh"
-                  [refreshingText]="staleRefreshingText()"
+                  [retryText]="refreshLabel()"
+                  [refreshingText]="resolvedStaleRefreshingText()"
                   [refreshing]="badges.fetching"
                   (retry)="retry.emit()"
                 />
@@ -115,6 +117,8 @@ type AsyncView =
  * Async query wrapper that maps {@link AsyncQueryStateModel} into loading / error / empty / success with non-blocking badges for background activity.
  */
 export class AsyncStateComponent<T = unknown> {
+  private readonly i18n = inject(AfricaniesUiI18n);
+
   /**
    * Snapshot from the app's query layer (e.g. mapped `injectQuery()` signals).
    */
@@ -123,19 +127,17 @@ export class AsyncStateComponent<T = unknown> {
   /**
    * Optional override for the blocking empty copy.
    */
-  readonly emptyMessage = input('No results found.');
+  readonly emptyMessage = input<string | undefined>(undefined);
 
   /**
    * Copy for the non-blocking stale-data error pill (data present, refresh failed).
    */
-  readonly staleErrorMessage = input(
-    'Failed to fetch the most recent data.',
-  );
+  readonly staleErrorMessage = input<string | undefined>(undefined);
 
   /**
    * Retry label on the stale pill while a background refetch is in flight.
    */
-  readonly staleRefreshingText = input('Refreshing...');
+  readonly staleRefreshingText = input<string | undefined>(undefined);
 
   /**
    * Single retry channel for error, empty, and stale-data badge actions.
@@ -145,9 +147,34 @@ export class AsyncStateComponent<T = unknown> {
    */
   readonly retry = output<void>();
 
+  protected readonly loadingLabel = computed(() =>
+    this.i18n.t('africaniesUi.feedback.loading', 'Loading…'),
+  );
+
+  protected readonly refreshLabel = computed(() =>
+    this.i18n.t('africaniesUi.feedback.refresh', 'Refresh'),
+  );
+
+  protected readonly resolvedEmptyMessage = computed(
+    () =>
+      this.emptyMessage() ??
+      this.i18n.t('africaniesUi.feedback.empty', 'No results found.'),
+  );
+
+  protected readonly resolvedStaleRefreshingText = computed(
+    () =>
+      this.staleRefreshingText() ??
+      this.i18n.t('africaniesUi.feedback.refreshing', 'Refreshing…'),
+  );
+
   /** Resolved blocking error message with a safe fallback. */
   protected readonly errorMessage = computed(
-    () => this.state().error ?? 'Something went wrong.',
+    () =>
+      this.state().error ??
+      this.i18n.t(
+        'africaniesUi.feedback.somethingWentWrong',
+        'Something went wrong.',
+      ),
   );
 
   /**
@@ -158,7 +185,13 @@ export class AsyncStateComponent<T = unknown> {
     if (fromState) {
       return fromState;
     }
-    return this.staleErrorMessage();
+    return (
+      this.staleErrorMessage() ??
+      this.i18n.t(
+        'africaniesUi.feedback.staleError',
+        'Failed to fetch the most recent data.',
+      )
+    );
   });
 
   /**
