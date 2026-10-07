@@ -13,13 +13,21 @@ export const AFRICANIES_UI_LANG = new InjectionToken<Signal<string>>(
   'AFRICANIES_UI_LANG',
 );
 
+export type AfricaniesUiTranslateFn = (
+  key: string,
+  params?: Record<string, string | number>,
+) => string;
+
 /**
  * Optional host translate function (e.g. Transloco). Keys use the
  * `africaniesUi.*` namespace from `assets/i18n/{lang}.json`.
+ *
+ * Hosts that interpolate themselves (Transloco) must accept `params` so
+ * placeholders are not emptied before {@link AfricaniesUiI18n.tParams} runs.
  */
-export const AFRICANIES_UI_TRANSLATE = new InjectionToken<
-  (key: string) => string
->('AFRICANIES_UI_TRANSLATE');
+export const AFRICANIES_UI_TRANSLATE = new InjectionToken<AfricaniesUiTranslateFn>(
+  'AFRICANIES_UI_TRANSLATE',
+);
 
 /**
  * Resolves SDK chrome copy. Without host providers, returns English fallbacks.
@@ -42,13 +50,21 @@ export class AfricaniesUiI18n {
 
   /**
    * Interpolation for `{{name}}` placeholders (pagination, etc.).
+   * Prefers host-side params (Transloco); also replaces leftover `{{name}}`.
    */
   tParams(
     key: string,
     fallback: string,
     params: Record<string, string | number>,
   ): string {
-    let out = this.t(key, fallback);
+    this.lang?.();
+    let out: string;
+    if (this.translateFn) {
+      const value = this.translateFn(key, params);
+      out = !value || value === key ? fallback : value;
+    } else {
+      out = fallback;
+    }
     for (const [name, value] of Object.entries(params)) {
       out = out.split(`{{${name}}}`).join(String(value));
     }
