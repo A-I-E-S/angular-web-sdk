@@ -5,6 +5,9 @@ import type {
   UserAccountManagerModel,
   UserBusinessAccountModel,
   UserCountryModel,
+  UserDefaultWarehouseRefModel,
+  UserDefaultWarehousesModel,
+  UserDefaultWarehouseSlotModel,
   UserGatewayPayloadModel,
   UserModel,
   UserModelType,
@@ -389,6 +392,56 @@ export function mapUserAccountManager(
 }
 
 /**
+ * Map nested `warehouse: { id, name }` under a default-warehouse slot.
+ */
+export function mapUserDefaultWarehouseRef(
+  raw: unknown,
+): UserDefaultWarehouseRefModel | null {
+  const record = asRecord(raw);
+  if (!record) {
+    return null;
+  }
+  const id = asNullableNumber(record['id']);
+  const name = asNullableString(record['name']);
+  if (id == null && (name == null || name === '')) {
+    return null;
+  }
+  return { id, name };
+}
+
+/**
+ * Map one `default_warehouses.sfn|stn` slot (`country` + nested warehouse).
+ */
+export function mapUserDefaultWarehouseSlot(
+  raw: unknown,
+): UserDefaultWarehouseSlotModel | null {
+  const record = asRecord(raw);
+  if (!record) {
+    return null;
+  }
+  return {
+    country: asNullableString(record['country']),
+    warehouse: mapUserDefaultWarehouseRef(record['warehouse']),
+  };
+}
+
+/**
+ * Map `user.default_warehouses` (`sfn` / `stn` slots; null when omitted).
+ */
+export function mapUserDefaultWarehouses(
+  raw: unknown,
+): UserDefaultWarehousesModel | null {
+  const record = asRecord(raw);
+  if (!record) {
+    return null;
+  }
+  return {
+    sfn: mapUserDefaultWarehouseSlot(record['sfn'] ?? record['SFN']),
+    stn: mapUserDefaultWarehouseSlot(record['stn'] ?? record['STN']),
+  };
+}
+
+/**
  * Map a bare wire user object into {@link UserModel} (snake_case preserved).
  * @param raw - User object from `GET /user` (unwrapped).
  * @returns Normalized {@link UserModel}.
@@ -491,6 +544,9 @@ export function mapUser(raw: unknown): UserModel {
     ),
     account_manager: mapUserAccountManager(
       record['account_manager'] ?? record['accountManager'],
+    ),
+    default_warehouses: mapUserDefaultWarehouses(
+      record['default_warehouses'] ?? record['defaultWarehouses'],
     ),
   };
 }

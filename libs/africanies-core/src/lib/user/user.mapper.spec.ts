@@ -1,6 +1,7 @@
 import {
   mapUser,
   mapUserCountry,
+  mapUserDefaultWarehouses,
   mapUserStateLabel,
   USER_PATH,
 } from './user.mapper';
@@ -71,6 +72,16 @@ const WIRE_USER = {
     name: 'Ada',
     email: 'ada@africanies.com',
   },
+  default_warehouses: {
+    sfn: {
+      country: 'CN',
+      warehouse: {
+        id: 36,
+        name: 'Guangzhuo Warehouse (City Center)',
+      },
+    },
+    stn: null,
+  },
 };
 
 describe('user.mapper', () => {
@@ -100,6 +111,12 @@ describe('user.mapper', () => {
     expect(mapped.business_account?.subscription?.currency).toBe('NGN');
     expect(mapped.account_manager?.email).toBe('ada@africanies.com');
     expect(mapped.accounts).toEqual([]);
+    expect(mapped.default_warehouses?.sfn?.country).toBe('CN');
+    expect(mapped.default_warehouses?.sfn?.warehouse?.id).toBe(36);
+    expect(mapped.default_warehouses?.sfn?.warehouse?.name).toBe(
+      'Guangzhuo Warehouse (City Center)',
+    );
+    expect(mapped.default_warehouses?.stn).toBeNull();
   });
 
   it('mapUserCountry returns null for non-objects', () => {
@@ -110,5 +127,12 @@ describe('user.mapper', () => {
     expect(mapUserStateLabel(null)).toBeNull();
     expect(mapUserStateLabel('Lagos')).toBe('Lagos');
     expect(mapUserStateLabel({ name: 'Lagos State' })).toBe('Lagos State');
+  });
+
+  it('mapUserDefaultWarehouses maps null slots and omitted payloads', () => {
+    expect(mapUserDefaultWarehouses(null)).toBeNull();
+    expect(
+      mapUserDefaultWarehouses({ sfn: null, stn: null }),
+    ).toEqual({ sfn: null, stn: null });
   });
 });

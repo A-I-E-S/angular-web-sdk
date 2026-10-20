@@ -169,6 +169,27 @@ export interface UserAccountManagerModel {
   deleted_at?: string | null;
 }
 
+/** Nested warehouse under a default-warehouse mode slot. */
+export interface UserDefaultWarehouseRefModel {
+  id?: number | null;
+  name?: string | null;
+}
+
+/**
+ * Per-mode default warehouse from `user.default_warehouses.sfn|stn`.
+ * `country` is typically an ISO2 code (e.g. `"CN"`).
+ */
+export interface UserDefaultWarehouseSlotModel {
+  country?: string | null;
+  warehouse?: UserDefaultWarehouseRefModel | null;
+}
+
+/** Default warehouses keyed by shipping mode (`sfn` / `stn`). */
+export interface UserDefaultWarehousesModel {
+  sfn?: UserDefaultWarehouseSlotModel | null;
+  stn?: UserDefaultWarehouseSlotModel | null;
+}
+
 /**
  * Current user from `GET /user` (auth required).
  *
@@ -221,6 +242,8 @@ export interface UserModel {
   accounts?: unknown[] | null;
   business_account?: UserBusinessAccountModel | null;
   account_manager?: UserAccountManagerModel | null;
+  /** Per-mode default warehouse assignment when the API sends it. */
+  default_warehouses?: UserDefaultWarehousesModel | null;
 }
 
 /**
