@@ -40,20 +40,13 @@ export {
 } from './lib/feedback';
 
 // Accordion (expandable bordered panels)
-export {
-  AccordionComponent,
-  type AccordionSize,
-} from './lib/accordion';
+export { AccordionComponent, type AccordionSize } from './lib/accordion';
 
 // Alert (inline banners — distinct from ErrorState / Toast)
 export { AlertComponent, type AlertVariant } from './lib/alert';
 
 // Chip (compact status labels)
-export {
-  ChipComponent,
-  type ChipSize,
-  type ChipVariant,
-} from './lib/chip';
+export { ChipComponent, type ChipSize, type ChipVariant } from './lib/chip';
 
 // Carrier marks (delivery vendor logos)
 export {
@@ -171,9 +164,11 @@ export {
   AddressInputComponent,
   type AddressPlace,
   type AddressPrediction,
+  type AfricaniesDateRangeValue,
   buildPhoneNumberValue,
   CheckboxComponent,
   DatePickerComponent,
+  DateRangeComponent,
   dialCodeForIso2,
   fileExtensionLabel,
   fileMatchesAccept,
@@ -260,15 +255,15 @@ export {
   AppShellHeaderSlotDirective,
   AppShellHeaderStartDirective,
   type AppShellLayoutPreview,
+  HEADER_WEATHER_CONFIG,
   type HeaderGreeting,
   headerGreetingFirstName,
   type HeaderGreetingPeriod,
   headerGreetingPeriod,
+  headerKickerDictionary,
   type HeaderWeather,
   type HeaderWeatherConfig,
   type HeaderWeatherKind,
-  HEADER_WEATHER_CONFIG,
-  headerKickerDictionary,
   PageHeaderComponent,
   pickHeaderGreeting,
   provideHeaderWeather,
@@ -303,11 +298,7 @@ export {
 } from './lib/language-switcher';
 
 // Image (loading / fallback frame)
-export {
-  ImageComponent,
-  type ImageFit,
-  type ImageShape,
-} from './lib/image';
+export { ImageComponent, type ImageFit, type ImageShape } from './lib/image';
 
 // Notifications drawer
 export {

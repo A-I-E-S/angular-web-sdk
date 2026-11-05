@@ -70,6 +70,7 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
  *   `SelectOption<T> | null` — selecting replaces the previous value.
  * - **`multiple=true`:** `selected` / CVA / `selectedChange` use
  *   `SelectOption<T>[]` — every change emits the **full** selection array.
+ *   **Clear all** (on the field and at the top of the open list) emits `[]`.
  *   Switching modes is a breaking type change for consumers; do not assume one
  *   output shape works for both.
  *
@@ -273,6 +274,19 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
       >
         <ng-content select="[suffix]" />
       </span>
+      @if (hasMultiSelection() && !loading()) {
+        <button
+          type="button"
+          [class]="
+            'inline-flex shrink-0 cursor-pointer items-center px-2 text-body-sm font-semibold disabled:cursor-not-allowed ' +
+            modeColor.classes().text
+          "
+          [disabled]="disabled()"
+          (click)="clearAll($event)"
+        >
+          Clear all
+        </button>
+      }
       @if (loading()) {
         <span [class]="affixClass" data-slot="trigger-icon" aria-hidden="true">
           <africanies-icon
@@ -328,6 +342,23 @@ const SELECT_PANEL_POSITIONS: ConnectedPosition[] = [
               (input)="onSearchInput($event)"
               (keydown)="onSearchKeydown($event)"
             />
+          </div>
+        }
+        @if (hasMultiSelection()) {
+          <div
+            class="flex justify-end border-b border-border px-2 py-1.5 dark:border-white/10"
+          >
+            <button
+              type="button"
+              [class]="
+                'cursor-pointer text-body-sm font-semibold disabled:cursor-not-allowed ' +
+                modeColor.classes().text
+              "
+              [disabled]="disabled()"
+              (click)="clearAll($event)"
+            >
+              Clear all
+            </button>
           </div>
         }
 
@@ -1113,6 +1144,23 @@ export class SelectComponent<T = string> implements ControlValueAccessor {
       (s) => !Object.is(s.value, opt.value),
     );
     this.commitSelection(next);
+  }
+
+  /**
+   * Drops every selected option in multiple mode. Single-select ignores it.
+   * @param event
+   */
+  protected clearAll(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    if (
+      this.disabled() ||
+      !this.multiple() ||
+      this.selectedList().length === 0
+    ) {
+      return;
+    }
+    this.commitSelection([]);
   }
 
   protected commitFreeText(): void {

@@ -17,15 +17,19 @@ export {
 export { CheckboxComponent } from './checkbox';
 export { DatePickerComponent } from './date-picker';
 export {
-  acceptLabels,
-  fileExtensionLabel,
-  fileMatchesAccept,
-  FileUploadComponent,
-} from './file-upload';
+  type AfricaniesDateRangeValue,
+  DateRangeComponent,
+} from './date-range';
 export type {
   FileUploadExistingFile,
   FileUploadResult,
   FileUploadVariant,
+} from './file-upload';
+export {
+  acceptLabels,
+  fileExtensionLabel,
+  fileMatchesAccept,
+  FileUploadComponent,
 } from './file-upload';
 export { NumberInputComponent } from './number-input';
 export { OtpInputComponent, type OtpInputVariant } from './otp-input';
