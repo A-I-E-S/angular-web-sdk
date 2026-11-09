@@ -8,6 +8,7 @@ import {
 import { type EnvironmentProviders } from '@angular/core';
 
 import { shipmentModeInterceptor } from '../shipping/shipment-mode.interceptor';
+import { acceptLanguageInterceptor } from './accept-language.interceptor';
 import { authInterceptor } from './auth.interceptor';
 import { httpToastInterceptor } from './http-toast.interceptor';
 
@@ -17,7 +18,8 @@ import { httpToastInterceptor } from './http-toast.interceptor';
 export interface AfricaniesHttpClientOptions {
   /**
    * Extra interceptors appended **after** the SDK defaults
-   * (`shipmentModeInterceptor`, `authInterceptor`, `httpToastInterceptor`).
+   * (`shipmentModeInterceptor`, `acceptLanguageInterceptor`, `authInterceptor`,
+   * `httpToastInterceptor`).
    */
   interceptors?: HttpInterceptorFn[];
 }
@@ -27,10 +29,12 @@ export interface AfricaniesHttpClientOptions {
  *
  * Defaults (in order):
  * 1. {@link shipmentModeInterceptor} — `x-shipment-mode`
- * 2. {@link authInterceptor} — `Authorization` when {@link AuthTokenService} has a token
- * 3. {@link httpToastInterceptor} — toasts for requests tagged with {@link withToast}
+ * 2. {@link acceptLanguageInterceptor} — `Accept-Language` when
+ *    {@link AFRICANIES_HTTP_ACCEPT_LANGUAGE} is provided
+ * 3. {@link authInterceptor} — `Authorization` when {@link AuthTokenService} has a token
+ * 4. {@link httpToastInterceptor} — toasts for requests tagged with {@link withToast}
  *    (no-op until `provideAfricaniesToasts()` registers {@link AFRICANIES_HTTP_TOAST})
- * 4. Any {@link AfricaniesHttpClientOptions.interceptors} from the host
+ * 5. Any {@link AfricaniesHttpClientOptions.interceptors} from the host
  *
  * @param options - Optional extra interceptors.
  * @param features - Extra `provideHttpClient` features (`withFetch`, etc.).
@@ -51,6 +55,7 @@ export function provideAfricaniesHttpClient(
   return provideHttpClient(
     withInterceptors([
       shipmentModeInterceptor,
+      acceptLanguageInterceptor,
       authInterceptor,
       httpToastInterceptor,
       ...extras,

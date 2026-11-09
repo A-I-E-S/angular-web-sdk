@@ -33,7 +33,7 @@ Wire these in `app.config.ts`. Each provider turns on one slice of the SDK:
 | Provider / setup | What it does |
 | --- | --- |
 | `provideAfricaniesSdk({ baseUrl })` | **Required.** Sets the API base URL (and optional timeout/headers) used by all SDK HTTP services. |
-| `provideAfricaniesHttpClient()` | **Required for API calls.** Registers Angular `HttpClient` plus SDK interceptors: shipping mode header, bearer token from `AuthTokenService`, and optional HTTP toasts. |
+| `provideAfricaniesHttpClient()` | **Required for API calls.** Registers Angular `HttpClient` plus SDK interceptors: shipping mode header, optional `Accept-Language` from `AFRICANIES_HTTP_ACCEPT_LANGUAGE`, bearer token from `AuthTokenService`, and optional HTTP toasts. |
 | `provideAfricaniesUiOverlays()` | Enables modal / drawer / confirm overlay services used by UI components (filters, dialogs, etc.). |
 | `provideAfricaniesToasts()` | **Optional.** Mounts the toast UI and connects it to HTTP. Then mark individual requests with `withToast()` to show success/error toasts. Without this, `withToast()` is a no-op. |
 | `inject(ThemeService)` in an app initializer | Applies light/dark theme class early so the first paint matches the stored preference. |

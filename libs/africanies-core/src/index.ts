@@ -24,6 +24,8 @@ export {
 export { type ShippingModeChangeGuard,ShippingModeService } from './lib/shipping/shipping-mode.service';
 
 // HTTP
+export { AFRICANIES_HTTP_ACCEPT_LANGUAGE } from './lib/http/accept-language.context';
+export { acceptLanguageInterceptor } from './lib/http/accept-language.interceptor';
 export { ApiClient, type ApiRequestOptions } from './lib/http/api-client';
 export { formatApiErrorMessage } from './lib/http/api-error-message';
 export { authInterceptor } from './lib/http/auth.interceptor';
